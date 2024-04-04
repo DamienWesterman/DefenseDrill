@@ -12,4 +12,5 @@
 package com.damienwesterman.defensedrill.database;
 
 public interface DrillDao {
+    public void doSomething();
 }
