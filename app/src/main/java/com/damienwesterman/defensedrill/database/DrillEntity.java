@@ -16,7 +16,13 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +38,10 @@ public class DrillEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;
-    // TODO Figure this out in room DB
+    @TypeConverters(DrillEntity.Converters.class)
     private List<GroupEntity> groups;
+    @TypeConverters(DrillEntity.Converters.class)
     @ColumnInfo(name = "sub_groups")
-    // TODO Figure this out in room DB
     private List<SubGroupEntity> subGroups;
     @ColumnInfo(name = "last_drilled")
     private long lastDrilled;
@@ -203,5 +209,33 @@ public class DrillEntity {
 
     public void setHowToVideoUrl(String howToVideoUrl) {
         this.howToVideoUrl = howToVideoUrl;
+    }
+
+    public static class Converters {
+        @TypeConverter
+        public static String groupListToString(List<GroupEntity> groupList) {
+            Gson gson = new Gson();
+            return gson.toJson(groupList);
+        }
+
+        @TypeConverter
+        public static List<GroupEntity> stringToGroupList(String groupListString) {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<GroupEntity>>() {}.getType();
+            return gson.fromJson(groupListString, listType);
+        }
+
+        @TypeConverter
+        public static String subGroupListToString(List<SubGroupEntity> subGroupList) {
+            Gson gson = new Gson();
+            return gson.toJson(subGroupList);
+        }
+
+        @TypeConverter
+        public static List<SubGroupEntity> stringToSubGroupList(String subGroupListString) {
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<SubGroupEntity>>() {}.getType();
+            return gson.fromJson(subGroupListString, listType);
+        }
     }
 }

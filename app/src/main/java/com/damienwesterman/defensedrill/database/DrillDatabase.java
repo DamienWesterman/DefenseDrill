@@ -16,11 +16,15 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 
 /**
  * TODO: Doc comments
  */
+@TypeConverters({
+        DrillEntity.Converters.class
+})
 @Database(entities = {
         DrillEntity.class,
         GroupEntity.class,
@@ -31,9 +35,9 @@ public abstract class DrillDatabase extends RoomDatabase {
     private static DrillDatabase instance;
 
     /**
-     * Private constructor, access class with {@link #getInstance(Context context)}.
+     * Default constructor. Do not use. Access class with {@link #getInstance(Context context)}.
      */
-    private DrillDatabase() { };
+    public DrillDatabase() { };
 
     /**
      * Get running DrillRepository instance.
