@@ -26,8 +26,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(indices = {@Index(value = {"name"}, unique = true)})
+@Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = DrillEntity.TABLE_NAME)
 public class DrillEntity {
+    @Ignore
+    public static final String TABLE_NAME = "drill";
     @Ignore
     public static final int HIGH_CONFIDENCE = 0;
     @Ignore

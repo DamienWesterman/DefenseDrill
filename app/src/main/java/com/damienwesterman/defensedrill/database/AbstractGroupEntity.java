@@ -3,7 +3,7 @@ package com.damienwesterman.defensedrill.database;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-public abstract class AbstractGroup {
+public abstract class AbstractGroupEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;
@@ -16,7 +16,7 @@ public abstract class AbstractGroup {
      * @param name          Name of the group.
      * @param description   Description of the group.
      */
-    public AbstractGroup(long id, String name, String description) {
+    public AbstractGroupEntity(long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -29,7 +29,7 @@ public abstract class AbstractGroup {
      * @param description   Description of the group.
      */
     @Ignore
-    public AbstractGroup(String name, String description) {
+    public AbstractGroupEntity(String name, String description) {
         this.id = -1;
         this.name = name;
         this.description = description;
@@ -39,7 +39,7 @@ public abstract class AbstractGroup {
      * Default Constructor.
      */
     @Ignore
-    public AbstractGroup() {
+    public AbstractGroupEntity() {
         this.id = -1;
         this.name = "";
         this.description = "";
