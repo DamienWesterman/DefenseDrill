@@ -22,9 +22,6 @@ import androidx.room.TypeConverters;
 /**
  * TODO: Doc comments
  */
-@TypeConverters({
-        DrillEntity.Converters.class
-})
 @Database(entities = {
         DrillEntity.class,
         GroupEntity.class,

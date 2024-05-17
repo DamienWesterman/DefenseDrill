@@ -40,11 +40,6 @@ public class DrillEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;
-    @TypeConverters(DrillEntity.Converters.class)
-    private List<GroupEntity> groups;
-    @TypeConverters(DrillEntity.Converters.class)
-    @ColumnInfo(name = "sub_groups")
-    private List<SubGroupEntity> subGroups;
     @ColumnInfo(name = "last_drilled")
     private long lastDrilled;
     @ColumnInfo(name = "new_drill")
@@ -65,8 +60,6 @@ public class DrillEntity {
     public DrillEntity() {
         this.id = -1;
         this.name = "";
-        this.groups = new ArrayList<>();
-        this.subGroups = new ArrayList<>();
         this.lastDrilled = System.currentTimeMillis();
         this.newDrill = true;
         this.confidence = LOW_CONFIDENCE;
@@ -80,8 +73,6 @@ public class DrillEntity {
      *
      * @param id            RoomDB generated id.
      * @param name          Drill name.
-     * @param groups        List of Groups the drill belongs to.
-     * @param subGroups     List of SubGroups the drill belongs to.
      * @param lastDrilled   Date (in milliseconds since epoch) the drill was last drilled.
      * @param newDrill      True = new drill.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
@@ -89,13 +80,10 @@ public class DrillEntity {
      * @param howToDescUrl  URL for description on how to perform the drill.
      * @param howToVideoUrl URL for video on how to perform the drill.
      */
-    public DrillEntity(long id, String name, List<GroupEntity> groups, List<SubGroupEntity> subGroups,
-                       long lastDrilled, boolean newDrill, int confidence, String notes,
-                       String howToDescUrl, String howToVideoUrl) {
+    public DrillEntity(long id, String name, long lastDrilled, boolean newDrill, int confidence,
+                       String notes, String howToDescUrl, String howToVideoUrl) {
         this.id = id;
         this.name = name;
-        this.groups = groups;
-        this.subGroups = subGroups;
         this.lastDrilled = lastDrilled;
         this.newDrill = newDrill;
         this.confidence = confidence;
@@ -108,8 +96,6 @@ public class DrillEntity {
      * Usable fully parameterized constructor.
      *
      * @param name          Drill name.
-     * @param groups        List of Groups the drill belongs to.
-     * @param subGroups     List of SubGroups the drill belongs to.
      * @param lastDrilled   Date (in milliseconds since epoch) the drill was last drilled.
      * @param newDrill      True = new drill.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
@@ -118,13 +104,10 @@ public class DrillEntity {
      * @param howToVideoUrl URL for video on how to perform the drill.
      */
     @Ignore
-    public DrillEntity(String name, List<GroupEntity> groups, List<SubGroupEntity> subGroups,
-                       long lastDrilled, boolean newDrill, int confidence, String notes,
-                       String howToDescUrl, String howToVideoUrl) {
+    public DrillEntity(String name, long lastDrilled, boolean newDrill, int confidence,
+                       String notes, String howToDescUrl, String howToVideoUrl) {
         this.id = -1;
         this.name = name;
-        this.groups = groups;
-        this.subGroups = subGroups;
         this.lastDrilled = lastDrilled;
         this.newDrill = newDrill;
         this.confidence = confidence;
@@ -147,22 +130,6 @@ public class DrillEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<GroupEntity> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(List<GroupEntity> groups) {
-        this.groups = groups;
-    }
-
-    public List<SubGroupEntity> getSubGroups() {
-        return subGroups;
-    }
-
-    public void setSubGroups(List<SubGroupEntity> subGroups) {
-        this.subGroups = subGroups;
     }
 
     public long getLastDrilled() {
@@ -211,33 +178,5 @@ public class DrillEntity {
 
     public void setHowToVideoUrl(String howToVideoUrl) {
         this.howToVideoUrl = howToVideoUrl;
-    }
-
-    public static class Converters {
-        @TypeConverter
-        public static String groupListToString(List<GroupEntity> groupList) {
-            Gson gson = new Gson();
-            return gson.toJson(groupList);
-        }
-
-        @TypeConverter
-        public static List<GroupEntity> stringToGroupList(String groupListString) {
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<GroupEntity>>() {}.getType();
-            return gson.fromJson(groupListString, listType);
-        }
-
-        @TypeConverter
-        public static String subGroupListToString(List<SubGroupEntity> subGroupList) {
-            Gson gson = new Gson();
-            return gson.toJson(subGroupList);
-        }
-
-        @TypeConverter
-        public static List<SubGroupEntity> stringToSubGroupList(String subGroupListString) {
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<SubGroupEntity>>() {}.getType();
-            return gson.fromJson(subGroupListString, listType);
-        }
     }
 }
