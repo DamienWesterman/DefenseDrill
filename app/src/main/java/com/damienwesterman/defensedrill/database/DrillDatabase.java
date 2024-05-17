@@ -25,7 +25,9 @@ import androidx.room.TypeConverters;
 @Database(entities = {
         DrillEntity.class,
         GroupEntity.class,
-        SubGroupEntity.class
+        SubGroupEntity.class,
+        DrillGroupJoinEntity.class,
+        DrillSubGroupJoinEntity.class
 }, version = 1, exportSchema = false)
 public abstract class DrillDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "drill_database";

@@ -30,12 +30,6 @@ import java.util.List;
 public class DrillEntity {
     @Ignore
     public static final String TABLE_NAME = "drill";
-    @Ignore
-    public static final int HIGH_CONFIDENCE = 0;
-    @Ignore
-    public static final int MEDIUM_CONFIDENCE = 2;
-    @Ignore
-    public static final int LOW_CONFIDENCE = 4;
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -62,7 +56,7 @@ public class DrillEntity {
         this.name = "";
         this.lastDrilled = System.currentTimeMillis();
         this.newDrill = true;
-        this.confidence = LOW_CONFIDENCE;
+        this.confidence = Drill.LOW_CONFIDENCE;
         this.notes = "";
         this.howToDescUrl = "";
         this.howToVideoUrl = "";

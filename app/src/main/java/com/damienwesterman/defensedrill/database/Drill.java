@@ -1,6 +1,187 @@
+/****************************\
+ *      ________________      *
+ *     /  _             \     *
+ *     \   \ |\   _  \  /     *
+ *      \  / | \ / \  \/      *
+ *      /  \ | / | /  /\      *
+ *     /  _/ |/  \__ /  \     *
+ *     \________________/     *
+ *                            *
+ \****************************/
+
 package com.damienwesterman.defensedrill.database;
 
+import androidx.room.Embedded;
+import androidx.room.Ignore;
+import androidx.room.Junction;
+import androidx.room.Relation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * TODO: Doc comments
+ */
 public class Drill {
     // FIXME: START HERE Do this and edit the entities
     // TODO: implement the join tables
+    public static final int HIGH_CONFIDENCE = 0;
+    public static final int MEDIUM_CONFIDENCE = 2;
+    public static final int LOW_CONFIDENCE = 4;
+    @Embedded
+    private DrillEntity drillEntity;
+
+    @Relation(
+            parentColumn = "id",
+            entityColumn = "id",
+            associateBy = @Junction(value = DrillGroupJoinEntity.class,
+                    parentColumn = "drill_id", entityColumn = "group_id")
+    )
+    private List<GroupEntity> groups;
+
+    @Relation(
+            parentColumn = "id",
+            entityColumn = "id",
+            associateBy = @Junction(value = DrillSubGroupJoinEntity.class,
+                    parentColumn = "drill_id", entityColumn = "sub_group_id")
+    )
+    private List<SubGroupEntity> subGroups;
+
+    /**
+     * Default Constructor
+     */
+    public Drill() {
+        this.drillEntity = new DrillEntity();
+        this.groups = new ArrayList<>();
+        this.subGroups = new ArrayList<>();
+    }
+
+    /**
+     * Parameterized constructor - ROOM DB ONLY
+     *
+     * @param drillEntity
+     * @param groups
+     * @param subGroups
+     */
+    public Drill(DrillEntity drillEntity, List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
+        this.drillEntity = drillEntity;
+        this.groups = groups;
+        this.subGroups = subGroups;
+    }
+
+    /**
+     * Usable fully parameterized constructor.
+     *
+     * @param name          Drill name.
+     * @param lastDrilled   Date (in milliseconds since epoch) the drill was last drilled.
+     * @param newDrill      True = new drill.
+     * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
+     * @param notes         User notes on the drill.
+     * @param howToDescUrl  URL for description on how to perform the drill.
+     * @param howToVideoUrl URL for video on how to perform the drill.
+     * @param groups        List of groups the Drill belongs to
+     * @param subGroups     List of subGroups the Drill belongs to
+     */
+    public Drill(String name, long lastDrilled, boolean newDrill, int confidence,
+                       String notes, String howToDescUrl, String howToVideoUrl,
+                       List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
+        this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
+                                            howToDescUrl, howToVideoUrl);
+        this.groups = groups;
+        this.subGroups = subGroups;
+    }
+
+    /**
+     * Room DB only
+     */
+    public DrillEntity getDrillEntity() {
+        return drillEntity;
+    }
+
+    /**
+     * Room DB only
+     */
+    public void setDrillEntity(DrillEntity drillEntity) {
+        this.drillEntity = drillEntity;
+    }
+
+    public long getId() {
+        return this.drillEntity.getId();
+    }
+
+    public void setId(long id) {
+        this.drillEntity.setId(id);
+    }
+
+    public String getName() {
+        return this.drillEntity.getName();
+    }
+
+    public void setName(String name) {
+        this.drillEntity.setName(name);
+    }
+
+    public long getLastDrilled() {
+        return this.drillEntity.getLastDrilled();
+    }
+
+    public void setLastDrilled(long lastDrilled) {
+        this.drillEntity.setLastDrilled(lastDrilled );
+    }
+
+    public boolean isNewDrill() {
+        return this.drillEntity.isNewDrill();
+    }
+
+    public void setNewDrill(boolean newDrill) {
+        this.drillEntity.setNewDrill(newDrill);
+    }
+
+    public int getConfidence() {
+        return this.drillEntity.getConfidence();
+    }
+
+    public void setConfidence(int confidence) {
+        this.drillEntity.setConfidence(confidence);
+    }
+
+    public String getNotes() {
+        return this.drillEntity.getNotes();
+    }
+
+    public void setNotes(String notes) {
+        this.drillEntity.setNotes(notes);
+    }
+
+    public String getHowToDescUrl() {
+        return this.drillEntity.getHowToDescUrl();
+    }
+
+    public void setHowToDescUrl(String howToDescUrl) {
+        this.drillEntity.setHowToDescUrl(howToDescUrl);
+    }
+
+    public String getHowToVideoUrl() {
+        return this.drillEntity.getHowToVideoUrl();
+    }
+
+    public void setHowToVideoUrl(String howToVideoUrl) {
+        this.drillEntity.setHowToVideoUrl(howToVideoUrl);
+    }
+
+    public List<GroupEntity> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<GroupEntity> groups) {
+        this.groups = groups;
+    }
+
+    public List<SubGroupEntity> getSubGroups() {
+        return subGroups;
+    }
+
+    public void setSubGroups(List<SubGroupEntity> subGroups) {
+        this.subGroups = subGroups;
+    }
 }
