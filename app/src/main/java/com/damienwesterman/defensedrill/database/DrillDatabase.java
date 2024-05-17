@@ -20,7 +20,8 @@ import androidx.room.TypeConverters;
 
 
 /**
- * TODO: Doc comments
+ * Database class to access all the DAOs. Should only be used internally, database interaction
+ * should be done through {@link DrillRepository}.
  */
 @Database(entities = {
         DrillEntity.class,

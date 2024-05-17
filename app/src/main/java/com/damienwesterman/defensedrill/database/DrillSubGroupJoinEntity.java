@@ -18,7 +18,8 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 
 /**
- * TODO: Doc comments USED ONLY FOR ROOM DB
+ * Join table entity for the {@link DrillEntity} and {@link SubGroupEntity} entities. This should
+ * only be used by RoomDB internally.
  */
 @Entity(
         tableName = DrillSubGroupJoinEntity.TABLE_NAME,

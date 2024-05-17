@@ -20,11 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: Doc comments
+ * Drill class contains all the information about a single drill.
  */
 public class Drill {
-    // FIXME: START HERE Do this and edit the entities
-    // TODO: implement the join tables
     public static final int HIGH_CONFIDENCE = 0;
     public static final int MEDIUM_CONFIDENCE = 2;
     public static final int LOW_CONFIDENCE = 4;
