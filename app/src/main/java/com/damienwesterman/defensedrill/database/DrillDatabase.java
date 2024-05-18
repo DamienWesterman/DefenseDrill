@@ -16,7 +16,6 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
 
 
 /**
@@ -37,7 +36,7 @@ public abstract class DrillDatabase extends RoomDatabase {
     /**
      * Default constructor. Do not use. Access class with {@link #getInstance(Context context)}.
      */
-    public DrillDatabase() { };
+    public DrillDatabase() { }
 
     /**
      * Get running DrillRepository instance.

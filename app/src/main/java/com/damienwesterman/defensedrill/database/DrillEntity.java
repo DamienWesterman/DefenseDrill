@@ -16,15 +16,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = DrillEntity.TABLE_NAME)
 public class DrillEntity {
@@ -40,12 +31,9 @@ public class DrillEntity {
     private boolean newDrill;
     private int confidence;
     private String notes;
-    /** Url for the description on how to perform this drill - To Be Implemented */
-    @ColumnInfo(name = "how_to_desc_url")
-    private String howToDescUrl;
-    /** Url for the video on how to perform this drill - To Be Implemented */
-    @ColumnInfo(name = "how_to_video_url")
-    private String howToVideoUrl;
+    /** ID of this drill on the server, for retrieving instructions and videos */
+    @ColumnInfo(name = "server_drill_id")
+    private long serverDrillId;
 
     /**
      * Default Constructor.
@@ -58,8 +46,7 @@ public class DrillEntity {
         this.newDrill = true;
         this.confidence = Drill.LOW_CONFIDENCE;
         this.notes = "";
-        this.howToDescUrl = "";
-        this.howToVideoUrl = "";
+        this.serverDrillId = -1;
     }
 
     /**
@@ -71,19 +58,17 @@ public class DrillEntity {
      * @param newDrill      True = new drill.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
      * @param notes         User notes on the drill.
-     * @param howToDescUrl  URL for description on how to perform the drill.
-     * @param howToVideoUrl URL for video on how to perform the drill.
+     * @param serverDrillId ID of this drill on the server, for retrieving drill information
      */
     public DrillEntity(long id, String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, String howToDescUrl, String howToVideoUrl) {
+                       String notes, long serverDrillId) {
         this.id = id;
         this.name = name;
         this.lastDrilled = lastDrilled;
         this.newDrill = newDrill;
         this.confidence = confidence;
         this.notes = notes;
-        this.howToDescUrl = howToDescUrl;
-        this.howToVideoUrl = howToVideoUrl;
+        this.serverDrillId = serverDrillId;
     }
 
     /**
@@ -94,20 +79,18 @@ public class DrillEntity {
      * @param newDrill      True = new drill.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
      * @param notes         User notes on the drill.
-     * @param howToDescUrl  URL for description on how to perform the drill.
-     * @param howToVideoUrl URL for video on how to perform the drill.
+     * @param serverDrillId ID of this drill on the server, for retrieving drill information
      */
     @Ignore
     public DrillEntity(String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, String howToDescUrl, String howToVideoUrl) {
+                       String notes, long serverDrillId) {
         this.id = -1;
         this.name = name;
         this.lastDrilled = lastDrilled;
         this.newDrill = newDrill;
         this.confidence = confidence;
         this.notes = notes;
-        this.howToDescUrl = howToDescUrl;
-        this.howToVideoUrl = howToVideoUrl;
+        this.serverDrillId = serverDrillId;
     }
 
     public long getId() {
@@ -158,19 +141,11 @@ public class DrillEntity {
         this.notes = notes;
     }
 
-    public String getHowToDescUrl() {
-        return howToDescUrl;
+    public long getServerDrillId() {
+        return this.serverDrillId;
     }
 
-    public void setHowToDescUrl(String howToDescUrl) {
-        this.howToDescUrl = howToDescUrl;
-    }
-
-    public String getHowToVideoUrl() {
-        return howToVideoUrl;
-    }
-
-    public void setHowToVideoUrl(String howToVideoUrl) {
-        this.howToVideoUrl = howToVideoUrl;
+    public void setServerDrillId(long serverDrillId) {
+        this.serverDrillId = serverDrillId;
     }
 }

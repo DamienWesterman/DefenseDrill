@@ -12,7 +12,6 @@
 package com.damienwesterman.defensedrill.database;
 
 import androidx.room.Embedded;
-import androidx.room.Ignore;
 import androidx.room.Junction;
 import androidx.room.Relation;
 
@@ -57,9 +56,9 @@ public class Drill {
     /**
      * Parameterized constructor - ROOM DB ONLY
      *
-     * @param drillEntity
-     * @param groups
-     * @param subGroups
+     * @param drillEntity   DrillEntity
+     * @param groups        GroupEntity list
+     * @param subGroups     SubGroupEntity list
      */
     public Drill(DrillEntity drillEntity, List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
         this.drillEntity = drillEntity;
@@ -75,16 +74,15 @@ public class Drill {
      * @param newDrill      True = new drill.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
      * @param notes         User notes on the drill.
-     * @param howToDescUrl  URL for description on how to perform the drill.
-     * @param howToVideoUrl URL for video on how to perform the drill.
+     * @param serverDrillId ID of this drill on the server, for retrieving drill information
      * @param groups        List of groups the Drill belongs to
      * @param subGroups     List of subGroups the Drill belongs to
      */
     public Drill(String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, String howToDescUrl, String howToVideoUrl,
-                       List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
+                       String notes, long serverDrillId, List<GroupEntity> groups,
+                       List<SubGroupEntity> subGroups) {
         this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
-                                            howToDescUrl, howToVideoUrl);
+                                            serverDrillId);
         this.groups = groups;
         this.subGroups = subGroups;
     }
@@ -151,20 +149,12 @@ public class Drill {
         this.drillEntity.setNotes(notes);
     }
 
-    public String getHowToDescUrl() {
-        return this.drillEntity.getHowToDescUrl();
+    public long getServerDrillId() {
+        return this.drillEntity.getServerDrillId();
     }
 
-    public void setHowToDescUrl(String howToDescUrl) {
-        this.drillEntity.setHowToDescUrl(howToDescUrl);
-    }
-
-    public String getHowToVideoUrl() {
-        return this.drillEntity.getHowToVideoUrl();
-    }
-
-    public void setHowToVideoUrl(String howToVideoUrl) {
-        this.drillEntity.setHowToVideoUrl(howToVideoUrl);
+    public void setServerDrillId(long serverDrillId) {
+        this.drillEntity.setServerDrillId(serverDrillId);
     }
 
     public List<GroupEntity> getGroups() {
