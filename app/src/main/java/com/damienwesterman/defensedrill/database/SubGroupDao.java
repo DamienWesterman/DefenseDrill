@@ -25,11 +25,11 @@ public interface SubGroupDao {
     List<SubGroupEntity> getAll();
 
     @Query(
-            "SELECT sub.* FROM " + SubGroupEntity.TABLE_NAME + " sub " +
-            "JOIN " + DrillSubGroupJoinEntity.TABLE_NAME + " drillSubJoin ON sub.id = drillSubJoin.sub_group_id " +
-            "JOIN " + DrillEntity.TABLE_NAME + " drill ON drillSubJoin.drill_id = drill.id " +
-            "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
-            "JOIN " + GroupEntity.TABLE_NAME + " grp ON drillGroupJoin.group_id = grp.id " +
+            "SELECT sub.* FROM " + SubGroupEntity.TABLE_NAME + " AS sub " +
+            "JOIN " + DrillSubGroupJoinEntity.TABLE_NAME + " AS drillSubJoin ON sub.id = drillSubJoin.sub_group_id " +
+            "JOIN " + DrillEntity.TABLE_NAME + " AS drill ON drillSubJoin.drill_id = drill.id " +
+            "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " AS drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
+            "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
             "WHERE grp.id = :groupId"
     )
     List<SubGroupEntity> findAllByGroup(long groupId);

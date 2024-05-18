@@ -12,6 +12,7 @@
 package com.damienwesterman.defensedrill.database;
 
 import androidx.room.Embedded;
+import androidx.room.Ignore;
 import androidx.room.Junction;
 import androidx.room.Relation;
 
@@ -47,6 +48,7 @@ public class Drill {
     /**
      * Default Constructor
      */
+    @Ignore
     public Drill() {
         this.drillEntity = new DrillEntity();
         this.groups = new ArrayList<>();
@@ -78,6 +80,7 @@ public class Drill {
      * @param groups        List of groups the Drill belongs to
      * @param subGroups     List of subGroups the Drill belongs to
      */
+    @Ignore
     public Drill(String name, long lastDrilled, boolean newDrill, int confidence,
                        String notes, long serverDrillId, List<GroupEntity> groups,
                        List<SubGroupEntity> subGroups) {
