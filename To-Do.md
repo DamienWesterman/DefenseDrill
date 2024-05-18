@@ -1,11 +1,4 @@
 # TODO
-## Database
-- [ ] Make tests - literally everything
-- [ ] Make tests pass
-## Logic
-- [ ] Literally everything
-## UI
-- [ ] Also literally everything
 ## [Potential] Features
 - [ ] Link features for video demos of drills
 - [ ] Sync between devices
