@@ -20,7 +20,7 @@ import androidx.room.Update;
 import java.util.List;
 
 @Dao
-public interface GroupDao {
+/* package-private */ interface GroupDao {
     @Query("SELECT * FROM " + GroupEntity.TABLE_NAME)
     List<GroupEntity> getAll();
 

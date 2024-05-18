@@ -29,14 +29,14 @@ import androidx.room.RoomDatabase;
         DrillGroupJoinEntity.class,
         DrillSubGroupJoinEntity.class
 }, version = 1, exportSchema = false)
-public abstract class DrillDatabase extends RoomDatabase {
+/* package-private */ abstract class DrillDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "drill_database";
     private static DrillDatabase instance;
 
     /**
      * Default constructor. Do not use. Access class with {@link #getInstance(Context context)}.
      */
-    public DrillDatabase() { }
+    protected DrillDatabase() { }
 
     /**
      * Get running DrillRepository instance.

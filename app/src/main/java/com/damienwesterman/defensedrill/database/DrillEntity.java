@@ -18,7 +18,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = DrillEntity.TABLE_NAME)
-public class DrillEntity {
+/* package-private */ class DrillEntity {
     @Ignore
     public static final String TABLE_NAME = "drill";
 
@@ -60,7 +60,7 @@ public class DrillEntity {
      * @param notes         User notes on the drill.
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
      */
-    public DrillEntity(long id, String name, long lastDrilled, boolean newDrill, int confidence,
+    protected DrillEntity(long id, String name, long lastDrilled, boolean newDrill, int confidence,
                        String notes, long serverDrillId) {
         this.id = id;
         this.name = name;

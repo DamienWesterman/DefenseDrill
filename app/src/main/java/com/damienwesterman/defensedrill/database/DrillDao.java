@@ -21,7 +21,7 @@ import androidx.room.Update;
 import java.util.List;
 
 @Dao
-public interface DrillDao {
+/* package-private */ interface DrillDao {
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME)
     List<Drill> getAll();

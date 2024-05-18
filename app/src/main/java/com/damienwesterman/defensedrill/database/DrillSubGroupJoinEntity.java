@@ -37,7 +37,7 @@ import androidx.room.Index;
                 @Index(value = {"sub_group_id"})
         }
 )
-public class DrillSubGroupJoinEntity {
+/* package-private */ class DrillSubGroupJoinEntity {
     @Ignore
     public static final String TABLE_NAME = "drill_group_join";
 

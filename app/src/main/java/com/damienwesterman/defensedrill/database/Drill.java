@@ -62,7 +62,7 @@ public class Drill {
      * @param groups        GroupEntity list
      * @param subGroups     SubGroupEntity list
      */
-    public Drill(DrillEntity drillEntity, List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
+    protected Drill(DrillEntity drillEntity, List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
         this.drillEntity = drillEntity;
         this.groups = groups;
         this.subGroups = subGroups;
@@ -93,14 +93,14 @@ public class Drill {
     /**
      * Room DB only
      */
-    public DrillEntity getDrillEntity() {
+    protected DrillEntity getDrillEntity() {
         return drillEntity;
     }
 
     /**
      * Room DB only
      */
-    public void setDrillEntity(DrillEntity drillEntity) {
+    protected void setDrillEntity(DrillEntity drillEntity) {
         this.drillEntity = drillEntity;
     }
 
@@ -108,7 +108,10 @@ public class Drill {
         return this.drillEntity.getId();
     }
 
-    public void setId(long id) {
+    /**
+     * Room DB only
+     */
+    protected void setId(long id) {
         this.drillEntity.setId(id);
     }
 
