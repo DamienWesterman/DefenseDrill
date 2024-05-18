@@ -14,6 +14,7 @@ package com.damienwesterman.defensedrill.database;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -30,7 +31,7 @@ import java.util.List;
     @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " WHERE name = :name")
     GroupEntity findByName(String name);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long[] insert(GroupEntity... groups);
 
     @Update

@@ -14,6 +14,7 @@ package com.damienwesterman.defensedrill.database;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
@@ -63,11 +64,11 @@ import java.util.List;
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE name = :name")
     Drill findByName(String name);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long[] insert(DrillEntity... drills);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long[] insert(DrillGroupJoinEntity... entities);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     long[] insert(DrillSubGroupJoinEntity... entities);
 
     @Update
