@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.utils;
+package com.damienwesterman.defensedrill.services;
 
 public class DrillGenerator {
 }
