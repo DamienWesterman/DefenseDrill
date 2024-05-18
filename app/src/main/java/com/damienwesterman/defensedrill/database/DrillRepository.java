@@ -14,7 +14,11 @@ package com.damienwesterman.defensedrill.database;
 import android.content.Context;
 
 /**
- * TODO: Doc comments
+ * This class is used to interact with the SQLite database.
+ * <br>
+ * Call {@link DrillRepository#getInstance(Context)} to use the repo.
+ * <br><br>
+ * All methods are synchronized, and thus all calls are thread safe.
  */
 public class DrillRepository {
     private static DrillRepository instance;
