@@ -40,7 +40,6 @@ import androidx.room.PrimaryKey;
      */
     @Ignore
     public DrillEntity() {
-        this.id = -1;
         this.name = "";
         this.lastDrilled = System.currentTimeMillis();
         this.newDrill = true;
@@ -84,7 +83,6 @@ import androidx.room.PrimaryKey;
     @Ignore
     public DrillEntity(String name, long lastDrilled, boolean newDrill, int confidence,
                        String notes, long serverDrillId) {
-        this.id = -1;
         this.name = name;
         this.lastDrilled = lastDrilled;
         this.newDrill = newDrill;

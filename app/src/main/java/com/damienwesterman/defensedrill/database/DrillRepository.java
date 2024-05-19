@@ -25,10 +25,10 @@ import java.util.List;
 public class DrillRepository {
     private static DrillRepository instance;
 
-    private DrillDatabase db;
-    private DrillDao drillDao;
-    private GroupDao groupDao;
-    private SubGroupDao subGroupDao;
+    private final DrillDatabase db;
+    private final DrillDao drillDao;
+    private final GroupDao groupDao;
+    private final SubGroupDao subGroupDao;
 
     /**
      * Private constructor, access class with {@link #getInstance(Context context)}.
@@ -40,7 +40,7 @@ public class DrillRepository {
         this.drillDao = this.db.getDrillDao();
         this.groupDao = this.db.getGroupDao();
         this.subGroupDao = this.db.getSubGroupDao();
-    };
+    }
 
     /**
      * Get running DrillRepository instance.
@@ -142,7 +142,6 @@ public class DrillRepository {
                         drillDao.upsert(new DrillSubGroupJoinEntity(drillId, subGroup.getId()));
                     }
                 }
-
             }
         });
     }

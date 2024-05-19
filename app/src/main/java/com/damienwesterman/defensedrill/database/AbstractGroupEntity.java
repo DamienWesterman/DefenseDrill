@@ -27,7 +27,7 @@ import androidx.room.PrimaryKey;
      * @param name          Name of the group.
      * @param description   Description of the group.
      */
-    public AbstractGroupEntity(long id, String name, String description) {
+    protected AbstractGroupEntity(long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -41,7 +41,6 @@ import androidx.room.PrimaryKey;
      */
     @Ignore
     public AbstractGroupEntity(String name, String description) {
-        this.id = -1;
         this.name = name;
         this.description = description;
     }
@@ -51,7 +50,6 @@ import androidx.room.PrimaryKey;
      */
     @Ignore
     public AbstractGroupEntity() {
-        this.id = -1;
         this.name = "";
         this.description = "";
     }
