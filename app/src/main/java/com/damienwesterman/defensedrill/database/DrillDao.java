@@ -13,9 +13,11 @@ package com.damienwesterman.defensedrill.database;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
-import androidx.room.Upsert;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -62,12 +64,22 @@ import java.util.List;
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE name = :name")
     Drill findByName(String name);
 
-    @Upsert
-    void upsert(DrillEntity... drills);
-    @Upsert
-    void upsert(DrillGroupJoinEntity... entities);
-    @Upsert
-    void upsert(DrillSubGroupJoinEntity... entities);
+    // Allow DrillEntity inserts to throw if there is an issue. Join tables should just replace for
+    // ease of insertions, as there are only two fields and no event observers, should not cause a
+    // problem.
+    @Insert
+    void insert(DrillEntity... drills);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(DrillGroupJoinEntity... entities);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(DrillSubGroupJoinEntity... entities);
+
+    @Update
+    void update(DrillEntity... drills);
+    @Update
+    void update(DrillGroupJoinEntity... entities);
+    @Update
+    void update(DrillSubGroupJoinEntity... entities);
 
     @Delete
     void delete(DrillEntity... drills);

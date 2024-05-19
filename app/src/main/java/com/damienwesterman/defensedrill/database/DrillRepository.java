@@ -12,6 +12,7 @@
 package com.damienwesterman.defensedrill.database;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 
 import java.util.List;
 
@@ -117,18 +118,15 @@ public class DrillRepository {
     }
 
     /**
-     * Insert or update the given drill(s).
-     * <br><br>
-     * If inserting a new Drill, caller is responsible for ensuring the name is unique,
-     * otherwise the existing Drill will be updated. Caller is also responsible for ensuring
-     * the groups and subGroups already exist.
+     * Insert the given drill(s).
      *
-     * @param drills    Drill(s) to insert or update.
+     * @param drills    Drill(s) to insert.
+     * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
      */
-    public synchronized void upsertDrills(Drill... drills) {
+    public synchronized void insertDrills(Drill... drills) {
         db.runInTransaction(() -> {
             for (Drill drill : drills) {
-                drillDao.upsert(drill.getDrillEntity());
+                drillDao.insert(drill.getDrillEntity());
 
                 // Need to extract the auto generated ID in order to update the join tables
                 Drill insertedDrill = drillDao.findByName(drill.getName());
@@ -136,10 +134,37 @@ public class DrillRepository {
                     long drillId = insertedDrill.getId();
 
                     for (GroupEntity group : drill.getGroups()) {
-                        drillDao.upsert(new DrillGroupJoinEntity(drillId, group.getId()));
+                        drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId()));
                     }
                     for (SubGroupEntity subGroup : drill.getSubGroups()) {
-                        drillDao.upsert(new DrillSubGroupJoinEntity(drillId, subGroup.getId()));
+                        drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId()));
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Update the given drill(s).
+     *
+     * @param drills    Drill(s) to update.
+     * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
+     */
+    public synchronized void updateDrills(Drill... drills) {
+        db.runInTransaction(() -> {
+            for (Drill drill : drills) {
+                drillDao.update(drill.getDrillEntity());
+
+                // Need to extract the auto generated ID in order to update the join tables
+                Drill insertedDrill = drillDao.findByName(drill.getName());
+                if (null != insertedDrill) {
+                    long drillId = insertedDrill.getId();
+
+                    for (GroupEntity group : drill.getGroups()) {
+                        drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId()));
+                    }
+                    for (SubGroupEntity subGroup : drill.getSubGroups()) {
+                        drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId()));
                     }
                 }
             }
@@ -189,12 +214,23 @@ public class DrillRepository {
     }
 
     /**
-     * Insert or update the given group(s).
+     * Insert the given group(s).
      *
-     * @param groups    Group(s) to insert or update.
+     * @param groups    Group(s) to insert.
+     * @throws SQLiteConstraintException If name is not unique or name is null.
      */
-    public synchronized void upsertGroups(GroupEntity... groups) {
-        this.groupDao.upsert(groups);
+    public synchronized void insertGroups(GroupEntity... groups) {
+        this.groupDao.insert(groups);
+    }
+
+    /**
+     * Update the given group(s).
+     *
+     * @param groups    Group(s) to update.
+     * @throws SQLiteConstraintException If name is not unique or name is null.
+     */
+    public synchronized void updateGroups(GroupEntity... groups) {
+        this.groupDao.update(groups);
     }
 
     /**
@@ -246,12 +282,23 @@ public class DrillRepository {
     }
 
     /**
-     * Insert or update the given subGroup(s).
+     * Insert the given subGroup(s).
      *
-     * @param subGroups SubGroup(s) to insert or update.
+     * @param subGroups SubGroup(s) to insert.
+     * @throws SQLiteConstraintException If name is not unique or name is null.
      */
-    public synchronized void upsertSubGroups(SubGroupEntity... subGroups) {
-        this.subGroupDao.upsert(subGroups);
+    public synchronized void insertSubGroups(SubGroupEntity... subGroups) {
+        this.subGroupDao.insert(subGroups);
+    }
+
+    /**
+     * Update the given subGroup(s).
+     *
+     * @param subGroups SubGroup(s) to update.
+     * @throws SQLiteConstraintException If name is not unique or name is null.
+     */
+    public synchronized void updateSubGroups(SubGroupEntity... subGroups) {
+        this.subGroupDao.update(subGroups);
     }
 
     /**
