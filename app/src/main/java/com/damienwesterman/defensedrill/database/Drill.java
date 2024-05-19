@@ -16,6 +16,8 @@ import androidx.room.Ignore;
 import androidx.room.Junction;
 import androidx.room.Relation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,9 +83,9 @@ public class Drill {
      * @param subGroups     List of subGroups the Drill belongs to
      */
     @Ignore
-    public Drill(String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, long serverDrillId, List<GroupEntity> groups,
-                       List<SubGroupEntity> subGroups) {
+    public Drill(@NotNull String name, long lastDrilled, boolean newDrill, int confidence,
+                 String notes, long serverDrillId, List<GroupEntity> groups,
+                 List<SubGroupEntity> subGroups) {
         this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
                                             serverDrillId);
         this.groups = groups;
@@ -119,7 +121,7 @@ public class Drill {
         return this.drillEntity.getName();
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.drillEntity.setName(name);
     }
 

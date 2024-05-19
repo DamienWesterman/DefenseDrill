@@ -11,12 +11,14 @@
 
 package com.damienwesterman.defensedrill.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 public abstract class AbstractGroupEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
+    @NonNull
     private String name;
     private String description;
 
@@ -27,7 +29,7 @@ public abstract class AbstractGroupEntity {
      * @param name          Name of the group.
      * @param description   Description of the group.
      */
-    protected AbstractGroupEntity(long id, String name, String description) {
+    protected AbstractGroupEntity(long id, @NonNull String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,7 +42,7 @@ public abstract class AbstractGroupEntity {
      * @param description   Description of the group.
      */
     @Ignore
-    public AbstractGroupEntity(String name, String description) {
+    public AbstractGroupEntity(@NonNull String name, String description) {
         this.name = name;
         this.description = description;
     }
@@ -62,11 +64,11 @@ public abstract class AbstractGroupEntity {
         this.id = id;
     }
 
-    public String getName() {
+    @NonNull public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 

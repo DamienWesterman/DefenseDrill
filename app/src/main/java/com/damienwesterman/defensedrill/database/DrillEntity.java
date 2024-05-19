@@ -11,6 +11,7 @@
 
 package com.damienwesterman.defensedrill.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -24,6 +25,7 @@ import androidx.room.PrimaryKey;
 
     @PrimaryKey(autoGenerate = true)
     private long id;
+    @NonNull
     private String name;
     @ColumnInfo(name = "last_drilled")
     private long lastDrilled;
@@ -59,7 +61,7 @@ import androidx.room.PrimaryKey;
      * @param notes         User notes on the drill.
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
      */
-    protected DrillEntity(long id, String name, long lastDrilled, boolean newDrill, int confidence,
+    protected DrillEntity(long id, @NonNull String name, long lastDrilled, boolean newDrill, int confidence,
                        String notes, long serverDrillId) {
         this.id = id;
         this.name = name;
@@ -81,7 +83,7 @@ import androidx.room.PrimaryKey;
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
      */
     @Ignore
-    public DrillEntity(String name, long lastDrilled, boolean newDrill, int confidence,
+    public DrillEntity(@NonNull String name, long lastDrilled, boolean newDrill, int confidence,
                        String notes, long serverDrillId) {
         this.name = name;
         this.lastDrilled = lastDrilled;
@@ -99,11 +101,11 @@ import androidx.room.PrimaryKey;
         this.id = id;
     }
 
-    public String getName() {
+    @NonNull public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         this.name = name;
     }
 
