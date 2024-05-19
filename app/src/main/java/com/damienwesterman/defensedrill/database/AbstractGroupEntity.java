@@ -14,7 +14,7 @@ package com.damienwesterman.defensedrill.database;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-/* package-private */ abstract class AbstractGroupEntity {
+public abstract class AbstractGroupEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;

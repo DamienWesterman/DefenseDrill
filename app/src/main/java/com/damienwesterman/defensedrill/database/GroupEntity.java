@@ -19,4 +19,34 @@ import androidx.room.Index;
 public class GroupEntity extends AbstractGroupEntity {
     @Ignore
     public static final String TABLE_NAME = "drill_group"; // "group" is reserved word in SQL
+
+    /**
+     * Fully parameterized constructor - for Room DB only.
+     *
+     * @param id            RoomDB generated id.
+     * @param name          Name of the group.
+     * @param description   Description of the group.
+     */
+    protected GroupEntity(long id, String name, String description) {
+        super(id, name, description);
+    }
+
+    /**
+     * Usable fully parameterized constructor.
+     *
+     * @param name          Name of the group.
+     * @param description   Description of the group.
+     */
+    @Ignore
+    public GroupEntity(String name, String description) {
+        super(name, description);
+    }
+
+    /**
+     * Default Constructor.
+     */
+    @Ignore
+    public GroupEntity() {
+        super();
+    }
 }
