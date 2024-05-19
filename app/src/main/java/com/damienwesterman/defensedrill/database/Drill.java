@@ -91,7 +91,7 @@ public class Drill {
     }
 
     /**
-     * Room DB only
+     * Internal use only
      */
     protected DrillEntity getDrillEntity() {
         return drillEntity;
