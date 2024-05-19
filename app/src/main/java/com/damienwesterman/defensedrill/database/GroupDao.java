@@ -13,10 +13,8 @@ package com.damienwesterman.defensedrill.database;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
+import androidx.room.Upsert;
 
 import java.util.List;
 
@@ -31,11 +29,8 @@ import java.util.List;
     @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " WHERE name = :name")
     GroupEntity findByName(String name);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    long[] insert(GroupEntity... groups);
-
-    @Update
-    void update(GroupEntity... groups);
+    @Upsert
+    void upsert(GroupEntity... groups);
 
     @Delete
     void delete(GroupEntity... groups);
