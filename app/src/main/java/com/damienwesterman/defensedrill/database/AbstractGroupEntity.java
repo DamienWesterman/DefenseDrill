@@ -79,4 +79,15 @@ public abstract class AbstractGroupEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (null == o || getClass() != o.getClass()) {
+            return false;
+        }
+        AbstractGroupEntity a = (AbstractGroupEntity) o;
+        return this.id == a.id
+                && 0 == this.name.compareTo(a.name)
+                && 0 == this.description.compareTo(a.description);
+    }
 }

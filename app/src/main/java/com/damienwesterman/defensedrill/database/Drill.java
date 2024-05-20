@@ -173,11 +173,27 @@ public class Drill {
         this.groups = groups;
     }
 
+    public void addGroup(GroupEntity group) {
+        this.groups.add(group);
+    }
+
+    public void removeGroup(GroupEntity group) {
+        this.groups.remove(group);
+    }
+
     public List<SubGroupEntity> getSubGroups() {
         return subGroups;
     }
 
     public void setSubGroups(List<SubGroupEntity> subGroups) {
         this.subGroups = subGroups;
+    }
+
+    public void addSubGroup(SubGroupEntity subGroup) {
+        this.subGroups.add(subGroup);
+    }
+
+    public void removeSubGroup(SubGroupEntity subGroup) {
+        this.subGroups.remove(subGroup);
     }
 }
