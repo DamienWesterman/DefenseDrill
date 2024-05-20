@@ -14,7 +14,10 @@ package com.damienwesterman.defensedrill.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This class is used to interact with the SQLite database.
@@ -63,7 +66,7 @@ public class DrillRepository {
      * @return  List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills() {
-        return this.drillDao.getAll();
+        return this.drillDao.getAllDrills();
     }
 
     /**
@@ -73,7 +76,7 @@ public class DrillRepository {
      * @return      List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills(GroupEntity group) {
-        return this.drillDao.findAllByGroup(group.getId());
+        return this.drillDao.findAllDrillsByGroup(group.getId());
     }
 
     /**
@@ -83,7 +86,7 @@ public class DrillRepository {
      * @return          List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills(SubGroupEntity subGroup) {
-        return this.drillDao.findAllBySubGroup(subGroup.getId());
+        return this.drillDao.findAllDrillsBySubGroup(subGroup.getId());
     }
 
     /**
@@ -94,7 +97,7 @@ public class DrillRepository {
      * @return          List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills(GroupEntity group, SubGroupEntity subGroup) {
-        return this.drillDao.findAllByGroupAndSubGroup(group.getId(), subGroup.getId());
+        return this.drillDao.findAllDrillsByGroupAndSubGroup(group.getId(), subGroup.getId());
     }
 
     /**
@@ -104,7 +107,7 @@ public class DrillRepository {
      * @return      Drill object or null if the id does not exist in the database.
      */
     public synchronized Drill getDrill(long id) {
-        return this.drillDao.findById(id);
+        return this.drillDao.findDrillById(id);
     }
 
     /**
@@ -114,7 +117,7 @@ public class DrillRepository {
      * @return      Drill object or null if the name does not exist in the database.
      */
     public synchronized Drill getDrill(String name) {
-        return this.drillDao.findByName(name);
+        return this.drillDao.findDrillByName(name);
     }
 
     /**
@@ -129,7 +132,7 @@ public class DrillRepository {
                 drillDao.insert(drill.getDrillEntity());
 
                 // Need to extract the auto generated ID in order to update the join tables
-                Drill insertedDrill = drillDao.findByName(drill.getName());
+                Drill insertedDrill = drillDao.findDrillByName(drill.getName());
                 if (null != insertedDrill) {
                     long drillId = insertedDrill.getId();
 
@@ -155,17 +158,53 @@ public class DrillRepository {
             for (Drill drill : drills) {
                 drillDao.update(drill.getDrillEntity());
 
-                // Need to extract the auto generated ID in order to update the join tables
-                Drill insertedDrill = drillDao.findByName(drill.getName());
-                if (null != insertedDrill) {
-                    long drillId = insertedDrill.getId();
+                long drillId = drill.getId();
 
-                    for (GroupEntity group : drill.getGroups()) {
-                        drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId()));
-                    }
-                    for (SubGroupEntity subGroup : drill.getSubGroups()) {
-                        drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId()));
-                    }
+                // Add/remove new/removed groups
+                Set<Long> existingGroupIds = drillDao.findAllGroupJoinByDrillId(drillId).stream()
+                        .map(DrillGroupJoinEntity::getGroupId)
+                        .collect(Collectors.toSet());
+
+                Set<Long> newGroupIds = drill.getGroups().stream()
+                        .map(GroupEntity::getId)
+                        .collect(Collectors.toSet());
+
+                Set<Long> groupsToRemove = new HashSet<>(existingGroupIds);
+                groupsToRemove.removeAll(newGroupIds);
+
+                Set<Long> groupsToAdd = new HashSet<>(newGroupIds);
+                groupsToAdd.remove(existingGroupIds);
+
+                for (Long groupId : groupsToRemove) {
+                    drillDao.delete(new DrillGroupJoinEntity(drillId, groupId));
+                }
+
+                for (Long groupId : groupsToAdd) {
+                    drillDao.insert(new DrillGroupJoinEntity(drillId, groupId));
+                }
+
+
+                // Add/remove new/removed groups
+                Set<Long> existingSubGroupIds = drillDao.findAllSubGroupJoinByDrillId(drillId).stream()
+                        .map(DrillSubGroupJoinEntity::getSubGroupId)
+                        .collect(Collectors.toSet());
+
+                Set<Long> newSubGroupIds = drill.getSubGroups().stream()
+                        .map(SubGroupEntity::getId)
+                        .collect(Collectors.toSet());
+
+                Set<Long> subGroupsToRemove = new HashSet<>(existingSubGroupIds);
+                groupsToRemove.removeAll(newSubGroupIds);
+
+                Set<Long> subGroupsToAdd = new HashSet<>(newSubGroupIds);
+                groupsToAdd.remove(existingSubGroupIds);
+
+                for (Long subGroupId : subGroupsToRemove) {
+                    drillDao.delete(new DrillSubGroupJoinEntity(drillId, subGroupId));
+                }
+
+                for (Long subGroupId : subGroupsToAdd) {
+                    drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroupId));
                 }
             }
         });
