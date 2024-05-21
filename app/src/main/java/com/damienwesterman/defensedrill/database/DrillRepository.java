@@ -146,6 +146,10 @@ public class DrillRepository {
 
         db.runInTransaction(() -> {
             for (Drill drill : drills) {
+                if (null == drill) {
+                    continue;
+                }
+
                 if (null == drill.getGroups()) {
                     drill.setGroups(new ArrayList<>());
                 }
@@ -184,6 +188,9 @@ public class DrillRepository {
 
         db.runInTransaction(() -> {
             for (Drill drill : drills) {
+                if (null == drill) {
+                    continue;
+                }
                 if (null == drill.getGroups()) {
                     drill.setGroups(new ArrayList<>());
                 }
