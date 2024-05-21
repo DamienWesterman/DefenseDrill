@@ -280,7 +280,7 @@ public class DrillRepository {
      * @param id    Group ID.
      * @return      GroupEntity object.
      */
-    public synchronized GroupEntity getOneGroup(long id) {
+    public synchronized GroupEntity getGroup(long id) {
         return this.groupDao.findById(id);
     }
 
@@ -290,7 +290,7 @@ public class DrillRepository {
      * @param name  Group name.
      * @return      GroupEntity object.
      */
-    public synchronized GroupEntity getOneGroup(String name) {
+    public synchronized GroupEntity getGroup(String name) {
         return this.groupDao.findByName(name);
     }
 
@@ -348,7 +348,7 @@ public class DrillRepository {
      * @param id    SubGroup ID.
      * @return      SubGroupEntity object.
      */
-    public synchronized SubGroupEntity getOneSubGroup(long id) {
+    public synchronized SubGroupEntity getSubGroup(long id) {
         return this.subGroupDao.findById(id);
     }
 
@@ -358,7 +358,7 @@ public class DrillRepository {
      * @param name  SubGroup name.
      * @return      SubGroupEntity object.
      */
-    public synchronized SubGroupEntity getOneSubGroup(String name) {
+    public synchronized SubGroupEntity getSubGroup(String name) {
         return this.subGroupDao.findByName(name);
     }
 
