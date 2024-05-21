@@ -258,8 +258,14 @@ public class DrillRepository {
      * @param drills    Drill(s) to delete.
      */
     public synchronized void deleteDrills(Drill... drills) {
+        if (null == drills) {
+            return;
+        }
         this.db.runInTransaction(() -> {
             for (Drill drill : drills) {
+                if (null == drill) {
+                    continue;
+                }
                 this.drillDao.delete(drill.getDrillEntity());
             }
         });
@@ -291,6 +297,9 @@ public class DrillRepository {
      * @return      GroupEntity object.
      */
     public synchronized GroupEntity getGroup(String name) {
+        if (null == name) {
+            return null;
+        }
         return this.groupDao.findByName(name);
     }
 
@@ -301,7 +310,18 @@ public class DrillRepository {
      * @throws SQLiteConstraintException If name is not unique or name is null.
      */
     public synchronized void insertGroups(GroupEntity... groups) {
-        this.groupDao.insert(groups);
+        if (null == groups) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            for (GroupEntity group : groups) {
+                if (null == group) {
+                    continue;
+                }
+                this.groupDao.insert(group);
+            }
+
+        });
     }
 
     /**
@@ -311,7 +331,18 @@ public class DrillRepository {
      * @throws SQLiteConstraintException If name is not unique or name is null.
      */
     public synchronized void updateGroups(GroupEntity... groups) {
-        this.groupDao.update(groups);
+        if (null == groups) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            for (GroupEntity group : groups) {
+                if (null == group) {
+                    continue;
+                }
+                this.groupDao.update(group);
+            }
+
+        });
     }
 
     /**
@@ -320,7 +351,18 @@ public class DrillRepository {
      * @param groups    Group(s) to delete.
      */
     public synchronized void deleteGroups(GroupEntity... groups) {
-        this.groupDao.delete(groups);
+        if (null == groups) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            for (GroupEntity group : groups) {
+                if (null == group) {
+                    continue;
+                }
+                this.groupDao.delete(group);
+            }
+
+        });
     }
 
     /**
@@ -339,6 +381,9 @@ public class DrillRepository {
      * @return      List of SubGroupEntity objects.
      */
     public synchronized List<SubGroupEntity> getAllSubGroups(GroupEntity group) {
+        if (null == group) {
+            return null;
+        }
         return this.subGroupDao.findAllByGroup(group.getId());
     }
 
@@ -359,6 +404,9 @@ public class DrillRepository {
      * @return      SubGroupEntity object.
      */
     public synchronized SubGroupEntity getSubGroup(String name) {
+        if (null == name) {
+            return null;
+        }
         return this.subGroupDao.findByName(name);
     }
 
@@ -369,7 +417,18 @@ public class DrillRepository {
      * @throws SQLiteConstraintException If name is not unique or name is null.
      */
     public synchronized void insertSubGroups(SubGroupEntity... subGroups) {
-        this.subGroupDao.insert(subGroups);
+        if (null == subGroups) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            for (SubGroupEntity subGroup : subGroups) {
+                if (null == subGroup) {
+                    continue;
+                }
+                this.subGroupDao.insert(subGroup);
+            }
+
+        });
     }
 
     /**
@@ -379,7 +438,18 @@ public class DrillRepository {
      * @throws SQLiteConstraintException If name is not unique or name is null.
      */
     public synchronized void updateSubGroups(SubGroupEntity... subGroups) {
-        this.subGroupDao.update(subGroups);
+        if (null == subGroups) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            for (SubGroupEntity subGroup : subGroups) {
+                if (null == subGroup) {
+                    continue;
+                }
+                this.subGroupDao.update(subGroup);
+            }
+
+        });
     }
 
     /**
@@ -388,6 +458,17 @@ public class DrillRepository {
      * @param subGroups SubGroup(s) to delete.
      */
     public synchronized void deleteSubGroups(SubGroupEntity... subGroups) {
-        this.subGroupDao.delete(subGroups);
+        if (null == subGroups) {
+            return;
+        }
+        db.runInTransaction(() -> {
+            for (SubGroupEntity subGroup : subGroups) {
+                if (null == subGroup) {
+                    continue;
+                }
+                this.subGroupDao.delete(subGroup);
+            }
+
+        });
     }
 }
