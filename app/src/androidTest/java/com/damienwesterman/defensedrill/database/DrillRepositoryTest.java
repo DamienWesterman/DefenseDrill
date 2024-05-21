@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
 public class DrillRepositoryTest {
@@ -94,13 +95,10 @@ public class DrillRepositoryTest {
         repo.insertDrills(drill1, drill2, drill3);
 
         List<Drill> returnedDrills = repo.getAllDrills();
-        List<String> returnedDrillsNames = new ArrayList<>();
-
         assertEquals(3, returnedDrills.size());
-
-        for (Drill drill : returnedDrills) {
-            returnedDrillsNames.add(drill.getName());
-        }
+        List<String> returnedDrillsNames = returnedDrills.stream()
+                .map(Drill::getName)
+                .collect(Collectors.toList());
 
         assertTrue(returnedDrillsNames.contains(drill1.getName()));
         assertTrue(returnedDrillsNames.contains(drill2.getName()));
@@ -110,9 +108,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupParameter_noMatchingDrills() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         drill1.getGroups().add(group1);
         drill2.getGroups().add(group2);
@@ -124,9 +122,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupParameter_oneMatchingDrills() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         drill1.getGroups().add(group1);
         drill2.getGroups().add(group2);
@@ -139,9 +137,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupParameter_multipleMatchingDrills() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         drill1.getGroups().add(group1);
         drill2.getGroups().add(group1);
@@ -154,8 +152,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupParameter_nonExistentGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
         drill2.getGroups().add(group2);
@@ -168,8 +166,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupParameter_nullArgument() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
         drill2.getGroups().add(group2);
@@ -182,9 +180,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_subGroupParameter_noMatchingDrills() {
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill2.getSubGroups().add(subGroup2);
@@ -196,9 +194,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_subGroupParameter_oneMatchingDrills() {
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill2.getSubGroups().add(subGroup2);
@@ -211,9 +209,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_subGroupParameter_multipleMatchingDrills() {
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill2.getSubGroups().add(subGroup1);
@@ -226,8 +224,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_subGroupParameter_nonExistentSubGroup() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill2.getSubGroups().add(subGroup2);
@@ -240,8 +238,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_subGroupParameter_nullArgument() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill2.getSubGroups().add(subGroup2);
@@ -254,14 +252,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_noMatchingDrillForGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addSubGroup(subGroup1);
         drill2.addSubGroup(subGroup2);
@@ -274,14 +272,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_noMatchingDrillForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill2.addGroup(group2);
@@ -294,14 +292,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_noMatchingDrillForGroupORSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         repo.insertDrills(drill1, drill2, drill3);
 
@@ -311,14 +309,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupOneDifferentDrillForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill2.addSubGroup(subGroup1);
@@ -330,14 +328,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_MultipleMatchingDrillsForGroupOneDifferentDrillForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill2.addSubGroup(subGroup1);
@@ -350,14 +348,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupMultipleDifferentDrillsForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill2.addSubGroup(subGroup1);
@@ -372,14 +370,14 @@ public class DrillRepositoryTest {
         Drill drill4 = new Drill("drill four", 4, false, Drill.HIGH_CONFIDENCE, "notes four", 4,
                 new ArrayList<>(), new ArrayList<>());
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill2.addSubGroup(subGroup1);
@@ -393,14 +391,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupOneForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -416,14 +414,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupMultipleForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -439,14 +437,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_MultipleMatchingDrillsForGroupOneForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -462,14 +460,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_multipleMatchingDrillsForGroupMultipleForSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -485,13 +483,13 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_noDrillsForNonExistentGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
-        subGroup3 = repo.getOneSubGroup(subGroup3.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -507,13 +505,13 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_noDrillsForNonExistentSubGroup() {
         repo.insertGroups(group1, group2, group3);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
-        group3 = repo.getOneGroup(group3.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -529,12 +527,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_noDrillsForNonExistentGroupANDnonExistentSubGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -550,12 +548,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_nullGroupNoMatchingDrillForSubGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group2);
         drill1.addSubGroup(subGroup2);
@@ -567,12 +565,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_nullGroupYesMatchingDrillForSubGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -584,12 +582,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_NoMatchingDrillForGroupNullSubGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group2);
         drill1.addSubGroup(subGroup2);
@@ -601,12 +599,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_YesMatchingDrillForGroupNullSubGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -618,12 +616,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_groupANDsubGroupParameters_nullGroupNullSubGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.addGroup(group1);
         drill1.addSubGroup(subGroup1);
@@ -685,8 +683,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_insertDrills_insertWithGroups() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
         drill1.getGroups().add(group2);
@@ -699,8 +697,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_insertDrills_insertWithSubGroups() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill1.getSubGroups().add(subGroup2);
@@ -727,8 +725,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_insertDrills_throwsWhenGivenNonExistentGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
         drill1.getGroups().add(group2);
@@ -740,8 +738,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_insertDrills_throwsWhenGivenNonExistentSubGroup() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill1.getSubGroups().add(subGroup2);
@@ -799,8 +797,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_addGroups() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
 
@@ -819,8 +817,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_removeGroups() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
         drill1.getGroups().add(group2);
@@ -840,8 +838,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_addSubGroups() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
 
@@ -859,8 +857,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_removeSubGroups() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill1.getSubGroups().add(subGroup2);
@@ -898,8 +896,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_throwsWhenGivenNonExistentGroup() {
         repo.insertGroups(group1, group2);
-        group1 = repo.getOneGroup(group1.getName());
-        group2 = repo.getOneGroup(group2.getName());
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
 
         drill1.getGroups().add(group1);
         drill1.getGroups().add(group2);
@@ -915,8 +913,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_throwsWhenGivenNonExistentSubGroup() {
         repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getOneSubGroup(subGroup1.getName());
-        subGroup2 = repo.getOneSubGroup(subGroup2.getName());
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
 
         drill1.getSubGroups().add(subGroup1);
         drill1.getSubGroups().add(subGroup2);
@@ -960,9 +958,177 @@ public class DrillRepositoryTest {
 
     }
 
-    // TODO deleteDrills
+    @Test
+    public void test_deleteDrills_deleteExistingDrill() {
+        repo.insertDrills(drill1, drill2);
+        drill1 = repo.getDrill(drill1.getName());
+        repo.deleteDrills(drill1);
+        assertEquals(1, repo.getAllDrills().size());
+    }
 
-    // TODO: IMPLEMENT GROUP TESTS
+    @Test
+    public void test_deleteDrills_nonExistingDrillDoesNothing() {
+        repo.insertDrills(drill1, drill2);
+        repo.deleteDrills(drill3);
+        assertEquals(2, repo.getAllDrills().size());
+    }
+
+    @Test
+    public void test_deleteDrills_doesNothingWithNullArgument() {
+        repo.insertDrills(drill1);
+        repo.deleteDrills((Drill) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllDrills().size());
+    }
+
+    @Test
+    public void test_getAllGroups_emptyDB() {
+        assertEquals(0, repo.getAllGroups().size());
+    }
+
+    @Test
+    public void test_getAllGroups_AND_insertGroups_insertOneGroup() {
+        repo.insertGroups(group1);
+
+        List<GroupEntity> returnedGroups = repo.getAllGroups();
+        assertEquals(1, returnedGroups.size());
+
+        assertEquals(0, group1.getName().compareTo(returnedGroups.get(0).getName()));
+    }
+
+    @Test
+    public void test_getAllGroups_AND_insertGroups_insertMultipleGroups() {
+        repo.insertGroups(group1, group2, group3);
+
+        List<GroupEntity> returnedGroups = repo.getAllGroups();
+        assertEquals(3, returnedGroups.size());
+        List<String> returnedGroupNames = returnedGroups.stream()
+                .map(GroupEntity::getName)
+                .collect(Collectors.toList());
+
+        assertTrue(returnedGroupNames.contains(group1.getName()));
+        assertTrue(returnedGroupNames.contains(group2.getName()));
+        assertTrue(returnedGroupNames.contains(group3.getName()));
+    }
+
+    @Test
+    public void test_getGroup_idParameter_noExistingGroup() {
+        repo.insertGroups(group1);
+        assertNull(repo.getGroup(repo.getGroup(group1.getName()).getId() + 1));
+    }
+
+    @Test
+    public void test_getGroup_idParameter_yesExistingGroup() {
+        repo.insertGroups(group1);
+        GroupEntity returnedGroup = repo.getAllGroups().get(0); // should not throw
+        assertNotNull(repo.getGroup(returnedGroup.getId()));
+    }
+
+    @Test
+    public void test_getGroup_stringParameter_noExistingGroup() {
+        repo.insertGroups(group1);
+        assertNull(repo.getGroup(group2.getName()));
+    }
+
+    @Test
+    public void test_getGroup_stringParameter_yesExistingGroup() {
+        repo.insertGroups(group1);
+        assertNotNull(repo.getGroup(group1.getName()));
+    }
+
+    @Test
+    public void test_getGroup_stringParameter_nullArgument() {
+        assertNull(repo.getGroup(null));
+    }
+
+    @Test
+    public void test_insertGroup_throwsWhenViolateUniqueKey() {
+        String sameName = "same name";
+        group1.setName(sameName);
+        group2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertGroups(group1, group2));
+    }
+
+    @Test
+    public void test_insertGroup_throwsWhenGivenNullName() {
+        group1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertGroups(group1));
+    }
+
+    @Test
+    public void test_insertGroup_doesNothingWithNullArgument() {
+        repo.insertGroups((GroupEntity) null); // Make sure this does not throw
+        assertEquals(0, repo.getAllDrills().size());
+    }
+
+    @Test
+    public void test_updateGroup_updateOneGroup() {
+        repo.insertGroups(group1);
+        group1 = repo.getGroup(group1.getName());
+        String newName = "new name";
+        group1.setName(newName);
+        repo.updateGroups(group1);
+
+        assertEquals(0, newName.compareTo(repo.getGroup(group1.getId()).getName()));
+    }
+
+    @Test
+    public void test_updateGroup_updateMultipleGroups() {
+        repo.insertGroups(group1, group2);
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        String newName1 = "new name 1";
+        String newName2 = "new name 2";
+        group1.setName(newName1);
+        group2.setName(newName2);
+        repo.updateGroups(group1, group2);
+
+        assertEquals(0, newName1.compareTo(repo.getGroup(group1.getId()).getName()));
+        assertEquals(0, newName2.compareTo(repo.getGroup(group2.getId()).getName()));
+    }
+
+    @Test
+    public void test_updateGroup_throwsWhenViolateUniqueKey() {
+        repo.insertGroups(group1, group2);
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        String sameName = "same name";
+        group1.setName(sameName);
+        group2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateGroups(group1, group2));
+    }
+
+    @Test
+    public void test_updateGroup_throwsWhenGivenNullName() {
+        repo.insertGroups(group1);
+        group1 = repo.getGroup(group1.getName());
+        group1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateGroups(group1));
+    }
+
+    @Test
+    public void test_updateGroup_doesNothingWithNonExistentGroup() {
+        // TODO
+    }
+
+    @Test
+    public void test_updateGroup_doesNothingWithNullArgument() {
+        // TODO
+    }
+
+    @Test
+    public void test_deleteGroups_deleteExistingGroup() {
+        // TODO
+    }
+
+    @Test
+    public void test_deleteGroups_nonExistentGroupDoesNothing() {
+        // TODO
+    }
+
+    @Test
+    public void test_deleteGroups_doesNothingWithNullArgument() {
+
+    }
 
     // TODO: IMPLEMENT SubGROUP TESTS
 }
