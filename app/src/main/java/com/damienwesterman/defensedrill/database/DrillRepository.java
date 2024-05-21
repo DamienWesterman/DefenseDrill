@@ -14,6 +14,7 @@ package com.damienwesterman.defensedrill.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,6 +77,9 @@ public class DrillRepository {
      * @return      List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills(GroupEntity group) {
+        if (null == group) {
+            return new ArrayList<>();
+        }
         return this.drillDao.findAllDrillsByGroup(group.getId());
     }
 
@@ -86,6 +90,9 @@ public class DrillRepository {
      * @return          List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills(SubGroupEntity subGroup) {
+        if (null == subGroup) {
+            return new ArrayList<>();
+        }
         return this.drillDao.findAllDrillsBySubGroup(subGroup.getId());
     }
 
@@ -97,6 +104,9 @@ public class DrillRepository {
      * @return          List of Drill objects.
      */
     public synchronized List<Drill> getAllDrills(GroupEntity group, SubGroupEntity subGroup) {
+        if (null == group || null == subGroup) {
+            return new ArrayList<>();
+        }
         return this.drillDao.findAllDrillsByGroupAndSubGroup(group.getId(), subGroup.getId());
     }
 
@@ -117,6 +127,9 @@ public class DrillRepository {
      * @return      Drill object or null if the name does not exist in the database.
      */
     public synchronized Drill getDrill(String name) {
+        if (null == name) {
+            return null;
+        }
         return this.drillDao.findDrillByName(name);
     }
 
@@ -127,8 +140,19 @@ public class DrillRepository {
      * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
      */
     public synchronized void insertDrills(Drill... drills) {
+        if (null == drills) {
+            return;
+        }
+
         db.runInTransaction(() -> {
             for (Drill drill : drills) {
+                if (null == drill.getGroups()) {
+                    drill.setGroups(new ArrayList<>());
+                }
+                if (null == drill.getSubGroups()) {
+                    drill.setSubGroups(new ArrayList<>());
+                }
+
                 drillDao.insert(drill.getDrillEntity());
 
                 // Need to extract the auto generated ID in order to update the join tables
@@ -154,8 +178,19 @@ public class DrillRepository {
      * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
      */
     public synchronized void updateDrills(Drill... drills) {
+        if (null == drills) {
+            return;
+        }
+
         db.runInTransaction(() -> {
             for (Drill drill : drills) {
+                if (null == drill.getGroups()) {
+                    drill.setGroups(new ArrayList<>());
+                }
+                if (null == drill.getSubGroups()) {
+                    drill.setSubGroups(new ArrayList<>());
+                }
+
                 drillDao.update(drill.getDrillEntity());
 
                 long drillId = drill.getId();
@@ -173,7 +208,7 @@ public class DrillRepository {
                 groupsToRemove.removeAll(newGroupIds);
 
                 Set<Long> groupsToAdd = new HashSet<>(newGroupIds);
-                groupsToAdd.remove(existingGroupIds);
+                groupsToAdd.removeAll(existingGroupIds);
 
                 for (Long groupId : groupsToRemove) {
                     drillDao.delete(new DrillGroupJoinEntity(drillId, groupId));
@@ -197,7 +232,7 @@ public class DrillRepository {
                 groupsToRemove.removeAll(newSubGroupIds);
 
                 Set<Long> subGroupsToAdd = new HashSet<>(newSubGroupIds);
-                groupsToAdd.remove(existingSubGroupIds);
+                groupsToAdd.removeAll(existingSubGroupIds);
 
                 for (Long subGroupId : subGroupsToRemove) {
                     drillDao.delete(new DrillSubGroupJoinEntity(drillId, subGroupId));
