@@ -86,18 +86,18 @@ import java.util.List;
     // ease of insertions, as there are only two fields and no event observers, should not cause a
     // problem.
     @Insert
-    void insert(DrillEntity... drills);
+    long[] insert(DrillEntity... drills);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(DrillGroupJoinEntity... entities);
+    long[] insert(DrillGroupJoinEntity... entities);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(DrillSubGroupJoinEntity... entities);
+    long[] insert(DrillSubGroupJoinEntity... entities);
 
     @Update
-    void update(DrillEntity... drills);
+    int update(DrillEntity... drills);
     @Update
-    void update(DrillGroupJoinEntity... entities);
+    int update(DrillGroupJoinEntity... entities);
     @Update
-    void update(DrillSubGroupJoinEntity... entities);
+    int update(DrillSubGroupJoinEntity... entities);
 
     @Delete
     void delete(DrillEntity... drills);

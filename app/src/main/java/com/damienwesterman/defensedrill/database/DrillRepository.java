@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -138,10 +139,13 @@ public class DrillRepository {
      *
      * @param drills    Drill(s) to insert.
      * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
+     * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
      */
-    public synchronized void insertDrills(Drill... drills) {
+    public synchronized boolean insertDrills(Drill... drills) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
         if (null == drills) {
-            return;
+            return success.get();
         }
 
         db.runInTransaction(() -> {
@@ -157,7 +161,9 @@ public class DrillRepository {
                     drill.setSubGroups(new ArrayList<>());
                 }
 
-                drillDao.insert(drill.getDrillEntity());
+                if (1 != drillDao.insert(drill.getDrillEntity()).length) {
+                    success.set(false);
+                }
 
                 // Need to extract the auto generated ID in order to update the join tables
                 Drill insertedDrill = drillDao.findDrillByName(drill.getName());
@@ -165,14 +171,20 @@ public class DrillRepository {
                     long drillId = insertedDrill.getId();
 
                     for (GroupEntity group : drill.getGroups()) {
-                        drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId()));
+                        if (1 != drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId())).length) {
+                            success.set(false);
+                        }
                     }
                     for (SubGroupEntity subGroup : drill.getSubGroups()) {
-                        drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId()));
+                        if (1 != drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId())).length) {
+                            success.set(false);
+                        }
                     }
                 }
             }
         });
+
+        return success.get();
     }
 
     /**
@@ -180,10 +192,13 @@ public class DrillRepository {
      *
      * @param drills    Drill(s) to update.
      * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
+     * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
      */
-    public synchronized void updateDrills(Drill... drills) {
+    public synchronized boolean updateDrills(Drill... drills) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
         if (null == drills) {
-            return;
+            return success.get();
         }
 
         db.runInTransaction(() -> {
@@ -198,7 +213,9 @@ public class DrillRepository {
                     drill.setSubGroups(new ArrayList<>());
                 }
 
-                drillDao.update(drill.getDrillEntity());
+                if (1 != drillDao.update(drill.getDrillEntity())) {
+                    success.set(false);
+                }
 
                 long drillId = drill.getId();
 
@@ -222,7 +239,9 @@ public class DrillRepository {
                 }
 
                 for (Long groupId : groupsToAdd) {
-                    drillDao.insert(new DrillGroupJoinEntity(drillId, groupId));
+                    if (1 != drillDao.insert(new DrillGroupJoinEntity(drillId, groupId)).length) {
+                        success.set(false);
+                    }
                 }
 
 
@@ -246,10 +265,14 @@ public class DrillRepository {
                 }
 
                 for (Long subGroupId : subGroupsToAdd) {
-                    drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroupId));
+                    if (1 != drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroupId)).length) {
+                        success.set(false);
+                    }
                 }
             }
         });
+
+        return success.get();
     }
 
     /**
@@ -308,20 +331,27 @@ public class DrillRepository {
      *
      * @param groups    Group(s) to insert.
      * @throws SQLiteConstraintException If name is not unique or name is null.
+     * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
      */
-    public synchronized void insertGroups(GroupEntity... groups) {
+    public synchronized boolean insertGroups(GroupEntity... groups) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
         if (null == groups) {
-            return;
+            return success.get();
         }
         db.runInTransaction(() -> {
             for (GroupEntity group : groups) {
                 if (null == group) {
                     continue;
                 }
-                this.groupDao.insert(group);
+                if (1 != this.groupDao.insert(group).length) {
+                    success.set(false);
+                }
             }
 
         });
+
+        return success.get();
     }
 
     /**
@@ -329,20 +359,27 @@ public class DrillRepository {
      *
      * @param groups    Group(s) to update.
      * @throws SQLiteConstraintException If name is not unique or name is null.
+     * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
      */
-    public synchronized void updateGroups(GroupEntity... groups) {
+    public synchronized boolean updateGroups(GroupEntity... groups) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
         if (null == groups) {
-            return;
+            return success.get();
         }
         db.runInTransaction(() -> {
             for (GroupEntity group : groups) {
                 if (null == group) {
                     continue;
                 }
-                this.groupDao.update(group);
+                if (1 != this.groupDao.update(group)) {
+                    success.set(false);
+                }
             }
 
         });
+
+        return success.get();
     }
 
     /**
@@ -415,20 +452,28 @@ public class DrillRepository {
      *
      * @param subGroups SubGroup(s) to insert.
      * @throws SQLiteConstraintException If name is not unique or name is null.
+     * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
      */
-    public synchronized void insertSubGroups(SubGroupEntity... subGroups) {
+    public synchronized boolean insertSubGroups(SubGroupEntity... subGroups) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
         if (null == subGroups) {
-            return;
+            return success.get();
         }
+
         db.runInTransaction(() -> {
             for (SubGroupEntity subGroup : subGroups) {
                 if (null == subGroup) {
                     continue;
                 }
-                this.subGroupDao.insert(subGroup);
+                if (1 != this.subGroupDao.insert(subGroup).length) {
+                    success.set(false);
+                }
             }
 
         });
+
+        return success.get();
     }
 
     /**
@@ -436,20 +481,27 @@ public class DrillRepository {
      *
      * @param subGroups SubGroup(s) to update.
      * @throws SQLiteConstraintException If name is not unique or name is null.
+     * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
      */
-    public synchronized void updateSubGroups(SubGroupEntity... subGroups) {
+    public synchronized boolean updateSubGroups(SubGroupEntity... subGroups) {
+        AtomicBoolean success = new AtomicBoolean(true);
+
         if (null == subGroups) {
-            return;
+            return success.get();
         }
         db.runInTransaction(() -> {
             for (SubGroupEntity subGroup : subGroups) {
                 if (null == subGroup) {
                     continue;
                 }
-                this.subGroupDao.update(subGroup);
+                if (1 != this.subGroupDao.update(subGroup)) {
+                    success.set(false);
+                }
             }
 
         });
+
+        return success.get();
     }
 
     /**

@@ -15,6 +15,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 
+import org.jetbrains.annotations.NotNull;
+
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = SubGroupEntity.TABLE_NAME)
 public class SubGroupEntity extends AbstractGroupEntity {
     @Ignore
@@ -27,7 +29,7 @@ public class SubGroupEntity extends AbstractGroupEntity {
      * @param name          Name of the group.
      * @param description   Description of the group.
      */
-    protected SubGroupEntity(long id, String name, String description) {
+    protected SubGroupEntity(long id, @NotNull String name, String description) {
         super(id, name, description);
     }
 
@@ -38,7 +40,7 @@ public class SubGroupEntity extends AbstractGroupEntity {
      * @param description   Description of the group.
      */
     @Ignore
-    public SubGroupEntity(String name, String description) {
+    public SubGroupEntity(@NotNull String name, String description) {
         super(name, description);
     }
 

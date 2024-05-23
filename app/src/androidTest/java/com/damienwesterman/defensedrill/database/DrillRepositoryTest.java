@@ -12,6 +12,7 @@
 package com.damienwesterman.defensedrill.database;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
@@ -92,7 +93,7 @@ public class DrillRepositoryTest {
             present
          */
 
-        repo.insertDrills(drill1, drill2, drill3);
+        assertTrue(repo.insertDrills(drill1, drill2, drill3));
 
         List<Drill> returnedDrills = repo.getAllDrills();
         assertEquals(3, returnedDrills.size());
@@ -666,7 +667,7 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_insertDrills_insertOneDrill() {
-        repo.insertDrills(drill1);
+        assertTrue(repo.insertDrills(drill1));
 
         List<Drill> returnedDrills = repo.getAllDrills();
         List<String> returnedDrillsNames = new ArrayList<>();
@@ -689,7 +690,7 @@ public class DrillRepositoryTest {
         drill1.getGroups().add(group1);
         drill1.getGroups().add(group2);
 
-        repo.insertDrills(drill1);
+        assertTrue(repo.insertDrills(drill1));
 
         assertEquals(2, repo.getDrill(drill1.getName()).getGroups().size());
     }
@@ -703,7 +704,7 @@ public class DrillRepositoryTest {
         drill1.getSubGroups().add(subGroup1);
         drill1.getSubGroups().add(subGroup2);
 
-        repo.insertDrills(drill1);
+        assertTrue(repo.insertDrills(drill1));
 
         assertEquals(2, repo.getDrill(drill1.getName()).getSubGroups().size());
     }
@@ -750,27 +751,27 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_insertDrills_doesNothingWithNullArgument() {
-        repo.insertDrills((Drill) null); // Making sure this does not throw
+        assertTrue(repo.insertDrills((Drill) null)); // Making sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
     public void test_insertDrills_doesNothingWithNullArgumentList() {
-        repo.insertDrills((Drill[]) null); // Making sure this does not throw
+        assertTrue(repo.insertDrills((Drill[]) null)); // Making sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
     public void test_insertDrills_nullGroupTreatedAsEmptyArray() {
         drill1.setGroups(null);
-        repo.insertDrills(drill1); // Making sure this does not throw
+        assertTrue(repo.insertDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
 
     @Test
     public void test_insertDrills_nullSubGroupTreatedAsEmptyArray() {
         drill1.setSubGroups(null);
-        repo.insertDrills(drill1); // Making sure this does not throw
+        assertTrue(repo.insertDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
 
@@ -780,7 +781,7 @@ public class DrillRepositoryTest {
         drill1 = repo.getDrill(drill1.getName());
         String newName = "new name";
         drill1.setName(newName);
-        repo.updateDrills(drill1);
+        assertTrue(repo.updateDrills(drill1));
 
         assertEquals(0, newName.compareTo(repo.getDrill(drill1.getId()).getName()));
     }
@@ -794,7 +795,7 @@ public class DrillRepositoryTest {
         String newName2 = "new name two";
         drill1.setName(newName1);
         drill2.setName(newName2);
-        repo.updateDrills(drill1, drill2);
+        assertTrue(repo.updateDrills(drill1, drill2));
 
         assertEquals(0, newName1.compareTo(repo.getDrill(drill1.getId()).getName()));
         assertEquals(0, newName2.compareTo(repo.getDrill(drill2.getId()).getName()));
@@ -815,7 +816,7 @@ public class DrillRepositoryTest {
         assertEquals(1, insertedDrill.getGroups().size());
 
         insertedDrill.getGroups().add(group2);
-        repo.updateDrills(insertedDrill);
+        assertTrue(repo.updateDrills(insertedDrill));
 
         assertEquals(2, repo.getDrill(insertedDrill.getId()).getGroups().size());
     }
@@ -836,7 +837,7 @@ public class DrillRepositoryTest {
         assertEquals(2, insertedDrill.getGroups().size());
 
         insertedDrill.removeGroup(group2);
-        repo.updateDrills(insertedDrill);
+        assertTrue(repo.updateDrills(insertedDrill));
 
         assertEquals(1, repo.getDrill(insertedDrill.getId()).getGroups().size());
     }
@@ -855,7 +856,7 @@ public class DrillRepositoryTest {
         assertEquals(1, insertedDrill.getSubGroups().size());
 
         insertedDrill.getSubGroups().add(subGroup2);
-        repo.updateDrills(insertedDrill);
+        assertTrue(repo.updateDrills(insertedDrill));
 
         assertEquals(2, repo.getDrill(insertedDrill.getId()).getSubGroups().size());
     }
@@ -875,7 +876,7 @@ public class DrillRepositoryTest {
         assertEquals(2, insertedDrill.getSubGroups().size());
 
         insertedDrill.removeSubGroup(subGroup2);
-        repo.updateDrills(insertedDrill);
+        assertTrue(repo.updateDrills(insertedDrill));
 
         assertEquals(1, repo.getDrill(insertedDrill.getId()).getSubGroups().size());
     }
@@ -935,19 +936,19 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_updateDrills_updateNonExistentDrillDoesNothing() {
-        repo.updateDrills(drill1);
+        assertFalse(repo.updateDrills(drill1));
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
     public void test_updateDrills_doesNothingWithNullArgument() {
-        repo.updateDrills((Drill) null); // Making sure this does not throw
+        assertTrue(repo.updateDrills((Drill) null)); // Making sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
     public void test_updateDrills_doesNothingWithNullArgumentList() {
-        repo.updateDrills((Drill[]) null); // Making sure this does not throw
+        assertTrue(repo.updateDrills((Drill[]) null)); // Making sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
@@ -956,7 +957,7 @@ public class DrillRepositoryTest {
         repo.insertDrills(drill1);
         drill1 = repo.getDrill(drill1.getName());
         drill1.setGroups(null);
-        repo.updateDrills(drill1); // Making sure this does not throw
+        assertTrue(repo.updateDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
 
@@ -965,7 +966,7 @@ public class DrillRepositoryTest {
         repo.insertDrills(drill1);
         drill1 = repo.getDrill(drill1.getName());
         drill1.setSubGroups(null);
-        repo.updateDrills(drill1); // Making sure this does not throw
+        assertTrue(repo.updateDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
 
     }
@@ -1006,7 +1007,7 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_getAllGroups_AND_insertGroups_insertOneGroup() {
-        repo.insertGroups(group1);
+        assertTrue(repo.insertGroups(group1));
 
         List<GroupEntity> returnedGroups = repo.getAllGroups();
         assertEquals(1, returnedGroups.size());
@@ -1016,7 +1017,7 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_getAllGroups_AND_insertGroups_insertMultipleGroups() {
-        repo.insertGroups(group1, group2, group3);
+        assertTrue(repo.insertGroups(group1, group2, group3));
 
         List<GroupEntity> returnedGroups = repo.getAllGroups();
         assertEquals(3, returnedGroups.size());
@@ -1075,13 +1076,13 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_insertGroup_doesNothingWithNullArgument() {
-        repo.insertGroups((GroupEntity) null); // Make sure this does not throw
+        assertTrue(repo.insertGroups((GroupEntity) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
     public void test_insertGroup_doesNothingWithNullArgumentList() {
-        repo.insertGroups((GroupEntity[]) null); // Make sure this does not throw
+        assertTrue(repo.insertGroups((GroupEntity[]) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
@@ -1091,7 +1092,7 @@ public class DrillRepositoryTest {
         group1 = repo.getGroup(group1.getName());
         String newName = "new name";
         group1.setName(newName);
-        repo.updateGroups(group1);
+        assertTrue(repo.updateGroups(group1));
 
         assertEquals(0, newName.compareTo(repo.getGroup(group1.getId()).getName()));
     }
@@ -1105,7 +1106,7 @@ public class DrillRepositoryTest {
         String newName2 = "new name 2";
         group1.setName(newName1);
         group2.setName(newName2);
-        repo.updateGroups(group1, group2);
+        assertTrue(repo.updateGroups(group1, group2));
 
         assertEquals(0, newName1.compareTo(repo.getGroup(group1.getId()).getName()));
         assertEquals(0, newName2.compareTo(repo.getGroup(group2.getId()).getName()));
@@ -1132,19 +1133,19 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_updateGroup_doesNothingWithNonExistentGroup() {
-        repo.updateGroups(group1);
+        assertFalse(repo.updateGroups(group1));
         assertEquals(0, repo.getAllGroups().size());
     }
 
     @Test
     public void test_updateGroup_doesNothingWithNullArgument() {
-        repo.updateGroups((GroupEntity) null);
+        assertTrue(repo.updateGroups((GroupEntity) null));
         assertEquals(0, repo.getAllGroups().size());
     }
 
     @Test
     public void test_updateGroup_doesNothingWithNullArgumentList() {
-        repo.updateGroups((GroupEntity[]) null);
+        assertTrue(repo.updateGroups((GroupEntity[]) null));
         assertEquals(0, repo.getAllGroups().size());
     }
 
@@ -1184,7 +1185,7 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_getAllSubGroups_AND_insertSubGroups_insertOneSubGroup() {
-        repo.insertSubGroups(subGroup1);
+        assertTrue(repo.insertSubGroups(subGroup1));
 
         List<SubGroupEntity> returnedSubGroups = repo.getAllSubGroups();
         assertEquals(1, returnedSubGroups.size());
@@ -1194,7 +1195,7 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_getAllSubGroups_AND_insertSubGroups_insertMultipleSubGroups() {
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
+        assertTrue(repo.insertSubGroups(subGroup1, subGroup2, subGroup3));
 
         List<SubGroupEntity> returnedSubGroups = repo.getAllSubGroups();
         assertEquals(3, returnedSubGroups.size());
@@ -1345,13 +1346,13 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_insertSubGroup_doesNothingWithNullArgument() {
-        repo.insertSubGroups((SubGroupEntity) null); // Make sure this does not throw
+        assertTrue(repo.insertSubGroups((SubGroupEntity) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
     public void test_insertSubGroup_doesNothingWithNullArgumentList() {
-        repo.insertSubGroups((SubGroupEntity[]) null); // Make sure this does not throw
+        assertTrue(repo.insertSubGroups((SubGroupEntity[]) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
@@ -1361,7 +1362,7 @@ public class DrillRepositoryTest {
         subGroup1 = repo.getSubGroup(subGroup1.getName());
         String newName = "new name";
         subGroup1.setName(newName);
-        repo.updateSubGroups(subGroup1);
+        assertTrue(repo.updateSubGroups(subGroup1));
 
         assertEquals(0, newName.compareTo(repo.getSubGroup(subGroup1.getId()).getName()));
     }
@@ -1375,7 +1376,7 @@ public class DrillRepositoryTest {
         String newName2 = "new name 2";
         subGroup1.setName(newName1);
         subGroup2.setName(newName2);
-        repo.updateSubGroups(subGroup1, subGroup2);
+        assertTrue(repo.updateSubGroups(subGroup1, subGroup2));
 
         assertEquals(0, newName1.compareTo(repo.getSubGroup(subGroup1.getId()).getName()));
         assertEquals(0, newName2.compareTo(repo.getSubGroup(subGroup2.getId()).getName()));
@@ -1402,19 +1403,19 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_updateSubGroup_doesNothingWithNonExistentSubGroup() {
-        repo.updateSubGroups(subGroup1);
+        assertFalse(repo.updateSubGroups(subGroup1));
         assertEquals(0, repo.getAllSubGroups().size());
     }
 
     @Test
     public void test_updateSubGroup_doesNothingWithNullArgument() {
-        repo.updateSubGroups((SubGroupEntity) null);
+        assertTrue(repo.updateSubGroups((SubGroupEntity) null));
         assertEquals(0, repo.getAllSubGroups().size());
     }
 
     @Test
     public void test_updateSubGroup_doesNothingWithNullArgumentList() {
-        repo.updateSubGroups((SubGroupEntity[]) null);
+        assertTrue(repo.updateSubGroups((SubGroupEntity[]) null));
         assertEquals(0, repo.getAllSubGroups().size());
     }
 

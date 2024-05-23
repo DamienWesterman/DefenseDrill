@@ -31,10 +31,10 @@ import java.util.List;
     GroupEntity findByName(String name);
 
     @Insert
-    void insert(GroupEntity... groups);
+    long[] insert(GroupEntity... groups);
 
     @Update
-    void update(GroupEntity... groups);
+    int update(GroupEntity... groups);
 
     @Delete
     void delete(GroupEntity... groups);
