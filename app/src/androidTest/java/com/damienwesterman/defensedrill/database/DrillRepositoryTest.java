@@ -755,6 +755,12 @@ public class DrillRepositoryTest {
     }
 
     @Test
+    public void test_insertDrills_doesNothingWithNullArgumentList() {
+        repo.insertDrills((Drill[]) null); // Making sure this does not throw
+        assertEquals(0, repo.getAllDrills().size());
+    }
+
+    @Test
     public void test_insertDrills_nullGroupTreatedAsEmptyArray() {
         drill1.setGroups(null);
         repo.insertDrills(drill1); // Making sure this does not throw
@@ -940,6 +946,12 @@ public class DrillRepositoryTest {
     }
 
     @Test
+    public void test_updateDrills_doesNothingWithNullArgumentList() {
+        repo.updateDrills((Drill[]) null); // Making sure this does not throw
+        assertEquals(0, repo.getAllDrills().size());
+    }
+
+    @Test
     public void test_updateDrills_nullGroupTreatedAsEmptyArray() {
         repo.insertDrills(drill1);
         drill1 = repo.getDrill(drill1.getName());
@@ -977,6 +989,13 @@ public class DrillRepositoryTest {
     public void test_deleteDrills_doesNothingWithNullArgument() {
         repo.insertDrills(drill1);
         repo.deleteDrills((Drill) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllDrills().size());
+    }
+
+    @Test
+    public void test_deleteDrills_doesNothingWithNullArgumentList() {
+        repo.insertDrills(drill1);
+        repo.deleteDrills((Drill[]) null); // Make sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
 
@@ -1061,6 +1080,12 @@ public class DrillRepositoryTest {
     }
 
     @Test
+    public void test_insertGroup_doesNothingWithNullArgumentList() {
+        repo.insertGroups((GroupEntity[]) null); // Make sure this does not throw
+        assertEquals(0, repo.getAllDrills().size());
+    }
+
+    @Test
     public void test_updateGroup_updateOneGroup() {
         repo.insertGroups(group1);
         group1 = repo.getGroup(group1.getName());
@@ -1107,28 +1132,318 @@ public class DrillRepositoryTest {
 
     @Test
     public void test_updateGroup_doesNothingWithNonExistentGroup() {
-        // TODO
+        repo.updateGroups(group1);
+        assertEquals(0, repo.getAllGroups().size());
     }
 
     @Test
     public void test_updateGroup_doesNothingWithNullArgument() {
-        // TODO
+        repo.updateGroups((GroupEntity) null);
+        assertEquals(0, repo.getAllGroups().size());
+    }
+
+    @Test
+    public void test_updateGroup_doesNothingWithNullArgumentList() {
+        repo.updateGroups((GroupEntity[]) null);
+        assertEquals(0, repo.getAllGroups().size());
     }
 
     @Test
     public void test_deleteGroups_deleteExistingGroup() {
-        // TODO
+        repo.insertGroups(group1, group2);
+        group1 = repo.getGroup(group1.getName());
+        repo.deleteGroups(group1);
+        assertEquals(1, repo.getAllGroups().size());
     }
 
     @Test
     public void test_deleteGroups_nonExistentGroupDoesNothing() {
-        // TODO
+        repo.insertGroups(group1, group2);
+        repo.deleteGroups(group3);
+        assertEquals(2, repo.getAllGroups().size());
     }
 
     @Test
     public void test_deleteGroups_doesNothingWithNullArgument() {
-
+        repo.insertGroups(group1);
+        repo.deleteGroups((GroupEntity) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllGroups().size());
     }
 
-    // TODO: IMPLEMENT SubGROUP TESTS
+    @Test
+    public void test_deleteGroups_doesNothingWithNullArgumentList() {
+        repo.insertGroups(group1);
+        repo.deleteGroups((GroupEntity[]) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllGroups().size());
+    }
+
+    @Test
+    public void test_getAllSubGroups_emptyDB() {
+        assertEquals(0, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_getAllSubGroups_AND_insertSubGroups_insertOneSubGroup() {
+        repo.insertSubGroups(subGroup1);
+
+        List<SubGroupEntity> returnedSubGroups = repo.getAllSubGroups();
+        assertEquals(1, returnedSubGroups.size());
+
+        assertEquals(0, subGroup1.getName().compareTo(returnedSubGroups.get(0).getName()));
+    }
+
+    @Test
+    public void test_getAllSubGroups_AND_insertSubGroups_insertMultipleSubGroups() {
+        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
+
+        List<SubGroupEntity> returnedSubGroups = repo.getAllSubGroups();
+        assertEquals(3, returnedSubGroups.size());
+        List<String> returnedSubGroupNames = returnedSubGroups.stream()
+                .map(SubGroupEntity::getName)
+                .collect(Collectors.toList());
+
+        assertTrue(returnedSubGroupNames.contains(subGroup1.getName()));
+        assertTrue(returnedSubGroupNames.contains(subGroup2.getName()));
+        assertTrue(returnedSubGroupNames.contains(subGroup3.getName()));
+    }
+
+    @Test
+    public void test_getAllSubGroups_groupParameter_noMatchingSubGroups() {
+        repo.insertGroups(group1, group2, group3);
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
+
+        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
+
+        drill1.addGroup(group1);
+        drill1.addSubGroup(subGroup1);
+        drill2.addGroup(group2);
+        drill2.addSubGroup(subGroup2);
+
+        repo.insertDrills(drill1, drill2);
+
+        assertEquals(0, repo.getAllSubGroups(group3).size());
+    }
+
+    @Test
+    public void test_getAllSubGroups_groupParameter_oneMatchingSubGroup() {
+        repo.insertGroups(group1, group2, group3);
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
+
+        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
+
+        drill1.addGroup(group1);
+        drill1.addSubGroup(subGroup1);
+        drill2.addGroup(group2);
+        drill2.addSubGroup(subGroup2);
+
+        repo.insertDrills(drill1, drill2);
+
+        assertEquals(1, repo.getAllSubGroups(group2).size());
+    }
+
+    @Test
+    public void test_getAllSubGroups_groupParameter_multipleMatchingSubGroups() {
+        repo.insertGroups(group1, group2, group3);
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+        group3 = repo.getGroup(group3.getName());
+
+        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
+
+        drill1.addGroup(group1);
+        drill1.addSubGroup(subGroup1);
+        drill2.addGroup(group1);
+        drill2.addSubGroup(subGroup1);
+
+        repo.insertDrills(drill1, drill2);
+
+        assertEquals(2, repo.getAllSubGroups(group1).size());
+    }
+
+    @Test
+    public void test_getAllSubGroups_groupParameter_nonExistentGroup() {
+        repo.insertGroups(group1, group2, group3);
+        group1 = repo.getGroup(group1.getName());
+        group2 = repo.getGroup(group2.getName());
+
+        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        subGroup3 = repo.getSubGroup(subGroup3.getName());
+
+        drill1.addGroup(group1);
+        drill1.addSubGroup(subGroup1);
+        drill2.addGroup(group2);
+        drill2.addSubGroup(subGroup2);
+
+        repo.insertDrills(drill1, drill2);
+
+        assertEquals(0, repo.getAllSubGroups(group3).size());
+    }
+
+    @Test
+    public void test_getAllSubGroups_groupParameter_nullArgument() {
+        assertEquals(0, repo.getAllSubGroups(null).size());
+    }
+
+    @Test
+    public void test_getSubGroup_idParameter_noExistingSubGroup() {
+        repo.insertSubGroups(subGroup1);
+        assertNull(repo.getSubGroup(repo.getSubGroup(subGroup1.getName()).getId() + 1));
+    }
+
+    @Test
+    public void test_getSubGroup_idParameter_yesExistingSubGroup() {
+        repo.insertSubGroups(subGroup1);
+        SubGroupEntity returnedSubGroup = repo.getAllSubGroups().get(0); // should not throw
+        assertNotNull(repo.getSubGroup(returnedSubGroup.getId()));
+    }
+
+    @Test
+    public void test_getSubGroup_stringParameter_noExistingSubGroup() {
+        repo.insertSubGroups(subGroup1);
+        assertNull(repo.getSubGroup(subGroup2.getName()));
+    }
+
+    @Test
+    public void test_getSubGroup_stringParameter_yesExistingSubGroup() {
+        repo.insertSubGroups(subGroup1);
+        assertNotNull(repo.getSubGroup(subGroup1.getName()));
+    }
+
+    @Test
+    public void test_getSubGroup_stringParameter_nullArgument() {
+        assertNull(repo.getSubGroup(null));
+    }
+
+    @Test
+    public void test_insertSubGroup_throwsWhenViolateUniqueKey() {
+        String sameName = "same name";
+        subGroup1.setName(sameName);
+        subGroup2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubGroups(subGroup1, subGroup2));
+    }
+
+    @Test
+    public void test_insertSubGroup_throwsWhenGivenNullName() {
+        subGroup1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubGroups(subGroup1));
+    }
+
+    @Test
+    public void test_insertSubGroup_doesNothingWithNullArgument() {
+        repo.insertSubGroups((SubGroupEntity) null); // Make sure this does not throw
+        assertEquals(0, repo.getAllDrills().size());
+    }
+
+    @Test
+    public void test_insertSubGroup_doesNothingWithNullArgumentList() {
+        repo.insertSubGroups((SubGroupEntity[]) null); // Make sure this does not throw
+        assertEquals(0, repo.getAllDrills().size());
+    }
+
+    @Test
+    public void test_updateSubGroup_updateOneSubGroup() {
+        repo.insertSubGroups(subGroup1);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        String newName = "new name";
+        subGroup1.setName(newName);
+        repo.updateSubGroups(subGroup1);
+
+        assertEquals(0, newName.compareTo(repo.getSubGroup(subGroup1.getId()).getName()));
+    }
+
+    @Test
+    public void test_updateSubGroup_updateMultipleSubGroups() {
+        repo.insertSubGroups(subGroup1, subGroup2);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        String newName1 = "new name 1";
+        String newName2 = "new name 2";
+        subGroup1.setName(newName1);
+        subGroup2.setName(newName2);
+        repo.updateSubGroups(subGroup1, subGroup2);
+
+        assertEquals(0, newName1.compareTo(repo.getSubGroup(subGroup1.getId()).getName()));
+        assertEquals(0, newName2.compareTo(repo.getSubGroup(subGroup2.getId()).getName()));
+    }
+
+    @Test
+    public void test_updateSubGroup_throwsWhenViolateUniqueKey() {
+        repo.insertSubGroups(subGroup1, subGroup2);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        String sameName = "same name";
+        subGroup1.setName(sameName);
+        subGroup2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubGroups(subGroup1, subGroup2));
+    }
+
+    @Test
+    public void test_updateSubGroup_throwsWhenGivenNullName() {
+        repo.insertSubGroups(subGroup1);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        subGroup1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubGroups(subGroup1));
+    }
+
+    @Test
+    public void test_updateSubGroup_doesNothingWithNonExistentSubGroup() {
+        repo.updateSubGroups(subGroup1);
+        assertEquals(0, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_updateSubGroup_doesNothingWithNullArgument() {
+        repo.updateSubGroups((SubGroupEntity) null);
+        assertEquals(0, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_updateSubGroup_doesNothingWithNullArgumentList() {
+        repo.updateSubGroups((SubGroupEntity[]) null);
+        assertEquals(0, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_deleteSubGroups_deleteExistingSubGroup() {
+        repo.insertSubGroups(subGroup1, subGroup2);
+        subGroup1 = repo.getSubGroup(subGroup1.getName());
+        repo.deleteSubGroups(subGroup1);
+        assertEquals(1, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_deleteSubGroups_nonExistentSubGroupDoesNothing() {
+        repo.insertSubGroups(subGroup1, subGroup2);
+        repo.deleteSubGroups(subGroup3);
+        assertEquals(2, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_deleteSubGroups_doesNothingWithNullArgument() {
+        repo.insertSubGroups(subGroup1);
+        repo.deleteSubGroups((SubGroupEntity) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllSubGroups().size());
+    }
+
+    @Test
+    public void test_deleteSubGroups_doesNothingWithNullArgumentList() {
+        repo.insertSubGroups(subGroup1);
+        repo.deleteSubGroups((SubGroupEntity[]) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllSubGroups().size());
+    }
 }
