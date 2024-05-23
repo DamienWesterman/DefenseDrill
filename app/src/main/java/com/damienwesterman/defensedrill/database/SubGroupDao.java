@@ -41,11 +41,11 @@ import java.util.List;
     SubGroupEntity findByName(String name);
 
     @Insert
-    long[] insert(SubGroupEntity... groups);
+    long[] insert(SubGroupEntity... subGroups);
 
     @Update
-    void update(SubGroupEntity... groups);
+    int update(SubGroupEntity... subGroups);
 
     @Delete
-    void delete(SubGroupEntity... groups);
+    void delete(SubGroupEntity... subGroups);
 }

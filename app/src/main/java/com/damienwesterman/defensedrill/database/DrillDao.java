@@ -14,6 +14,7 @@ package com.damienwesterman.defensedrill.database;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
@@ -24,7 +25,7 @@ import java.util.List;
 /* package-private */ interface DrillDao {
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME)
-    List<Drill> getAll();
+    List<Drill> getAllDrills();
 
     @Transaction
     @Query(
@@ -33,7 +34,7 @@ import java.util.List;
             "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
             "WHERE grp.id = :groupId"
     )
-    List<Drill> findAllByGroup(long groupId);
+    List<Drill> findAllDrillsByGroup(long groupId);
 
     @Transaction
     @Query(
@@ -42,7 +43,7 @@ import java.util.List;
             "JOIN " + SubGroupEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_group_id = sub.id " +
             "WHERE sub.id = :subGroupId"
     )
-    List<Drill> findAllBySubGroup(long subGroupId);
+    List<Drill> findAllDrillsBySubGroup(long subGroupId);
 
     @Transaction
     @Query(
@@ -53,29 +54,50 @@ import java.util.List;
             "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
             "WHERE grp.id = :groupId AND sub.id = :subGroupId"
     )
-    List<Drill> findAllByGroupAndSubGroup(long groupId, long subGroupId);
+    List<Drill> findAllDrillsByGroupAndSubGroup(long groupId, long subGroupId);
 
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE id = :id")
-    Drill findById(long id);
+    Drill findDrillById(long id);
 
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE name = :name")
-    Drill findByName(String name);
+    Drill findDrillByName(String name);
 
+    @Query("SELECT * FROM " + DrillGroupJoinEntity.TABLE_NAME)
+    List<DrillGroupJoinEntity> getAllGroupJoin();
+
+    @Query("SELECT * FROM " + DrillGroupJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
+    List<DrillGroupJoinEntity> findAllGroupJoinByDrillId(long drillId);
+
+    @Query("SELECT * FROM " + DrillGroupJoinEntity.TABLE_NAME + " WHERE group_id = :groupId")
+    List<DrillGroupJoinEntity> findAllGroupJoinByGroupId(long groupId);
+
+    @Query("SELECT * FROM " + DrillSubGroupJoinEntity.TABLE_NAME)
+    List<DrillSubGroupJoinEntity> getAllSubGroupJoin();
+
+    @Query("SELECT * FROM " + DrillSubGroupJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
+    List<DrillSubGroupJoinEntity> findAllSubGroupJoinByDrillId(long drillId);
+
+    @Query("SELECT * FROM " + DrillSubGroupJoinEntity.TABLE_NAME + " WHERE sub_group_id = :subGroupId")
+    List<DrillSubGroupJoinEntity> findAllSubGroupJoinByGroupId(long subGroupId);
+
+    // Allow DrillEntity inserts to throw if there is an issue. Join tables should just replace for
+    // ease of insertions, as there are only two fields and no event observers, should not cause a
+    // problem.
     @Insert
     long[] insert(DrillEntity... drills);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insert(DrillGroupJoinEntity... entities);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insert(DrillSubGroupJoinEntity... entities);
 
     @Update
-    void update(DrillEntity... drills);
+    int update(DrillEntity... drills);
     @Update
-    void update(DrillGroupJoinEntity... entities);
+    int update(DrillGroupJoinEntity... entities);
     @Update
-    void update(DrillSubGroupJoinEntity... entities);
+    int update(DrillSubGroupJoinEntity... entities);
 
     @Delete
     void delete(DrillEntity... drills);

@@ -34,7 +34,7 @@ import java.util.List;
     long[] insert(GroupEntity... groups);
 
     @Update
-    void update(GroupEntity... groups);
+    int update(GroupEntity... groups);
 
     @Delete
     void delete(GroupEntity... groups);

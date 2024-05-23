@@ -16,6 +16,8 @@ import androidx.room.Ignore;
 import androidx.room.Junction;
 import androidx.room.Relation;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,9 +83,9 @@ public class Drill {
      * @param subGroups     List of subGroups the Drill belongs to
      */
     @Ignore
-    public Drill(String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, long serverDrillId, List<GroupEntity> groups,
-                       List<SubGroupEntity> subGroups) {
+    public Drill(@NotNull String name, long lastDrilled, boolean newDrill, int confidence,
+                 String notes, long serverDrillId, List<GroupEntity> groups,
+                 List<SubGroupEntity> subGroups) {
         this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
                                             serverDrillId);
         this.groups = groups;
@@ -91,7 +93,7 @@ public class Drill {
     }
 
     /**
-     * Room DB only
+     * Internal use only
      */
     protected DrillEntity getDrillEntity() {
         return drillEntity;
@@ -119,7 +121,7 @@ public class Drill {
         return this.drillEntity.getName();
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.drillEntity.setName(name);
     }
 
@@ -171,11 +173,27 @@ public class Drill {
         this.groups = groups;
     }
 
+    public void addGroup(GroupEntity group) {
+        this.groups.add(group);
+    }
+
+    public void removeGroup(GroupEntity group) {
+        this.groups.remove(group);
+    }
+
     public List<SubGroupEntity> getSubGroups() {
         return subGroups;
     }
 
     public void setSubGroups(List<SubGroupEntity> subGroups) {
         this.subGroups = subGroups;
+    }
+
+    public void addSubGroup(SubGroupEntity subGroup) {
+        this.subGroups.add(subGroup);
+    }
+
+    public void removeSubGroup(SubGroupEntity subGroup) {
+        this.subGroups.remove(subGroup);
     }
 }
