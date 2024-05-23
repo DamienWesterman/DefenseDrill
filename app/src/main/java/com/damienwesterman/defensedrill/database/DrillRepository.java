@@ -284,7 +284,7 @@ public class DrillRepository {
      * Find a group based on the given id.
      *
      * @param id    Group ID.
-     * @return      GroupEntity object.
+     * @return      GroupEntity object or null if the id does not exist in the database.
      */
     public synchronized GroupEntity getGroup(long id) {
         return this.groupDao.findById(id);
@@ -294,7 +294,7 @@ public class DrillRepository {
      * Find a group based on the given name.
      *
      * @param name  Group name.
-     * @return      GroupEntity object.
+     * @return      GroupEntity object or null if the name does not exist in the database.
      */
     public synchronized GroupEntity getGroup(String name) {
         if (null == name) {
@@ -382,7 +382,7 @@ public class DrillRepository {
      */
     public synchronized List<SubGroupEntity> getAllSubGroups(GroupEntity group) {
         if (null == group) {
-            return null;
+            return new ArrayList<>();
         }
         return this.subGroupDao.findAllByGroup(group.getId());
     }
@@ -391,7 +391,7 @@ public class DrillRepository {
      * Find a subGroup based on the given id.
      *
      * @param id    SubGroup ID.
-     * @return      SubGroupEntity object.
+     * @return      SubGroupEntity object or null if the id does not exist in the database.
      */
     public synchronized SubGroupEntity getSubGroup(long id) {
         return this.subGroupDao.findById(id);
@@ -401,7 +401,7 @@ public class DrillRepository {
      * Find a subGroup based on the given name.
      *
      * @param name  SubGroup name.
-     * @return      SubGroupEntity object.
+     * @return      SubGroupEntity object or null if the name does not exist in the database.
      */
     public synchronized SubGroupEntity getSubGroup(String name) {
         if (null == name) {
