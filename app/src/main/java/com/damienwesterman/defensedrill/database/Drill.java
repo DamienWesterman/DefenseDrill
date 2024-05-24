@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Drill class contains all the information about a single drill.
@@ -195,5 +196,18 @@ public class Drill {
 
     public void removeSubGroup(SubGroupEntity subGroup) {
         this.subGroups.remove(subGroup);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Drill drill = (Drill) o;
+        return drillEntity.equals(drill.drillEntity) && groups.equals(drill.groups) && subGroups.equals(drill.subGroups);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(drillEntity, groups, subGroups);
     }
 }
