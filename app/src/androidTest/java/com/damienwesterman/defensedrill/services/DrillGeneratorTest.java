@@ -35,9 +35,9 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Tests the DrillGenerator service class. Must be an instrumented test as the database layer auto
- * generates unique Drill IDs. Due to the random nature of the selection algorithm, each test will
- * likely be tested multiple times to ensure consistently correct results.
+ * Tests the {@link DrillGenerator} service class. Must be an instrumented test as the database
+ * layer auto generates unique Drill IDs. Due to the random nature of the selection algorithm, each
+ * test will likely be tested multiple times to ensure consistently correct results.
  */
 public class DrillGeneratorTest {
     private static final int NUM_TESTS = 10;

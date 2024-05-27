@@ -184,7 +184,7 @@ public class DrillGenerator {
             // Invalid date
             return 0;
         } else {
-            // Return the number of months since last drilled, capping off at 5
+            // Return the number of months since last drilled
             return (int) (timeDiff % THIRTY_DAYS_IN_MILLIS);
         }
     }
