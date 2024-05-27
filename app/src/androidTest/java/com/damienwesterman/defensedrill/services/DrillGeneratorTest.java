@@ -52,7 +52,7 @@ public class DrillGeneratorTest {
     }
 
     @Test
-    public void test_generateDrill_noParams_returnsNull_noDrillsInDB() {
+    public void test_generateDrill_returnsNull_noDrillsInDB() {
         DrillGenerator generator = createDrillGenerator();
         Drill returnedDrill = generator.generateDrill();
         assertNull(returnedDrill);
@@ -83,11 +83,10 @@ public class DrillGeneratorTest {
         Drill drill3 = new Drill();
         drill3.setName("drill3");
         drill3.setNewDrill(false);
-        DrillGenerator generator = createDrillGenerator(drill1);
+        DrillGenerator generator = createDrillGenerator(drill1, drill2, drill3);
 
         for (int i = 0; i < NUM_TESTS; i++) {
-            Drill returnedDrill = generator.generateDrill();
-            assertNotNull(returnedDrill);
+            assertNotNull(generator.generateDrill());
         }
     }
 
@@ -105,13 +104,11 @@ public class DrillGeneratorTest {
         Drill drill4 = new Drill();
         drill4.setName("drill4");
         drill4.setNewDrill(false);
-        DrillGenerator generator = createDrillGenerator(drill1);
+        DrillGenerator generator = createDrillGenerator(drill1, drill2, drill3, drill4);
 
         for (int i = 0; i < NUM_TESTS; i++) {
             Drill returnedDrill = generator.generateDrill();
             assertNotNull(returnedDrill);
-            assertTrue(0 == returnedDrill.getName().compareTo(drill1.getName()) ||
-                    0 == returnedDrill.getName().compareTo(drill2.getName()));
             assertTrue(returnedDrill.isNewDrill());
         }
     }
@@ -134,7 +131,7 @@ public class DrillGeneratorTest {
         long startTime = System.currentTimeMillis();
         Drill returnedDrill = generator.generateDrill();
         long elapsedTime = System.currentTimeMillis() - startTime;
-        assertNotNull(returnedDrill); // What exactly is returns does not matter
+        assertNotNull(returnedDrill);
         assertTrue("Method took too long: " + elapsedTime + " milliseconds", elapsedTime < 500);
     }
 
@@ -235,7 +232,7 @@ public class DrillGeneratorTest {
     }
 
     @Test
-    public void test_resetSkippedDrills_prevNoParams_noNewDrills_returnsDifferentDrillUntilNoDrillsLeft_thenResetOnce() {
+    public void test_resetSkippedDrills_noNewDrills_returnsDifferentDrillUntilNoDrillsLeft_thenResetOnce() {
         Drill drill1 = new Drill();
         drill1.setName("drill1");
         drill1.setNewDrill(false);
