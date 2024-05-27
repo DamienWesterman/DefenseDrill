@@ -15,11 +15,14 @@ import androidx.annotation.Nullable;
 
 import com.damienwesterman.defensedrill.database.Drill;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -30,7 +33,7 @@ import java.util.stream.Collectors;
  * First call should be to {@link DrillGenerator#generateDrill()}, <i>after</i> which
  * {@link DrillGenerator#regenerateDrill()} can be called to skip the first drill and select a
  * different drill from the original list given to the constructor. regenerateDrill() can be called
- * multiple times to continuously select a new drill. The drill skipped by regenerateDrill() can be
+ * multiple times to continuously select a new drill. All drills skipped by regenerateDrill() can be
  * added back into the list of possibilities by calling {@link DrillGenerator#resetSkippedDrills()}.
  * <br><br>
  * Each drill in the list given to the constructor has a weighted possibility to be chosen, with all
@@ -52,10 +55,10 @@ public class DrillGenerator {
      * @param drills    List of Drills to randomly select from.
      * @param random    Random object to use for random Drill selection. Can be seeded.
      */
-    public DrillGenerator(List<Drill> drills, Random random) {
-        this.originalDrills = drills;
-        this.random = random;
-        this.drillPossibilities = idDrillMapFromDrillList(drills);
+    public DrillGenerator(@NotNull List<Drill> drills, @NotNull Random random) {
+        this.originalDrills = null != drills ? drills : new ArrayList<>();
+        this.random = null != random ? random : new Random();
+        this.drillPossibilities = idDrillMapFromDrillList(originalDrills);
         this.lastGeneratedDrillId = -1;
     }
 
@@ -97,7 +100,7 @@ public class DrillGenerator {
      */
     public synchronized void resetSkippedDrills() {
         lastGeneratedDrillId = NO_DRILL_GENERATED;
-        this.drillPossibilities = idDrillMapFromDrillList(this.originalDrills);
+        drillPossibilities = idDrillMapFromDrillList(originalDrills);
     }
 
     /**
@@ -108,11 +111,13 @@ public class DrillGenerator {
      * @return          Map of Drill IDs to their respective Drill.
      */
     private Map<Long, Drill> idDrillMapFromDrillList(List<Drill> drills) {
-        return drills.stream().collect(Collectors.toMap(
-            Drill::getId,
-            drill -> drill,
-            (existing, replacement) -> existing,
-            HashMap::new
+        return drills.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(
+                Drill::getId,
+                drill -> drill,
+                (existing, replacement) -> existing,
+                HashMap::new
         ));
     }
 
@@ -129,7 +134,7 @@ public class DrillGenerator {
             return;
         }
 
-        NavigableMap<Long, Long> weightedDrillIds = new TreeMap<>(); // Essentially a weighted list of IDs
+        NavigableMap<Long, Long> weightedDrillIds = new TreeMap<>(); // Weighted list of IDs
         List<Long> newDrillIds = new ArrayList<>();
         long totalWeight = 0;
 
@@ -159,7 +164,7 @@ public class DrillGenerator {
         } else if (!weightedDrillIds.isEmpty()){
             long randomLong = (long) (random.nextDouble() * totalWeight);
             Map.Entry<Long, Long> temp = weightedDrillIds.ceilingEntry(randomLong);
-            lastGeneratedDrillId = (null == temp) ? NO_DRILL_GENERATED : temp.getValue();
+            lastGeneratedDrillId = (null != temp) ? temp.getValue() : NO_DRILL_GENERATED;
 
         } else {
             // Empty possibilities list or some other issue
