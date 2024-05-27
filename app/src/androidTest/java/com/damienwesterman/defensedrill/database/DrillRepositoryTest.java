@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Tests the {@link DrillRepository} database access class.
+ */
 @RunWith(AndroidJUnit4.class)
 public class DrillRepositoryTest {
     static Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();

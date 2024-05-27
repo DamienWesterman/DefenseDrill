@@ -18,6 +18,8 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.util.Objects;
+
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = DrillEntity.TABLE_NAME)
 /* package-private */ class DrillEntity {
     @Ignore
@@ -147,5 +149,18 @@ import androidx.room.PrimaryKey;
 
     public void setServerDrillId(long serverDrillId) {
         this.serverDrillId = serverDrillId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DrillEntity that = (DrillEntity) o;
+        return id == that.id && lastDrilled == that.lastDrilled && newDrill == that.newDrill && confidence == that.confidence && serverDrillId == that.serverDrillId && name.equals(that.name) && Objects.equals(notes, that.notes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, lastDrilled, newDrill, confidence, notes, serverDrillId);
     }
 }
