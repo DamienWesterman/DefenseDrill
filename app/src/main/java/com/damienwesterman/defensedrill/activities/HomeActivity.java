@@ -11,6 +11,7 @@
 
 package com.damienwesterman.defensedrill.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -25,6 +26,9 @@ import com.damienwesterman.defensedrill.database.SubGroupEntity;
 
 import java.util.ArrayList;
 
+/**
+ * TOD doc comments
+ */
 public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,8 @@ public class HomeActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
-            Toast.makeText(this, "Unimplemented: Generate Drill", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, GroupSelectActivity.class);
+            startActivity(intent);
         } else if (R.id.createDrillCard == cardId) {
             Toast.makeText(this, "Unimplemented: Create Drill", Toast.LENGTH_SHORT).show();
             // Just for now, create some mock entries in the database
