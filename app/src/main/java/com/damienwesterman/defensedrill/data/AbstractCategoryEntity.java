@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.database;
+package com.damienwesterman.defensedrill.data;
 
 import androidx.annotation.NonNull;
 import androidx.room.Ignore;

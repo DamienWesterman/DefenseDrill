@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.activities;
+package com.damienwesterman.defensedrill.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,10 +19,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.database.CategoryEntity;
-import com.damienwesterman.defensedrill.database.Drill;
-import com.damienwesterman.defensedrill.database.DrillRepository;
-import com.damienwesterman.defensedrill.database.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 
 import java.util.ArrayList;
 

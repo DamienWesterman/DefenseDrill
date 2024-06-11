@@ -9,14 +9,14 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.view_models;
+package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
-import com.damienwesterman.defensedrill.database.CategoryEntity;
-import com.damienwesterman.defensedrill.database.DrillRepository;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.data.DrillRepository;
 
 import java.util.List;
 

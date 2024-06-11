@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.database;
+package com.damienwesterman.defensedrill.data;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -17,30 +17,30 @@ import androidx.room.Index;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = SubCategoryEntity.TABLE_NAME)
-public class SubCategoryEntity extends AbstractCategoryEntity {
+@Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = CategoryEntity.TABLE_NAME)
+public class CategoryEntity extends AbstractCategoryEntity {
     @Ignore
-    public static final String TABLE_NAME = "sub_category";
+    public static final String TABLE_NAME = "category";
 
     /**
      * Fully parameterized constructor - for Room DB only.
      *
      * @param id            RoomDB generated id.
-     * @param name          Name of the subCategory.
-     * @param description   Description of the subCategory.
+     * @param name          Name of the category.
+     * @param description   Description of the category.
      */
-    protected SubCategoryEntity(long id, @NotNull String name, String description) {
+    protected CategoryEntity(long id, @NotNull String name, String description) {
         super(id, name, description);
     }
 
     /**
      * Usable fully parameterized constructor.
      *
-     * @param name          Name of the subCategory.
-     * @param description   Description of the subCategory.
+     * @param name          Name of the category.
+     * @param description   Description of the category.
      */
     @Ignore
-    public SubCategoryEntity(@NotNull String name, String description) {
+    public CategoryEntity(String name, @NotNull String description) {
         super(name, description);
     }
 
@@ -48,7 +48,7 @@ public class SubCategoryEntity extends AbstractCategoryEntity {
      * Default Constructor.
      */
     @Ignore
-    public SubCategoryEntity() {
+    public CategoryEntity() {
         super();
     }
 }

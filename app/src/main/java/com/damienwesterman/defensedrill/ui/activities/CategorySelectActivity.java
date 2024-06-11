@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.activities;
+package com.damienwesterman.defensedrill.ui.activities;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -18,8 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.database.CategoryEntity;
-import com.damienwesterman.defensedrill.view_models.CategorySelectViewModel;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.ui.view_models.CategorySelectViewModel;
 
 import java.util.List;
 import java.util.concurrent.Executors;
