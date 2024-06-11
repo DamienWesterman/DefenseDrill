@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * TODO Doc comments
+ * TODO FIXME DELETE IF NOT NEEDED USING RECYCLER VIEW
  */
 public class CategorySelectViewModel extends AndroidViewModel {
     private List<CategoryEntity> categories;
