@@ -18,37 +18,37 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 
 /**
- * Join table entity for the {@link DrillEntity} and {@link GroupEntity} entities. This should only
+ * Join table entity for the {@link DrillEntity} and {@link CategoryEntity} entities. This should only
  * be used by RoomDB internally.
  */
 @Entity(
-        tableName = DrillGroupJoinEntity.TABLE_NAME,
-        primaryKeys = {"drill_id", "group_id"},
+        tableName = DrillCategoryJoinEntity.TABLE_NAME,
+        primaryKeys = {"drill_id", "category_id"},
         foreignKeys = {
                 @ForeignKey(entity = DrillEntity.class, parentColumns = "id",
                         childColumns = "drill_id", onDelete = ForeignKey.CASCADE,
                         onUpdate = ForeignKey.CASCADE),
-                @ForeignKey(entity = GroupEntity.class, parentColumns = "id",
-                        childColumns = "group_id", onDelete = ForeignKey.CASCADE,
+                @ForeignKey(entity = CategoryEntity.class, parentColumns = "id",
+                        childColumns = "category_id", onDelete = ForeignKey.CASCADE,
                         onUpdate = ForeignKey.CASCADE)
         },
         indices = {
                 @Index(value = {"drill_id"}),
-                @Index(value = {"group_id"})
+                @Index(value = {"category_id"})
         }
 )
-/* package-private */ class DrillGroupJoinEntity {
+/* package-private */ class DrillCategoryJoinEntity {
     @Ignore
-    public static final String TABLE_NAME = "drill_sub_group_join";
+    public static final String TABLE_NAME = "drill_category_join";
 
     @ColumnInfo(name = "drill_id")
     private long drillId;
-    @ColumnInfo(name = "group_id")
-    private long groupId;
+    @ColumnInfo(name = "category_id")
+    private long categoryId;
 
-    public DrillGroupJoinEntity(long drillId, long groupId) {
+    public DrillCategoryJoinEntity(long drillId, long categoryId) {
         this.drillId = drillId;
-        this.groupId = groupId;
+        this.categoryId = categoryId;
     }
 
     public long getDrillId() {
@@ -59,11 +59,11 @@ import androidx.room.Index;
         this.drillId = drillId;
     }
 
-    public long getGroupId() {
-        return groupId;
+    public long getCategoryId() {
+        return categoryId;
     }
 
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
     }
 }

@@ -17,30 +17,30 @@ import androidx.room.Index;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = SubGroupEntity.TABLE_NAME)
-public class SubGroupEntity extends AbstractGroupEntity {
+@Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = CategoryEntity.TABLE_NAME)
+public class CategoryEntity extends AbstractCategoryEntity {
     @Ignore
-    public static final String TABLE_NAME = "sub_group";
+    public static final String TABLE_NAME = "category";
 
     /**
      * Fully parameterized constructor - for Room DB only.
      *
      * @param id            RoomDB generated id.
-     * @param name          Name of the group.
-     * @param description   Description of the group.
+     * @param name          Name of the category.
+     * @param description   Description of the category.
      */
-    protected SubGroupEntity(long id, @NotNull String name, String description) {
+    protected CategoryEntity(long id, @NotNull String name, String description) {
         super(id, name, description);
     }
 
     /**
      * Usable fully parameterized constructor.
      *
-     * @param name          Name of the group.
-     * @param description   Description of the group.
+     * @param name          Name of the category.
+     * @param description   Description of the category.
      */
     @Ignore
-    public SubGroupEntity(@NotNull String name, String description) {
+    public CategoryEntity(String name, @NotNull String description) {
         super(name, description);
     }
 
@@ -48,7 +48,7 @@ public class SubGroupEntity extends AbstractGroupEntity {
      * Default Constructor.
      */
     @Ignore
-    public SubGroupEntity() {
+    public CategoryEntity() {
         super();
     }
 }

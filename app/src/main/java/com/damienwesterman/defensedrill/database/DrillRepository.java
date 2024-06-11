@@ -34,8 +34,8 @@ public class DrillRepository {
 
     private final DrillDatabase db;
     private final DrillDao drillDao;
-    private final GroupDao groupDao;
-    private final SubGroupDao subGroupDao;
+    private final CategoryDao categoryDao;
+    private final SubCategoryDao subCategoryDao;
 
     /**
      * Private constructor, access class with {@link #getInstance(Context context)}.
@@ -45,8 +45,8 @@ public class DrillRepository {
     private DrillRepository(Context context) {
         this.db = DrillDatabase.getInstance(context);
         this.drillDao = this.db.getDrillDao();
-        this.groupDao = this.db.getGroupDao();
-        this.subGroupDao = this.db.getSubGroupDao();
+        this.categoryDao = this.db.getCategoryDao();
+        this.subCategoryDao = this.db.getSubCategoryDao();
     }
 
     /**
@@ -73,34 +73,34 @@ public class DrillRepository {
     }
 
     /**
-     * Return a list of all Drills that belong to the specified group.
+     * Return a list of all Drills that belong to the specified category.
      *
-     * @param groupId   ID of the specific group of drills.
+     * @param categoryId   ID of the specific category of drills.
      * @return          List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrillsByGroupId(long groupId) {
-        return this.drillDao.findAllDrillsByGroup(groupId);
+    public synchronized List<Drill> getAllDrillsByCategoryId(long categoryId) {
+        return this.drillDao.findAllDrillsByCategory(categoryId);
     }
 
     /**
-     * Return a list of all Drills that belong to the specified sub group.
+     * Return a list of all Drills that belong to the specified sub category.
      *
-     * @param subGroupId    ID of the specific sub group of drills.
+     * @param subCategoryId    ID of the specific sub category of drills.
      * @return              List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrillsBySubGroupId(long subGroupId) {
-        return this.drillDao.findAllDrillsBySubGroup(subGroupId);
+    public synchronized List<Drill> getAllDrillsBySubCategoryId(long subCategoryId) {
+        return this.drillDao.findAllDrillsBySubCategory(subCategoryId);
     }
 
     /**
-     * Return a list of all Drills that belong to both the specified group and sub group.
+     * Return a list of all Drills that belong to both the specified category and sub category.
      *
-     * @param groupId       ID of the specific group of drills.
-     * @param subGroupId    ID of the specific sub group of drills.
+     * @param categoryId       ID of the specific category of drills.
+     * @param subCategoryId    ID of the specific sub category of drills.
      * @return              List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrills(long groupId, long subGroupId) {
-        return this.drillDao.findAllDrillsByGroupAndSubGroup(groupId, subGroupId);
+    public synchronized List<Drill> getAllDrills(long categoryId, long subCategoryId) {
+        return this.drillDao.findAllDrillsByCategoryAndSubCategory(categoryId, subCategoryId);
     }
 
     /**
@@ -130,7 +130,7 @@ public class DrillRepository {
      * Insert the given drill(s).
      *
      * @param drills    Drill(s) to insert.
-     * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
+     * @throws SQLiteConstraintException If name is not unique, name is null, or a category/subcategory does not exist.
      * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
      */
     public synchronized boolean insertDrills(Drill... drills) {
@@ -146,11 +146,11 @@ public class DrillRepository {
                     continue;
                 }
 
-                if (null == drill.getGroups()) {
-                    drill.setGroups(new ArrayList<>());
+                if (null == drill.getCategories()) {
+                    drill.setCategories(new ArrayList<>());
                 }
-                if (null == drill.getSubGroups()) {
-                    drill.setSubGroups(new ArrayList<>());
+                if (null == drill.getSubCategories()) {
+                    drill.setSubCategories(new ArrayList<>());
                 }
 
                 if (1 != drillDao.insert(drill.getDrillEntity()).length) {
@@ -162,21 +162,21 @@ public class DrillRepository {
                 if (null != insertedDrill) {
                     long drillId = insertedDrill.getId();
 
-                    for (GroupEntity group : drill.getGroups()) {
-                        if (null == group) {
+                    for (CategoryEntity category : drill.getCategories()) {
+                        if (null == category) {
                             success.set(false);
                             continue;
                         }
-                        if (1 != drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId())).length) {
+                        if (1 != drillDao.insert(new DrillCategoryJoinEntity(drillId, category.getId())).length) {
                             success.set(false);
                         }
                     }
-                    for (SubGroupEntity subGroup : drill.getSubGroups()) {
-                        if (null == subGroup) {
+                    for (SubCategoryEntity subCategory : drill.getSubCategories()) {
+                        if (null == subCategory) {
                             success.set(false);
                             continue;
                         }
-                        if (1 != drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId())).length) {
+                        if (1 != drillDao.insert(new DrillSubCategoryJoinEntity(drillId, subCategory.getId())).length) {
                             success.set(false);
                         }
                     }
@@ -191,7 +191,7 @@ public class DrillRepository {
      * Update the given drill(s).
      *
      * @param drills    Drill(s) to update.
-     * @throws SQLiteConstraintException If name is not unique, name is null, or a group/subgroup does not exist.
+     * @throws SQLiteConstraintException If name is not unique, name is null, or a category/subcategory does not exist.
      * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
      */
     public synchronized boolean updateDrills(Drill... drills) {
@@ -206,11 +206,11 @@ public class DrillRepository {
                 if (null == drill) {
                     continue;
                 }
-                if (null == drill.getGroups()) {
-                    drill.setGroups(new ArrayList<>());
+                if (null == drill.getCategories()) {
+                    drill.setCategories(new ArrayList<>());
                 }
-                if (null == drill.getSubGroups()) {
-                    drill.setSubGroups(new ArrayList<>());
+                if (null == drill.getSubCategories()) {
+                    drill.setSubCategories(new ArrayList<>());
                 }
 
                 if (1 != drillDao.update(drill.getDrillEntity())) {
@@ -219,57 +219,57 @@ public class DrillRepository {
 
                 long drillId = drill.getId();
 
-                // Add/remove new/removed groups
-                Set<Long> existingGroupIds = drillDao.findAllGroupJoinByDrillId(drillId).stream()
+                // Add/remove new/removed categories
+                Set<Long> existingCategoryIds = drillDao.findAllCategoryJoinByDrillId(drillId).stream()
                         .filter(Objects::nonNull)
-                        .map(DrillGroupJoinEntity::getGroupId)
+                        .map(DrillCategoryJoinEntity::getCategoryId)
                         .collect(Collectors.toSet());
 
-                Set<Long> newGroupIds = drill.getGroups().stream()
+                Set<Long> newCategoryIds = drill.getCategories().stream()
                         .filter(Objects::nonNull)
-                        .map(GroupEntity::getId)
+                        .map(CategoryEntity::getId)
                         .collect(Collectors.toSet());
 
-                Set<Long> groupsToRemove = new HashSet<>(existingGroupIds);
-                groupsToRemove.removeAll(newGroupIds);
+                Set<Long> categoriesToRemove = new HashSet<>(existingCategoryIds);
+                categoriesToRemove.removeAll(newCategoryIds);
 
-                Set<Long> groupsToAdd = new HashSet<>(newGroupIds);
-                groupsToAdd.removeAll(existingGroupIds);
+                Set<Long> categoriesToAdd = new HashSet<>(newCategoryIds);
+                categoriesToAdd.removeAll(existingCategoryIds);
 
-                for (Long groupId : groupsToRemove) {
-                    drillDao.delete(new DrillGroupJoinEntity(drillId, groupId));
+                for (Long categoryId : categoriesToRemove) {
+                    drillDao.delete(new DrillCategoryJoinEntity(drillId, categoryId));
                 }
 
-                for (Long groupId : groupsToAdd) {
-                    if (1 != drillDao.insert(new DrillGroupJoinEntity(drillId, groupId)).length) {
+                for (Long categoryId : categoriesToAdd) {
+                    if (1 != drillDao.insert(new DrillCategoryJoinEntity(drillId, categoryId)).length) {
                         success.set(false);
                     }
                 }
 
 
-                // Add/remove new/removed groups
-                Set<Long> existingSubGroupIds = drillDao.findAllSubGroupJoinByDrillId(drillId).stream()
+                // Add/remove new/removed subCategories
+                Set<Long> existingSubCategoryIds = drillDao.findAllSubCategoryJoinByDrillId(drillId).stream()
                         .filter(Objects::nonNull)
-                        .map(DrillSubGroupJoinEntity::getSubGroupId)
+                        .map(DrillSubCategoryJoinEntity::getSubCategoryId)
                         .collect(Collectors.toSet());
 
-                Set<Long> newSubGroupIds = drill.getSubGroups().stream()
+                Set<Long> newSubCategoryIds = drill.getSubCategories().stream()
                         .filter(Objects::nonNull)
-                        .map(SubGroupEntity::getId)
+                        .map(SubCategoryEntity::getId)
                         .collect(Collectors.toSet());
 
-                Set<Long> subGroupsToRemove = new HashSet<>(existingSubGroupIds);
-                groupsToRemove.removeAll(newSubGroupIds);
+                Set<Long> subCategoriesToRemove = new HashSet<>(existingSubCategoryIds);
+                categoriesToRemove.removeAll(newSubCategoryIds);
 
-                Set<Long> subGroupsToAdd = new HashSet<>(newSubGroupIds);
-                groupsToAdd.removeAll(existingSubGroupIds);
+                Set<Long> subCategoriesToAdd = new HashSet<>(newSubCategoryIds);
+                categoriesToAdd.removeAll(existingSubCategoryIds);
 
-                for (Long subGroupId : subGroupsToRemove) {
-                    drillDao.delete(new DrillSubGroupJoinEntity(drillId, subGroupId));
+                for (Long subCategoryId : subCategoriesToRemove) {
+                    drillDao.delete(new DrillSubCategoryJoinEntity(drillId, subCategoryId));
                 }
 
-                for (Long subGroupId : subGroupsToAdd) {
-                    if (1 != drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroupId)).length) {
+                for (Long subCategoryId : subCategoriesToAdd) {
+                    if (1 != drillDao.insert(new DrillSubCategoryJoinEntity(drillId, subCategoryId)).length) {
                         success.set(false);
                     }
                 }
@@ -299,56 +299,56 @@ public class DrillRepository {
     }
 
     /**
-     * Get all groups in the database.
+     * Get all categories in the database.
      *
-     * @return  List of GroupEntity objects.
+     * @return  List of CategoryEntity objects.
      */
-    public synchronized List<GroupEntity> getAllGroups() {
-        return this.groupDao.getAll();
+    public synchronized List<CategoryEntity> getAllCategories() {
+        return this.categoryDao.getAll();
     }
 
     /**
-     * Find a group based on the given id.
+     * Find a category based on the given id.
      *
-     * @param id    Group ID.
-     * @return      GroupEntity object or null if the id does not exist in the database.
+     * @param id    Category ID.
+     * @return      CategoryEntity object or null if the id does not exist in the database.
      */
-    public synchronized GroupEntity getGroup(long id) {
-        return this.groupDao.findById(id);
+    public synchronized CategoryEntity getCategory(long id) {
+        return this.categoryDao.findById(id);
     }
 
     /**
-     * Find a group based on the given name.
+     * Find a category based on the given name.
      *
-     * @param name  Group name.
-     * @return      GroupEntity object or null if the name does not exist in the database.
+     * @param name  Category name.
+     * @return      CategoryEntity object or null if the name does not exist in the database.
      */
-    public synchronized GroupEntity getGroup(String name) {
+    public synchronized CategoryEntity getCategory(String name) {
         if (null == name) {
             return null;
         }
-        return this.groupDao.findByName(name);
+        return this.categoryDao.findByName(name);
     }
 
     /**
-     * Insert the given group(s).
+     * Insert the given category(s).
      *
-     * @param groups    Group(s) to insert.
+     * @param categories    Category(s) to insert.
      * @throws SQLiteConstraintException If name is not unique or name is null.
      * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
      */
-    public synchronized boolean insertGroups(GroupEntity... groups) {
+    public synchronized boolean insertCategories(CategoryEntity... categories) {
         AtomicBoolean success = new AtomicBoolean(true);
 
-        if (null == groups) {
+        if (null == categories) {
             return success.get();
         }
         db.runInTransaction(() -> {
-            for (GroupEntity group : groups) {
-                if (null == group) {
+            for (CategoryEntity category : categories) {
+                if (null == category) {
                     continue;
                 }
-                if (1 != this.groupDao.insert(group).length) {
+                if (1 != this.categoryDao.insert(category).length) {
                     success.set(false);
                 }
             }
@@ -359,24 +359,24 @@ public class DrillRepository {
     }
 
     /**
-     * Update the given group(s).
+     * Update the given category(s).
      *
-     * @param groups    Group(s) to update.
+     * @param categories    Category(s) to update.
      * @throws SQLiteConstraintException If name is not unique or name is null.
      * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
      */
-    public synchronized boolean updateGroups(GroupEntity... groups) {
+    public synchronized boolean updateCategories(CategoryEntity... categories) {
         AtomicBoolean success = new AtomicBoolean(true);
 
-        if (null == groups) {
+        if (null == categories) {
             return success.get();
         }
         db.runInTransaction(() -> {
-            for (GroupEntity group : groups) {
-                if (null == group) {
+            for (CategoryEntity category : categories) {
+                if (null == category) {
                     continue;
                 }
-                if (1 != this.groupDao.update(group)) {
+                if (1 != this.categoryDao.update(category)) {
                     success.set(false);
                 }
             }
@@ -387,87 +387,87 @@ public class DrillRepository {
     }
 
     /**
-     * Delete the given group(s).
+     * Delete the given category(s).
      *
-     * @param groups    Group(s) to delete.
+     * @param categories    Category(s) to delete.
      */
-    public synchronized void deleteGroups(GroupEntity... groups) {
-        if (null == groups) {
+    public synchronized void deleteCategories(CategoryEntity... categories) {
+        if (null == categories) {
             return;
         }
         db.runInTransaction(() -> {
-            for (GroupEntity group : groups) {
-                if (null == group) {
+            for (CategoryEntity category : categories) {
+                if (null == category) {
                     continue;
                 }
-                this.groupDao.delete(group);
+                this.categoryDao.delete(category);
             }
 
         });
     }
 
     /**
-     * Get all subGroups in the database.
+     * Get all subCategories in the database.
      *
-     * @return  List of SubGroupEntity objects.
+     * @return  List of SubCategoryEntity objects.
      */
-    public synchronized List<SubGroupEntity> getAllSubGroups() {
-        return this.subGroupDao.getAll();
+    public synchronized List<SubCategoryEntity> getAllSubCategories() {
+        return this.subCategoryDao.getAll();
     }
 
     /**
-     * Get all subGroups of a given group.
+     * Get all subCategories of a given category.
      *
-     * @param groupId   ID of the group to search for its subGroups.
-     * @return          List of SubGroupEntity objects.
+     * @param categoryId   ID of the category to search for its subCategories.
+     * @return          List of SubCategoryEntity objects.
      */
-    public synchronized List<SubGroupEntity> getAllSubGroups(long groupId) {
-        return this.subGroupDao.findAllByGroup(groupId);
+    public synchronized List<SubCategoryEntity> getAllSubCategories(long categoryId) {
+        return this.subCategoryDao.findAllByCategory(categoryId);
     }
 
     /**
-     * Find a subGroup based on the given id.
+     * Find a subCategory based on the given id.
      *
-     * @param id    SubGroup ID.
-     * @return      SubGroupEntity object or null if the id does not exist in the database.
+     * @param id    SubCategory ID.
+     * @return      SubCategoryEntity object or null if the id does not exist in the database.
      */
-    public synchronized SubGroupEntity getSubGroup(long id) {
-        return this.subGroupDao.findById(id);
+    public synchronized SubCategoryEntity getSubCategory(long id) {
+        return this.subCategoryDao.findById(id);
     }
 
     /**
-     * Find a subGroup based on the given name.
+     * Find a subCategory based on the given name.
      *
-     * @param name  SubGroup name.
-     * @return      SubGroupEntity object or null if the name does not exist in the database.
+     * @param name  SubCategory name.
+     * @return      SubCategoryEntity object or null if the name does not exist in the database.
      */
-    public synchronized SubGroupEntity getSubGroup(String name) {
+    public synchronized SubCategoryEntity getSubCategory(String name) {
         if (null == name) {
             return null;
         }
-        return this.subGroupDao.findByName(name);
+        return this.subCategoryDao.findByName(name);
     }
 
     /**
-     * Insert the given subGroup(s).
+     * Insert the given subCategory(s).
      *
-     * @param subGroups SubGroup(s) to insert.
+     * @param subCategories SubCategory(s) to insert.
      * @throws SQLiteConstraintException If name is not unique or name is null.
      * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
      */
-    public synchronized boolean insertSubGroups(SubGroupEntity... subGroups) {
+    public synchronized boolean insertSubCategories(SubCategoryEntity... subCategories) {
         AtomicBoolean success = new AtomicBoolean(true);
 
-        if (null == subGroups) {
+        if (null == subCategories) {
             return success.get();
         }
 
         db.runInTransaction(() -> {
-            for (SubGroupEntity subGroup : subGroups) {
-                if (null == subGroup) {
+            for (SubCategoryEntity subCategory : subCategories) {
+                if (null == subCategory) {
                     continue;
                 }
-                if (1 != this.subGroupDao.insert(subGroup).length) {
+                if (1 != this.subCategoryDao.insert(subCategory).length) {
                     success.set(false);
                 }
             }
@@ -478,24 +478,24 @@ public class DrillRepository {
     }
 
     /**
-     * Update the given subGroup(s).
+     * Update the given subCategory(s).
      *
-     * @param subGroups SubGroup(s) to update.
+     * @param subCategories SubCategory(s) to update.
      * @throws SQLiteConstraintException If name is not unique or name is null.
      * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
      */
-    public synchronized boolean updateSubGroups(SubGroupEntity... subGroups) {
+    public synchronized boolean updateSubCategories(SubCategoryEntity... subCategories) {
         AtomicBoolean success = new AtomicBoolean(true);
 
-        if (null == subGroups) {
+        if (null == subCategories) {
             return success.get();
         }
         db.runInTransaction(() -> {
-            for (SubGroupEntity subGroup : subGroups) {
-                if (null == subGroup) {
+            for (SubCategoryEntity subCategory : subCategories) {
+                if (null == subCategory) {
                     continue;
                 }
-                if (1 != this.subGroupDao.update(subGroup)) {
+                if (1 != this.subCategoryDao.update(subCategory)) {
                     success.set(false);
                 }
             }
@@ -506,20 +506,20 @@ public class DrillRepository {
     }
 
     /**
-     * Delete the given subGroup(s).
+     * Delete the given subCategory(s).
      *
-     * @param subGroups SubGroup(s) to delete.
+     * @param subCategories SubCategory(s) to delete.
      */
-    public synchronized void deleteSubGroups(SubGroupEntity... subGroups) {
-        if (null == subGroups) {
+    public synchronized void deleteSubCategories(SubCategoryEntity... subCategories) {
+        if (null == subCategories) {
             return;
         }
         db.runInTransaction(() -> {
-            for (SubGroupEntity subGroup : subGroups) {
-                if (null == subGroup) {
+            for (SubCategoryEntity subCategory : subCategories) {
+                if (null == subCategory) {
                     continue;
                 }
-                this.subGroupDao.delete(subGroup);
+                this.subCategoryDao.delete(subCategory);
             }
 
         });

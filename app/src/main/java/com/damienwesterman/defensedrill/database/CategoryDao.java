@@ -20,22 +20,22 @@ import androidx.room.Update;
 import java.util.List;
 
 @Dao
-/* package-private */ interface GroupDao {
-    @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " ORDER BY name")
-    List<GroupEntity> getAll();
+/* package-private */ interface CategoryDao {
+    @Query("SELECT * FROM " + CategoryEntity.TABLE_NAME + " ORDER BY name")
+    List<CategoryEntity> getAll();
 
-    @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " WHERE id = :id")
-    GroupEntity findById(long id);
+    @Query("SELECT * FROM " + CategoryEntity.TABLE_NAME + " WHERE id = :id")
+    CategoryEntity findById(long id);
 
-    @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " WHERE name = :name")
-    GroupEntity findByName(String name);
+    @Query("SELECT * FROM " + CategoryEntity.TABLE_NAME + " WHERE name = :name")
+    CategoryEntity findByName(String name);
 
     @Insert
-    long[] insert(GroupEntity... groups);
+    long[] insert(CategoryEntity... categories);
 
     @Update
-    int update(GroupEntity... groups);
+    int update(CategoryEntity... categories);
 
     @Delete
-    void delete(GroupEntity... groups);
+    void delete(CategoryEntity... categories);
 }

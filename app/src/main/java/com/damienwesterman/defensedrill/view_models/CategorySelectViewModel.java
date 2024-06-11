@@ -15,29 +15,29 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
+import com.damienwesterman.defensedrill.database.CategoryEntity;
 import com.damienwesterman.defensedrill.database.DrillRepository;
-import com.damienwesterman.defensedrill.database.GroupEntity;
 
 import java.util.List;
 
 /**
  * TODO Doc comments
  */
-public class GroupSelectViewModel extends AndroidViewModel {
-    private List<GroupEntity> groups;
+public class CategorySelectViewModel extends AndroidViewModel {
+    private List<CategoryEntity> categories;
     private final DrillRepository repo;
 
-    public GroupSelectViewModel(Application application) {
+    public CategorySelectViewModel(Application application) {
         super(application);
 
         repo = DrillRepository.getInstance(application);
-        groups = null;
+        categories = null;
     }
 
-    public List<GroupEntity> getGroups() {
-        if (null == groups) {
-            groups = repo.getAllGroups();
+    public List<CategoryEntity> getCategories() {
+        if (null == categories) {
+            categories = repo.getAllCategories();
         }
-        return this.groups;
+        return this.categories;
     }
 }

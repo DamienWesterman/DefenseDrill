@@ -18,37 +18,37 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 
 /**
- * Join table entity for the {@link DrillEntity} and {@link SubGroupEntity} entities. This should
+ * Join table entity for the {@link DrillEntity} and {@link SubCategoryEntity} entities. This should
  * only be used by RoomDB internally.
  */
 @Entity(
-        tableName = DrillSubGroupJoinEntity.TABLE_NAME,
-        primaryKeys = {"drill_id", "sub_group_id"},
+        tableName = DrillSubCategoryJoinEntity.TABLE_NAME,
+        primaryKeys = {"drill_id", "sub_category_id"},
         foreignKeys = {
                 @ForeignKey(entity = DrillEntity.class, parentColumns = "id",
                         childColumns = "drill_id", onDelete = ForeignKey.CASCADE,
                         onUpdate = ForeignKey.CASCADE),
-                @ForeignKey(entity = SubGroupEntity.class, parentColumns = "id",
-                        childColumns = "sub_group_id", onDelete = ForeignKey.CASCADE,
+                @ForeignKey(entity = SubCategoryEntity.class, parentColumns = "id",
+                        childColumns = "sub_category_id", onDelete = ForeignKey.CASCADE,
                         onUpdate = ForeignKey.CASCADE)
         },
         indices = {
                 @Index(value = {"drill_id"}),
-                @Index(value = {"sub_group_id"})
+                @Index(value = {"sub_category_id"})
         }
 )
-/* package-private */ class DrillSubGroupJoinEntity {
+/* package-private */ class DrillSubCategoryJoinEntity {
     @Ignore
-    public static final String TABLE_NAME = "drill_group_join";
+    public static final String TABLE_NAME = "drill_sub_category_join";
 
     @ColumnInfo(name = "drill_id")
     private long drillId;
-    @ColumnInfo(name = "sub_group_id")
-    private long subGroupId;
+    @ColumnInfo(name = "sub_category_id")
+    private long subCategoryId;
 
-    public DrillSubGroupJoinEntity(long drillId, long subGroupId) {
+    public DrillSubCategoryJoinEntity(long drillId, long subCategoryId) {
         this.drillId = drillId;
-        this.subGroupId = subGroupId;
+        this.subCategoryId = subCategoryId;
     }
 
     public long getDrillId() {
@@ -59,11 +59,11 @@ import androidx.room.Index;
         this.drillId = drillId;
     }
 
-    public long getSubGroupId() {
-        return subGroupId;
+    public long getSubCategoryId() {
+        return subCategoryId;
     }
 
-    public void setSubGroupId(long groupId) {
-        this.subGroupId = groupId;
+    public void setSubCategoryId(long subCategoryId) {
+        this.subCategoryId = subCategoryId;
     }
 }

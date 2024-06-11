@@ -19,8 +19,8 @@ public class Constants {
 
     // Intents
     public static final String INTENT_PREFIX = "com.damienwesterman.defensedrill.";
-    /** Should be accompanied by a long of the Group ID chosen */
-    public static final String INTENT_GROUP_CHOICE = INTENT_PREFIX + "group_choice";
-    /** Should be accompanied by a long of the SubGroup ID chosen */
-    public static final String INTENT_SUB_GROUP_CHOICE = INTENT_PREFIX + "sub_group_choice";
+    /** Should be accompanied by a long of the Category ID chosen */
+    public static final String INTENT_CATEGORY_CHOICE = INTENT_PREFIX + "category_choice";
+    /** Should be accompanied by a long of the SubCategory ID chosen */
+    public static final String INTENT_SUB_CATEGORY_CHOICE = INTENT_PREFIX + "sub_category_choice";
 }

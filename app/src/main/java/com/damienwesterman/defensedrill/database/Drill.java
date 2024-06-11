@@ -35,18 +35,18 @@ public class Drill {
     @Relation(
             parentColumn = "id",
             entityColumn = "id",
-            associateBy = @Junction(value = DrillGroupJoinEntity.class,
-                    parentColumn = "drill_id", entityColumn = "group_id")
+            associateBy = @Junction(value = DrillCategoryJoinEntity.class,
+                    parentColumn = "drill_id", entityColumn = "category_id")
     )
-    private List<GroupEntity> groups;
+    private List<CategoryEntity> categories;
 
     @Relation(
             parentColumn = "id",
             entityColumn = "id",
-            associateBy = @Junction(value = DrillSubGroupJoinEntity.class,
-                    parentColumn = "drill_id", entityColumn = "sub_group_id")
+            associateBy = @Junction(value = DrillSubCategoryJoinEntity.class,
+                    parentColumn = "drill_id", entityColumn = "sub_category_id")
     )
-    private List<SubGroupEntity> subGroups;
+    private List<SubCategoryEntity> subCategories;
 
     /**
      * Default Constructor
@@ -54,21 +54,21 @@ public class Drill {
     @Ignore
     public Drill() {
         this.drillEntity = new DrillEntity();
-        this.groups = new ArrayList<>();
-        this.subGroups = new ArrayList<>();
+        this.categories = new ArrayList<>();
+        this.subCategories = new ArrayList<>();
     }
 
     /**
      * Parameterized constructor - ROOM DB ONLY
      *
      * @param drillEntity   DrillEntity
-     * @param groups        GroupEntity list
-     * @param subGroups     SubGroupEntity list
+     * @param categories        CategoryEntity list
+     * @param subCategories     SubCategoryEntity list
      */
-    protected Drill(DrillEntity drillEntity, List<GroupEntity> groups, List<SubGroupEntity> subGroups) {
+    protected Drill(DrillEntity drillEntity, List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
         this.drillEntity = drillEntity;
-        this.groups = groups;
-        this.subGroups = subGroups;
+        this.categories = categories;
+        this.subCategories = subCategories;
     }
 
     /**
@@ -80,17 +80,17 @@ public class Drill {
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
      * @param notes         User notes on the drill.
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
-     * @param groups        List of groups the Drill belongs to
-     * @param subGroups     List of subGroups the Drill belongs to
+     * @param categories        List of categories the Drill belongs to
+     * @param subCategories     List of subCategories the Drill belongs to
      */
     @Ignore
     public Drill(@NotNull String name, long lastDrilled, boolean newDrill, int confidence,
-                 String notes, long serverDrillId, List<GroupEntity> groups,
-                 List<SubGroupEntity> subGroups) {
+                 String notes, long serverDrillId, List<CategoryEntity> categories,
+                 List<SubCategoryEntity> subCategories) {
         this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
                                             serverDrillId);
-        this.groups = groups;
-        this.subGroups = subGroups;
+        this.categories = categories;
+        this.subCategories = subCategories;
     }
 
     /**
@@ -166,36 +166,36 @@ public class Drill {
         this.drillEntity.setServerDrillId(serverDrillId);
     }
 
-    public List<GroupEntity> getGroups() {
-        return groups;
+    public List<CategoryEntity> getCategories() {
+        return categories;
     }
 
-    public void setGroups(List<GroupEntity> groups) {
-        this.groups = groups;
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
     }
 
-    public void addGroup(GroupEntity group) {
-        this.groups.add(group);
+    public void addCategory(CategoryEntity category) {
+        this.categories.add(category);
     }
 
-    public void removeGroup(GroupEntity group) {
-        this.groups.remove(group);
+    public void removeCategory(CategoryEntity category) {
+        this.categories.remove(category);
     }
 
-    public List<SubGroupEntity> getSubGroups() {
-        return subGroups;
+    public List<SubCategoryEntity> getSubCategories() {
+        return subCategories;
     }
 
-    public void setSubGroups(List<SubGroupEntity> subGroups) {
-        this.subGroups = subGroups;
+    public void setSubCategories(List<SubCategoryEntity> subCategories) {
+        this.subCategories = subCategories;
     }
 
-    public void addSubGroup(SubGroupEntity subGroup) {
-        this.subGroups.add(subGroup);
+    public void addSubCategory(SubCategoryEntity subCategory) {
+        this.subCategories.add(subCategory);
     }
 
-    public void removeSubGroup(SubGroupEntity subGroup) {
-        this.subGroups.remove(subGroup);
+    public void removeSubCategory(SubCategoryEntity subCategory) {
+        this.subCategories.remove(subCategory);
     }
 
     @Override
@@ -203,11 +203,11 @@ public class Drill {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Drill drill = (Drill) o;
-        return drillEntity.equals(drill.drillEntity) && groups.equals(drill.groups) && subGroups.equals(drill.subGroups);
+        return drillEntity.equals(drill.drillEntity) && categories.equals(drill.categories) && subCategories.equals(drill.subCategories);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(drillEntity, groups, subGroups);
+        return Objects.hash(drillEntity, categories, subCategories);
     }
 }
