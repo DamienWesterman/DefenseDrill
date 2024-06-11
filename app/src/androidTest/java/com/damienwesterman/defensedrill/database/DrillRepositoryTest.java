@@ -110,7 +110,7 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_getAllDrills_groupParameter_noMatchingDrills() {
+    public void test_getAllDrillsByGroupId_noMatchingDrills() {
         repo.insertGroups(group1, group2, group3);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -120,11 +120,11 @@ public class DrillRepositoryTest {
         drill2.getGroups().add(group2);
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllDrills(group3).size());
+        assertEquals(0, repo.getAllDrillsByGroupId(group3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupParameter_oneMatchingDrills() {
+    public void test_getAllDrillsByGroupId_oneMatchingDrills() {
         repo.insertGroups(group1, group2, group3);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -135,11 +135,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1).size());
+        assertEquals(1, repo.getAllDrillsByGroupId(group1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupParameter_multipleMatchingDrills() {
+    public void test_getAllDrillsByGroupId_multipleMatchingDrills() {
         repo.insertGroups(group1, group2, group3);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -150,11 +150,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(2, repo.getAllDrills(group1).size());
+        assertEquals(2, repo.getAllDrillsByGroupId(group1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupParameter_nonExistentGroup() {
+    public void test_getAllDrillsByGroupId_nonExistentGroup() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -164,11 +164,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group3).size());
+        assertEquals(0, repo.getAllDrillsByGroupId(group3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupParameter_nullArgument() {
+    public void test_getAllDrillsByGroupId_invalidGroupId() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -178,11 +178,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills((GroupEntity) null).size());
+        assertEquals(0, repo.getAllDrillsByGroupId(-1).size());
     }
 
     @Test
-    public void test_getAllDrills_subGroupParameter_noMatchingDrills() {
+    public void test_getAllDrillsBySubGroupId_noMatchingDrills() {
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
         subGroup1 = repo.getSubGroup(subGroup1.getName());
         subGroup2 = repo.getSubGroup(subGroup2.getName());
@@ -192,11 +192,11 @@ public class DrillRepositoryTest {
         drill2.getSubGroups().add(subGroup2);
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllDrills(subGroup3).size());
+        assertEquals(0, repo.getAllDrillsBySubGroupId(subGroup3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_subGroupParameter_oneMatchingDrills() {
+    public void test_getAllDrillsBySubGroupId_oneMatchingDrills() {
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
         subGroup1 = repo.getSubGroup(subGroup1.getName());
         subGroup2 = repo.getSubGroup(subGroup2.getName());
@@ -207,11 +207,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(subGroup1).size());
+        assertEquals(1, repo.getAllDrillsBySubGroupId(subGroup1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_subGroupParameter_multipleMatchingDrills() {
+    public void test_getAllDrillsBySubGroupId_multipleMatchingDrills() {
         repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
         subGroup1 = repo.getSubGroup(subGroup1.getName());
         subGroup2 = repo.getSubGroup(subGroup2.getName());
@@ -222,11 +222,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(2, repo.getAllDrills(subGroup1).size());
+        assertEquals(2, repo.getAllDrillsBySubGroupId(subGroup1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_subGroupParameter_nonExistentSubGroup() {
+    public void test_getAllDrillsBySubGroupId_nonExistentSubGroup() {
         repo.insertSubGroups(subGroup1, subGroup2);
         subGroup1 = repo.getSubGroup(subGroup1.getName());
         subGroup2 = repo.getSubGroup(subGroup2.getName());
@@ -236,11 +236,11 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(subGroup3).size());
+        assertEquals(0, repo.getAllDrillsBySubGroupId(subGroup3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_subGroupParameter_nullArgument() {
+    public void test_getAllDrillsBySubGroupId_invalidGroupId() {
         repo.insertSubGroups(subGroup1, subGroup2);
         subGroup1 = repo.getSubGroup(subGroup1.getName());
         subGroup2 = repo.getSubGroup(subGroup2.getName());
@@ -250,7 +250,7 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills((SubGroupEntity) null).size());
+        assertEquals(0, repo.getAllDrillsBySubGroupId(-1).size());
     }
 
     @Test
@@ -270,7 +270,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -290,7 +290,7 @@ public class DrillRepositoryTest {
         drill3.addGroup(group3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -307,7 +307,7 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -326,7 +326,7 @@ public class DrillRepositoryTest {
         drill2.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -346,7 +346,7 @@ public class DrillRepositoryTest {
         drill3.addGroup(group1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -366,7 +366,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -389,7 +389,7 @@ public class DrillRepositoryTest {
         drill4.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -412,7 +412,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(1, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -435,7 +435,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(1, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -458,7 +458,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(1, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -481,7 +481,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(3, repo.getAllDrills(group1, subGroup1).size());
+        assertEquals(3, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -503,7 +503,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group3, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(group3.getId(), subGroup1.getId()).size());
     }
 
     @Test
@@ -525,7 +525,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, subGroup3).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup3.getId()).size());
     }
 
     @Test
@@ -546,11 +546,11 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group3, subGroup3).size());
+        assertEquals(0, repo.getAllDrills(group3.getId(), subGroup3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_nullGroupNoMatchingDrillForSubGroup() {
+    public void test_getAllDrills_groupANDsubGroupParameters_invalidGroupNoMatchingDrillForSubGroup() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -563,11 +563,11 @@ public class DrillRepositoryTest {
         drill1.addSubGroup(subGroup2);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(null, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(-1, subGroup1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_nullGroupYesMatchingDrillForSubGroup() {
+    public void test_getAllDrills_groupANDsubGroupParameters_invalidGroupYesMatchingDrillForSubGroup() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -580,11 +580,11 @@ public class DrillRepositoryTest {
         drill1.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(null, subGroup1).size());
+        assertEquals(0, repo.getAllDrills(-1, subGroup1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_NoMatchingDrillForGroupNullSubGroup() {
+    public void test_getAllDrills_groupANDsubGroupParameters_NoMatchingDrillForGroupInvalidSubGroup() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -597,11 +597,11 @@ public class DrillRepositoryTest {
         drill1.addSubGroup(subGroup2);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, null).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), -1).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_YesMatchingDrillForGroupNullSubGroup() {
+    public void test_getAllDrills_groupANDsubGroupParameters_YesMatchingDrillForGroupInvalidSubGroup() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -614,11 +614,11 @@ public class DrillRepositoryTest {
         drill1.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1, null).size());
+        assertEquals(0, repo.getAllDrills(group1.getId(), -1).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_nullGroupNullSubGroup() {
+    public void test_getAllDrills_groupANDsubGroupParameters_invalidGroupInvalidSubGroup() {
         repo.insertGroups(group1, group2);
         group1 = repo.getGroup(group1.getName());
         group2 = repo.getGroup(group2.getName());
@@ -635,7 +635,7 @@ public class DrillRepositoryTest {
         drill3.addSubGroup(subGroup1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(null, null).size());
+        assertEquals(0, repo.getAllDrills(-1, -1).size());
     }
 
     @Test
@@ -1230,7 +1230,7 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllSubGroups(group3).size());
+        assertEquals(0, repo.getAllSubGroups(group3.getId()).size());
     }
 
     @Test
@@ -1252,7 +1252,7 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(1, repo.getAllSubGroups(group2).size());
+        assertEquals(1, repo.getAllSubGroups(group2.getId()).size());
     }
 
     @Test
@@ -1274,7 +1274,7 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(2, repo.getAllSubGroups(group1).size());
+        assertEquals(2, repo.getAllSubGroups(group1.getId()).size());
     }
 
     @Test
@@ -1295,12 +1295,12 @@ public class DrillRepositoryTest {
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllSubGroups(group3).size());
+        assertEquals(0, repo.getAllSubGroups(group3.getId()).size());
     }
 
     @Test
-    public void test_getAllSubGroups_groupParameter_nullArgument() {
-        assertEquals(0, repo.getAllSubGroups(null).size());
+    public void test_getAllSubGroups_groupParameter_invalidArgument() {
+        assertEquals(0, repo.getAllSubGroups(-1).size());
     }
 
     @Test

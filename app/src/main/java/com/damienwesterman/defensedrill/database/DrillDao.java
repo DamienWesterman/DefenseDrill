@@ -24,7 +24,7 @@ import java.util.List;
 @Dao
 /* package-private */ interface DrillDao {
     @Transaction
-    @Query("SELECT * FROM " + DrillEntity.TABLE_NAME)
+    @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " ORDER BY name")
     List<Drill> getAllDrills();
 
     @Transaction
@@ -32,7 +32,7 @@ import java.util.List;
             "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
             "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " AS drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
             "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
-            "WHERE grp.id = :groupId"
+            "WHERE grp.id = :groupId ORDER BY drill.name"
     )
     List<Drill> findAllDrillsByGroup(long groupId);
 
@@ -41,7 +41,7 @@ import java.util.List;
             "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
             "JOIN " + DrillSubGroupJoinEntity.TABLE_NAME + " AS drillSubJoin ON drill.id = drillSubJoin.drill_id " +
             "JOIN " + SubGroupEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_group_id = sub.id " +
-            "WHERE sub.id = :subGroupId"
+            "WHERE sub.id = :subGroupId ORDER BY drill.name"
     )
     List<Drill> findAllDrillsBySubGroup(long subGroupId);
 
@@ -52,7 +52,7 @@ import java.util.List;
             "JOIN " + DrillEntity.TABLE_NAME + " AS drill ON drillSubJoin.drill_id = drill.id " +
             "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " AS drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
             "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
-            "WHERE grp.id = :groupId AND sub.id = :subGroupId"
+            "WHERE grp.id = :groupId AND sub.id = :subGroupId ORDER BY drill.name"
     )
     List<Drill> findAllDrillsByGroupAndSubGroup(long groupId, long subGroupId);
 

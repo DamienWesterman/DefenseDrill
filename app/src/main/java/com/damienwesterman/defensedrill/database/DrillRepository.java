@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -74,41 +75,32 @@ public class DrillRepository {
     /**
      * Return a list of all Drills that belong to the specified group.
      *
-     * @param group Specific group of drills.
-     * @return      List of Drill objects.
+     * @param groupId   ID of the specific group of drills.
+     * @return          List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrills(GroupEntity group) {
-        if (null == group) {
-            return new ArrayList<>();
-        }
-        return this.drillDao.findAllDrillsByGroup(group.getId());
+    public synchronized List<Drill> getAllDrillsByGroupId(long groupId) {
+        return this.drillDao.findAllDrillsByGroup(groupId);
     }
 
     /**
      * Return a list of all Drills that belong to the specified sub group.
      *
-     * @param subGroup  Specific sub group of drills.
-     * @return          List of Drill objects.
+     * @param subGroupId    ID of the specific sub group of drills.
+     * @return              List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrills(SubGroupEntity subGroup) {
-        if (null == subGroup) {
-            return new ArrayList<>();
-        }
-        return this.drillDao.findAllDrillsBySubGroup(subGroup.getId());
+    public synchronized List<Drill> getAllDrillsBySubGroupId(long subGroupId) {
+        return this.drillDao.findAllDrillsBySubGroup(subGroupId);
     }
 
     /**
      * Return a list of all Drills that belong to both the specified group and sub group.
      *
-     * @param group     Specific group of drills.
-     * @param subGroup  Specific sub group of drills.
-     * @return          List of Drill objects.
+     * @param groupId       ID of the specific group of drills.
+     * @param subGroupId    ID of the specific sub group of drills.
+     * @return              List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrills(GroupEntity group, SubGroupEntity subGroup) {
-        if (null == group || null == subGroup) {
-            return new ArrayList<>();
-        }
-        return this.drillDao.findAllDrillsByGroupAndSubGroup(group.getId(), subGroup.getId());
+    public synchronized List<Drill> getAllDrills(long groupId, long subGroupId) {
+        return this.drillDao.findAllDrillsByGroupAndSubGroup(groupId, subGroupId);
     }
 
     /**
@@ -171,11 +163,19 @@ public class DrillRepository {
                     long drillId = insertedDrill.getId();
 
                     for (GroupEntity group : drill.getGroups()) {
+                        if (null == group) {
+                            success.set(false);
+                            continue;
+                        }
                         if (1 != drillDao.insert(new DrillGroupJoinEntity(drillId, group.getId())).length) {
                             success.set(false);
                         }
                     }
                     for (SubGroupEntity subGroup : drill.getSubGroups()) {
+                        if (null == subGroup) {
+                            success.set(false);
+                            continue;
+                        }
                         if (1 != drillDao.insert(new DrillSubGroupJoinEntity(drillId, subGroup.getId())).length) {
                             success.set(false);
                         }
@@ -221,10 +221,12 @@ public class DrillRepository {
 
                 // Add/remove new/removed groups
                 Set<Long> existingGroupIds = drillDao.findAllGroupJoinByDrillId(drillId).stream()
+                        .filter(Objects::nonNull)
                         .map(DrillGroupJoinEntity::getGroupId)
                         .collect(Collectors.toSet());
 
                 Set<Long> newGroupIds = drill.getGroups().stream()
+                        .filter(Objects::nonNull)
                         .map(GroupEntity::getId)
                         .collect(Collectors.toSet());
 
@@ -247,10 +249,12 @@ public class DrillRepository {
 
                 // Add/remove new/removed groups
                 Set<Long> existingSubGroupIds = drillDao.findAllSubGroupJoinByDrillId(drillId).stream()
+                        .filter(Objects::nonNull)
                         .map(DrillSubGroupJoinEntity::getSubGroupId)
                         .collect(Collectors.toSet());
 
                 Set<Long> newSubGroupIds = drill.getSubGroups().stream()
+                        .filter(Objects::nonNull)
                         .map(SubGroupEntity::getId)
                         .collect(Collectors.toSet());
 
@@ -414,14 +418,11 @@ public class DrillRepository {
     /**
      * Get all subGroups of a given group.
      *
-     * @param group Group to search for its subGroups.
-     * @return      List of SubGroupEntity objects.
+     * @param groupId   ID of the group to search for its subGroups.
+     * @return          List of SubGroupEntity objects.
      */
-    public synchronized List<SubGroupEntity> getAllSubGroups(GroupEntity group) {
-        if (null == group) {
-            return new ArrayList<>();
-        }
-        return this.subGroupDao.findAllByGroup(group.getId());
+    public synchronized List<SubGroupEntity> getAllSubGroups(long groupId) {
+        return this.subGroupDao.findAllByGroup(groupId);
     }
 
     /**

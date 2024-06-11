@@ -21,7 +21,7 @@ import java.util.List;
 
 @Dao
 /* package-private */ interface SubGroupDao {
-    @Query("SELECT * FROM " + SubGroupEntity.TABLE_NAME)
+    @Query("SELECT * FROM " + SubGroupEntity.TABLE_NAME + " ORDER BY name")
     List<SubGroupEntity> getAll();
 
     @Query(
@@ -30,7 +30,7 @@ import java.util.List;
             "JOIN " + DrillEntity.TABLE_NAME + " AS drill ON drillSubJoin.drill_id = drill.id " +
             "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " AS drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
             "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
-            "WHERE grp.id = :groupId"
+            "WHERE grp.id = :groupId ORDER BY sub.name"
     )
     List<SubGroupEntity> findAllByGroup(long groupId);
 

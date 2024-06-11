@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.services;
+package com.damienwesterman.defensedrill.utils;
 
 import androidx.annotation.Nullable;
 

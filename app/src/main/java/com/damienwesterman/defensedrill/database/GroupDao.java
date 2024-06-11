@@ -21,7 +21,7 @@ import java.util.List;
 
 @Dao
 /* package-private */ interface GroupDao {
-    @Query("SELECT * FROM " + GroupEntity.TABLE_NAME)
+    @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " ORDER BY name")
     List<GroupEntity> getAll();
 
     @Query("SELECT * FROM " + GroupEntity.TABLE_NAME + " WHERE id = :id")
