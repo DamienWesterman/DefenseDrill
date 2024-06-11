@@ -38,6 +38,7 @@ public class CategorySelectActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(CategorySelectViewModel.class);
 
+        // TODO: implement RecyclerView with Cards
         Executors.newSingleThreadExecutor().execute(() -> {
             List<CategoryEntity> categories = viewModel.getCategories();
             String categoryNames = categories.stream().map(CategoryEntity::getName).collect(Collectors.joining("\n"));
