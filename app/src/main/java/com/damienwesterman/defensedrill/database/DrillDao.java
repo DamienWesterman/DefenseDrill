@@ -30,31 +30,31 @@ import java.util.List;
     @Transaction
     @Query(
             "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
-            "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " AS drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
-            "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
-            "WHERE grp.id = :groupId ORDER BY drill.name"
+            "JOIN " + DrillCategoryJoinEntity.TABLE_NAME + " AS drillcatJoin ON drill.id = drillcatJoin.drill_id " +
+            "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillcatJoin.category_id = cat.id " +
+            "WHERE cat.id = :categoryId ORDER BY drill.name"
     )
-    List<Drill> findAllDrillsByGroup(long groupId);
+    List<Drill> findAllDrillsByCategory(long categoryId);
 
     @Transaction
     @Query(
             "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
-            "JOIN " + DrillSubGroupJoinEntity.TABLE_NAME + " AS drillSubJoin ON drill.id = drillSubJoin.drill_id " +
-            "JOIN " + SubGroupEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_group_id = sub.id " +
-            "WHERE sub.id = :subGroupId ORDER BY drill.name"
+            "JOIN " + DrillSubCategoryJoinEntity.TABLE_NAME + " AS drillSubJoin ON drill.id = drillSubJoin.drill_id " +
+            "JOIN " + SubCategoryEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_category_id = sub.id " +
+            "WHERE sub.id = :subCategoryId ORDER BY drill.name"
     )
-    List<Drill> findAllDrillsBySubGroup(long subGroupId);
+    List<Drill> findAllDrillsBySubCategory(long subCategoryId);
 
     @Transaction
     @Query(
-            "SELECT drill.* FROM " + SubGroupEntity.TABLE_NAME + " AS sub " +
-            "JOIN " + DrillSubGroupJoinEntity.TABLE_NAME + " AS drillSubJoin ON sub.id = drillSubJoin.sub_group_id " +
+            "SELECT drill.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
+            "JOIN " + DrillSubCategoryJoinEntity.TABLE_NAME + " AS drillSubJoin ON sub.id = drillSubJoin.sub_category_id " +
             "JOIN " + DrillEntity.TABLE_NAME + " AS drill ON drillSubJoin.drill_id = drill.id " +
-            "JOIN " + DrillGroupJoinEntity.TABLE_NAME + " AS drillGroupJoin ON drill.id = drillGroupJoin.drill_id " +
-            "JOIN " + GroupEntity.TABLE_NAME + " AS grp ON drillGroupJoin.group_id = grp.id " +
-            "WHERE grp.id = :groupId AND sub.id = :subGroupId ORDER BY drill.name"
+            "JOIN " + DrillCategoryJoinEntity.TABLE_NAME + " AS drillCatJoin ON drill.id = drillCatJoin.drill_id " +
+            "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillCatJoin.category_id = cat.id " +
+            "WHERE cat.id = :categoryId AND sub.id = :subCategoryId ORDER BY drill.name"
     )
-    List<Drill> findAllDrillsByGroupAndSubGroup(long groupId, long subGroupId);
+    List<Drill> findAllDrillsByCategoryAndSubCategory(long categoryId, long subCategoryId);
 
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE id = :id")
@@ -64,23 +64,23 @@ import java.util.List;
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE name = :name")
     Drill findDrillByName(String name);
 
-    @Query("SELECT * FROM " + DrillGroupJoinEntity.TABLE_NAME)
-    List<DrillGroupJoinEntity> getAllGroupJoin();
+    @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME)
+    List<DrillCategoryJoinEntity> getAllCategoryJoin();
 
-    @Query("SELECT * FROM " + DrillGroupJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
-    List<DrillGroupJoinEntity> findAllGroupJoinByDrillId(long drillId);
+    @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
+    List<DrillCategoryJoinEntity> findAllCategoryJoinByDrillId(long drillId);
 
-    @Query("SELECT * FROM " + DrillGroupJoinEntity.TABLE_NAME + " WHERE group_id = :groupId")
-    List<DrillGroupJoinEntity> findAllGroupJoinByGroupId(long groupId);
+    @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME + " WHERE category_id = :categoryId")
+    List<DrillCategoryJoinEntity> findAllCategoryJoinByCategoryId(long categoryId);
 
-    @Query("SELECT * FROM " + DrillSubGroupJoinEntity.TABLE_NAME)
-    List<DrillSubGroupJoinEntity> getAllSubGroupJoin();
+    @Query("SELECT * FROM " + DrillSubCategoryJoinEntity.TABLE_NAME)
+    List<DrillSubCategoryJoinEntity> getAllSubCategoryJoin();
 
-    @Query("SELECT * FROM " + DrillSubGroupJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
-    List<DrillSubGroupJoinEntity> findAllSubGroupJoinByDrillId(long drillId);
+    @Query("SELECT * FROM " + DrillSubCategoryJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
+    List<DrillSubCategoryJoinEntity> findAllSubCategoryJoinByDrillId(long drillId);
 
-    @Query("SELECT * FROM " + DrillSubGroupJoinEntity.TABLE_NAME + " WHERE sub_group_id = :subGroupId")
-    List<DrillSubGroupJoinEntity> findAllSubGroupJoinByGroupId(long subGroupId);
+    @Query("SELECT * FROM " + DrillSubCategoryJoinEntity.TABLE_NAME + " WHERE sub_category_id = :subCategoryId")
+    List<DrillSubCategoryJoinEntity> findAllSubCategoryJoinByCategoryId(long subCategoryId);
 
     // Allow DrillEntity inserts to throw if there is an issue. Join tables should just replace for
     // ease of insertions, as there are only two fields and no event observers, should not cause a
@@ -88,21 +88,21 @@ import java.util.List;
     @Insert
     long[] insert(DrillEntity... drills);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insert(DrillGroupJoinEntity... entities);
+    long[] insert(DrillCategoryJoinEntity... entities);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insert(DrillSubGroupJoinEntity... entities);
+    long[] insert(DrillSubCategoryJoinEntity... entities);
 
     @Update
     int update(DrillEntity... drills);
     @Update
-    int update(DrillGroupJoinEntity... entities);
+    int update(DrillCategoryJoinEntity... entities);
     @Update
-    int update(DrillSubGroupJoinEntity... entities);
+    int update(DrillSubCategoryJoinEntity... entities);
 
     @Delete
     void delete(DrillEntity... drills);
     @Delete
-    void delete(DrillGroupJoinEntity... entities);
+    void delete(DrillCategoryJoinEntity... entities);
     @Delete
-    void delete(DrillSubGroupJoinEntity... entities);
+    void delete(DrillSubCategoryJoinEntity... entities);
 }

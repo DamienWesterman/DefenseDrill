@@ -43,12 +43,12 @@ public class DrillRepositoryTest {
     Drill drill1;
     Drill drill2;
     Drill drill3;
-    GroupEntity group1;
-    GroupEntity group2;
-    GroupEntity group3;
-    SubGroupEntity subGroup1;
-    SubGroupEntity subGroup2;
-    SubGroupEntity subGroup3;
+    CategoryEntity category1;
+    CategoryEntity category2;
+    CategoryEntity category3;
+    SubCategoryEntity subCategory1;
+    SubCategoryEntity subCategory2;
+    SubCategoryEntity subCategory3;
 
     @Before
     public void setUp() {
@@ -58,24 +58,24 @@ public class DrillRepositoryTest {
                 new ArrayList<>(), new ArrayList<>());
         drill3 = new Drill("drill three", 3, false, Drill.LOW_CONFIDENCE, "notes three", 3,
                 new ArrayList<>(), new ArrayList<>());
-        group1 = new GroupEntity("group one", "description one");
-        group2 = new GroupEntity("group two", "description two");
-        group3 = new GroupEntity("group three", "description three");
-        subGroup1 = new SubGroupEntity("sub group one", "description one");
-        subGroup2 = new SubGroupEntity("sub group two", "description two");
-        subGroup3 = new SubGroupEntity("sub group three", "description three");
+        category1 = new CategoryEntity("category one", "description one");
+        category2 = new CategoryEntity("category two", "description two");
+        category3 = new CategoryEntity("category three", "description three");
+        subCategory1 = new SubCategoryEntity("sub category one", "description one");
+        subCategory2 = new SubCategoryEntity("sub category two", "description two");
+        subCategory3 = new SubCategoryEntity("sub category three", "description three");
 
         // Assumed to work here, tested and working, but also has its own test cases
         repo.deleteDrills(repo.getAllDrills().toArray(new Drill[0]));
-        repo.deleteGroups(repo.getAllGroups().toArray(new GroupEntity[0]));
-        repo.deleteSubGroups(repo.getAllSubGroups().toArray(new SubGroupEntity[0]));
+        repo.deleteCategories(repo.getAllCategories().toArray(new CategoryEntity[0]));
+        repo.deleteSubCategories(repo.getAllSubCategories().toArray(new SubCategoryEntity[0]));
     }
 
     @AfterClass
     public static void tearDown() {
         repo.deleteDrills(repo.getAllDrills().toArray(new Drill[0]));
-        repo.deleteGroups(repo.getAllGroups().toArray(new GroupEntity[0]));
-        repo.deleteSubGroups(repo.getAllSubGroups().toArray(new SubGroupEntity[0]));
+        repo.deleteCategories(repo.getAllCategories().toArray(new CategoryEntity[0]));
+        repo.deleteSubCategories(repo.getAllSubCategories().toArray(new SubCategoryEntity[0]));
     }
 
     @Test
@@ -110,529 +110,529 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_getAllDrillsByGroupId_noMatchingDrills() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrillsByCategoryId_noMatchingDrills() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        drill1.getGroups().add(group1);
-        drill2.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill2.getCategories().add(category2);
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllDrillsByGroupId(group3.getId()).size());
+        assertEquals(0, repo.getAllDrillsByCategoryId(category3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsByGroupId_oneMatchingDrills() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrillsByCategoryId_oneMatchingDrills() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        drill1.getGroups().add(group1);
-        drill2.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill2.getCategories().add(category2);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrillsByGroupId(group1.getId()).size());
+        assertEquals(1, repo.getAllDrillsByCategoryId(category1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsByGroupId_multipleMatchingDrills() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrillsByCategoryId_multipleMatchingDrills() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        drill1.getGroups().add(group1);
-        drill2.getGroups().add(group1);
+        drill1.getCategories().add(category1);
+        drill2.getCategories().add(category1);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(2, repo.getAllDrillsByGroupId(group1.getId()).size());
+        assertEquals(2, repo.getAllDrillsByCategoryId(category1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsByGroupId_nonExistentGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrillsByCategoryId_nonExistentCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
-        drill2.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill2.getCategories().add(category2);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrillsByGroupId(group3.getId()).size());
+        assertEquals(0, repo.getAllDrillsByCategoryId(category3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsByGroupId_invalidGroupId() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrillsByCategoryId_invalidCategoryId() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
-        drill2.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill2.getCategories().add(category2);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrillsByGroupId(-1).size());
+        assertEquals(0, repo.getAllDrillsByCategoryId(-1).size());
     }
 
     @Test
-    public void test_getAllDrillsBySubGroupId_noMatchingDrills() {
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+    public void test_getAllDrillsBySubCategoryId_noMatchingDrills() {
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill2.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill2.getSubCategories().add(subCategory2);
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllDrillsBySubGroupId(subGroup3.getId()).size());
+        assertEquals(0, repo.getAllDrillsBySubCategoryId(subCategory3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsBySubGroupId_oneMatchingDrills() {
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+    public void test_getAllDrillsBySubCategoryId_oneMatchingDrills() {
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill2.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill2.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrillsBySubGroupId(subGroup1.getId()).size());
+        assertEquals(1, repo.getAllDrillsBySubCategoryId(subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsBySubGroupId_multipleMatchingDrills() {
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+    public void test_getAllDrillsBySubCategoryId_multipleMatchingDrills() {
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill2.getSubGroups().add(subGroup1);
+        drill1.getSubCategories().add(subCategory1);
+        drill2.getSubCategories().add(subCategory1);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(2, repo.getAllDrillsBySubGroupId(subGroup1.getId()).size());
+        assertEquals(2, repo.getAllDrillsBySubCategoryId(subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsBySubGroupId_nonExistentSubGroup() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_getAllDrillsBySubCategoryId_nonExistentSubCategory() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill2.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill2.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrillsBySubGroupId(subGroup3.getId()).size());
+        assertEquals(0, repo.getAllDrillsBySubCategoryId(subCategory3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrillsBySubGroupId_invalidGroupId() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_getAllDrillsBySubCategoryId_invalidCategoryId() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill2.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill2.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrillsBySubGroupId(-1).size());
+        assertEquals(0, repo.getAllDrillsBySubCategoryId(-1).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_noMatchingDrillForGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_noMatchingDrillForCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addSubGroup(subGroup1);
-        drill2.addSubGroup(subGroup2);
-        drill3.addSubGroup(subGroup3);
+        drill1.addSubCategory(subCategory1);
+        drill2.addSubCategory(subCategory2);
+        drill3.addSubCategory(subCategory3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_noMatchingDrillForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_noMatchingDrillForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill2.addGroup(group2);
-        drill3.addGroup(group3);
+        drill1.addCategory(category1);
+        drill2.addCategory(category2);
+        drill3.addCategory(category3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_noMatchingDrillForGroupORSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_noMatchingDrillForCategoryORSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupOneDifferentDrillForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryOneDifferentDrillForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_MultipleMatchingDrillsForGroupOneDifferentDrillForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_MultipleMatchingDrillsForCategoryOneDifferentDrillForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
+        drill1.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupMultipleDifferentDrillsForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryMultipleDifferentDrillsForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_multipleMatchingDrillsForGroupMultipleDifferentDrillsForSubGroup() {
+    public void test_getAllDrills_categoryANDsubCategoryParameters_multipleMatchingDrillsForCategoryMultipleDifferentDrillsForSubCategory() {
         Drill drill4 = new Drill("drill four", 4, false, Drill.HIGH_CONFIDENCE, "notes four", 4,
                 new ArrayList<>(), new ArrayList<>());
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
-        drill4.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
+        drill4.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupOneForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryOneForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group2);
-        drill2.addSubGroup(subGroup2);
-        drill3.addGroup(group3);
-        drill3.addSubGroup(subGroup3);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category2);
+        drill2.addSubCategory(subCategory2);
+        drill3.addCategory(category3);
+        drill3.addSubCategory(subCategory3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(1, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_oneMatchingDrillForGroupMultipleForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryMultipleForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group2);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group3);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category2);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category3);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(1, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_MultipleMatchingDrillsForGroupOneForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_MultipleMatchingDrillsForCategoryOneForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup2);
-        drill3.addGroup(group1);
-        drill3.addSubGroup(subGroup3);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory2);
+        drill3.addCategory(category1);
+        drill3.addSubCategory(subCategory3);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(1, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(1, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_multipleMatchingDrillsForGroupMultipleForSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_multipleMatchingDrillsForCategoryMultipleForSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(3, repo.getAllDrills(group1.getId(), subGroup1.getId()).size());
+        assertEquals(3, repo.getAllDrills(category1.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_noDrillsForNonExistentGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_noDrillsForNonExistentCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group3.getId(), subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(category3.getId(), subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_noDrillsForNonExistentSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_noDrillsForNonExistentSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), subGroup3.getId()).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), subCategory3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_noDrillsForNonExistentGroupANDnonExistentSubGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_noDrillsForNonExistentCategoryANDnonExistentSubCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group3.getId(), subGroup3.getId()).size());
+        assertEquals(0, repo.getAllDrills(category3.getId(), subCategory3.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_invalidGroupNoMatchingDrillForSubGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_invalidCategoryNoMatchingDrillForSubCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group2);
-        drill1.addSubGroup(subGroup2);
+        drill1.addCategory(category2);
+        drill1.addSubCategory(subCategory2);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(-1, subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(-1, subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_invalidGroupYesMatchingDrillForSubGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_invalidCategoryYesMatchingDrillForSubCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(-1, subGroup1.getId()).size());
+        assertEquals(0, repo.getAllDrills(-1, subCategory1.getId()).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_NoMatchingDrillForGroupInvalidSubGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_NoMatchingDrillForCategoryInvalidSubCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group2);
-        drill1.addSubGroup(subGroup2);
+        drill1.addCategory(category2);
+        drill1.addSubCategory(subCategory2);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), -1).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), -1).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_YesMatchingDrillForGroupInvalidSubGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_YesMatchingDrillForCategoryInvalidSubCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
-        assertEquals(0, repo.getAllDrills(group1.getId(), -1).size());
+        assertEquals(0, repo.getAllDrills(category1.getId(), -1).size());
     }
 
     @Test
-    public void test_getAllDrills_groupANDsubGroupParameters_invalidGroupInvalidSubGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllDrills_categoryANDsubCategoryParameters_invalidCategoryInvalidSubCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
-        drill3.addGroup(group1);
-        drill3.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+        drill3.addCategory(category1);
+        drill3.addSubCategory(subCategory1);
         repo.insertDrills(drill1, drill2, drill3);
 
         assertEquals(0, repo.getAllDrills(-1, -1).size());
@@ -685,31 +685,31 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_insertDrills_insertWithGroups() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_insertDrills_insertWithCategories() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
-        drill1.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill1.getCategories().add(category2);
 
         assertTrue(repo.insertDrills(drill1));
 
-        assertEquals(2, repo.getDrill(drill1.getName()).getGroups().size());
+        assertEquals(2, repo.getDrill(drill1.getName()).getCategories().size());
     }
 
     @Test
-    public void test_insertDrills_insertWithSubGroups() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_insertDrills_insertWithSubCategories() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill1.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill1.getSubCategories().add(subCategory2);
 
         assertTrue(repo.insertDrills(drill1));
 
-        assertEquals(2, repo.getDrill(drill1.getName()).getSubGroups().size());
+        assertEquals(2, repo.getDrill(drill1.getName()).getSubCategories().size());
     }
 
     @Test
@@ -727,27 +727,27 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_insertDrills_throwsWhenGivenNonExistentGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_insertDrills_throwsWhenGivenNonExistentCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
-        drill1.getGroups().add(group2);
-        drill1.getGroups().add(group3);
+        drill1.getCategories().add(category1);
+        drill1.getCategories().add(category2);
+        drill1.getCategories().add(category3);
 
         assertThrows(SQLiteConstraintException.class, () -> repo.insertDrills(drill1));
     }
 
     @Test
-    public void test_insertDrills_throwsWhenGivenNonExistentSubGroup() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_insertDrills_throwsWhenGivenNonExistentSubCategory() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill1.getSubGroups().add(subGroup2);
-        drill1.getSubGroups().add(subGroup3);
+        drill1.getSubCategories().add(subCategory1);
+        drill1.getSubCategories().add(subCategory2);
+        drill1.getSubCategories().add(subCategory3);
 
         assertThrows(SQLiteConstraintException.class, () -> repo.insertDrills(drill1));
     }
@@ -765,15 +765,15 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_insertDrills_nullGroupTreatedAsEmptyArray() {
-        drill1.setGroups(null);
+    public void test_insertDrills_nullCategoryTreatedAsEmptyArray() {
+        drill1.setCategories(null);
         assertTrue(repo.insertDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
 
     @Test
-    public void test_insertDrills_nullSubGroupTreatedAsEmptyArray() {
-        drill1.setSubGroups(null);
+    public void test_insertDrills_nullSubCategoryTreatedAsEmptyArray() {
+        drill1.setSubCategories(null);
         assertTrue(repo.insertDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
@@ -805,83 +805,83 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_updateDrills_addGroups() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_updateDrills_addCategories() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
+        drill1.getCategories().add(category1);
 
         repo.insertDrills(drill1);
 
         Drill insertedDrill = repo.getDrill(drill1.getName());
 
-        assertEquals(1, insertedDrill.getGroups().size());
+        assertEquals(1, insertedDrill.getCategories().size());
 
-        insertedDrill.getGroups().add(group2);
+        insertedDrill.getCategories().add(category2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(2, repo.getDrill(insertedDrill.getId()).getGroups().size());
+        assertEquals(2, repo.getDrill(insertedDrill.getId()).getCategories().size());
     }
 
     @Test
-    public void test_updateDrills_removeGroups() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_updateDrills_removeCategories() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
-        drill1.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill1.getCategories().add(category2);
 
         repo.insertDrills(drill1);
 
         Drill insertedDrill = repo.getDrill(drill1.getName());
 
-        assertEquals(2, insertedDrill.getGroups().size());
+        assertEquals(2, insertedDrill.getCategories().size());
 
-        insertedDrill.removeGroup(group2);
+        insertedDrill.removeCategory(category2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(1, repo.getDrill(insertedDrill.getId()).getGroups().size());
+        assertEquals(1, repo.getDrill(insertedDrill.getId()).getCategories().size());
     }
 
     @Test
-    public void test_updateDrills_addSubGroups() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_updateDrills_addSubCategories() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
+        drill1.getSubCategories().add(subCategory1);
 
         repo.insertDrills(drill1);
         Drill insertedDrill = repo.getDrill(drill1.getName());
 
-        assertEquals(1, insertedDrill.getSubGroups().size());
+        assertEquals(1, insertedDrill.getSubCategories().size());
 
-        insertedDrill.getSubGroups().add(subGroup2);
+        insertedDrill.getSubCategories().add(subCategory2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(2, repo.getDrill(insertedDrill.getId()).getSubGroups().size());
+        assertEquals(2, repo.getDrill(insertedDrill.getId()).getSubCategories().size());
     }
 
     @Test
-    public void test_updateDrills_removeSubGroups() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_updateDrills_removeSubCategories() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill1.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill1.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1);
         Drill insertedDrill = repo.getDrill(drill1.getName());
 
-        assertEquals(2, insertedDrill.getSubGroups().size());
+        assertEquals(2, insertedDrill.getSubCategories().size());
 
-        insertedDrill.removeSubGroup(subGroup2);
+        insertedDrill.removeSubCategory(subCategory2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(1, repo.getDrill(insertedDrill.getId()).getSubGroups().size());
+        assertEquals(1, repo.getDrill(insertedDrill.getId()).getSubCategories().size());
     }
 
     @Test
@@ -904,35 +904,35 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_updateDrills_throwsWhenGivenNonExistentGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_updateDrills_throwsWhenGivenNonExistentCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        drill1.getGroups().add(group1);
-        drill1.getGroups().add(group2);
+        drill1.getCategories().add(category1);
+        drill1.getCategories().add(category2);
 
         repo.insertDrills(drill1);
 
         Drill insertedDrill = repo.getDrill(drill1.getName());
-        insertedDrill.getGroups().add(group3);
+        insertedDrill.getCategories().add(category3);
 
         assertThrows(SQLiteConstraintException.class, () -> repo.updateDrills(insertedDrill));
     }
 
     @Test
-    public void test_updateDrills_throwsWhenGivenNonExistentSubGroup() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_updateDrills_throwsWhenGivenNonExistentSubCategory() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
 
-        drill1.getSubGroups().add(subGroup1);
-        drill1.getSubGroups().add(subGroup2);
+        drill1.getSubCategories().add(subCategory1);
+        drill1.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1);
 
         Drill insertedDrill = repo.getDrill(drill1.getName());
-        insertedDrill.getSubGroups().add(subGroup3);
+        insertedDrill.getSubCategories().add(subCategory3);
 
         assertThrows(SQLiteConstraintException.class, () -> repo.updateDrills(insertedDrill));
     }
@@ -956,19 +956,19 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_updateDrills_nullGroupTreatedAsEmptyArray() {
+    public void test_updateDrills_nullCategoryTreatedAsEmptyArray() {
         repo.insertDrills(drill1);
         drill1 = repo.getDrill(drill1.getName());
-        drill1.setGroups(null);
+        drill1.setCategories(null);
         assertTrue(repo.updateDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
     }
 
     @Test
-    public void test_updateDrills_nullSubGroupTreatedAsEmptyArray() {
+    public void test_updateDrills_nullSubCategoryTreatedAsEmptyArray() {
         repo.insertDrills(drill1);
         drill1 = repo.getDrill(drill1.getName());
-        drill1.setSubGroups(null);
+        drill1.setSubCategories(null);
         assertTrue(repo.updateDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
 
@@ -1004,450 +1004,450 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_getAllGroups_emptyDB() {
-        assertEquals(0, repo.getAllGroups().size());
+    public void test_getAllCategories_emptyDB() {
+        assertEquals(0, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_getAllGroups_AND_insertGroups_insertOneGroup() {
-        assertTrue(repo.insertGroups(group1));
+    public void test_getAllCategories_AND_insertCategories_insertOneCategory() {
+        assertTrue(repo.insertCategories(category1));
 
-        List<GroupEntity> returnedGroups = repo.getAllGroups();
-        assertEquals(1, returnedGroups.size());
+        List<CategoryEntity> returnedCategories = repo.getAllCategories();
+        assertEquals(1, returnedCategories.size());
 
-        assertEquals(0, group1.getName().compareTo(returnedGroups.get(0).getName()));
+        assertEquals(0, category1.getName().compareTo(returnedCategories.get(0).getName()));
     }
 
     @Test
-    public void test_getAllGroups_AND_insertGroups_insertMultipleGroups() {
-        assertTrue(repo.insertGroups(group1, group2, group3));
+    public void test_getAllCategories_AND_insertCategories_insertMultipleCategories() {
+        assertTrue(repo.insertCategories(category1, category2, category3));
 
-        List<GroupEntity> returnedGroups = repo.getAllGroups();
-        assertEquals(3, returnedGroups.size());
-        List<String> returnedGroupNames = returnedGroups.stream()
-                .map(GroupEntity::getName)
+        List<CategoryEntity> returnedCategories = repo.getAllCategories();
+        assertEquals(3, returnedCategories.size());
+        List<String> returnedCategoryNames = returnedCategories.stream()
+                .map(CategoryEntity::getName)
                 .collect(Collectors.toList());
 
-        assertTrue(returnedGroupNames.contains(group1.getName()));
-        assertTrue(returnedGroupNames.contains(group2.getName()));
-        assertTrue(returnedGroupNames.contains(group3.getName()));
+        assertTrue(returnedCategoryNames.contains(category1.getName()));
+        assertTrue(returnedCategoryNames.contains(category2.getName()));
+        assertTrue(returnedCategoryNames.contains(category3.getName()));
     }
 
     @Test
-    public void test_getGroup_idParameter_noExistingGroup() {
-        repo.insertGroups(group1);
-        assertNull(repo.getGroup(repo.getGroup(group1.getName()).getId() + 1));
+    public void test_getCategory_idParameter_noExistingCategory() {
+        repo.insertCategories(category1);
+        assertNull(repo.getCategory(repo.getCategory(category1.getName()).getId() + 1));
     }
 
     @Test
-    public void test_getGroup_idParameter_yesExistingGroup() {
-        repo.insertGroups(group1);
-        GroupEntity returnedGroup = repo.getAllGroups().get(0); // should not throw
-        assertNotNull(repo.getGroup(returnedGroup.getId()));
+    public void test_getCategory_idParameter_yesExistingCategory() {
+        repo.insertCategories(category1);
+        CategoryEntity returnedCategory = repo.getAllCategories().get(0); // should not throw
+        assertNotNull(repo.getCategory(returnedCategory.getId()));
     }
 
     @Test
-    public void test_getGroup_stringParameter_noExistingGroup() {
-        repo.insertGroups(group1);
-        assertNull(repo.getGroup(group2.getName()));
+    public void test_getCategory_stringParameter_noExistingCategory() {
+        repo.insertCategories(category1);
+        assertNull(repo.getCategory(category2.getName()));
     }
 
     @Test
-    public void test_getGroup_stringParameter_yesExistingGroup() {
-        repo.insertGroups(group1);
-        assertNotNull(repo.getGroup(group1.getName()));
+    public void test_getCategory_stringParameter_yesExistingCategory() {
+        repo.insertCategories(category1);
+        assertNotNull(repo.getCategory(category1.getName()));
     }
 
     @Test
-    public void test_getGroup_stringParameter_nullArgument() {
-        assertNull(repo.getGroup(null));
+    public void test_getCategory_stringParameter_nullArgument() {
+        assertNull(repo.getCategory(null));
     }
 
     @Test
-    public void test_insertGroup_throwsWhenViolateUniqueKey() {
+    public void test_insertCategory_throwsWhenViolateUniqueKey() {
         String sameName = "same name";
-        group1.setName(sameName);
-        group2.setName(sameName);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertGroups(group1, group2));
+        category1.setName(sameName);
+        category2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertCategories(category1, category2));
     }
 
     @Test
-    public void test_insertGroup_throwsWhenGivenNullName() {
-        group1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertGroups(group1));
+    public void test_insertCategory_throwsWhenGivenNullName() {
+        category1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertCategories(category1));
     }
 
     @Test
-    public void test_insertGroup_doesNothingWithNullArgument() {
-        assertTrue(repo.insertGroups((GroupEntity) null)); // Make sure this does not throw
+    public void test_insertCategory_doesNothingWithNullArgument() {
+        assertTrue(repo.insertCategories((CategoryEntity) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
-    public void test_insertGroup_doesNothingWithNullArgumentList() {
-        assertTrue(repo.insertGroups((GroupEntity[]) null)); // Make sure this does not throw
+    public void test_insertCategory_doesNothingWithNullArgumentList() {
+        assertTrue(repo.insertCategories((CategoryEntity[]) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
-    public void test_updateGroup_updateOneGroup() {
-        repo.insertGroups(group1);
-        group1 = repo.getGroup(group1.getName());
+    public void test_updateCategory_updateOneCategory() {
+        repo.insertCategories(category1);
+        category1 = repo.getCategory(category1.getName());
         String newName = "new name";
-        group1.setName(newName);
-        assertTrue(repo.updateGroups(group1));
+        category1.setName(newName);
+        assertTrue(repo.updateCategories(category1));
 
-        assertEquals(0, newName.compareTo(repo.getGroup(group1.getId()).getName()));
+        assertEquals(0, newName.compareTo(repo.getCategory(category1.getId()).getName()));
     }
 
     @Test
-    public void test_updateGroup_updateMultipleGroups() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_updateCategory_updateMultipleCategories() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
         String newName1 = "new name 1";
         String newName2 = "new name 2";
-        group1.setName(newName1);
-        group2.setName(newName2);
-        assertTrue(repo.updateGroups(group1, group2));
+        category1.setName(newName1);
+        category2.setName(newName2);
+        assertTrue(repo.updateCategories(category1, category2));
 
-        assertEquals(0, newName1.compareTo(repo.getGroup(group1.getId()).getName()));
-        assertEquals(0, newName2.compareTo(repo.getGroup(group2.getId()).getName()));
+        assertEquals(0, newName1.compareTo(repo.getCategory(category1.getId()).getName()));
+        assertEquals(0, newName2.compareTo(repo.getCategory(category2.getId()).getName()));
     }
 
     @Test
-    public void test_updateGroup_throwsWhenViolateUniqueKey() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_updateCategory_throwsWhenViolateUniqueKey() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
         String sameName = "same name";
-        group1.setName(sameName);
-        group2.setName(sameName);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateGroups(group1, group2));
+        category1.setName(sameName);
+        category2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateCategories(category1, category2));
     }
 
     @Test
-    public void test_updateGroup_throwsWhenGivenNullName() {
-        repo.insertGroups(group1);
-        group1 = repo.getGroup(group1.getName());
-        group1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateGroups(group1));
+    public void test_updateCategory_throwsWhenGivenNullName() {
+        repo.insertCategories(category1);
+        category1 = repo.getCategory(category1.getName());
+        category1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateCategories(category1));
     }
 
     @Test
-    public void test_updateGroup_doesNothingWithNonExistentGroup() {
-        assertFalse(repo.updateGroups(group1));
-        assertEquals(0, repo.getAllGroups().size());
+    public void test_updateCategory_doesNothingWithNonExistentCategory() {
+        assertFalse(repo.updateCategories(category1));
+        assertEquals(0, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_updateGroup_doesNothingWithNullArgument() {
-        assertTrue(repo.updateGroups((GroupEntity) null));
-        assertEquals(0, repo.getAllGroups().size());
+    public void test_updateCategory_doesNothingWithNullArgument() {
+        assertTrue(repo.updateCategories((CategoryEntity) null));
+        assertEquals(0, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_updateGroup_doesNothingWithNullArgumentList() {
-        assertTrue(repo.updateGroups((GroupEntity[]) null));
-        assertEquals(0, repo.getAllGroups().size());
+    public void test_updateCategory_doesNothingWithNullArgumentList() {
+        assertTrue(repo.updateCategories((CategoryEntity[]) null));
+        assertEquals(0, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_deleteGroups_deleteExistingGroup() {
-        repo.insertGroups(group1, group2);
-        group1 = repo.getGroup(group1.getName());
-        repo.deleteGroups(group1);
-        assertEquals(1, repo.getAllGroups().size());
+    public void test_deleteCategories_deleteExistingCategory() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        repo.deleteCategories(category1);
+        assertEquals(1, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_deleteGroups_nonExistentGroupDoesNothing() {
-        repo.insertGroups(group1, group2);
-        repo.deleteGroups(group3);
-        assertEquals(2, repo.getAllGroups().size());
+    public void test_deleteCategories_nonExistentCategoryDoesNothing() {
+        repo.insertCategories(category1, category2);
+        repo.deleteCategories(category3);
+        assertEquals(2, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_deleteGroups_doesNothingWithNullArgument() {
-        repo.insertGroups(group1);
-        repo.deleteGroups((GroupEntity) null); // Make sure this does not throw
-        assertEquals(1, repo.getAllGroups().size());
+    public void test_deleteCategories_doesNothingWithNullArgument() {
+        repo.insertCategories(category1);
+        repo.deleteCategories((CategoryEntity) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_deleteGroups_doesNothingWithNullArgumentList() {
-        repo.insertGroups(group1);
-        repo.deleteGroups((GroupEntity[]) null); // Make sure this does not throw
-        assertEquals(1, repo.getAllGroups().size());
+    public void test_deleteCategories_doesNothingWithNullArgumentList() {
+        repo.insertCategories(category1);
+        repo.deleteCategories((CategoryEntity[]) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllCategories().size());
     }
 
     @Test
-    public void test_getAllSubGroups_emptyDB() {
-        assertEquals(0, repo.getAllSubGroups().size());
+    public void test_getAllSubCategories_emptyDB() {
+        assertEquals(0, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_getAllSubGroups_AND_insertSubGroups_insertOneSubGroup() {
-        assertTrue(repo.insertSubGroups(subGroup1));
+    public void test_getAllSubCategories_AND_insertSubCategories_insertOneSubCategory() {
+        assertTrue(repo.insertSubCategories(subCategory1));
 
-        List<SubGroupEntity> returnedSubGroups = repo.getAllSubGroups();
-        assertEquals(1, returnedSubGroups.size());
+        List<SubCategoryEntity> returnedSubCategories = repo.getAllSubCategories();
+        assertEquals(1, returnedSubCategories.size());
 
-        assertEquals(0, subGroup1.getName().compareTo(returnedSubGroups.get(0).getName()));
+        assertEquals(0, subCategory1.getName().compareTo(returnedSubCategories.get(0).getName()));
     }
 
     @Test
-    public void test_getAllSubGroups_AND_insertSubGroups_insertMultipleSubGroups() {
-        assertTrue(repo.insertSubGroups(subGroup1, subGroup2, subGroup3));
+    public void test_getAllSubCategories_AND_insertSubCategories_insertMultipleSubCategories() {
+        assertTrue(repo.insertSubCategories(subCategory1, subCategory2, subCategory3));
 
-        List<SubGroupEntity> returnedSubGroups = repo.getAllSubGroups();
-        assertEquals(3, returnedSubGroups.size());
-        List<String> returnedSubGroupNames = returnedSubGroups.stream()
-                .map(SubGroupEntity::getName)
+        List<SubCategoryEntity> returnedSubCategories = repo.getAllSubCategories();
+        assertEquals(3, returnedSubCategories.size());
+        List<String> returnedSubCategoryNames = returnedSubCategories.stream()
+                .map(SubCategoryEntity::getName)
                 .collect(Collectors.toList());
 
-        assertTrue(returnedSubGroupNames.contains(subGroup1.getName()));
-        assertTrue(returnedSubGroupNames.contains(subGroup2.getName()));
-        assertTrue(returnedSubGroupNames.contains(subGroup3.getName()));
+        assertTrue(returnedSubCategoryNames.contains(subCategory1.getName()));
+        assertTrue(returnedSubCategoryNames.contains(subCategory2.getName()));
+        assertTrue(returnedSubCategoryNames.contains(subCategory3.getName()));
     }
 
     @Test
-    public void test_getAllSubGroups_groupParameter_noMatchingSubGroups() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllSubCategories_categoryParameter_noMatchingSubCategories() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group2);
-        drill2.addSubGroup(subGroup2);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category2);
+        drill2.addSubCategory(subCategory2);
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllSubGroups(group3.getId()).size());
+        assertEquals(0, repo.getAllSubCategories(category3.getId()).size());
     }
 
     @Test
-    public void test_getAllSubGroups_groupParameter_oneMatchingSubGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllSubCategories_categoryParameter_oneMatchingSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group2);
-        drill2.addSubGroup(subGroup2);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category2);
+        drill2.addSubCategory(subCategory2);
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(1, repo.getAllSubGroups(group2.getId()).size());
+        assertEquals(1, repo.getAllSubCategories(category2.getId()).size());
     }
 
     @Test
-    public void test_getAllSubGroups_groupParameter_multipleMatchingSubGroups() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
-        group3 = repo.getGroup(group3.getName());
+    public void test_getAllSubCategories_categoryParameter_multipleMatchingSubCategories() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group1);
-        drill2.addSubGroup(subGroup1);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(2, repo.getAllSubGroups(group1.getId()).size());
+        assertEquals(2, repo.getAllSubCategories(category1.getId()).size());
     }
 
     @Test
-    public void test_getAllSubGroups_groupParameter_nonExistentGroup() {
-        repo.insertGroups(group1, group2, group3);
-        group1 = repo.getGroup(group1.getName());
-        group2 = repo.getGroup(group2.getName());
+    public void test_getAllSubCategories_categoryParameter_nonExistentCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
 
-        repo.insertSubGroups(subGroup1, subGroup2, subGroup3);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
-        subGroup3 = repo.getSubGroup(subGroup3.getName());
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
 
-        drill1.addGroup(group1);
-        drill1.addSubGroup(subGroup1);
-        drill2.addGroup(group2);
-        drill2.addSubGroup(subGroup2);
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category2);
+        drill2.addSubCategory(subCategory2);
 
         repo.insertDrills(drill1, drill2);
 
-        assertEquals(0, repo.getAllSubGroups(group3.getId()).size());
+        assertEquals(0, repo.getAllSubCategories(category3.getId()).size());
     }
 
     @Test
-    public void test_getAllSubGroups_groupParameter_invalidArgument() {
-        assertEquals(0, repo.getAllSubGroups(-1).size());
+    public void test_getAllSubCategories_categoryParameter_invalidArgument() {
+        assertEquals(0, repo.getAllSubCategories(-1).size());
     }
 
     @Test
-    public void test_getSubGroup_idParameter_noExistingSubGroup() {
-        repo.insertSubGroups(subGroup1);
-        assertNull(repo.getSubGroup(repo.getSubGroup(subGroup1.getName()).getId() + 1));
+    public void test_getSubCategory_idParameter_noExistingSubCategory() {
+        repo.insertSubCategories(subCategory1);
+        assertNull(repo.getSubCategory(repo.getSubCategory(subCategory1.getName()).getId() + 1));
     }
 
     @Test
-    public void test_getSubGroup_idParameter_yesExistingSubGroup() {
-        repo.insertSubGroups(subGroup1);
-        SubGroupEntity returnedSubGroup = repo.getAllSubGroups().get(0); // should not throw
-        assertNotNull(repo.getSubGroup(returnedSubGroup.getId()));
+    public void test_getSubCategory_idParameter_yesExistingSubCategory() {
+        repo.insertSubCategories(subCategory1);
+        SubCategoryEntity returnedSubCategory = repo.getAllSubCategories().get(0); // should not throw
+        assertNotNull(repo.getSubCategory(returnedSubCategory.getId()));
     }
 
     @Test
-    public void test_getSubGroup_stringParameter_noExistingSubGroup() {
-        repo.insertSubGroups(subGroup1);
-        assertNull(repo.getSubGroup(subGroup2.getName()));
+    public void test_getSubCategory_stringParameter_noExistingSubCategory() {
+        repo.insertSubCategories(subCategory1);
+        assertNull(repo.getSubCategory(subCategory2.getName()));
     }
 
     @Test
-    public void test_getSubGroup_stringParameter_yesExistingSubGroup() {
-        repo.insertSubGroups(subGroup1);
-        assertNotNull(repo.getSubGroup(subGroup1.getName()));
+    public void test_getSubCategory_stringParameter_yesExistingSubCategory() {
+        repo.insertSubCategories(subCategory1);
+        assertNotNull(repo.getSubCategory(subCategory1.getName()));
     }
 
     @Test
-    public void test_getSubGroup_stringParameter_nullArgument() {
-        assertNull(repo.getSubGroup(null));
+    public void test_getSubCategory_stringParameter_nullArgument() {
+        assertNull(repo.getSubCategory(null));
     }
 
     @Test
-    public void test_insertSubGroup_throwsWhenViolateUniqueKey() {
+    public void test_insertSubCategory_throwsWhenViolateUniqueKey() {
         String sameName = "same name";
-        subGroup1.setName(sameName);
-        subGroup2.setName(sameName);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubGroups(subGroup1, subGroup2));
+        subCategory1.setName(sameName);
+        subCategory2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubCategories(subCategory1, subCategory2));
     }
 
     @Test
-    public void test_insertSubGroup_throwsWhenGivenNullName() {
-        subGroup1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubGroups(subGroup1));
+    public void test_insertSubCategory_throwsWhenGivenNullName() {
+        subCategory1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubCategories(subCategory1));
     }
 
     @Test
-    public void test_insertSubGroup_doesNothingWithNullArgument() {
-        assertTrue(repo.insertSubGroups((SubGroupEntity) null)); // Make sure this does not throw
+    public void test_insertSubCategory_doesNothingWithNullArgument() {
+        assertTrue(repo.insertSubCategories((SubCategoryEntity) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
-    public void test_insertSubGroup_doesNothingWithNullArgumentList() {
-        assertTrue(repo.insertSubGroups((SubGroupEntity[]) null)); // Make sure this does not throw
+    public void test_insertSubCategory_doesNothingWithNullArgumentList() {
+        assertTrue(repo.insertSubCategories((SubCategoryEntity[]) null)); // Make sure this does not throw
         assertEquals(0, repo.getAllDrills().size());
     }
 
     @Test
-    public void test_updateSubGroup_updateOneSubGroup() {
-        repo.insertSubGroups(subGroup1);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
+    public void test_updateSubCategory_updateOneSubCategory() {
+        repo.insertSubCategories(subCategory1);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
         String newName = "new name";
-        subGroup1.setName(newName);
-        assertTrue(repo.updateSubGroups(subGroup1));
+        subCategory1.setName(newName);
+        assertTrue(repo.updateSubCategories(subCategory1));
 
-        assertEquals(0, newName.compareTo(repo.getSubGroup(subGroup1.getId()).getName()));
+        assertEquals(0, newName.compareTo(repo.getSubCategory(subCategory1.getId()).getName()));
     }
 
     @Test
-    public void test_updateSubGroup_updateMultipleSubGroups() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_updateSubCategory_updateMultipleSubCategories() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
         String newName1 = "new name 1";
         String newName2 = "new name 2";
-        subGroup1.setName(newName1);
-        subGroup2.setName(newName2);
-        assertTrue(repo.updateSubGroups(subGroup1, subGroup2));
+        subCategory1.setName(newName1);
+        subCategory2.setName(newName2);
+        assertTrue(repo.updateSubCategories(subCategory1, subCategory2));
 
-        assertEquals(0, newName1.compareTo(repo.getSubGroup(subGroup1.getId()).getName()));
-        assertEquals(0, newName2.compareTo(repo.getSubGroup(subGroup2.getId()).getName()));
+        assertEquals(0, newName1.compareTo(repo.getSubCategory(subCategory1.getId()).getName()));
+        assertEquals(0, newName2.compareTo(repo.getSubCategory(subCategory2.getId()).getName()));
     }
 
     @Test
-    public void test_updateSubGroup_throwsWhenViolateUniqueKey() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup2 = repo.getSubGroup(subGroup2.getName());
+    public void test_updateSubCategory_throwsWhenViolateUniqueKey() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
         String sameName = "same name";
-        subGroup1.setName(sameName);
-        subGroup2.setName(sameName);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubGroups(subGroup1, subGroup2));
+        subCategory1.setName(sameName);
+        subCategory2.setName(sameName);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubCategories(subCategory1, subCategory2));
     }
 
     @Test
-    public void test_updateSubGroup_throwsWhenGivenNullName() {
-        repo.insertSubGroups(subGroup1);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        subGroup1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubGroups(subGroup1));
+    public void test_updateSubCategory_throwsWhenGivenNullName() {
+        repo.insertSubCategories(subCategory1);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory1.setName(null);
+        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubCategories(subCategory1));
     }
 
     @Test
-    public void test_updateSubGroup_doesNothingWithNonExistentSubGroup() {
-        assertFalse(repo.updateSubGroups(subGroup1));
-        assertEquals(0, repo.getAllSubGroups().size());
+    public void test_updateSubCategory_doesNothingWithNonExistentSubCategory() {
+        assertFalse(repo.updateSubCategories(subCategory1));
+        assertEquals(0, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_updateSubGroup_doesNothingWithNullArgument() {
-        assertTrue(repo.updateSubGroups((SubGroupEntity) null));
-        assertEquals(0, repo.getAllSubGroups().size());
+    public void test_updateSubCategory_doesNothingWithNullArgument() {
+        assertTrue(repo.updateSubCategories((SubCategoryEntity) null));
+        assertEquals(0, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_updateSubGroup_doesNothingWithNullArgumentList() {
-        assertTrue(repo.updateSubGroups((SubGroupEntity[]) null));
-        assertEquals(0, repo.getAllSubGroups().size());
+    public void test_updateSubCategory_doesNothingWithNullArgumentList() {
+        assertTrue(repo.updateSubCategories((SubCategoryEntity[]) null));
+        assertEquals(0, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_deleteSubGroups_deleteExistingSubGroup() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        subGroup1 = repo.getSubGroup(subGroup1.getName());
-        repo.deleteSubGroups(subGroup1);
-        assertEquals(1, repo.getAllSubGroups().size());
+    public void test_deleteSubCategories_deleteExistingSubCategory() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        repo.deleteSubCategories(subCategory1);
+        assertEquals(1, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_deleteSubGroups_nonExistentSubGroupDoesNothing() {
-        repo.insertSubGroups(subGroup1, subGroup2);
-        repo.deleteSubGroups(subGroup3);
-        assertEquals(2, repo.getAllSubGroups().size());
+    public void test_deleteSubCategories_nonExistentSubCategoryDoesNothing() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        repo.deleteSubCategories(subCategory3);
+        assertEquals(2, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_deleteSubGroups_doesNothingWithNullArgument() {
-        repo.insertSubGroups(subGroup1);
-        repo.deleteSubGroups((SubGroupEntity) null); // Make sure this does not throw
-        assertEquals(1, repo.getAllSubGroups().size());
+    public void test_deleteSubCategories_doesNothingWithNullArgument() {
+        repo.insertSubCategories(subCategory1);
+        repo.deleteSubCategories((SubCategoryEntity) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllSubCategories().size());
     }
 
     @Test
-    public void test_deleteSubGroups_doesNothingWithNullArgumentList() {
-        repo.insertSubGroups(subGroup1);
-        repo.deleteSubGroups((SubGroupEntity[]) null); // Make sure this does not throw
-        assertEquals(1, repo.getAllSubGroups().size());
+    public void test_deleteSubCategories_doesNothingWithNullArgumentList() {
+        repo.insertSubCategories(subCategory1);
+        repo.deleteSubCategories((SubCategoryEntity[]) null); // Make sure this does not throw
+        assertEquals(1, repo.getAllSubCategories().size());
     }
 }

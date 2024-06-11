@@ -19,10 +19,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.database.CategoryEntity;
 import com.damienwesterman.defensedrill.database.Drill;
 import com.damienwesterman.defensedrill.database.DrillRepository;
-import com.damienwesterman.defensedrill.database.GroupEntity;
-import com.damienwesterman.defensedrill.database.SubGroupEntity;
+import com.damienwesterman.defensedrill.database.SubCategoryEntity;
 
 import java.util.ArrayList;
 
@@ -35,9 +35,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
     }
-    // TODO: Use LinearLayout for this one as it is simpler, then for the Group and SubGroup lists use
+    // TODO: Use LinearLayout for this one as it is simpler, then for the Category and SubCategory lists use
     //       RecyclerView. Maybe have a service or something in order to report over all the activities
-    //       what Group and SubGroup was picked, that way it could also do the database interactions
+    //       what Category and SubCategory was picked, that way it could also do the database interactions
     //       off the main thread? Or maybe just pass each to the next activity as it is called and
     //       have the last one responsible for it? That's probably better so we can show some sort
     //       of loading screen then hide it and all that, especially during regeneration
@@ -45,7 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
-            Intent intent = new Intent(this, GroupSelectActivity.class);
+            Intent intent = new Intent(this, CategorySelectActivity.class);
             startActivity(intent);
         } else if (R.id.createDrillCard == cardId) {
             Toast.makeText(this, "Unimplemented: Create Drill", Toast.LENGTH_SHORT).show();
@@ -63,56 +63,56 @@ public class HomeActivity extends AppCompatActivity {
 
         // Clear database
         repo.deleteDrills(repo.getAllDrills().toArray(new Drill[0]));
-        repo.deleteGroups(repo.getAllGroups().toArray(new GroupEntity[0]));
-        repo.deleteSubGroups(repo.getAllSubGroups().toArray(new SubGroupEntity[0]));
+        repo.deleteCategories(repo.getAllCategories().toArray(new CategoryEntity[0]));
+        repo.deleteSubCategories(repo.getAllSubCategories().toArray(new SubCategoryEntity[0]));
 
-        // Set up groups
-        GroupEntity kickBoxingGroup = new GroupEntity("Kickboxing", "Using fists and kicks.");
-        GroupEntity kravMagaGroup = new GroupEntity("Krav Maga", "Real world escapes.");
-        GroupEntity jiuJitsuGroup = new GroupEntity("Jiu-Jitsu", "Ground based grapples.");
-        repo.insertGroups(kickBoxingGroup, kravMagaGroup, jiuJitsuGroup);
-        kickBoxingGroup = repo.getGroup(kickBoxingGroup.getName());
-        kravMagaGroup = repo.getGroup(kravMagaGroup.getName());
-        jiuJitsuGroup = repo.getGroup(jiuJitsuGroup.getName());
+        // Set up categories
+        CategoryEntity kickBoxingCategory = new CategoryEntity("Kickboxing", "Using fists and kicks.");
+        CategoryEntity kravMagaCategory = new CategoryEntity("Krav Maga", "Real world escapes.");
+        CategoryEntity jiuJitsuCategory = new CategoryEntity("Jiu-Jitsu", "Ground based grapples.");
+        repo.insertCategories(kickBoxingCategory, kravMagaCategory, jiuJitsuCategory);
+        kickBoxingCategory = repo.getCategory(kickBoxingCategory.getName());
+        kravMagaCategory = repo.getCategory(kravMagaCategory.getName());
+        jiuJitsuCategory = repo.getCategory(jiuJitsuCategory.getName());
 
-        // Set up subGroups
-        SubGroupEntity strikesSubGroup = new SubGroupEntity("Strikes", "Using your upper body to strike your opponent.");
-        SubGroupEntity kicksSubGroup = new SubGroupEntity("Kicks", "Using your legs to strike your opponent.");
-        SubGroupEntity escapesSubGroup = new SubGroupEntity("Escapes", "Escaping an opponent's hold on you.");
-        repo.insertSubGroups(strikesSubGroup, kicksSubGroup, escapesSubGroup);
-        strikesSubGroup = repo.getSubGroup(strikesSubGroup.getName());
-        kicksSubGroup = repo.getSubGroup(kickBoxingGroup.getName());
-        escapesSubGroup = repo.getSubGroup(escapesSubGroup.getName());
+        // Set up subCategories
+        SubCategoryEntity strikesSubCategory = new SubCategoryEntity("Strikes", "Using your upper body to strike your opponent.");
+        SubCategoryEntity kicksSubCategory = new SubCategoryEntity("Kicks", "Using your legs to strike your opponent.");
+        SubCategoryEntity escapesSubCategory = new SubCategoryEntity("Escapes", "Escaping an opponent's hold on you.");
+        repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory);
+        strikesSubCategory = repo.getSubCategory(strikesSubCategory.getName());
+        kicksSubCategory = repo.getSubCategory(kickBoxingCategory.getName());
+        escapesSubCategory = repo.getSubCategory(escapesSubCategory.getName());
 
         // Set up some drills
         Drill jab = new Drill("Jab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        jab.addGroup(kickBoxingGroup);
-        jab.addSubGroup(strikesSubGroup);
+        jab.addCategory(kickBoxingCategory);
+        jab.addSubCategory(strikesSubCategory);
         Drill cross = new Drill("Cross", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        cross.addGroup(kickBoxingGroup);
-        cross.addSubGroup(strikesSubGroup);
+        cross.addCategory(kickBoxingCategory);
+        cross.addSubCategory(strikesSubCategory);
         Drill roundKick = new Drill("Round Kick", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        roundKick.addGroup(kickBoxingGroup);
-        roundKick.addSubGroup(kicksSubGroup);
+        roundKick.addCategory(kickBoxingCategory);
+        roundKick.addSubCategory(kicksSubCategory);
         Drill elbow = new Drill("Elbow", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        elbow.addGroup(kravMagaGroup);
-        elbow.addSubGroup(strikesSubGroup);
+        elbow.addCategory(kravMagaCategory);
+        elbow.addSubCategory(strikesSubCategory);
         Drill knee = new Drill("Knee", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        knee.addGroup(kravMagaGroup);
-        knee.addSubGroup(kicksSubGroup);
+        knee.addCategory(kravMagaCategory);
+        knee.addSubCategory(kicksSubCategory);
         Drill oneHandChokeEscape = new Drill("One Hand Standing Choke Escape", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        oneHandChokeEscape.addGroup(kravMagaGroup);
-        oneHandChokeEscape.addSubGroup(escapesSubGroup);
+        oneHandChokeEscape.addCategory(kravMagaCategory);
+        oneHandChokeEscape.addSubCategory(escapesSubCategory);
         Drill shrimpEscape = new Drill("Shrimp Escape", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
-        shrimpEscape.addGroup(jiuJitsuGroup);
-        shrimpEscape.addSubGroup(escapesSubGroup);
+        shrimpEscape.addCategory(jiuJitsuCategory);
+        shrimpEscape.addSubCategory(escapesSubCategory);
         repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape);
     }
 }

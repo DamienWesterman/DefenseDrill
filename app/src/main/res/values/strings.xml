@@ -3,7 +3,7 @@
     <string name="generate_drill_title">Generate Drill</string>
     <string name="generate_drills_description">Randomly generate a drill to practice.</string>
     <string name="create_drill_title">Create Drill</string>
-    <string name="create_drill_description">Create a new Drill, new type of Group, or new type of SubGroup.</string>
+    <string name="create_drill_description">Create a new Drill, new type of Category, or new type of sub-Category.</string>
     <string name="view_all_drills_title">View All Drills</string>
-    <string name="view_all_drills_description">See all currently saved drills, groups, and subgroups. Filter drills by group and/or subgroup.</string>
+    <string name="view_all_drills_description">See all currently saved Drills, Categories, and sub-Categories. Filter drills by category and/or sub-category.</string>
 </resources>
