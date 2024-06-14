@@ -15,8 +15,9 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
-import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
 
@@ -24,20 +25,24 @@ import java.util.List;
  * TODO Doc comments
  * Abstraction so that we don't do another database call on phone rotation
  */
-public class CategorySelectViewModel extends AndroidViewModel {
-    private List<CategoryEntity> categories;
+public class SubCategorySelectViewModel extends AndroidViewModel {
+    private List<SubCategoryEntity> categories;
     private final DrillRepository repo;
 
-    public CategorySelectViewModel(Application application) {
+    public SubCategorySelectViewModel(Application application) {
         super(application);
 
         repo = DrillRepository.getInstance(application);
         categories = null;
     }
 
-    public List<CategoryEntity> getCategories() {
+    public List<SubCategoryEntity> getCategories(long id) {
         if (null == categories) {
-            categories = repo.getAllCategories();
+            if (Constants.RANDOM_CHOICE == id) {
+                categories = repo.getAllSubCategories();
+            } else {
+                categories = repo.getAllSubCategories(id);
+            }
         }
         return this.categories;
     }

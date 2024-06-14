@@ -11,19 +11,22 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.view_models.CategorySelectViewModel;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * TODO doc comments
@@ -38,13 +41,20 @@ public class CategorySelectActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(CategorySelectViewModel.class);
 
-        // TODO: implement RecyclerView with Cards
         Executors.newSingleThreadExecutor().execute(() -> {
             List<CategoryEntity> categories = viewModel.getCategories();
-            String categoryNames = categories.stream().map(CategoryEntity::getName).collect(Collectors.joining("\n"));
+            // Add some kind of loading wheel until recyclerView is done with setup?
+            // Also check if there are 0 Categories
 
-            TextView textView = findViewById(R.id.textView);
-            runOnUiThread(() -> textView.setText(categoryNames));
+            runOnUiThread(() -> {
+                RecyclerView recyclerView = findViewById(R.id.categoryRecyclerView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                recyclerView.setAdapter(new AbstractCategoryAdapter<>(categories, id -> {
+                    Intent intent = new Intent(this, SubCategorySelectActivity.class);
+                    intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, id);
+                    startActivity(intent);
+                }));
+            });
         });
     }
 }
