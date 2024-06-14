@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 
 /**
  * TODO doc comments
+ * TODO Notate the required intents (none)
  */
 public class CategorySelectActivity extends AppCompatActivity {
     CategorySelectViewModel viewModel;

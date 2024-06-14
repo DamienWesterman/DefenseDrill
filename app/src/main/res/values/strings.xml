@@ -9,4 +9,7 @@
     <string name="select_category">Select a Category</string>
     <string name="random_category">Random Category</string>
     <string name="randomly_select_any_category">Randomly select any category.</string>
+    <string name="select_sub_category">Select a sub-Category</string>
+    <string name="random_sub_category">Random sub-Category</string>
+    <string name="randomly_select_any_sub_category">Randomly select any sub-category.</string>
 </resources>

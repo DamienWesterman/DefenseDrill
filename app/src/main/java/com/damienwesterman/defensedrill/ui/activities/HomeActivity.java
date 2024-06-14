@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
         SubCategoryEntity escapesSubCategory = new SubCategoryEntity("Escapes", "Escaping an opponent's hold on you.");
         repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory);
         strikesSubCategory = repo.getSubCategory(strikesSubCategory.getName());
-        kicksSubCategory = repo.getSubCategory(kickBoxingCategory.getName());
+        kicksSubCategory = repo.getSubCategory(kicksSubCategory.getName());
         escapesSubCategory = repo.getSubCategory(escapesSubCategory.getName());
 
         // Set up some drills
