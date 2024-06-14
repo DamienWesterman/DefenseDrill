@@ -15,7 +15,7 @@ package com.damienwesterman.defensedrill.utils;
  * TODO Doc comments
  */
 public class Constants {
-    public static final long RANDOM_CHOICE = -1;
+    public static final long USER_RANDOM_SELECTION = -1;
 
     // Intents
     public static final String INTENT_PREFIX = "com.damienwesterman.defensedrill.";

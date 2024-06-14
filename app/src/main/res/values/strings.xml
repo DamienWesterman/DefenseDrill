@@ -6,4 +6,7 @@
     <string name="create_drill_description">Create a new Drill, new type of Category, or new type of sub-Category.</string>
     <string name="view_all_drills_title">View All Drills</string>
     <string name="view_all_drills_description">See all currently saved Drills, Categories, and sub-Categories. Filter drills by category and/or sub-category.</string>
+    <string name="select_category">Select a Category</string>
+    <string name="random_category">Random Category</string>
+    <string name="randomly_select_any_category">Randomly select any category.</string>
 </resources>

@@ -13,6 +13,8 @@ package com.damienwesterman.defensedrill.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -41,13 +43,32 @@ public class CategorySelectActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(CategorySelectViewModel.class);
 
+        setUpRecyclerView();
+    }
+
+    public void randomCategoryClick(View view) {
+        Intent intent = new Intent(this, SubCategorySelectActivity.class);
+        intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        startActivity(intent);
+    }
+
+    private void setUpRecyclerView() {
         Executors.newSingleThreadExecutor().execute(() -> {
             List<CategoryEntity> categories = viewModel.getCategories();
-            // Add some kind of loading wheel until recyclerView is done with setup?
-            // Also check if there are 0 Categories
+
+            RecyclerView recyclerView = findViewById(R.id.categoryRecyclerView);
+            recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    // Once all the items are rendered: remove this listener, hide progress bar,
+                    // and display the random option
+                    recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    findViewById(R.id.categoryProgressBar).setVisibility(View.GONE);
+                    findViewById(R.id.randomCategoryCard).setVisibility(View.VISIBLE);
+                }
+            });
 
             runOnUiThread(() -> {
-                RecyclerView recyclerView = findViewById(R.id.categoryRecyclerView);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
                 recyclerView.setAdapter(new AbstractCategoryAdapter<>(categories, id -> {
                     Intent intent = new Intent(this, SubCategorySelectActivity.class);

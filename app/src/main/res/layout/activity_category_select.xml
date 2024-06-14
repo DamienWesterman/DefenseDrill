@@ -3,8 +3,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.activities.CategorySelectActivity">
+
+    <TextView
+        android:id="@+id/selectCategoryText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_category"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+    <View
+        android:id="@+id/categoryDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <ProgressBar
+        android:id="@+id/categoryProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Random Category card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/randomCategoryCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        android:visibility="gone"
+        android:onClick="randomCategoryClick">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/randomCategoryTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/random_category"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/randomCategoryDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/randomly_select_any_category"
+                android:textSize="14sp"
+                android:textStyle="italic" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoryRecyclerView"

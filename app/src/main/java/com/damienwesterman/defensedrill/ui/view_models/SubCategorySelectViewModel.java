@@ -38,7 +38,7 @@ public class SubCategorySelectViewModel extends AndroidViewModel {
 
     public List<SubCategoryEntity> getCategories(long id) {
         if (null == categories) {
-            if (Constants.RANDOM_CHOICE == id) {
+            if (Constants.USER_RANDOM_SELECTION == id) {
                 categories = repo.getAllSubCategories();
             } else {
                 categories = repo.getAllSubCategories(id);
