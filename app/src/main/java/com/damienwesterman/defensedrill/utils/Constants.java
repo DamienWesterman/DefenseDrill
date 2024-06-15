@@ -23,4 +23,6 @@ public class Constants {
     public static final String INTENT_CATEGORY_CHOICE = INTENT_PREFIX + "category_choice";
     /** Should be accompanied by a long of the SubCategory ID chosen */
     public static final String INTENT_SUB_CATEGORY_CHOICE = INTENT_PREFIX + "sub_category_choice";
+    /** Should be accompanied by a long of the Drill ID */
+    public static final String INTENT_DRILL_ID = INTENT_PREFIX + "drill_id";
 }
