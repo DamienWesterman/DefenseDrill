@@ -16,17 +16,23 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * TODO doc comments
  * TODO Notate the required intents
  */
 public class DrillInfoActivity extends AppCompatActivity {
-    private DrillInfoViewModel viewModel;
     // TODO make an enum or something so we know the origin of the intent and what views to display
 
     @Override
@@ -39,7 +45,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     private void setUpViewModel() {
-        viewModel = new ViewModelProvider(this).get(DrillInfoViewModel.class);
+        DrillInfoViewModel viewModel = new ViewModelProvider(this).get(DrillInfoViewModel.class);
 
         viewModel.getDrill().observe(this, drill -> runOnUiThread(() -> {
             if (null == drill) {
@@ -47,10 +53,19 @@ public class DrillInfoActivity extends AppCompatActivity {
                 return;
             }
             // TODO Update UI components
+            TextView drillName = findViewById(R.id.drillName);
+            drillName.setText(drill.getName());
+            TextView lastDrilled = findViewById(R.id.lastDrilledDate);
+            Date drilledDate = new Date(drill.getLastDrilled());
+            DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+            lastDrilled.setText(dateFormatter.format(drilledDate));
+            TextView notes = findViewById(R.id.notes);
+            notes.setText(drill.getNotes());
+            ProgressBar progressBar = findViewById(R.id.drillProgressBar);
+            progressBar.setVisibility(View.GONE);
         }));
 
         Intent intent = getIntent();
-
         if (intent.hasExtra(Constants.INTENT_DRILL_ID)) {
             long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
             viewModel.populateDrill(drillId);

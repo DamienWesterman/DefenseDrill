@@ -12,4 +12,7 @@
     <string name="select_sub_category">Select a sub-Category</string>
     <string name="random_sub_category">Random sub-Category</string>
     <string name="randomly_select_any_sub_category">Randomly select any sub-category.</string>
+    <string name="last_drilled_label">Last Drilled:</string>
+    <string name="notes_label">Notes:</string>
+    <string name="notes_hint">Enter notes about this drill…</string>
 </resources>

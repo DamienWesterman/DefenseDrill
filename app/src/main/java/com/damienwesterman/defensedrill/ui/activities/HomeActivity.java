@@ -70,19 +70,25 @@ public class HomeActivity extends AppCompatActivity {
         CategoryEntity kickBoxingCategory = new CategoryEntity("Kickboxing", "Using fists and kicks.");
         CategoryEntity kravMagaCategory = new CategoryEntity("Krav Maga", "Real world escapes.");
         CategoryEntity jiuJitsuCategory = new CategoryEntity("Jiu-Jitsu", "Ground based grapples.");
-        repo.insertCategories(kickBoxingCategory, kravMagaCategory, jiuJitsuCategory);
+        CategoryEntity weaponsDefenseCategory = new CategoryEntity("Weapons Defense", "How to deal with an attacker with a weapon.");
+        repo.insertCategories(kickBoxingCategory, kravMagaCategory, jiuJitsuCategory, weaponsDefenseCategory);
         kickBoxingCategory = repo.getCategory(kickBoxingCategory.getName());
         kravMagaCategory = repo.getCategory(kravMagaCategory.getName());
         jiuJitsuCategory = repo.getCategory(jiuJitsuCategory.getName());
+        weaponsDefenseCategory = repo.getCategory(weaponsDefenseCategory.getName());
 
         // Set up subCategories
         SubCategoryEntity strikesSubCategory = new SubCategoryEntity("Strikes", "Using your upper body to strike your opponent.");
         SubCategoryEntity kicksSubCategory = new SubCategoryEntity("Kicks", "Using your legs to strike your opponent.");
         SubCategoryEntity escapesSubCategory = new SubCategoryEntity("Escapes", "Escaping an opponent's hold on you.");
-        repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory);
+        SubCategoryEntity gunDefenseSubCategory = new SubCategoryEntity("Gun Defense", "Dealing with an attacker who has a gun.");
+        SubCategoryEntity knifeDefenseSubCategory = new SubCategoryEntity("Knife Defense", "Dealing with an attacker who has a knife");
+        repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory, gunDefenseSubCategory, knifeDefenseSubCategory);
         strikesSubCategory = repo.getSubCategory(strikesSubCategory.getName());
         kicksSubCategory = repo.getSubCategory(kicksSubCategory.getName());
         escapesSubCategory = repo.getSubCategory(escapesSubCategory.getName());
+        gunDefenseSubCategory = repo.getSubCategory(gunDefenseSubCategory.getName());
+        knifeDefenseSubCategory = repo.getSubCategory(knifeDefenseSubCategory.getName());
 
         // Set up some drills
         Drill jab = new Drill("Jab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
@@ -113,6 +119,22 @@ public class HomeActivity extends AppCompatActivity {
                 -1, new ArrayList<>(), new ArrayList<>());
         shrimpEscape.addCategory(jiuJitsuCategory);
         shrimpEscape.addSubCategory(escapesSubCategory);
-        repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape);
+        Drill gunToHeadDrill = new Drill("Gun to the Front of the Head", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        gunToHeadDrill.addCategory(weaponsDefenseCategory);
+        gunToHeadDrill.addSubCategory(gunDefenseSubCategory);
+        Drill gunToHeadBack = new Drill("Gun to the Back", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        gunToHeadBack.addCategory(weaponsDefenseCategory);
+        gunToHeadBack.addSubCategory(gunDefenseSubCategory);
+        Drill slash = new Drill("Knife Slash", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        slash.addCategory(weaponsDefenseCategory);
+        slash.addSubCategory(knifeDefenseSubCategory);
+        Drill risingStab = new Drill("Rising Stab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        risingStab.addCategory(weaponsDefenseCategory);
+        risingStab.addSubCategory(knifeDefenseSubCategory);
+        repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape, gunToHeadDrill, gunToHeadBack, slash, risingStab);
     }
 }
