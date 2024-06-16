@@ -15,6 +15,16 @@
         android:textAlignment="center"
         android:textSize="36sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/categorySelection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/loading"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        android:textSize="20sp" />
+
     <View
         android:id="@+id/subCategoryDivider"
         android:layout_width="match_parent"

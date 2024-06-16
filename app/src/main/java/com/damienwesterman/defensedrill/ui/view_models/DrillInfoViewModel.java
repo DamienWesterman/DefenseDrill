@@ -11,7 +11,10 @@
 
 package com.damienwesterman.defensedrill.ui.view_models;
 
+import android.app.Activity;
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
+import android.widget.Toast;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -24,6 +27,7 @@ import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -32,7 +36,8 @@ import java.util.concurrent.Executors;
 public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<Drill> currentDrill;
     private final DrillRepository repo;
-    private DrillGenerator drillGenerator; //. TODO: Check if null in regenerating
+    private DrillGenerator drillGenerator;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public DrillInfoViewModel(Application application) {
         super(application);
@@ -45,12 +50,17 @@ public class DrillInfoViewModel extends AndroidViewModel {
         return currentDrill;
     }
 
-    public void populateDrill(long drillId) {
+    public void setDrill(Drill drill) {
+        if (null != drill) {
+            currentDrill.postValue(drill);
+        }
+    }
 
+    public void populateDrill(long drillId) {
     }
 
     public void populateDrill(long categoryId, long subCategoryId) {
-        Executors.newSingleThreadExecutor().execute(() -> {
+        executor.execute(() -> {
             List<Drill> drills;
             if (Constants.USER_RANDOM_SELECTION == categoryId &&
                     Constants.USER_RANDOM_SELECTION == subCategoryId) {
@@ -64,6 +74,33 @@ public class DrillInfoViewModel extends AndroidViewModel {
             }
             drillGenerator = new DrillGenerator(drills, new Random());
             currentDrill.postValue(drillGenerator.generateDrill());
+        });
+    }
+
+    public void regenerateDrill() {
+        if (null != drillGenerator) {
+            currentDrill.setValue(drillGenerator.regenerateDrill());
+        }
+    }
+
+    public void resetSkippedDrills() {
+        if (null != drillGenerator) {
+            drillGenerator.resetSkippedDrills();
+        }
+    }
+
+    /**
+     * TODO doc comments, pass in app context so that we
+     */
+    public void saveDrill(Drill drill, Activity activity) {
+        executor.execute(() -> {
+           try {
+               repo.updateDrills(drill);
+               currentDrill.postValue(drill);
+           } catch (SQLiteConstraintException e) {
+               activity.runOnUiThread(() ->
+                       Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
+           }
         });
     }
 }

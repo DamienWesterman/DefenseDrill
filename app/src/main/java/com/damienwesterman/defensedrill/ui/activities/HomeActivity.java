@@ -27,7 +27,8 @@ import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import java.util.ArrayList;
 
 /**
- * TOD doc comments
+ * TODO doc comments
+ * TODO Make sure all the ui classes are clean
  */
 public class HomeActivity extends AppCompatActivity {
     @Override
@@ -35,12 +36,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
     }
-    // TODO: Use LinearLayout for this one as it is simpler, then for the Category and SubCategory lists use
-    //       RecyclerView. Maybe have a service or something in order to report over all the activities
-    //       what Category and SubCategory was picked, that way it could also do the database interactions
-    //       off the main thread? Or maybe just pass each to the next activity as it is called and
-    //       have the last one responsible for it? That's probably better so we can show some sort
-    //       of loading screen then hide it and all that, especially during regeneration
 
     public void onCardClick(View view) {
         int cardId = view.getId();

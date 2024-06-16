@@ -15,6 +15,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
+import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.utils.Constants;
@@ -28,6 +29,8 @@ import java.util.List;
 public class SubCategorySelectViewModel extends AndroidViewModel {
     private List<SubCategoryEntity> categories;
     private final DrillRepository repo;
+    // TODO Change the functionality of the back buttons, whether to send the existing category pick
+    //  (might already do this), or go back to home maybe. Maybe display the chosen Category here?
 
     public SubCategorySelectViewModel(Application application) {
         super(application);
@@ -45,5 +48,10 @@ public class SubCategorySelectViewModel extends AndroidViewModel {
             }
         }
         return this.categories;
+    }
+
+    public String getCategoryName(long categoryId) {
+        CategoryEntity category = repo.getCategory(categoryId);
+        return null == category ? "" : category.getName();
     }
 }
