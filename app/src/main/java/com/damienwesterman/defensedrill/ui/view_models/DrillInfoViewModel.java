@@ -20,8 +20,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
@@ -35,6 +37,8 @@ import java.util.concurrent.Executors;
  */
 public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<Drill> currentDrill;
+    private final MutableLiveData<List<CategoryEntity>> allCategories;
+    private final MutableLiveData<List<SubCategoryEntity>> allSubCategories;
     private final DrillRepository repo;
     private DrillGenerator drillGenerator;
     ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -43,6 +47,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
         super(application);
 
         currentDrill = new MutableLiveData<>();
+        allCategories = new MutableLiveData<>();
+        allSubCategories = new MutableLiveData<>();
         repo = DrillRepository.getInstance(application);
     }
 
@@ -57,6 +63,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     public void populateDrill(long drillId) {
+        executor.execute(() -> currentDrill.postValue(repo.getDrill(drillId)));
     }
 
     public void populateDrill(long categoryId, long subCategoryId) {
@@ -90,17 +97,46 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     /**
-     * TODO doc comments, pass in app context so that we
+     * why we pass in app context
      */
     public void saveDrill(Drill drill, Activity activity) {
         executor.execute(() -> {
            try {
                repo.updateDrills(drill);
                currentDrill.postValue(drill);
+               activity.runOnUiThread(() ->
+                       Toast.makeText(activity, "Successfully saved changes!",
+                               Toast.LENGTH_SHORT).show());
            } catch (SQLiteConstraintException e) {
                activity.runOnUiThread(() ->
                        Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
            }
         });
+    }
+
+    public LiveData<List<CategoryEntity>> getAllCategories() {
+        return allCategories;
+    }
+
+    public LiveData<List<SubCategoryEntity>> getAllSubCategories() {
+        return allSubCategories;
+    }
+
+    public void loadAllCategories() {
+        if (null == allCategories.getValue()) {
+            executor.execute(() -> allCategories.postValue(repo.getAllCategories()));
+        } else {
+            // Force the observer to trigger
+            allCategories.setValue(allCategories.getValue());
+        }
+    }
+
+    public void loadAllSubCategories() {
+        if (null == allSubCategories.getValue()) {
+            executor.execute(() -> allSubCategories.postValue(repo.getAllSubCategories()));
+        } else {
+            // Force the observer to trigger
+            allSubCategories.setValue(allSubCategories.getValue());
+        }
     }
 }

@@ -75,7 +75,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
 
     private void setUpRecyclerView() {
         executor.execute(() -> {
-            List<SubCategoryEntity> subCategories = viewModel.getCategories(selectedCategoryId);
+            List<SubCategoryEntity> subCategories = viewModel.getSubCategories(selectedCategoryId);
 
             RecyclerView recyclerView = findViewById(R.id.subCategoryRecyclerView);
             recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

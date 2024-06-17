@@ -23,12 +23,16 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.utils.Constants;
+import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * TODO doc comments
  * TODO Make sure all the ui classes are clean
+ * TODO Double check everywhere for null checks
  */
 public class HomeActivity extends AppCompatActivity {
     @Override
@@ -47,6 +51,7 @@ public class HomeActivity extends AppCompatActivity {
             // Just for now, create some mock entries in the database
             new Thread(this::mockDatabaseEntries).start();
         } else if (R.id.viewDrillsCard == cardId) {
+            new Thread(this::mockLaunchRandomDrill).start();
             Toast.makeText(this, "Unimplemented: View Drills", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Unknown option", Toast.LENGTH_SHORT).show();
@@ -131,5 +136,14 @@ public class HomeActivity extends AppCompatActivity {
         risingStab.addCategory(weaponsDefenseCategory);
         risingStab.addSubCategory(knifeDefenseSubCategory);
         repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape, gunToHeadDrill, gunToHeadBack, slash, risingStab);
+    }
+
+    private void mockLaunchRandomDrill() {
+        DrillRepository repo = DrillRepository.getInstance(this);
+        DrillGenerator generator = new DrillGenerator(repo.getAllDrills(), new Random());
+        Drill drill = generator.generateDrill();
+        Intent intent = new Intent(this, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_DRILL_ID, drill.getId());
+        startActivity(intent);
     }
 }

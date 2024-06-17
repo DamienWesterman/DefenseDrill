@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activityDrillInfo"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -61,6 +62,27 @@
         android:textSize="24sp"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/editCategoriesButton"
+        android:onClick="editCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/view_edit_categories"
+        android:visibility="gone"
+        android:drawableLeft="@drawable/edit_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded" />
+
+    <Button
+        android:id="@+id/editSubCategoriesButton"
+        android:onClick="editSubCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/view_edit_sub_categories"
+        android:visibility="gone"
+        android:drawableLeft="@drawable/edit_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded" />
+
     <TextView
         android:id="@+id/notesLabel"
         android:layout_width="match_parent"
@@ -75,7 +97,7 @@
         android:id="@+id/notes"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:textSize="24sp"
         android:hint="@string/notes_hint"
         android:autofillHints=""
@@ -91,7 +113,6 @@
             android:onClick="regenerateDrill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_weight="1"
             android:text="@string/skip_drill"
@@ -105,7 +126,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
             android:layout_weight="1"
             android:text="@string/reset_skipped_drills"
             android:drawableLeft="@drawable/refresh_icon"
@@ -123,24 +143,32 @@
             android:onClick="saveDrillInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_weight="1"
-            android:text="@string/mark_as_practiced"
+            android:text="@string/save_changes"
             android:drawableLeft="@drawable/save_icon"
             android:visibility="gone"
             tools:ignore="ButtonStyle,RtlHardcoded" />
 
         <Button
-            android:id="@+id/homeButton"
-            android:onClick="goHome"
+            android:id="@+id/markAsPracticedButton"
+            android:onClick="markAsPracticed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
             android:layout_weight="1"
-            android:text="@string/home"
-            android:drawableLeft="@drawable/home_icon"
+            android:text="@string/mark_as_practiced"
+            android:drawableLeft="@drawable/checkmark_icon"
+            android:visibility="gone"
             tools:ignore="ButtonStyle,RtlHardcoded" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/homeButton"
+        android:onClick="goHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/home"
+        android:drawableLeft="@drawable/home_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded" />
 </LinearLayout>

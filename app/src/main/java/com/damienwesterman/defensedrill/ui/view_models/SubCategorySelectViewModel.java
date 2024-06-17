@@ -29,8 +29,6 @@ import java.util.List;
 public class SubCategorySelectViewModel extends AndroidViewModel {
     private List<SubCategoryEntity> categories;
     private final DrillRepository repo;
-    // TODO Change the functionality of the back buttons, whether to send the existing category pick
-    //  (might already do this), or go back to home maybe. Maybe display the chosen Category here?
 
     public SubCategorySelectViewModel(Application application) {
         super(application);
@@ -39,7 +37,9 @@ public class SubCategorySelectViewModel extends AndroidViewModel {
         categories = null;
     }
 
-    public List<SubCategoryEntity> getCategories(long id) {
+    // TODO Yeah change all this stuff to be LiveData in everywhere to make it cleaner
+    // Refactor to do all background stuff in the ViewModel
+    public List<SubCategoryEntity> getSubCategories(long id) {
         if (null == categories) {
             if (Constants.USER_RANDOM_SELECTION == id) {
                 categories = repo.getAllSubCategories();

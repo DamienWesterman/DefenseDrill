@@ -11,9 +11,6 @@
 
 package com.damienwesterman.defensedrill.utils;
 
-/**
- * TODO Doc comments
- */
 public class Constants {
     public static final long USER_RANDOM_SELECTION = -1;
 

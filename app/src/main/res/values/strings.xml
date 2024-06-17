@@ -22,6 +22,9 @@
     <string name="home">Home</string>
     <string name="reset_skipped_drills">Reset Skipped Drills</string>
     <string name="loading">Loading…</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="view_edit_categories">View/Edit Categories</string>
+    <string name="view_edit_sub_categories">View/Edit Sub-Categories</string>
     <string-array name="confidence_levels">
         <item>Low</item>
         <item>Medium</item>

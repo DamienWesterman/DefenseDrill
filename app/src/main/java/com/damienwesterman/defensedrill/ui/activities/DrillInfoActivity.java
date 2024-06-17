@@ -11,24 +11,34 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -36,8 +46,6 @@ import java.util.Locale;
  * TODO Notate the required intents
  */
 public class DrillInfoActivity extends AppCompatActivity {
-    // TODO if they make changes and try to navigate away without saving, prompt user to save
-    //      changes, maybe have a "changed" field
     private static final int LOW_CONFIDENCE_POSITION = 0;
     private static final int MEDIUM_CONFIDENCE_POSITION = 1;
     private static final int HIGH_CONFIDENCE_POSITION = 2;
@@ -51,6 +59,25 @@ public class DrillInfoActivity extends AppCompatActivity {
     private DrillInfoViewModel viewModel;
     private ScreenType screenType;
 
+    ProgressBar drillProgressBar;
+    TextView drillName;
+    View drillInfoDivider;
+    TextView lastDrilledLabel;
+    TextView lastDrilledDate;
+    TextView confidenceLabel;
+    Spinner confidenceSpinner;
+    Button editCategoriesButton;
+    Button editSubCategoriesButton;
+    TextView notesLabel;
+    EditText notes;
+    Button regenerateButton;
+    Button resetSkippedDrillsButton;
+    Button markAsPracticedButton;
+    Button saveDrillInfoButton;
+
+    Snackbar categoriesLoadingSnackbar;
+    Snackbar subCategoriesLoadingSnackbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +89,8 @@ public class DrillInfoActivity extends AppCompatActivity {
             screenType = ScreenType.GeneratedDrill;
         }
 
-        Spinner confidenceSpinner = findViewById(R.id.confidenceSpinner);
+        saveViews();
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.confidence_levels,
@@ -72,6 +100,16 @@ public class DrillInfoActivity extends AppCompatActivity {
         confidenceSpinner.setAdapter(adapter);
 
         setUpViewModel();
+    }
+
+    public void editCategories(View view) {
+        categoriesLoadingSnackbar.show();
+        viewModel.loadAllCategories();
+    }
+
+    public void editSubCategories(View view) {
+        subCategoriesLoadingSnackbar.show();
+        viewModel.loadAllSubCategories();
     }
 
     public void regenerateDrill(View view) {
@@ -84,13 +122,20 @@ public class DrillInfoActivity extends AppCompatActivity {
         Toast.makeText(this, "Skipped drills have been reset", Toast.LENGTH_SHORT).show();
     }
 
-    public void saveDrillInfo(View view) { // TODO change to be only the date or whatever
+    public void saveDrillInfo(View view) {
         Drill drill = collectDrillInfo();
-        // TODO Finish this
-//        viewModel.saveDrill(drill, this);
-        // TODO toast saying success if successful
+        viewModel.saveDrill(drill, this);
     }
-    // TODO add the save button (with toast of success
+
+    public void markAsPracticed(View view) {
+        Drill drill = collectDrillInfo();
+        if (null != drill) {
+            drill.setLastDrilled(System.currentTimeMillis());
+            drill.setNewDrill(false);
+            viewModel.saveDrill(drill, this);
+        }
+        // TODO make popup to save new confidence, then option to select next drill / different category / return home / close popup
+    }
 
     public void goHome(View view) {
         Intent intent = new Intent(this, HomeActivity.class);
@@ -113,6 +158,10 @@ public class DrillInfoActivity extends AppCompatActivity {
             //       descriptions and videos
         }));
 
+        viewModel.getAllCategories().observe(this, this::editCategoriesPopup);
+
+        viewModel.getAllSubCategories().observe(this, this::editSubCategoriesPopup);
+
         Intent intent = getIntent();
         if (intent.hasExtra(Constants.INTENT_DRILL_ID)) {
             long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
@@ -124,51 +173,104 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("CutPasteId")
+    private void saveViews() {
+        drillProgressBar = findViewById(R.id.drillProgressBar);
+        drillName = findViewById(R.id.drillName);
+        drillInfoDivider = findViewById(R.id.drillInfoDivider);
+        lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
+        lastDrilledDate = findViewById(R.id.lastDrilledDate);
+        confidenceLabel = findViewById(R.id.confidenceLabel);
+        confidenceSpinner = findViewById(R.id.confidenceSpinner);
+        editCategoriesButton = findViewById(R.id.editCategoriesButton);
+        editSubCategoriesButton = findViewById(R.id.editSubCategoriesButton);
+        notesLabel = findViewById(R.id.notesLabel);
+        notes = findViewById(R.id.notes);
+        if (ScreenType.GeneratedDrill == screenType) {
+            regenerateButton = findViewById(R.id.regenerateButton);
+            resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
+        }
+        markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
+        saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
+        categoriesLoadingSnackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                "Loading Categories...", Snackbar.LENGTH_INDEFINITE);
+        subCategoriesLoadingSnackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                "Loading sub-Categories...", Snackbar.LENGTH_INDEFINITE);
+    }
+
     private void alertNoDrillFound() {
-        // TODO Check what screenType we are in and change what we display, and offer to go home or reset skipped drills
+        // TODO Check what screenType we are in and change what we display, and offer to go home or reset skipped drills (and regenerate) or go back
+        // Avenues: ID not found | No matching drill from Cat / SubCat | Skipped drill and none left | Mark as practiced and none left
     }
 
     private void changeUiToDrillLoading() {
-        findViewById(R.id.drillProgressBar).setVisibility(View.VISIBLE);
-        findViewById(R.id.drillName).setVisibility(View.GONE);
-        findViewById(R.id.drillInfoDivider).setVisibility(View.GONE);
-        findViewById(R.id.lastDrilledLabel).setVisibility(View.GONE);
-        findViewById(R.id.lastDrilledDate).setVisibility(View.GONE);
-        findViewById(R.id.notesLabel).setVisibility(View.GONE);
-        findViewById(R.id.notes).setVisibility(View.GONE);
-        findViewById(R.id.confidenceLabel).setVisibility(View.GONE);
-        findViewById(R.id.confidenceSpinner).setVisibility(View.GONE);
+        drillProgressBar.setVisibility(View.VISIBLE);
+        drillName.setVisibility(View.GONE);
+        drillInfoDivider.setVisibility(View.GONE);
+        lastDrilledLabel.setVisibility(View.GONE);
+        lastDrilledDate.setVisibility(View.GONE);
+        confidenceLabel.setVisibility(View.GONE);
+        confidenceSpinner.setVisibility(View.GONE);
+        editCategoriesButton.setVisibility(View.GONE);
+        editSubCategoriesButton.setVisibility(View.GONE);
+        notesLabel.setVisibility(View.GONE);
+        notes.setVisibility(View.GONE);
         if (ScreenType.GeneratedDrill == screenType) {
-            findViewById(R.id.regenerateButton).setVisibility(View.GONE);
-            findViewById(R.id.resetSkippedDrillsButton).setVisibility(View.GONE);
+            regenerateButton.setVisibility(View.GONE);
+            resetSkippedDrillsButton.setVisibility(View.GONE);
         }
-        findViewById(R.id.saveDrillInfoButton).setVisibility(View.GONE);
+        markAsPracticedButton.setVisibility(View.GONE);
+        saveDrillInfoButton.setVisibility(View.GONE);
     }
 
     private void changeUiToDrillInfoShown() {
-        findViewById(R.id.drillProgressBar).setVisibility(View.GONE);
-        findViewById(R.id.drillName).setVisibility(View.VISIBLE);
-        findViewById(R.id.drillInfoDivider).setVisibility(View.VISIBLE);
-        findViewById(R.id.lastDrilledLabel).setVisibility(View.VISIBLE);
-        findViewById(R.id.lastDrilledDate).setVisibility(View.VISIBLE);
-        findViewById(R.id.notesLabel).setVisibility(View.VISIBLE);
-        findViewById(R.id.notes).setVisibility(View.VISIBLE);
-        findViewById(R.id.confidenceLabel).setVisibility(View.VISIBLE);
-        findViewById(R.id.confidenceSpinner).setVisibility(View.VISIBLE);
+        drillProgressBar.setVisibility(View.GONE);
+        drillName.setVisibility(View.VISIBLE);
+        drillInfoDivider.setVisibility(View.VISIBLE);
+        lastDrilledLabel.setVisibility(View.VISIBLE);
+        lastDrilledDate.setVisibility(View.VISIBLE);
+        confidenceLabel.setVisibility(View.VISIBLE);
+        confidenceSpinner.setVisibility(View.VISIBLE);
+        editCategoriesButton.setVisibility(View.VISIBLE);
+        editSubCategoriesButton.setVisibility(View.VISIBLE);
+        notesLabel.setVisibility(View.VISIBLE);
+        notes.setVisibility(View.VISIBLE);
         if (ScreenType.GeneratedDrill == screenType) {
-            findViewById(R.id.regenerateButton).setVisibility(View.VISIBLE);
-            findViewById(R.id.resetSkippedDrillsButton).setVisibility(View.VISIBLE);
+            regenerateButton.setVisibility(View.VISIBLE);
+            resetSkippedDrillsButton.setVisibility(View.VISIBLE);
         }
-        findViewById(R.id.saveDrillInfoButton).setVisibility(View.VISIBLE);
+        markAsPracticedButton.setVisibility(View.VISIBLE);
+        saveDrillInfoButton.setVisibility(View.VISIBLE);
     }
 
+    /**
+     *
+     * @return May return null // TODO
+     */
     private Drill collectDrillInfo() {
-        return null;
+        Drill drill = viewModel.getDrill().getValue();
+        if (null != drill) {
+            int confidence;
+            switch(confidenceSpinner.getSelectedItemPosition()) {
+                case HIGH_CONFIDENCE_POSITION:
+                    confidence = Drill.HIGH_CONFIDENCE;
+                    break;
+                case MEDIUM_CONFIDENCE_POSITION:
+                    confidence = Drill.MEDIUM_CONFIDENCE;
+                    break;
+                case LOW_CONFIDENCE_POSITION:
+                default:
+                    confidence = Drill.LOW_CONFIDENCE;
+                    break;
+            }
+            drill.setConfidence(confidence);
+            drill.setNotes(notes.getText().toString());
+        }
+        return drill;
     }
 
-    private void fillDrillInfo(Drill drill) {TextView drillName = findViewById(R.id.drillName);
+    private void fillDrillInfo(Drill drill) {
         drillName.setText(drill.getName());
-        Spinner confidenceSpinner = findViewById(R.id.confidenceSpinner);
         int position;
         switch(drill.getConfidence()) {
             case Drill.HIGH_CONFIDENCE:
@@ -183,11 +285,97 @@ public class DrillInfoActivity extends AppCompatActivity {
                 break;
         }
         confidenceSpinner.setSelection(position);
-        TextView lastDrilled = findViewById(R.id.lastDrilledDate);
         Date drilledDate = new Date(drill.getLastDrilled());
         DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-        lastDrilled.setText(dateFormatter.format(drilledDate));
-        TextView notes = findViewById(R.id.notes);
+        lastDrilledDate.setText(dateFormatter.format(drilledDate));
         notes.setText(drill.getNotes());
+    }
+
+    private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
+        Drill drill = viewModel.getDrill().getValue();
+        if (null == drill) {
+            Toast.makeText(this, "Issue retrieving categories", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<CategoryEntity> categories = drill.getCategories();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final String[] categoryNames = categoryEntities
+                .stream().map(CategoryEntity::getName).toArray(String[]::new);
+        final boolean[] checkedCategories = new boolean[categoryNames.length];
+
+        for (int i = 0; i < checkedCategories.length; i++) {
+            if (categories.contains(categoryEntities.get(i))) {
+                checkedCategories[i] = true;
+            }
+        }
+
+        builder.setTitle("Select Categories");
+        builder.setIcon(R.drawable.edit_icon);
+        builder.setMultiChoiceItems(categoryNames, checkedCategories,
+                (dialog, position, isChecked) -> checkedCategories[position] = isChecked);
+        builder.setCancelable(true);
+        builder.setPositiveButton("Save", (dialog, position) -> {
+            for (int i = 0; i < checkedCategories.length; i++) {
+                if (checkedCategories[i] && !categories.contains(categoryEntities.get(i))) {
+                    // Checked but not already in list - add
+                    drill.addCategory(categoryEntities.get(i));
+                } else if (!checkedCategories[i] && categories.contains(categoryEntities.get(i))) {
+                    // Not checked but in list - remove
+                    drill.removeCategory(categoryEntities.get(i));
+                }
+                viewModel.saveDrill(drill, this);
+            }
+        });
+        builder.setNegativeButton("Back", (dialog, position) -> {
+            // Intentionally left black
+        });
+        builder.setNeutralButton("Clear All", (dialog, position) -> Arrays.fill(checkedCategories, false));
+        builder.create().show();
+        categoriesLoadingSnackbar.dismiss();
+    }
+
+    private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
+        Drill drill = viewModel.getDrill().getValue();
+        if (null == drill) {
+            Toast.makeText(this, "Issue retrieving sub-categories", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<SubCategoryEntity> subCategories = drill.getSubCategories();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final String[] subCategoryNames = subCategoryEntities
+                .stream().map(SubCategoryEntity::getName).toArray(String[]::new);
+        final boolean[] checkedSubCategories = new boolean[subCategoryNames.length];
+
+        for (int i = 0; i < checkedSubCategories.length; i++) {
+            if (subCategories.contains(subCategoryEntities.get(i))) {
+                checkedSubCategories[i] = true;
+            }
+        }
+
+        builder.setTitle("Select sub-Categories");
+        builder.setIcon(R.drawable.edit_icon);
+        builder.setMultiChoiceItems(subCategoryNames, checkedSubCategories,
+                (dialog, position, isChecked) -> checkedSubCategories[position] = isChecked);
+        builder.setCancelable(true);
+        builder.setPositiveButton("Save", (dialog, position) -> {
+            for (int i = 0; i < checkedSubCategories.length; i++) {
+                if (checkedSubCategories[i] && !subCategories.contains(subCategoryEntities.get(i))) {
+                    // Checked but not already in list - add
+                    drill.addSubCategory(subCategoryEntities.get(i));
+                } else if (!checkedSubCategories[i] && subCategories.contains(subCategoryEntities.get(i))) {
+                    // Not checked but in list - remove
+                    drill.removeSubCategory(subCategoryEntities.get(i));
+                }
+                viewModel.saveDrill(drill, this);
+            }
+        });
+        builder.setNegativeButton("Back", (dialog, position) -> {
+            // Intentionally left black
+        });
+        builder.setNeutralButton("Clear All", (dialog, position) -> Arrays.fill(checkedSubCategories, false));
+        builder.create().show();
+        subCategoriesLoadingSnackbar.dismiss();
     }
 }
