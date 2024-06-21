@@ -30,4 +30,7 @@
         <item>Medium</item>
         <item>High</item>
     </string-array>
+    <string name="no_drill_found_by_id">There was an issue retrieving this drill.</string>
+    <string name="no_drill_by_category_sub_category">Looks like no matching drills were found!</string>
+    <string name="no_drills_left">No more drills in this category.</string>
 </resources>

@@ -52,8 +52,9 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     // TODO doc comments
     private enum ScreenType {
-        GeneratedDrill,
-        DisplayingDrill
+        GENERATED_DRILL,
+        REGENERATED_DRILL,
+        DISPLAYING_DRILL
     }
 
     private DrillInfoViewModel viewModel;
@@ -84,9 +85,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_drill_info);
 
         if (getIntent().hasExtra(Constants.INTENT_DRILL_ID)) {
-            screenType = ScreenType.DisplayingDrill;
+            screenType = ScreenType.DISPLAYING_DRILL;
         } else {
-            screenType = ScreenType.GeneratedDrill;
+            screenType = ScreenType.GENERATED_DRILL;
         }
 
         saveViews();
@@ -114,6 +115,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void regenerateDrill(View view) {
         changeUiToDrillLoading();
+        screenType = ScreenType.REGENERATED_DRILL;
         viewModel.regenerateDrill();
     }
 
@@ -164,6 +166,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
         viewModel.getAllSubCategories().observe(this, this::editSubCategoriesPopup);
 
+        changeUiToDrillLoading();
         Intent intent = getIntent();
         if (intent.hasExtra(Constants.INTENT_DRILL_ID)) {
             long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
@@ -188,7 +191,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         editSubCategoriesButton = findViewById(R.id.editSubCategoriesButton);
         notesLabel = findViewById(R.id.notesLabel);
         notes = findViewById(R.id.notes);
-        if (ScreenType.GeneratedDrill == screenType) {
+        if (ScreenType.DISPLAYING_DRILL != screenType) {
             regenerateButton = findViewById(R.id.regenerateButton);
             resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
         }
@@ -201,8 +204,26 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     private void alertNoDrillFound() {
-        // TODO Check what screenType we are in and change what we display, and offer to go home or reset skipped drills (and regenerate) or go back
-        // Avenues: ID not found | No matching drill from Cat / SubCat | Skipped drill and none left | Mark as practiced and none left
+        AlertDialog noDrillPopup;
+        String alertMessage;
+
+        switch(screenType) {
+            case GENERATED_DRILL:
+                alertMessage = getString(R.string.no_drill_by_category_sub_category);
+                break;
+            case REGENERATED_DRILL:
+                alertMessage = getString(R.string.no_drills_left);
+                break;
+            case DISPLAYING_DRILL:
+            default:
+                alertMessage = getString(R.string.no_drill_found_by_id);
+                break;
+        }
+        noDrillPopup = createNoDrillPopup(alertMessage);
+
+        if (null != noDrillPopup) {
+            noDrillPopup.show();
+        }
     }
 
     private void changeUiToDrillLoading() {
@@ -217,7 +238,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         editSubCategoriesButton.setVisibility(View.GONE);
         notesLabel.setVisibility(View.GONE);
         notes.setVisibility(View.GONE);
-        if (ScreenType.GeneratedDrill == screenType) {
+        if (ScreenType.DISPLAYING_DRILL != screenType) {
             regenerateButton.setVisibility(View.GONE);
             resetSkippedDrillsButton.setVisibility(View.GONE);
         }
@@ -237,7 +258,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         editSubCategoriesButton.setVisibility(View.VISIBLE);
         notesLabel.setVisibility(View.VISIBLE);
         notes.setVisibility(View.VISIBLE);
-        if (ScreenType.GeneratedDrill == screenType) {
+        if (ScreenType.DISPLAYING_DRILL != screenType) {
             regenerateButton.setVisibility(View.VISIBLE);
             resetSkippedDrillsButton.setVisibility(View.VISIBLE);
         }
@@ -432,24 +453,75 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setTitle("What next?");
         builder.setIcon(R.drawable.next_icon);
         builder.setCancelable(true);
-        builder.setItems(options, (dialog, position) -> {
-            switch(position) {
-                case 0:
-                    viewModel.regenerateDrill();
-                    break;
-                case 1:
-                    Intent intent = new Intent(this, CategorySelectActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    break;
-            }
-        });
+        if (ScreenType.DISPLAYING_DRILL != screenType) {
+            builder.setItems(options, (dialog, position) -> {
+                switch (position) {
+                    case 0:
+                        changeUiToDrillLoading();
+                        screenType = ScreenType.REGENERATED_DRILL;
+                        viewModel.regenerateDrill();
+                        break;
+                    case 1:
+                        Intent intent = new Intent(this, CategorySelectActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        break;
+                }
+            });
+        }
         builder.setPositiveButton("Go Home", (dialog, position) -> {
            Intent intent = new Intent(this, HomeActivity.class);
            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
            startActivity(intent);
         });
-        builder.setNegativeButton("Back", (dialog, position) -> {});
+        builder.setNegativeButton("Back", (dialog, position) -> {
+            if (ScreenType.DISPLAYING_DRILL == screenType) {
+                finish();
+            }
+        });
+        if (ScreenType.DISPLAYING_DRILL == screenType) {
+            builder.setNeutralButton("Close popup", (dialog, position) -> { });
+        }
+
+        return builder.create();
+    }
+
+    private AlertDialog createNoDrillPopup(String message) {
+        if (null == message) {
+            return null;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Drill not found!");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton("Go Home", (dialog, position) -> {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        });
+        switch(screenType) {
+            case REGENERATED_DRILL:
+                // Fallthrough intentional
+                builder.setNeutralButton("Reset skipped Drills", (dialog, position) -> {
+                    changeUiToDrillLoading();
+                    viewModel.resetSkippedDrills();
+                    screenType = ScreenType.GENERATED_DRILL;
+                    viewModel.regenerateDrill();
+                });
+            case GENERATED_DRILL:
+                builder.setNegativeButton("Select different Category", (dialog, position) -> {
+                    Intent intent = new Intent(this, CategorySelectActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                });
+                break;
+            case DISPLAYING_DRILL:
+                builder.setNegativeButton("Back", (dialog, position) -> finish());
+            default:
+
+        }
 
         return builder.create();
     }
