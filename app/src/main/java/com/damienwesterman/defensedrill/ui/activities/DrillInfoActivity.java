@@ -428,20 +428,28 @@ public class DrillInfoActivity extends AppCompatActivity {
     // TODO Doc comments may not return
     private AlertDialog createWhatNextPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        CharSequence[] options = {"Next Drill", "New Category"};
         builder.setTitle("What next?");
         builder.setIcon(R.drawable.next_icon);
         builder.setCancelable(true);
-        builder.setPositiveButton("Next Drill", (dialog, position) -> viewModel.regenerateDrill());
-        builder.setNegativeButton("New Category", (dialog, position) -> {
-           Intent intent = new Intent(this, CategorySelectActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-           startActivity(intent);
+        builder.setItems(options, (dialog, position) -> {
+            switch(position) {
+                case 0:
+                    viewModel.regenerateDrill();
+                    break;
+                case 1:
+                    Intent intent = new Intent(this, CategorySelectActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    break;
+            }
         });
-        builder.setNeutralButton("Go Home", (dialog, position) -> {
+        builder.setPositiveButton("Go Home", (dialog, position) -> {
            Intent intent = new Intent(this, HomeActivity.class);
            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
            startActivity(intent);
         });
+        builder.setNegativeButton("Back", (dialog, position) -> {});
 
         return builder.create();
     }
