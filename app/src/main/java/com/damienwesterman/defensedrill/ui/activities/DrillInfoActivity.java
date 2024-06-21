@@ -124,21 +124,23 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void saveDrillInfo(View view) {
         Drill drill = collectDrillInfo();
-        viewModel.saveDrill(drill, this);
+        viewModel.saveDrill(drill, this); // this method handles null check and feedback
     }
 
     public void markAsPracticed(View view) {
-        Drill drill = collectDrillInfo();
-        if (null != drill) {
-            drill.setLastDrilled(System.currentTimeMillis());
-            drill.setNewDrill(false);
-            viewModel.saveDrill(drill, this);
+        AlertDialog getConfidencePopup = createConfidencePopup();
+        if (null != getConfidencePopup) {
+            getConfidencePopup.setOnDismissListener(dialog -> {
+                AlertDialog whatNextPopup = createWhatNextPopup();
+                whatNextPopup.show();
+            });
+            getConfidencePopup.show();
         }
-        // TODO make popup to save new confidence, then option to select next drill / different category / return home / close popup
     }
 
     public void goHome(View view) {
         Intent intent = new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
@@ -243,36 +245,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveDrillInfoButton.setVisibility(View.VISIBLE);
     }
 
-    /**
-     *
-     * @return May return null // TODO
-     */
-    private Drill collectDrillInfo() {
-        Drill drill = viewModel.getDrill().getValue();
-        if (null != drill) {
-            int confidence;
-            switch(confidenceSpinner.getSelectedItemPosition()) {
-                case HIGH_CONFIDENCE_POSITION:
-                    confidence = Drill.HIGH_CONFIDENCE;
-                    break;
-                case MEDIUM_CONFIDENCE_POSITION:
-                    confidence = Drill.MEDIUM_CONFIDENCE;
-                    break;
-                case LOW_CONFIDENCE_POSITION:
-                default:
-                    confidence = Drill.LOW_CONFIDENCE;
-                    break;
-            }
-            drill.setConfidence(confidence);
-            drill.setNotes(notes.getText().toString());
-        }
-        return drill;
-    }
-
-    private void fillDrillInfo(Drill drill) {
-        drillName.setText(drill.getName());
+    private int confidenceWeightToPosition(int weight) {
         int position;
-        switch(drill.getConfidence()) {
+        switch(weight) {
             case Drill.HIGH_CONFIDENCE:
                 position = HIGH_CONFIDENCE_POSITION;
                 break;
@@ -284,7 +259,45 @@ public class DrillInfoActivity extends AppCompatActivity {
                 position = LOW_CONFIDENCE_POSITION;
                 break;
         }
-        confidenceSpinner.setSelection(position);
+
+        return position;
+    }
+
+    private int confidencePositionToWeight(int position) {
+        int confidence;
+        switch(position) {
+            case HIGH_CONFIDENCE_POSITION:
+                confidence = Drill.HIGH_CONFIDENCE;
+                break;
+            case MEDIUM_CONFIDENCE_POSITION:
+                confidence = Drill.MEDIUM_CONFIDENCE;
+                break;
+            case LOW_CONFIDENCE_POSITION:
+            default:
+                confidence = Drill.LOW_CONFIDENCE;
+                break;
+        }
+
+        return confidence;
+    }
+
+    /**
+     *
+     * @return May return null // TODO
+     */
+    private Drill collectDrillInfo() {
+        Drill drill = viewModel.getDrill().getValue();
+        if (null != drill) {
+            drill.setConfidence(
+                    confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()));
+            drill.setNotes(notes.getText().toString());
+        }
+        return drill;
+    }
+
+    private void fillDrillInfo(Drill drill) {
+        drillName.setText(drill.getName());
+        confidenceSpinner.setSelection(confidenceWeightToPosition(drill.getConfidence()));
         Date drilledDate = new Date(drill.getLastDrilled());
         DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
         lastDrilledDate.setText(dateFormatter.format(drilledDate));
@@ -377,5 +390,59 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setNeutralButton("Clear All", (dialog, position) -> Arrays.fill(checkedSubCategories, false));
         builder.create().show();
         subCategoriesLoadingSnackbar.dismiss();
+    }
+
+    // TODO Doc comments nullable
+    private AlertDialog createConfidencePopup() {
+        Drill drill = collectDrillInfo();
+
+        if (null == drill) {
+            Toast.makeText(this, "Issue marking as practiced", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] options = getResources().getStringArray(R.array.confidence_levels);
+        final int[] selectedOption = { confidenceWeightToPosition(drill.getConfidence())};
+
+        builder.setTitle("Enter new confidence level:");
+        builder.setIcon(R.drawable.thumbs_up_down_icon);
+        builder.setCancelable(false);
+        builder.setSingleChoiceItems(options, selectedOption[0], (dialog, position) -> selectedOption[0] = position);
+        builder.setPositiveButton("Save", (dialog, position) -> {
+            drill.setConfidence(confidencePositionToWeight(selectedOption[0]));
+            drill.setLastDrilled(System.currentTimeMillis());
+            drill.setNewDrill(false);
+            viewModel.saveDrill(drill, this);
+            dialog.dismiss();
+        });
+        builder.setNegativeButton("Skip", (dialog, position) -> {
+            drill.setLastDrilled(System.currentTimeMillis());
+            drill.setNewDrill(false);
+            viewModel.saveDrill(drill, null);
+           dialog.dismiss();
+        });
+
+        return builder.create();
+    }
+
+    // TODO Doc comments may not return
+    private AlertDialog createWhatNextPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What next?");
+        builder.setIcon(R.drawable.next_icon);
+        builder.setCancelable(true);
+        builder.setPositiveButton("Next Drill", (dialog, position) -> viewModel.regenerateDrill());
+        builder.setNegativeButton("New Category", (dialog, position) -> {
+           Intent intent = new Intent(this, CategorySelectActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+           startActivity(intent);
+        });
+        builder.setNeutralButton("Go Home", (dialog, position) -> {
+           Intent intent = new Intent(this, HomeActivity.class);
+           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+           startActivity(intent);
+        });
+
+        return builder.create();
     }
 }

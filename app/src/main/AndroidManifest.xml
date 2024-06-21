@@ -21,14 +21,16 @@
         </activity>
         <activity
             android:name=".ui.activities.SubCategorySelectActivity"
-            android:exported="false">
+            android:exported="false"
+            android:parentActivityName=".ui.activities.CategorySelectActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".ui.activities.CategorySelectActivity"
-            android:exported="false">
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

@@ -97,19 +97,29 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     /**
-     * why we pass in app context
+     * why we pass in app context, may be null if no toast to show
      */
     public void saveDrill(Drill drill, Activity activity) {
+        if (null == drill) {
+            if (null != activity) {
+                activity.runOnUiThread(() -> Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
+            }
+            return;
+        }
         executor.execute(() -> {
            try {
                repo.updateDrills(drill);
                currentDrill.postValue(drill);
-               activity.runOnUiThread(() ->
-                       Toast.makeText(activity, "Successfully saved changes!",
-                               Toast.LENGTH_SHORT).show());
+               if (null != activity) {
+                   activity.runOnUiThread(() ->
+                           Toast.makeText(activity, "Successfully saved changes!",
+                                   Toast.LENGTH_SHORT).show());
+               }
            } catch (SQLiteConstraintException e) {
-               activity.runOnUiThread(() ->
-                       Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
+               if (null != activity) {
+                   activity.runOnUiThread(() ->
+                           Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
+               }
            }
         });
     }
