@@ -51,8 +51,8 @@ public class AbstractCategoryAdapter<T extends AbstractCategoryEntity> extends R
 
     @Override
     public void onBindViewHolder(@NonNull AbstractCategoryViewHolder holder, int position) {
-        holder.getNameView().setText(categories.get(position).getName());
-        holder.getDescriptionView().setText(categories.get(position).getDescription());
+        holder.getCard().setTitle(categories.get(position).getName());
+        holder.getCard().setDescription(categories.get(position).getDescription());
         holder.setOnClickListener(clickListener, categories.get(position).getId());
     }
 

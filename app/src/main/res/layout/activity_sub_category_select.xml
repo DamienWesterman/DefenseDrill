@@ -37,41 +37,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!-- Random SubCategory card -->
-    <androidx.cardview.widget.CardView
+    <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
         android:id="@+id/randomSubCategoryCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
+        app:title="@string/random_sub_category"
+        app:description="@string/randomly_select_any_sub_category"
         android:visibility="gone"
-        android:onClick="randomSubCategoryClick">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/randomSubCategoryTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/random_sub_category"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/randomSubCategoryDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/randomly_select_any_sub_category"
-                android:textSize="14sp"
-                android:textStyle="italic" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        android:onClick="randomSubCategoryClick" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/subCategoryRecyclerView"
