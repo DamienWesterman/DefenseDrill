@@ -16,7 +16,7 @@
         app:cardCornerRadius="8dp"
         app:title="@string/generate_drill_title"
         app:description="@string/generate_drills_description"
-        android:onClick="onCardClick" />
+        android:onClick="onCardClick"/>
 
     <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
         android:id="@+id/createDrillCard"
@@ -27,7 +27,8 @@
         app:cardCornerRadius="8dp"
         app:title="@string/create_drill_title"
         app:description="@string/create_drill_description"
-        android:onClick="onCardClick" />
+        android:onClick="onCardClick"
+        android:longClickable="true" />
 
     <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
         android:id="@+id/viewDrillsCard"

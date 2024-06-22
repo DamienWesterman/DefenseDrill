@@ -2,14 +2,8 @@ package com.damienwesterman.defensedrill.ui.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,7 +17,6 @@ import com.damienwesterman.defensedrill.R;
  */
 public class TitleDescCard extends CardView {
     private final static String DEFAULT_TEXT = "";
-    private CardView cardView;
     private TextView titleView;
     private TextView descView;
 
@@ -45,7 +38,6 @@ public class TitleDescCard extends CardView {
     private void init(Context context, AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.layout_title_desc_card, this, true);
 
-        this.cardView = findViewById(R.id.titleDescCard);
         this.titleView = findViewById(R.id.title);
         this.descView = findViewById(R.id.description);
 
@@ -63,10 +55,20 @@ public class TitleDescCard extends CardView {
     }
 
     public void setTitle(String title) {
-        titleView.setText(title);
+        if (null == title || title.isEmpty()) {
+            titleView.setVisibility(GONE);
+        } else {
+            titleView.setVisibility(VISIBLE);
+            titleView.setText(title);
+        }
     }
 
     public void setDescription(String description) {
-        descView.setText(description);
+        if (null == description || description.isEmpty()) {
+            descView.setVisibility(GONE);
+        } else {
+            descView.setVisibility(VISIBLE);
+            descView.setText(description);
+        }
     }
 }

@@ -18,24 +18,23 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
 import com.damienwesterman.defensedrill.ui.view_holders.CardViewHolder;
 
 import java.util.List;
 
-import com.damienwesterman.defensedrill.R;
-
 /**
- * TODO: Doc comments
+ * TODO Doc comments
  */
-public class AbstractCategoryAdapter<T extends AbstractCategoryEntity> extends RecyclerView.Adapter<CardViewHolder> {
-    private final List<T> categories;
+public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
+    private final List<Drill> drills;
     CardClickListener clickListener;
 
 
-    public AbstractCategoryAdapter(List<T> categories, CardClickListener clickListener) {
-        this.categories = categories;
+    public DrillAdapter(List<Drill> drills, CardClickListener clickListener) {
+        this.drills = drills;
         this.clickListener = clickListener;
     }
 
@@ -51,13 +50,13 @@ public class AbstractCategoryAdapter<T extends AbstractCategoryEntity> extends R
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
-        holder.getCard().setTitle(categories.get(position).getName());
-        holder.getCard().setDescription(categories.get(position).getDescription());
-        holder.setOnClickListener(clickListener, categories.get(position).getId());
+        holder.getCard().setTitle(drills.get(position).getName());
+        holder.getCard().setDescription("");
+        holder.setOnClickListener(clickListener, drills.get(position).getId());
     }
 
     @Override
     public int getItemCount() {
-        return categories.size();
+        return drills.size();
     }
 }

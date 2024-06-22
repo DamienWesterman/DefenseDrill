@@ -23,13 +23,13 @@ import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 /**
  * TODO: Doc comments
  */
-public class AbstractCategoryViewHolder extends RecyclerView.ViewHolder {
+public class CardViewHolder extends RecyclerView.ViewHolder {
     private final TitleDescCard card;
 
-    public AbstractCategoryViewHolder(@NonNull View view) {
+    public CardViewHolder(@NonNull View view) {
         super(view);
 
-        card = view.findViewById(R.id.abstractCategoryCard);
+        card = view.findViewById(R.id.cardViewHolder);
 
     }
 

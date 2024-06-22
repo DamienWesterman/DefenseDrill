@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
     <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-        android:id="@+id/abstractCategoryCard"
+        android:id="@+id/cardViewHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

@@ -23,6 +23,7 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
@@ -39,6 +40,14 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        TitleDescCard createDrillCard = findViewById(R.id.createDrillCard);
+        createDrillCard.setOnLongClickListener(view -> {
+            // Just for now, create some mock entries in the database
+            new Thread(this::mockDatabaseEntries).start();
+            Toast.makeText(this, "Added mocked database entries", Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
     public void onCardClick(View view) {
@@ -48,11 +57,9 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (R.id.createDrillCard == cardId) {
             Toast.makeText(this, "Unimplemented: Create Drill", Toast.LENGTH_SHORT).show();
-            // Just for now, create some mock entries in the database
-            new Thread(this::mockDatabaseEntries).start();
         } else if (R.id.viewDrillsCard == cardId) {
-            new Thread(this::mockLaunchRandomDrill).start();
-            Toast.makeText(this, "Unimplemented: View Drills", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ViewDrillsActivity.class);
+            startActivity(intent);
         } else {
             Toast.makeText(this, "Unknown option", Toast.LENGTH_SHORT).show();
         }
@@ -136,14 +143,5 @@ public class HomeActivity extends AppCompatActivity {
         risingStab.addCategory(weaponsDefenseCategory);
         risingStab.addSubCategory(knifeDefenseSubCategory);
         repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape, gunToHeadDrill, gunToHeadBack, slash, risingStab);
-    }
-
-    private void mockLaunchRandomDrill() {
-        DrillRepository repo = DrillRepository.getInstance(this);
-        DrillGenerator generator = new DrillGenerator(repo.getAllDrills(), new Random());
-        Drill drill = generator.generateDrill();
-        Intent intent = new Intent(this, DrillInfoActivity.class);
-        intent.putExtra(Constants.INTENT_DRILL_ID, drill.getId());
-        startActivity(intent);
     }
 }

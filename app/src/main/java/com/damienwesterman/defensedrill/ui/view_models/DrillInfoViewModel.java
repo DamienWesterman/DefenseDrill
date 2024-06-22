@@ -41,7 +41,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<List<SubCategoryEntity>> allSubCategories;
     private final DrillRepository repo;
     private DrillGenerator drillGenerator;
-    ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public DrillInfoViewModel(Application application) {
         super(application);
