@@ -8,5 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="drill_green">#4EA217</color>
+    <color name="drill_green_variant">#2D7100</color>
     <color name="drill_yellow">#F8E860</color>
+    <color name="gray">#9E9E9E</color>
 </resources>
