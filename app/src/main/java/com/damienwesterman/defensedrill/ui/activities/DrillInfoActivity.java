@@ -35,7 +35,6 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -163,14 +162,22 @@ public class DrillInfoActivity extends AppCompatActivity {
         viewModel.loadAllSubCategories();
 
         changeUiToDrillLoading();
-        Intent intent = getIntent();
-        if (intent.hasExtra(Constants.INTENT_DRILL_ID)) {
-            long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
-            viewModel.populateDrill(drillId);
+        Drill drill = viewModel.getDrill().getValue();
+        if (null == drill) {
+            // First time loading activity
+            Intent intent = getIntent();
+            if (intent.hasExtra(Constants.INTENT_DRILL_ID)) {
+                long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
+                viewModel.populateDrill(drillId);
+            } else {
+                long categoryId = intent.getLongExtra(Constants.INTENT_CATEGORY_CHOICE, -1);
+                long subCategoryId = intent.getLongExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, -1);
+                viewModel.populateDrill(categoryId, subCategoryId);
+            }
         } else {
-            long categoryId = intent.getLongExtra(Constants.INTENT_CATEGORY_CHOICE, -1);
-            long subCategoryId = intent.getLongExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, -1);
-            viewModel.populateDrill(categoryId, subCategoryId);
+            // Screen rotation or something, re-load existing drill from viewModel
+            fillDrillInfo(drill);
+            changeUiToDrillInfoShown();
         }
     }
 
