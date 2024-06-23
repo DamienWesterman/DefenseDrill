@@ -24,16 +24,21 @@ import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * TODO Doc comments
  */
 public class DrillListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Drill>> drills;
-    private final MutableLiveData<List<CategoryEntity>> allCategories;
-    private final MutableLiveData<List<SubCategoryEntity>> allSubCategories;
+    private List<CategoryEntity> allCategories;
+    private List<SubCategoryEntity> allSubCategories;
+
+    private Set<Long> categoryFilterIds;
+    private Set<Long> subCategoryFilterIds;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -42,8 +47,6 @@ public class DrillListViewModel extends AndroidViewModel {
 
         repo = DrillRepository.getInstance(application);
         drills = new MutableLiveData<>();
-        allCategories = new MutableLiveData<>();
-        allSubCategories = new MutableLiveData<>();
     }
 
     public LiveData<List<Drill>> getDrills() {
@@ -51,6 +54,12 @@ public class DrillListViewModel extends AndroidViewModel {
     }
 
     public void populateDrills() {
+        if (null == drills.getValue()) {
+            executor.execute(() -> drills.postValue(repo.getAllDrills()));
+        }
+    }
+
+    public void rePopulateDrills() {
         executor.execute(() -> drills.postValue(repo.getAllDrills()));
     }
 
@@ -58,29 +67,49 @@ public class DrillListViewModel extends AndroidViewModel {
         executor.execute(() -> drills.postValue(repo.getAllDrills(categoryIds, subCategoryIds)));
     }
 
-    public LiveData<List<CategoryEntity>> getAllCategories() {
+    public List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
-    public LiveData<List<SubCategoryEntity>> getAllSubCategories() {
+    public List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 
     public void loadAllCategories() {
-        if (null == allCategories.getValue()) {
-            executor.execute(() -> allCategories.postValue(repo.getAllCategories()));
-        } else {
-            // Force the observer to trigger
-            allCategories.setValue(allCategories.getValue());
+        if (null == allCategories) {
+            executor.execute(() -> allCategories = repo.getAllCategories());
         }
     }
 
     public void loadAllSubCategories() {
-        if (null == allSubCategories.getValue()) {
-            executor.execute(() -> allSubCategories.postValue(repo.getAllSubCategories()));
-        } else {
-            // Force the observer to trigger
-            allSubCategories.setValue(allSubCategories.getValue());
+        if (null == allSubCategories) {
+            executor.execute(() -> allSubCategories = repo.getAllSubCategories());
         }
+    }
+
+    public Set<Long> getCategoryFilterIds() {
+        if (null == categoryFilterIds) {
+            categoryFilterIds = allCategories.stream().map(CategoryEntity::getId)
+                    .collect(Collectors.toSet());
+        }
+
+        return categoryFilterIds;
+    }
+
+    public void setCategoryFilterIds(Set<Long> categoryFilterIds) {
+        this.categoryFilterIds = categoryFilterIds;
+    }
+
+    public Set<Long> getSubCategoryFilterIds() {
+        if (null == subCategoryFilterIds) {
+            subCategoryFilterIds = allSubCategories.stream().map(SubCategoryEntity::getId)
+                    .collect(Collectors.toSet());
+        }
+
+        return subCategoryFilterIds;
+    }
+
+    public void setSubCategoryFilterIds(Set<Long> subCategoryFilterIds) {
+        this.subCategoryFilterIds = subCategoryFilterIds;
     }
 }

@@ -46,13 +46,9 @@ import java.util.stream.Collectors;
  */
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
-    private Set<Long> categoryFilterIds;
-    private Set<Long> subCategoryFilterIds;
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
-    Snackbar categoriesLoadingSnackbar;
-    Snackbar subCategoriesLoadingSnackbar;
 
     @Override
     @SuppressLint("CutPasteId")
@@ -63,32 +59,26 @@ public class ViewDrillsActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(DrillListViewModel.class);
         progressBar = findViewById(R.id.allDrillsProgressBar);
         recyclerView = findViewById(R.id.allDrillsRecyclerView);
-        categoriesLoadingSnackbar = Snackbar.make(findViewById(R.id.activityAllDrills),
-                "Loading Categories...", Snackbar.LENGTH_INDEFINITE);
-        subCategoriesLoadingSnackbar = Snackbar.make(findViewById(R.id.activityAllDrills),
-                "Loading sub-Categories...", Snackbar.LENGTH_INDEFINITE);
 
         setLoading(true);
         viewModel.getDrills().observe(this, this::setUpRecyclerView);
-        viewModel.getAllCategories().observe(this, this::filterCategoriesPopup);
-        viewModel.getAllSubCategories().observe(this, this::filterSubCategoriesPopup);
+        viewModel.loadAllCategories();
+        viewModel.loadAllSubCategories();
         viewModel.populateDrills();
     }
 
     public void filterByCategory(View view) {
-        categoriesLoadingSnackbar.show();
-        viewModel.loadAllCategories();
+        filterCategoriesPopup(viewModel.getAllCategories());
     }
 
     public void filterBySubCategory(View view) {
-        subCategoriesLoadingSnackbar.show();
-        viewModel.loadAllSubCategories();
+        filterSubCategoriesPopup(viewModel.getAllSubCategories());
     }
 
     public void resetFilters(View view) {
-        categoryFilterIds = null;
-        subCategoryFilterIds = null;
-        viewModel.populateDrills();
+        viewModel.setCategoryFilterIds(null);
+        viewModel.setSubCategoryFilterIds(null);
+        viewModel.rePopulateDrills();
     }
 
     public void setUpRecyclerView(List<Drill> drills) {
@@ -123,10 +113,8 @@ public class ViewDrillsActivity extends AppCompatActivity {
     }
 
     private void filterCategoriesPopup(List<CategoryEntity> categories) {
-        if (null == categoryFilterIds) {
-            categoryFilterIds = categories.stream().map(CategoryEntity::getId)
-                    .collect(Collectors.toSet());
-        }
+        final Set<Long> categoryFilterIds = viewModel.getCategoryFilterIds();
+        final Set<Long> subCategoryFilterIds = viewModel.getSubCategoryFilterIds();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] categoryNames = categories
@@ -182,14 +170,12 @@ public class ViewDrillsActivity extends AppCompatActivity {
         });
 
         alert.show();
-        categoriesLoadingSnackbar.dismiss();
     }
 
     private void filterSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
-        if (null == subCategoryFilterIds) {
-            subCategoryFilterIds = subCategories.stream().map(SubCategoryEntity::getId)
-                    .collect(Collectors.toSet());
-        }
+        final Set<Long> categoryFilterIds = viewModel.getCategoryFilterIds();
+        final Set<Long> subCategoryFilterIds = viewModel.getSubCategoryFilterIds();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] subCategoryNames = subCategories
                 .stream().map(SubCategoryEntity::getName).toArray(String[]::new);
@@ -244,6 +230,5 @@ public class ViewDrillsActivity extends AppCompatActivity {
         });
 
         alert.show();
-        subCategoriesLoadingSnackbar.dismiss();
     }
 }

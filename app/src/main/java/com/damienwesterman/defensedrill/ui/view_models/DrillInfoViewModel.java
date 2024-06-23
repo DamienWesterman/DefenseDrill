@@ -37,8 +37,8 @@ import java.util.concurrent.Executors;
  */
 public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<Drill> currentDrill;
-    private final MutableLiveData<List<CategoryEntity>> allCategories;
-    private final MutableLiveData<List<SubCategoryEntity>> allSubCategories;
+    private List<CategoryEntity> allCategories;
+    private List<SubCategoryEntity> allSubCategories;
     private final DrillRepository repo;
     private DrillGenerator drillGenerator;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -47,8 +47,6 @@ public class DrillInfoViewModel extends AndroidViewModel {
         super(application);
 
         currentDrill = new MutableLiveData<>();
-        allCategories = new MutableLiveData<>();
-        allSubCategories = new MutableLiveData<>();
         repo = DrillRepository.getInstance(application);
     }
 
@@ -124,29 +122,19 @@ public class DrillInfoViewModel extends AndroidViewModel {
         });
     }
 
-    public LiveData<List<CategoryEntity>> getAllCategories() {
+    public List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
-    public LiveData<List<SubCategoryEntity>> getAllSubCategories() {
+    public List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 
     public void loadAllCategories() {
-        if (null == allCategories.getValue()) {
-            executor.execute(() -> allCategories.postValue(repo.getAllCategories()));
-        } else {
-            // Force the observer to trigger
-            allCategories.setValue(allCategories.getValue());
-        }
+        executor.execute(() -> allCategories = repo.getAllCategories());
     }
 
     public void loadAllSubCategories() {
-        if (null == allSubCategories.getValue()) {
-            executor.execute(() -> allSubCategories.postValue(repo.getAllSubCategories()));
-        } else {
-            // Force the observer to trigger
-            allSubCategories.setValue(allSubCategories.getValue());
-        }
+            executor.execute(() -> allSubCategories = repo.getAllSubCategories());
     }
 }

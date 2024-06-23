@@ -78,9 +78,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     Button markAsPracticedButton;
     Button saveDrillInfoButton;
 
-    Snackbar categoriesLoadingSnackbar;
-    Snackbar subCategoriesLoadingSnackbar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,13 +103,11 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     public void editCategories(View view) {
-        categoriesLoadingSnackbar.show();
-        viewModel.loadAllCategories();
+        editCategoriesPopup(viewModel.getAllCategories());
     }
 
     public void editSubCategories(View view) {
-        subCategoriesLoadingSnackbar.show();
-        viewModel.loadAllSubCategories();
+        editSubCategoriesPopup(viewModel.getAllSubCategories());
     }
 
     public void regenerateDrill(View view) {
@@ -164,9 +159,8 @@ public class DrillInfoActivity extends AppCompatActivity {
             //       descriptions and videos
         }));
 
-        viewModel.getAllCategories().observe(this, this::editCategoriesPopup);
-
-        viewModel.getAllSubCategories().observe(this, this::editSubCategoriesPopup);
+        viewModel.loadAllCategories();
+        viewModel.loadAllSubCategories();
 
         changeUiToDrillLoading();
         Intent intent = getIntent();
@@ -199,10 +193,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
         markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
         saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
-        categoriesLoadingSnackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                "Loading Categories...", Snackbar.LENGTH_INDEFINITE);
-        subCategoriesLoadingSnackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                "Loading sub-Categories...", Snackbar.LENGTH_INDEFINITE);
     }
 
     private void alertNoDrillFound() {
@@ -387,7 +377,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         });
 
         alert.show();
-        categoriesLoadingSnackbar.dismiss();
     }
 
     private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
@@ -450,7 +439,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         });
 
         alert.show();
-        subCategoriesLoadingSnackbar.dismiss();
     }
 
     // TODO Doc comments nullable
