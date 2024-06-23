@@ -11,21 +11,23 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
@@ -349,23 +351,42 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setMultiChoiceItems(categoryNames, checkedCategories,
                 (dialog, position, isChecked) -> checkedCategories[position] = isChecked);
         builder.setCancelable(true);
-        builder.setPositiveButton("Save", (dialog, position) -> {
-            for (int i = 0; i < checkedCategories.length; i++) {
-                if (checkedCategories[i] && !categories.contains(categoryEntities.get(i))) {
-                    // Checked but not already in list - add
-                    drill.addCategory(categoryEntities.get(i));
-                } else if (!checkedCategories[i] && categories.contains(categoryEntities.get(i))) {
-                    // Not checked but in list - remove
-                    drill.removeCategory(categoryEntities.get(i));
+        builder.setPositiveButton("Save", null);
+        builder.setNegativeButton("Back", null);
+        builder.setNeutralButton("Clear All", null);
+        AlertDialog alert = builder.create();
+        alert.setOnShowListener(dialogInterface -> {
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                // "Save"
+                for (int i = 0; i < checkedCategories.length; i++) {
+                    if (checkedCategories[i] && !categories.contains(categoryEntities.get(i))) {
+                        // Checked but not already in list - add
+                        drill.addCategory(categoryEntities.get(i));
+                    } else if (!checkedCategories[i] && categories.contains(categoryEntities.get(i))) {
+                        // Not checked but in list - remove
+                        drill.removeCategory(categoryEntities.get(i));
+                    }
+                    viewModel.saveDrill(drill, this);
                 }
-                viewModel.saveDrill(drill, this);
-            }
+                alert.dismiss();
+            });
+            alert.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(view -> {
+                // "Back"
+                alert.dismiss();
+            });
+            alert.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
+                // "Clear All"
+                Arrays.fill(checkedCategories, false);
+
+                ListView listView = alert.getListView();
+                for (int i = 0; i < listView.getCount(); i++) {
+                    listView.setItemChecked(i, false);
+                }
+                // Do not dismiss
+            });
         });
-        builder.setNegativeButton("Back", (dialog, position) -> {
-            // Intentionally left black
-        });
-        builder.setNeutralButton("Clear All", (dialog, position) -> Arrays.fill(checkedCategories, false));
-        builder.create().show();
+
+        alert.show();
         categoriesLoadingSnackbar.dismiss();
     }
 
@@ -393,23 +414,42 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setMultiChoiceItems(subCategoryNames, checkedSubCategories,
                 (dialog, position, isChecked) -> checkedSubCategories[position] = isChecked);
         builder.setCancelable(true);
-        builder.setPositiveButton("Save", (dialog, position) -> {
-            for (int i = 0; i < checkedSubCategories.length; i++) {
-                if (checkedSubCategories[i] && !subCategories.contains(subCategoryEntities.get(i))) {
-                    // Checked but not already in list - add
-                    drill.addSubCategory(subCategoryEntities.get(i));
-                } else if (!checkedSubCategories[i] && subCategories.contains(subCategoryEntities.get(i))) {
-                    // Not checked but in list - remove
-                    drill.removeSubCategory(subCategoryEntities.get(i));
+        builder.setPositiveButton("Save", null);
+        builder.setNegativeButton("Back", null);
+        builder.setNeutralButton("Clear All", null);
+        AlertDialog alert = builder.create();
+        alert.setOnShowListener(dialogInterface -> {
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                // "Save"
+                for (int i = 0; i < checkedSubCategories.length; i++) {
+                    if (checkedSubCategories[i] && !subCategories.contains(subCategoryEntities.get(i))) {
+                        // Checked but not already in list - add
+                        drill.addSubCategory(subCategoryEntities.get(i));
+                    } else if (!checkedSubCategories[i] && subCategories.contains(subCategoryEntities.get(i))) {
+                        // Not checked but in list - remove
+                        drill.removeSubCategory(subCategoryEntities.get(i));
+                    }
+                    viewModel.saveDrill(drill, this);
                 }
-                viewModel.saveDrill(drill, this);
-            }
+                alert.dismiss();
+            });
+            alert.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(view -> {
+                // "Back"
+                alert.dismiss();
+            });
+            alert.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
+                // "Clear All"
+                Arrays.fill(checkedSubCategories, false);
+
+                ListView listView = alert.getListView();
+                for (int i = 0; i < listView.getCount(); i++) {
+                    listView.setItemChecked(i, false);
+                }
+                // Do not dismiss
+            });
         });
-        builder.setNegativeButton("Back", (dialog, position) -> {
-            // Intentionally left black
-        });
-        builder.setNeutralButton("Clear All", (dialog, position) -> Arrays.fill(checkedSubCategories, false));
-        builder.create().show();
+
+        alert.show();
         subCategoriesLoadingSnackbar.dismiss();
     }
 
