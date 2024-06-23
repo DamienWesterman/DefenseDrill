@@ -34,4 +34,7 @@
     <string name="no_drill_by_category_sub_category">Looks like no matching drills were found!</string>
     <string name="no_drills_left">No more drills in this category.</string>
     <string name="drills">Drills</string>
+    <string name="filter_by_category">Filter By Category</string>
+    <string name="filter_by_sub_category">Filter by sub-Category</string>
+    <string name="reset_filters">Reset Filters</string>
 </resources>

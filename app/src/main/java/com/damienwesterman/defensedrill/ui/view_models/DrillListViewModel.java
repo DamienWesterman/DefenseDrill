@@ -54,15 +54,33 @@ public class DrillListViewModel extends AndroidViewModel {
         executor.execute(() -> drills.postValue(repo.getAllDrills()));
     }
 
-    public void populateDrills(long categoryId, long subCategoryId) {
-        executor.execute(() -> drills.postValue(repo.getAllDrills(categoryId, subCategoryId)));
+    public void filterDrills(List<Long> categoryIds, List<Long> subCategoryIds) {
+        executor.execute(() -> drills.postValue(repo.getAllDrills(categoryIds, subCategoryIds)));
     }
 
-    public void populateDrillsByCategory(long categoryId)  {
-        executor.execute(() -> drills.postValue(repo.getAllDrillsByCategoryId(categoryId)));
+    public LiveData<List<CategoryEntity>> getAllCategories() {
+        return allCategories;
     }
 
-    public void populateDrillsBySubCategory(long subCategoryId) {
-        executor.execute(() -> drills.postValue(repo.getAllDrillsBySubCategoryId(subCategoryId)));
+    public LiveData<List<SubCategoryEntity>> getAllSubCategories() {
+        return allSubCategories;
+    }
+
+    public void loadAllCategories() {
+        if (null == allCategories.getValue()) {
+            executor.execute(() -> allCategories.postValue(repo.getAllCategories()));
+        } else {
+            // Force the observer to trigger
+            allCategories.setValue(allCategories.getValue());
+        }
+    }
+
+    public void loadAllSubCategories() {
+        if (null == allSubCategories.getValue()) {
+            executor.execute(() -> allSubCategories.postValue(repo.getAllSubCategories()));
+        } else {
+            // Force the observer to trigger
+            allSubCategories.setValue(allSubCategories.getValue());
+        }
     }
 }
