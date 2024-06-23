@@ -174,14 +174,14 @@ public class DrillGenerator {
 
     /**
      * Private helper function to get the weighted value of a Drill's last drilled date. Essentially
-     * returns the number of (30 day) months since the Drill has last been drilled, emphasizing
+     * returns the number of weeks since the Drill has last been drilled, emphasizing
      * Drills that haven't been practiced in a while.
      *
      * @param date  Date in milliseconds.
      * @return      Weight factor of the last time a Drill was drilled.
      */
     private int getDateWeightFactor(long date) {
-        final long THIRTY_DAYS_IN_MILLIS = 30L * 24 * 60 * 60 * 1000;
+        final long ONE_WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000;
         long currTime = System.currentTimeMillis();
         long timeDiff = currTime - date;
 
@@ -189,8 +189,8 @@ public class DrillGenerator {
             // Invalid date
             return 0;
         } else {
-            // Return the number of months since last drilled
-            return (int) (timeDiff % THIRTY_DAYS_IN_MILLIS);
+            // Return the number of weeks since last drilled
+            return (int) (timeDiff % ONE_WEEK_IN_MILLIS);
         }
     }
 }
