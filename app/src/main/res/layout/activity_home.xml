@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.activities.HomeActivity" >
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-        android:id="@+id/generateDrillCard"
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="8dp"
-        app:title="@string/generate_drill_title"
-        app:description="@string/generate_drills_description"
-        android:onClick="onCardClick"/>
+        android:orientation="vertical"
+        tools:context=".ui.activities.HomeActivity" >
 
-    <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-        android:id="@+id/createDrillCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="8dp"
-        app:title="@string/create_drill_title"
-        app:description="@string/create_drill_description"
-        android:onClick="onCardClick"
-        android:longClickable="true" />
+        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+            android:id="@+id/generateDrillCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/generate_drill_title"
+            app:description="@string/generate_drills_description"
+            android:onClick="onCardClick"/>
 
-    <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-        android:id="@+id/viewDrillsCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="8dp"
-        app:title="@string/view_all_drills_title"
-        app:description="@string/view_all_drills_description"
-        android:onClick="onCardClick" />
-</LinearLayout>
+        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+            android:id="@+id/createDrillCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/create_drill_title"
+            app:description="@string/create_drill_description"
+            android:onClick="onCardClick"
+            android:longClickable="true" />
+
+        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+            android:id="@+id/viewDrillsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/view_all_drills_title"
+            app:description="@string/view_all_drills_description"
+            android:onClick="onCardClick" />
+    </LinearLayout>
+</ScrollView>
