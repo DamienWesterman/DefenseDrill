@@ -45,13 +45,13 @@ import java.util.stream.Collectors;
  * TODO Doc comments
  */
 public class ViewDrillsActivity extends AppCompatActivity {
+    // TODO add functionality to delete on long click - with popup
     private DrillListViewModel viewModel;
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
 
     @Override
-    @SuppressLint("CutPasteId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_drills);

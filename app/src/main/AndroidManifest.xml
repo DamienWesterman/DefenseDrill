@@ -13,6 +13,22 @@
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activities.CreateAbstractCategoryActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.CreateDrillActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.activities.ViewDrillsActivity"
             android:exported="false"
             android:parentActivityName=".ui.activities.HomeActivity">

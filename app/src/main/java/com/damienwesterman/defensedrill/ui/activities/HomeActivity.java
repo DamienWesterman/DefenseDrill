@@ -24,11 +24,8 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
-import com.damienwesterman.defensedrill.utils.Constants;
-import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * TODO doc comments
@@ -51,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onCardClick(View view) {
+        // Add cards to delete things
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
             Intent intent = new Intent(this, CategorySelectActivity.class);
@@ -65,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    // TODO Take out once the server is ready
     private void mockDatabaseEntries() {
         DrillRepository repo = DrillRepository.getInstance(this.getApplicationContext());
 
