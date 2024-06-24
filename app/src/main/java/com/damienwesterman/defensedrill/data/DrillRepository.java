@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.database;
+package com.damienwesterman.defensedrill.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
@@ -101,6 +101,31 @@ public class DrillRepository {
      */
     public synchronized List<Drill> getAllDrills(long categoryId, long subCategoryId) {
         return this.drillDao.findAllDrillsByCategoryAndSubCategory(categoryId, subCategoryId);
+    }
+
+    /**
+     * Return a list of all Drills that are part of both lists of category and subCategory IDs.
+     * <br><br>
+     * If either list is null, it will match to ANY the respective category/subCategory.
+     *
+     * @param categoryIds       List of IDs of the category of drills.
+     * @param subCategoryIds    List of IDs of the sub category of drills.
+     * @return                  List of Drill objects.
+     */
+    public synchronized List<Drill> getAllDrills(List<Long> categoryIds, List<Long> subCategoryIds) {
+        List<Drill> ret;
+
+        if (null == categoryIds && null == subCategoryIds) {
+            ret = getAllDrills();
+        } else if (null == categoryIds) {
+            ret = this.drillDao.findAllDrillsBySubCategory(subCategoryIds);
+        } else if (null == subCategoryIds) {
+            ret = this.drillDao.findAllDrillsByCategory(categoryIds);
+        } else {
+            ret = this.drillDao.findAllDrillsByCategoryAndSubCategory(categoryIds, subCategoryIds);
+        }
+
+        return ret;
     }
 
     /**

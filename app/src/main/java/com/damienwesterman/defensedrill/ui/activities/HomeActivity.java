@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.activities;
+package com.damienwesterman.defensedrill.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,45 +19,51 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.database.CategoryEntity;
-import com.damienwesterman.defensedrill.database.Drill;
-import com.damienwesterman.defensedrill.database.DrillRepository;
-import com.damienwesterman.defensedrill.database.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 
 import java.util.ArrayList;
 
 /**
- * TOD doc comments
+ * TODO doc comments
+ * TODO Make sure all the ui classes are clean
+ * TODO Double check everywhere for null checks
  */
 public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        TitleDescCard createDrillCard = findViewById(R.id.createDrillCard);
+        createDrillCard.setOnLongClickListener(view -> {
+            // Just for now, create some mock entries in the database
+            new Thread(this::mockDatabaseEntries).start();
+            Toast.makeText(this, "Added mocked database entries", Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
-    // TODO: Use LinearLayout for this one as it is simpler, then for the Category and SubCategory lists use
-    //       RecyclerView. Maybe have a service or something in order to report over all the activities
-    //       what Category and SubCategory was picked, that way it could also do the database interactions
-    //       off the main thread? Or maybe just pass each to the next activity as it is called and
-    //       have the last one responsible for it? That's probably better so we can show some sort
-    //       of loading screen then hide it and all that, especially during regeneration
 
     public void onCardClick(View view) {
+        // Add cards to delete things
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
             Intent intent = new Intent(this, CategorySelectActivity.class);
             startActivity(intent);
         } else if (R.id.createDrillCard == cardId) {
             Toast.makeText(this, "Unimplemented: Create Drill", Toast.LENGTH_SHORT).show();
-            // Just for now, create some mock entries in the database
-            new Thread(this::mockDatabaseEntries).start();
         } else if (R.id.viewDrillsCard == cardId) {
-            Toast.makeText(this, "Unimplemented: View Drills", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ViewDrillsActivity.class);
+            startActivity(intent);
         } else {
             Toast.makeText(this, "Unknown option", Toast.LENGTH_SHORT).show();
         }
     }
 
+    // TODO Take out once the server is ready
     private void mockDatabaseEntries() {
         DrillRepository repo = DrillRepository.getInstance(this.getApplicationContext());
 
@@ -70,19 +76,25 @@ public class HomeActivity extends AppCompatActivity {
         CategoryEntity kickBoxingCategory = new CategoryEntity("Kickboxing", "Using fists and kicks.");
         CategoryEntity kravMagaCategory = new CategoryEntity("Krav Maga", "Real world escapes.");
         CategoryEntity jiuJitsuCategory = new CategoryEntity("Jiu-Jitsu", "Ground based grapples.");
-        repo.insertCategories(kickBoxingCategory, kravMagaCategory, jiuJitsuCategory);
+        CategoryEntity weaponsDefenseCategory = new CategoryEntity("Weapons Defense", "How to deal with an attacker with a weapon.");
+        repo.insertCategories(kickBoxingCategory, kravMagaCategory, jiuJitsuCategory, weaponsDefenseCategory);
         kickBoxingCategory = repo.getCategory(kickBoxingCategory.getName());
         kravMagaCategory = repo.getCategory(kravMagaCategory.getName());
         jiuJitsuCategory = repo.getCategory(jiuJitsuCategory.getName());
+        weaponsDefenseCategory = repo.getCategory(weaponsDefenseCategory.getName());
 
         // Set up subCategories
         SubCategoryEntity strikesSubCategory = new SubCategoryEntity("Strikes", "Using your upper body to strike your opponent.");
         SubCategoryEntity kicksSubCategory = new SubCategoryEntity("Kicks", "Using your legs to strike your opponent.");
         SubCategoryEntity escapesSubCategory = new SubCategoryEntity("Escapes", "Escaping an opponent's hold on you.");
-        repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory);
+        SubCategoryEntity gunDefenseSubCategory = new SubCategoryEntity("Gun Defense", "Dealing with an attacker who has a gun.");
+        SubCategoryEntity knifeDefenseSubCategory = new SubCategoryEntity("Knife Defense", "Dealing with an attacker who has a knife");
+        repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory, gunDefenseSubCategory, knifeDefenseSubCategory);
         strikesSubCategory = repo.getSubCategory(strikesSubCategory.getName());
-        kicksSubCategory = repo.getSubCategory(kickBoxingCategory.getName());
+        kicksSubCategory = repo.getSubCategory(kicksSubCategory.getName());
         escapesSubCategory = repo.getSubCategory(escapesSubCategory.getName());
+        gunDefenseSubCategory = repo.getSubCategory(gunDefenseSubCategory.getName());
+        knifeDefenseSubCategory = repo.getSubCategory(knifeDefenseSubCategory.getName());
 
         // Set up some drills
         Drill jab = new Drill("Jab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
@@ -113,6 +125,22 @@ public class HomeActivity extends AppCompatActivity {
                 -1, new ArrayList<>(), new ArrayList<>());
         shrimpEscape.addCategory(jiuJitsuCategory);
         shrimpEscape.addSubCategory(escapesSubCategory);
-        repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape);
+        Drill gunToHeadDrill = new Drill("Gun to the Front of the Head", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        gunToHeadDrill.addCategory(weaponsDefenseCategory);
+        gunToHeadDrill.addSubCategory(gunDefenseSubCategory);
+        Drill gunToHeadBack = new Drill("Gun to the Back", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        gunToHeadBack.addCategory(weaponsDefenseCategory);
+        gunToHeadBack.addSubCategory(gunDefenseSubCategory);
+        Drill slash = new Drill("Knife Slash", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        slash.addCategory(weaponsDefenseCategory);
+        slash.addSubCategory(knifeDefenseSubCategory);
+        Drill risingStab = new Drill("Rising Stab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+                -1, new ArrayList<>(), new ArrayList<>());
+        risingStab.addCategory(weaponsDefenseCategory);
+        risingStab.addSubCategory(knifeDefenseSubCategory);
+        repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape, gunToHeadDrill, gunToHeadBack, slash, risingStab);
     }
 }

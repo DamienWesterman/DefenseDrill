@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.database;
+package com.damienwesterman.defensedrill.data;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

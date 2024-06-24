@@ -9,19 +9,20 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.view_models;
+package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
-import com.damienwesterman.defensedrill.database.CategoryEntity;
-import com.damienwesterman.defensedrill.database.DrillRepository;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.data.DrillRepository;
 
 import java.util.List;
 
 /**
  * TODO Doc comments
+ * Abstraction so that we don't do another database call on phone rotation
  */
 public class CategorySelectViewModel extends AndroidViewModel {
     private List<CategoryEntity> categories;

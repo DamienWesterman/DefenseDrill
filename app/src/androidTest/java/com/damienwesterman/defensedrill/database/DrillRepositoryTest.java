@@ -24,6 +24,11 @@ import android.database.sqlite.SQLiteConstraintException;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.damienwesterman.defensedrill.data.CategoryEntity;
+import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -1270,11 +1275,33 @@ public class DrillRepositoryTest {
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
         drill2.addCategory(category1);
-        drill2.addSubCategory(subCategory1);
+        drill2.addSubCategory(subCategory2);
 
         repo.insertDrills(drill1, drill2);
 
         assertEquals(2, repo.getAllSubCategories(category1.getId()).size());
+    }
+
+    @Test
+    public void test_getAllSubCategories_categoryParameter_multipleDrillsSameSubCategory() {
+        repo.insertCategories(category1, category2, category3);
+        category1 = repo.getCategory(category1.getName());
+        category2 = repo.getCategory(category2.getName());
+        category3 = repo.getCategory(category3.getName());
+
+        repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory3 = repo.getSubCategory(subCategory3.getName());
+
+        drill1.addCategory(category1);
+        drill1.addSubCategory(subCategory1);
+        drill2.addCategory(category1);
+        drill2.addSubCategory(subCategory1);
+
+        repo.insertDrills(drill1, drill2);
+
+        assertEquals(1, repo.getAllSubCategories(category1.getId()).size());
     }
 
     @Test

@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 
-package com.damienwesterman.defensedrill.database;
+package com.damienwesterman.defensedrill.data;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -25,7 +25,7 @@ import java.util.List;
     List<SubCategoryEntity> getAll();
 
     @Query(
-            "SELECT sub.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
+            "SELECT DISTINCT sub.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
             "JOIN " + DrillSubCategoryJoinEntity.TABLE_NAME + " AS drillSubJoin ON sub.id = drillSubJoin.sub_category_id " +
             "JOIN " + DrillEntity.TABLE_NAME + " AS drill ON drillSubJoin.drill_id = drill.id " +
             "JOIN " + DrillCategoryJoinEntity.TABLE_NAME + " AS drillCatJoin ON drill.id = drillCatJoin.drill_id " +
