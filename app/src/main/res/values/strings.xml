@@ -37,4 +37,5 @@
     <string name="filter_by_category">Filter By Category</string>
     <string name="filter_by_sub_category">Filter by sub-Category</string>
     <string name="reset_filters">Reset Filters</string>
+    <string name="all_drills_instruction">Click to view/edit a Drill, hold to delete</string>
 </resources>

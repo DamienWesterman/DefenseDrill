@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
+import com.damienwesterman.defensedrill.ui.utils.LongCardClickListener;
 import com.damienwesterman.defensedrill.ui.view_holders.CardViewHolder;
 
 import java.util.List;
@@ -31,11 +32,13 @@ import java.util.List;
 public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final List<Drill> drills;
     CardClickListener clickListener;
+    LongCardClickListener longClickListener;
 
-
-    public DrillAdapter(List<Drill> drills, CardClickListener clickListener) {
+    public DrillAdapter(@NonNull List<Drill> drills, CardClickListener clickListener,
+                        LongCardClickListener longClickListener) {
         this.drills = drills;
         this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
@@ -53,6 +56,7 @@ public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.getCard().setTitle(drills.get(position).getName());
         holder.getCard().setDescription("");
         holder.setOnClickListener(clickListener, drills.get(position).getId());
+        holder.setLongClickListener(longClickListener, drills.get(position).getId());
     }
 
     @Override

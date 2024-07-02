@@ -14,6 +14,7 @@ package com.damienwesterman.defensedrill.ui.view_models;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -111,5 +112,35 @@ public class DrillListViewModel extends AndroidViewModel {
 
     public void setSubCategoryFilterIds(Set<Long> subCategoryFilterIds) {
         this.subCategoryFilterIds = subCategoryFilterIds;
+    }
+
+
+    public @Nullable Drill findDrillById(long id) {
+        Drill ret = null;
+        List<Drill> allDrills = drills.getValue();
+
+        if (null != allDrills) {
+            for (Drill drill : allDrills) {
+                if (drill.getId() == id) {
+                    ret = drill;
+                    break;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    public void deleteDrill(Drill drill) {
+        executor.execute(() -> {
+            if (null != drill) {
+                List<Drill> newDrills = drills.getValue();
+                if (newDrills != null) {
+                    newDrills.remove(drill);
+                    drills.postValue(newDrills);
+                    repo.deleteDrills(drill);
+                }
+            }
+        });
     }
 }

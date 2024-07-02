@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,7 +46,6 @@ import java.util.stream.Collectors;
  * TODO Doc comments
  */
 public class ViewDrillsActivity extends AppCompatActivity {
-    // TODO add functionality to delete on long click - with popup
     private DrillListViewModel viewModel;
 
     private ProgressBar progressBar;
@@ -95,11 +95,15 @@ public class ViewDrillsActivity extends AppCompatActivity {
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new DrillAdapter(drills, id -> {
+        recyclerView.setAdapter(new DrillAdapter(drills,
+                // Click listener
+                id -> {
             Intent intent = new Intent(this, DrillInfoActivity.class);
             intent.putExtra(Constants.INTENT_DRILL_ID, id);
             startActivity(intent);
-        }));
+        },
+                // Long click listener
+                id -> deleteDrillPopup(viewModel.findDrillById(id))));
     }
 
     public void setLoading(boolean loading) {
@@ -230,5 +234,24 @@ public class ViewDrillsActivity extends AppCompatActivity {
         });
 
         alert.show();
+    }
+
+    private void deleteDrillPopup(Drill drill) {
+        if (null == drill) {
+            Toast.makeText(this, "Something went wrong trying to delete", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure you want to delete the following Drill:");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setCancelable(true);
+        builder.setMessage(drill.getName());
+        builder.setNegativeButton("Cancel", null);
+        builder.setPositiveButton("Delete", (dialog, position) -> {
+            setLoading(true);
+            viewModel.deleteDrill(drill);
+        });
+        builder.create().show();
     }
 }
