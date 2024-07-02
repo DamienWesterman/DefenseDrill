@@ -91,12 +91,14 @@ public class SubCategorySelectActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
-                recyclerView.setAdapter(new AbstractCategoryAdapter<>(subCategories, id -> {
+                recyclerView.setAdapter(new AbstractCategoryAdapter<>(subCategories,
+                        // Card click listener
+                        id -> {
                     Intent intent = new Intent(this, DrillInfoActivity.class);
                     intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, selectedCategoryId);
                     intent.putExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, id);
                     startActivity(intent);
-                }));
+                }, null));
             });
         });
     }
