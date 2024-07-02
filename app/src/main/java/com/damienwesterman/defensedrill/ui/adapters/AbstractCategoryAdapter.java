@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
+import com.damienwesterman.defensedrill.ui.utils.LongCardClickListener;
 import com.damienwesterman.defensedrill.ui.view_holders.CardViewHolder;
 
 import java.util.List;
@@ -32,11 +33,13 @@ import com.damienwesterman.defensedrill.R;
 public class AbstractCategoryAdapter<T extends AbstractCategoryEntity> extends RecyclerView.Adapter<CardViewHolder> {
     private final List<T> categories;
     CardClickListener clickListener;
+    LongCardClickListener longClickListener;
 
-
-    public AbstractCategoryAdapter(List<T> categories, CardClickListener clickListener) {
+    public AbstractCategoryAdapter(@NonNull List<T> categories, CardClickListener clickListener,
+                                   LongCardClickListener longClickListener) {
         this.categories = categories;
         this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
@@ -54,6 +57,7 @@ public class AbstractCategoryAdapter<T extends AbstractCategoryEntity> extends R
         holder.getCard().setTitle(categories.get(position).getName());
         holder.getCard().setDescription(categories.get(position).getDescription());
         holder.setOnClickListener(clickListener, categories.get(position).getId());
+        holder.setLongClickListener(longClickListener, categories.get(position).getId());
     }
 
     @Override
