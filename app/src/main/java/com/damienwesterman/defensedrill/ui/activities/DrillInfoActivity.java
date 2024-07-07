@@ -63,7 +63,6 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     ProgressBar drillProgressBar;
     TextView drillName;
-    View drillInfoDivider;
     TextView lastDrilledLabel;
     TextView lastDrilledDate;
     TextView confidenceLabel;
@@ -185,7 +184,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void saveViews() {
         drillProgressBar = findViewById(R.id.drillProgressBar);
         drillName = findViewById(R.id.drillName);
-        drillInfoDivider = findViewById(R.id.drillInfoDivider);
         lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
         lastDrilledDate = findViewById(R.id.lastDrilledDate);
         confidenceLabel = findViewById(R.id.confidenceLabel);
@@ -228,7 +226,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void changeUiToDrillLoading() {
         drillProgressBar.setVisibility(View.VISIBLE);
         drillName.setVisibility(View.GONE);
-        drillInfoDivider.setVisibility(View.GONE);
         lastDrilledLabel.setVisibility(View.GONE);
         lastDrilledDate.setVisibility(View.GONE);
         confidenceLabel.setVisibility(View.GONE);
@@ -248,7 +245,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void changeUiToDrillInfoShown() {
         drillProgressBar.setVisibility(View.GONE);
         drillName.setVisibility(View.VISIBLE);
-        drillInfoDivider.setVisibility(View.VISIBLE);
         lastDrilledLabel.setVisibility(View.VISIBLE);
         lastDrilledDate.setVisibility(View.VISIBLE);
         confidenceLabel.setVisibility(View.VISIBLE);

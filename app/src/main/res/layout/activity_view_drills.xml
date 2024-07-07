@@ -61,14 +61,14 @@
         android:layout_height="wrap_content"
         android:text="@string/reset_filters"
         android:drawableLeft="@drawable/filter_icon"
-        android:layout_marginBottom="12dp"
         tools:ignore="ButtonStyle,RtlHardcoded" />
 
     <View
         android:id="@+id/allDrillsDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:attr/listDivider" />
+        android:layout_marginTop="8dp"
+        android:background="?attr/dividerColor"/>
 
     <ProgressBar
         android:id="@+id/allDrillsProgressBar"

@@ -15,11 +15,6 @@
         android:textAlignment="center"
         android:textSize="36sp"
         android:textStyle="bold" />
-    <View
-        android:id="@+id/categoryDivider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider" />
 
     <ProgressBar
         android:id="@+id/categoryProgressBar"
@@ -38,6 +33,13 @@
         app:description="@string/randomly_select_any_category"
         android:visibility="gone"
         android:onClick="randomCategoryClick" />
+
+    <View
+        android:id="@+id/categoryDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/dividerColor" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoryRecyclerView"

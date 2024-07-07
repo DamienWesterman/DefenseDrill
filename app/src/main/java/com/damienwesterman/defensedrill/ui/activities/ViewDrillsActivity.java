@@ -11,7 +11,6 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.DrillAdapter;
 import com.damienwesterman.defensedrill.ui.view_models.DrillListViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
