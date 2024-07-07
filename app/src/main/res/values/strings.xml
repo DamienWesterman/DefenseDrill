@@ -2,10 +2,8 @@
     <string name="app_name">Defense Drill</string>
     <string name="generate_drill_title">Generate Drill</string>
     <string name="generate_drills_description">Randomly generate a drill to practice.</string>
-    <string name="create_drill_title">Create Drill</string>
-    <string name="create_drill_description">Create a new Drill, new type of Category, or new type of sub-Category.</string>
-    <string name="view_all_drills_title">View All Drills</string>
-    <string name="view_all_drills_description">See all currently saved Drills, Categories, and sub-Categories. Filter drills by category and/or sub-category. Long click a Drill to delete it.</string>
+    <string name="customize_drills_title">Customize Drills</string>
+    <string name="customize_drills_description">See all currently saved Drills and edit them, or create a new one. Filter drills by category and/or sub-category. Long click a Drill to delete it.</string>
     <string name="select_category">Select a Category</string>
     <string name="random_category">Random Category</string>
     <string name="randomly_select_any_category">Randomly select any category.</string>
@@ -38,4 +36,10 @@
     <string name="filter_by_sub_category">Filter by sub-Category</string>
     <string name="reset_filters">Reset Filters</string>
     <string name="all_drills_instruction">Click to view/edit a Drill, hold to delete</string>
+    <string name="create_new_drill">Create New Drill</string>
+    <string name="name_label">Name:</string>
+    <string name="create_new_drill_title">Create New Drill</string>
+    <string name="enter_a_name_for_the_drill">Enter a name for the drill…</string>
+    <string name="add_categories">Add Categories</string>
+    <string name="add_sub_categories">Add sub-Categories</string>
 </resources>

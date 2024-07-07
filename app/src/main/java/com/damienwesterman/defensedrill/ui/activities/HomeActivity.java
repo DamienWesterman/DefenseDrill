@@ -38,8 +38,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        TitleDescCard createDrillCard = findViewById(R.id.createDrillCard);
-        createDrillCard.setOnLongClickListener(view -> {
+        TitleDescCard viewDrillsCard = findViewById(R.id.viewDrillsCard);
+        viewDrillsCard.setOnLongClickListener(view -> {
             // Just for now, create some mock entries in the database
             new Thread(this::mockDatabaseEntries).start();
             Toast.makeText(this, "Added mocked database entries", Toast.LENGTH_SHORT).show();
@@ -53,8 +53,6 @@ public class HomeActivity extends AppCompatActivity {
         if (R.id.generateDrillCard == cardId) {
             Intent intent = new Intent(this, CategorySelectActivity.class);
             startActivity(intent);
-        } else if (R.id.createDrillCard == cardId) {
-            Toast.makeText(this, "Unimplemented: Create Drill", Toast.LENGTH_SHORT).show();
         } else if (R.id.viewDrillsCard == cardId) {
             Intent intent = new Intent(this, ViewDrillsActivity.class);
             startActivity(intent);

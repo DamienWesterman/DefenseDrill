@@ -79,6 +79,11 @@ public class ViewDrillsActivity extends AppCompatActivity {
         viewModel.rePopulateDrills();
     }
 
+    public void createDrill(View view) {
+        Intent intent = new Intent(this, CreateDrillActivity.class);
+        startActivity(intent);
+    }
+
     public void setUpRecyclerView(List<Drill> drills) {
         setLoading(true);
 

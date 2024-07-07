@@ -63,6 +63,15 @@
         android:drawableLeft="@drawable/filter_icon"
         tools:ignore="ButtonStyle,RtlHardcoded" />
 
+    <Button
+        android:id="@+id/createDrillButton"
+        android:onClick="createDrill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_new_drill"
+        android:drawableLeft="@drawable/add_circle_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded" />
+
     <View
         android:id="@+id/allDrillsDivider"
         android:layout_width="match_parent"

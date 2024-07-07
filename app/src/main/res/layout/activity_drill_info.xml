@@ -36,12 +36,13 @@
             android:textStyle="italic"
             android:text="@string/confidence_label"
             android:visibility="gone"
-            android:textColor="@color/gray" />
+            android:textColor="@color/field_label" />
 
         <Spinner
             android:id="@+id/confidenceSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:visibility="gone" />
 
         <TextView
@@ -53,7 +54,7 @@
             android:textStyle="italic"
             android:text="@string/last_drilled_label"
             android:visibility="gone"
-            android:textColor="@color/gray" />
+            android:textColor="@color/field_label" />
 
         <TextView
             android:id="@+id/lastDrilledDate"
@@ -92,7 +93,7 @@
             android:textStyle="italic"
             android:text="@string/notes_label"
             android:visibility="gone"
-            android:textColor="@color/gray" />
+            android:textColor="@color/field_label" />
 
         <EditText
             android:id="@+id/notes"
