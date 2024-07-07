@@ -1187,6 +1187,21 @@ public class DrillRepositoryTest {
     }
 
     @Test
+    public void test_deleteCategories_removesFromDrills() {
+        repo.insertCategories(category1, category2);
+        category1 = repo.getCategory(category1.getName());
+        drill1.addCategory(category1);
+        repo.insertDrills(drill1);
+        drill1 = repo.getDrill(drill1.getName());
+
+        assertEquals(1, drill1.getCategories().size());
+        repo.deleteCategories(category1);
+        drill1 = repo.getDrill(drill1.getId());
+
+        assertEquals(0, drill1.getCategories().size());
+    }
+
+    @Test
     public void test_getAllSubCategories_emptyDB() {
         assertEquals(0, repo.getAllSubCategories().size());
     }
@@ -1476,5 +1491,20 @@ public class DrillRepositoryTest {
         repo.insertSubCategories(subCategory1);
         repo.deleteSubCategories((SubCategoryEntity[]) null); // Make sure this does not throw
         assertEquals(1, repo.getAllSubCategories().size());
+    }
+
+    @Test
+    public void test_deleteSubCategories_removesFromDrills() {
+        repo.insertSubCategories(subCategory1, subCategory2);
+        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        drill1.addSubCategory(subCategory1);
+        repo.insertDrills(drill1);
+        drill1 = repo.getDrill(drill1.getName());
+
+        assertEquals(1, drill1.getSubCategories().size());
+        repo.deleteSubCategories(subCategory1);
+        drill1 = repo.getDrill(drill1.getId());
+
+        assertEquals(0, drill1.getSubCategories().size());
     }
 }
