@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/add_categories"
-            android:drawableLeft="@drawable/edit_icon"
+            android:drawableLeft="@drawable/add_circle_icon"
             tools:ignore="ButtonStyle,RtlHardcoded" />
 
         <Button
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_sub_categories"
-            android:drawableLeft="@drawable/edit_icon"
+            android:drawableLeft="@drawable/add_circle_icon"
             tools:ignore="ButtonStyle,RtlHardcoded" />
 
         <TextView
@@ -92,6 +92,16 @@
             android:textSize="24sp"
             android:hint="@string/notes_hint"
             android:autofillHints="" />
+
+        <Button
+            android:id="@+id/saveDrillButton"
+            android:onClick="saveDrill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/save_drill"
+            android:drawableLeft="@drawable/save_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
 
     </LinearLayout>
 </ScrollView>

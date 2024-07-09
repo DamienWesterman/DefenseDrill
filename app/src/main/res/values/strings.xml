@@ -42,4 +42,5 @@
     <string name="enter_a_name_for_the_drill">Enter a name for the drill…</string>
     <string name="add_categories">Add Categories</string>
     <string name="add_sub_categories">Add sub-Categories</string>
+    <string name="save_drill">Save Drill</string>
 </resources>
