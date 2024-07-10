@@ -131,10 +131,14 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     public void loadAllCategories() {
-        executor.execute(() -> allCategories = repo.getAllCategories());
+        if (null == allCategories) {
+            executor.execute(() -> allCategories = repo.getAllCategories());
+        }
     }
 
     public void loadAllSubCategories() {
+        if (null == allSubCategories) {
             executor.execute(() -> allSubCategories = repo.getAllSubCategories());
+        }
     }
 }

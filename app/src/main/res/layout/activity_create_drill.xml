@@ -56,8 +56,8 @@
             android:minHeight="48dp" />
 
         <Button
-            android:id="@+id/editCategoriesButton"
-            android:onClick="editCategories"
+            android:id="@+id/addCategoriesButton"
+            android:onClick="addCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -66,8 +66,8 @@
             tools:ignore="ButtonStyle,RtlHardcoded" />
 
         <Button
-            android:id="@+id/editSubCategoriesButton"
-            android:onClick="editSubCategories"
+            android:id="@+id/addSubCategoriesButton"
+            android:onClick="addSubCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_sub_categories"

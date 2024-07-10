@@ -322,8 +322,11 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
-        if (null == drill) {
+        if (null == drill || null == categoryEntities) {
             Toast.makeText(this, "Issue retrieving categories", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (0 == categoryEntities.size()) {
+            Toast.makeText(this, "No Categories in database", Toast.LENGTH_SHORT).show();
             return;
         }
         List<CategoryEntity> categories = drill.getCategories();
@@ -355,7 +358,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                     if (checkedCategories[i] && !categories.contains(categoryEntities.get(i))) {
                         // Checked but not already in list - add
                         drill.addCategory(categoryEntities.get(i));
-                    } else if (!checkedCategories[i] && categories.contains(categoryEntities.get(i))) {
+                    } else if (!checkedCategories[i]) {
                         // Not checked but in list - remove
                         drill.removeCategory(categoryEntities.get(i));
                     }
@@ -384,8 +387,11 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
-        if (null == drill) {
+        if (null == drill || null == subCategoryEntities) {
             Toast.makeText(this, "Issue retrieving sub-categories", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (0 == subCategoryEntities.size()) {
+            Toast.makeText(this, "No sub-Categories in database", Toast.LENGTH_SHORT).show();
             return;
         }
         List<SubCategoryEntity> subCategories = drill.getSubCategories();
@@ -417,7 +423,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                     if (checkedSubCategories[i] && !subCategories.contains(subCategoryEntities.get(i))) {
                         // Checked but not already in list - add
                         drill.addSubCategory(subCategoryEntities.get(i));
-                    } else if (!checkedSubCategories[i] && subCategories.contains(subCategoryEntities.get(i))) {
+                    } else if (!checkedSubCategories[i]) {
                         // Not checked but in list - remove
                         drill.removeSubCategory(subCategoryEntities.get(i));
                     }
