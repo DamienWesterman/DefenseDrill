@@ -47,10 +47,6 @@ import java.util.Locale;
  * TODO Notate the required intents
  */
 public class DrillInfoActivity extends AppCompatActivity {
-    private static final int LOW_CONFIDENCE_POSITION = 0;
-    private static final int MEDIUM_CONFIDENCE_POSITION = 1;
-    private static final int HIGH_CONFIDENCE_POSITION = 2;
-
     // TODO doc comments
     private enum ScreenType {
         GENERATED_DRILL,
@@ -261,42 +257,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveDrillInfoButton.setVisibility(View.VISIBLE);
     }
 
-    private int confidenceWeightToPosition(int weight) {
-        int position;
-        switch(weight) {
-            case Drill.HIGH_CONFIDENCE:
-                position = HIGH_CONFIDENCE_POSITION;
-                break;
-            case Drill.MEDIUM_CONFIDENCE:
-                position = MEDIUM_CONFIDENCE_POSITION;
-                break;
-            case Drill.LOW_CONFIDENCE:
-            default:
-                position = LOW_CONFIDENCE_POSITION;
-                break;
-        }
-
-        return position;
-    }
-
-    private int confidencePositionToWeight(int position) {
-        int confidence;
-        switch(position) {
-            case HIGH_CONFIDENCE_POSITION:
-                confidence = Drill.HIGH_CONFIDENCE;
-                break;
-            case MEDIUM_CONFIDENCE_POSITION:
-                confidence = Drill.MEDIUM_CONFIDENCE;
-                break;
-            case LOW_CONFIDENCE_POSITION:
-            default:
-                confidence = Drill.LOW_CONFIDENCE;
-                break;
-        }
-
-        return confidence;
-    }
-
     /**
      *
      * @return May return null // TODO
@@ -305,7 +265,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         Drill drill = viewModel.getDrill().getValue();
         if (null != drill) {
             drill.setConfidence(
-                    confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()));
+                    Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()));
             drill.setNotes(notes.getText().toString());
         }
         return drill;
@@ -313,7 +273,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     private void fillDrillInfo(Drill drill) {
         drillName.setText(drill.getName());
-        confidenceSpinner.setSelection(confidenceWeightToPosition(drill.getConfidence()));
+        confidenceSpinner.setSelection(Constants.confidenceWeightToPosition(drill.getConfidence()));
         Date drilledDate = new Date(drill.getLastDrilled());
         DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
         lastDrilledDate.setText(dateFormatter.format(drilledDate));
@@ -460,14 +420,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] options = getResources().getStringArray(R.array.confidence_levels);
-        final int[] selectedOption = { confidenceWeightToPosition(drill.getConfidence())};
+        final int[] selectedOption = { Constants.confidenceWeightToPosition(drill.getConfidence())};
 
         builder.setTitle("Enter new confidence level:");
         builder.setIcon(R.drawable.thumbs_up_down_icon);
         builder.setCancelable(false);
         builder.setSingleChoiceItems(options, selectedOption[0], (dialog, position) -> selectedOption[0] = position);
         builder.setPositiveButton("Save", (dialog, position) -> {
-            drill.setConfidence(confidencePositionToWeight(selectedOption[0]));
+            drill.setConfidence(Constants.confidencePositionToWeight(selectedOption[0]));
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
             viewModel.saveDrill(drill, this);
