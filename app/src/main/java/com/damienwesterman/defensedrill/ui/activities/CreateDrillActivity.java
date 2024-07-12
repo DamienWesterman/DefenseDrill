@@ -16,6 +16,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -30,15 +32,23 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewDrillCallback;
 import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO change some toasts to snackbars (across the whole app) so user can dismiss then (check ChatGPT)
+// TODO doc comments
 public class CreateDrillActivity extends AppCompatActivity {
     private CreateDrillViewModel viewModel;
     private Context context;
+
+    private EditText enteredName;
     private Spinner confidenceSpinner;
+    private Button categoriesButton;
+    private Button subCategoriesButton;
+    private EditText enteredNotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +61,12 @@ public class CreateDrillActivity extends AppCompatActivity {
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
 
+        enteredName = findViewById(R.id.nameEditText);
         confidenceSpinner = findViewById(R.id.confidenceSpinner);
+        categoriesButton = findViewById(R.id.addCategoriesButton);
+        subCategoriesButton = findViewById(R.id.addSubCategoriesButton);
+        enteredNotes = findViewById(R.id.notes);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.confidence_levels,
@@ -70,20 +85,28 @@ public class CreateDrillActivity extends AppCompatActivity {
     }
 
     public void saveDrill(View view) {
-        // TODO check to make sure user has selected at least one category/sub-category, popup to confirm if 0
-        // TODO popup to have the user double check the spelling of the name, cannot change
-        // TODO have a saving progress wheel
-         viewModel.saveDrill(null, new CreateNewDrillCallback() {
-            @Override
-            public void onSuccess() {
-                runOnUiThread(() -> Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT).show());
-            }
+        Drill drill = generateDrillFromUserInput();
+        setUserEditable(false);
+        if (null != drill) {
+            // TODO check to make sure user has selected at least one category/sub-category, popup to confirm if 0
+            // TODO popup to have the user double check the spelling of the name, cannot change
+            viewModel.saveDrill(drill, new CreateNewDrillCallback() {
+                @Override
+                public void onSuccess() {
+                    runOnUiThread(() -> Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT).show());
+                    // TODO popup option confirming saved, allow to enter another or to go back
+                    // TODO when returning to last screen, make sure it re loads with the new drills
+                }
 
-            @Override
-            public void onFailure(String msg) {
-                runOnUiThread(() -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
-            }
-        });
+                @Override
+                public void onFailure(String msg) {
+                    runOnUiThread(() -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
+                }
+            });
+        } else {
+            setUserEditable(true);
+        }
+        // TODO: MAKE SURE TO setUserEditable(true) IN _EVER_ FLOW PATH
     }
 
     private void addCategoriesPopup(List<CategoryEntity> categories) {
@@ -212,6 +235,56 @@ public class CreateDrillActivity extends AppCompatActivity {
         });
 
         alert.show();
+    }
+
+    private void setUserEditable(boolean editable) {
+        enteredName.setEnabled(editable);
+        confidenceSpinner.setEnabled(editable);
+        categoriesButton.setEnabled(editable);
+        subCategoriesButton.setEnabled(editable);
+        enteredNotes.setEnabled(editable);
+    }
+
+    // TODO Doc comments, also does input sanitation, nullable if issue
+    private Drill generateDrillFromUserInput() {
+        // Both of these are limits just for display purposes on other screen. They are a little
+        // arbitrary and do not represent actual limits in the database layer.
+        final int NAME_CHARACTER_LIMIT = 256;
+        final int NOTES_CHARACTER_LIMIT = 2048;
+
+        Drill drill;
+        String name;
+        String notes;
+
+        name = enteredName.getText().toString();
+        if (0 == name.length()) {
+            Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+            return null;
+        } else if (NAME_CHARACTER_LIMIT <= name.length()) {
+            Toast.makeText(this, "Name must be less than " + NAME_CHARACTER_LIMIT +
+                    " characters", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        notes = enteredNotes.getText().toString();
+        if (NOTES_CHARACTER_LIMIT <= notes.length()) {
+            Toast.makeText(this, "Notes must be less than " + NOTES_CHARACTER_LIMIT +
+                    " characters", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
+        drill = new Drill(
+                name,
+                System.currentTimeMillis(),
+                true,
+                Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()),
+                notes,
+                0,
+                viewModel.getCheckedCategoryEntities(),
+                viewModel.getCheckedSubCategoryEntities()
+        );
+
+        return drill;
     }
 
     // TODO make sure we do input sanitation checking
