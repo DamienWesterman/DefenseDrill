@@ -15,7 +15,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -36,6 +38,7 @@ import java.util.List;
 public class CreateDrillActivity extends AppCompatActivity {
     private CreateDrillViewModel viewModel;
     private Context context;
+    private Spinner confidenceSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,15 @@ public class CreateDrillActivity extends AppCompatActivity {
 
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
+
+        confidenceSpinner = findViewById(R.id.confidenceSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.confidence_levels,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        confidenceSpinner.setAdapter(adapter);
     }
 
     public void addCategories(View view) {
@@ -61,7 +73,7 @@ public class CreateDrillActivity extends AppCompatActivity {
         // TODO check to make sure user has selected at least one category/sub-category, popup to confirm if 0
         // TODO popup to have the user double check the spelling of the name, cannot change
         // TODO have a saving progress wheel
-         viewModel.saveDrill((Drill) null, new CreateNewDrillCallback() {
+         viewModel.saveDrill(null, new CreateNewDrillCallback() {
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT).show());
@@ -204,5 +216,4 @@ public class CreateDrillActivity extends AppCompatActivity {
 
     // TODO make sure we do input sanitation checking
     // TODO Last drilled today BUT set it as a new drill
-    // TODO set the confidence spinner
 }
