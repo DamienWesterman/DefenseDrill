@@ -4,6 +4,8 @@
     <string name="generate_drills_description">Randomly generate a drill to practice.</string>
     <string name="customize_drills_title">Customize Drills</string>
     <string name="customize_drills_description">See all currently saved Drills and edit them, or create a new one. Filter drills by category and/or sub-category. Long click a Drill to delete it.</string>
+    <string name="feedback_title">Feedback</string>
+    <string name="feedback_description">Leave feedback on the app. This can be an issue you\'ve found, suggestions on future features, or other general comments. Thank you for using Defense Drill and for your feedback! :)</string>
     <string name="select_category">Select a Category</string>
     <string name="random_category">Random Category</string>
     <string name="randomly_select_any_category">Randomly select any category.</string>

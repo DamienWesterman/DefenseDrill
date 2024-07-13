@@ -56,6 +56,9 @@ public class HomeActivity extends AppCompatActivity {
         } else if (R.id.viewDrillsCard == cardId) {
             Intent intent = new Intent(this, ViewDrillsActivity.class);
             startActivity(intent);
+        } else if (R.id.feedbackCard == cardId) {
+            // TODO implement
+            Toast.makeText(this, "Feedback unimplemented", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Unknown option", Toast.LENGTH_SHORT).show();
         }
