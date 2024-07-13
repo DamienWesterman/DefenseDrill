@@ -23,6 +23,7 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
+import com.damienwesterman.defensedrill.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -58,6 +59,14 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (R.id.viewDrillsCard == cardId) {
             Intent intent = new Intent(this, ViewDrillsActivity.class);
+            startActivity(intent);
+        } else if (R.id.viewCategoriesCard == cardId) {
+            Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
+            intent.putExtra(Constants.INTENT_VIEW_CATEGORIES, "");
+            startActivity(intent);
+        } else if (R.id.viewSubCategoriesCard == cardId) {
+            Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
+            intent.putExtra(Constants.INTENT_VIEW_SUB_CATEGORIES, "");
             startActivity(intent);
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement
