@@ -454,11 +454,13 @@ public class DrillInfoActivity extends AppCompatActivity {
             builder.setItems(options, (dialog, position) -> {
                 switch (position) {
                     case 0:
+                        // Next Drill
                         changeUiToDrillLoading();
                         screenType = ScreenType.REGENERATED_DRILL;
                         viewModel.regenerateDrill();
                         break;
                     case 1:
+                        // New Category
                         Intent intent = new Intent(this, CategorySelectActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

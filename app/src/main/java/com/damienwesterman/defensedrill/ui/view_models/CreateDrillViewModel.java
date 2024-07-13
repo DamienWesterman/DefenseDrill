@@ -43,7 +43,8 @@ public class CreateDrillViewModel extends AndroidViewModel {
         repo = DrillRepository.getInstance(application);
     }
 
-    public void saveDrill(Drill drill, CreateNewDrillCallback callback) throws SQLiteConstraintException {
+    // TODO doc comments, onFailure() called when SQLiteConstraintException basically when name already exists
+    public void saveDrill(Drill drill, CreateNewDrillCallback callback) {
         executor.execute(() -> {
             try {
                 repo.insertDrills(drill);

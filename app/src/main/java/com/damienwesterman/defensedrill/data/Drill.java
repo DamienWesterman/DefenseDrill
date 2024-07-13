@@ -29,6 +29,7 @@ public class Drill {
     public static final int HIGH_CONFIDENCE = 0;
     public static final int MEDIUM_CONFIDENCE = 2;
     public static final int LOW_CONFIDENCE = 4;
+    public static final int INVALID_SERVER_DRILL_ID = -1;
     @Embedded
     private DrillEntity drillEntity;
 

@@ -34,7 +34,7 @@
             android:id="@+id/nameEditText"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textCapSentences"
             android:textSize="24sp"
             android:hint="@string/enter_a_name_for_the_drill"
             android:autofillHints="" />
@@ -88,7 +88,7 @@
             android:id="@+id/notes"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textCapSentences"
             android:textSize="24sp"
             android:hint="@string/notes_hint"
             android:autofillHints="" />

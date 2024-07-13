@@ -13,6 +13,7 @@ package com.damienwesterman.defensedrill.ui.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -34,7 +35,6 @@ import com.damienwesterman.defensedrill.ui.utils.CreateNewDrillCallback;
 import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,26 +87,22 @@ public class CreateDrillActivity extends AppCompatActivity {
     public void saveDrill(View view) {
         Drill drill = generateDrillFromUserInput();
         setUserEditable(false);
-        if (null != drill) {
-            // TODO check to make sure user has selected at least one category/sub-category, popup to confirm if 0
-            // TODO popup to have the user double check the spelling of the name, cannot change
-            viewModel.saveDrill(drill, new CreateNewDrillCallback() {
-                @Override
-                public void onSuccess() {
-                    runOnUiThread(() -> Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT).show());
-                    // TODO popup option confirming saved, allow to enter another or to go back
-                    // TODO when returning to last screen, make sure it re loads with the new drills
-                }
-
-                @Override
-                public void onFailure(String msg) {
-                    runOnUiThread(() -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
-                }
-            });
-        } else {
+        // TODO maybe have some sort of snackbar saying loading or something
+        
+        if (null == drill) {
+            // User notification is handled in generateDrillFromUserInput()
             setUserEditable(true);
+        } else if (0 == drill.getCategories().size()) {
+            // Will then check subCategories and call checkNamePopup()
+            confirmNoCategoriesPopup(drill);
+        } else if (0 == drill.getSubCategories().size()) {
+            // Will then call checkNamePopup()
+            confirmNoSubCategoriesPopup(drill);
+        } else {
+            // All checks passed, we are ready to save drill, have user double check name first
+            checkNamePopup(drill);
         }
-        // TODO: MAKE SURE TO setUserEditable(true) IN _EVER_ FLOW PATH
+        // TODO: MAKE SURE TO setUserEditable(true) IN _EVERY_ FLOW PATH
     }
 
     private void addCategoriesPopup(List<CategoryEntity> categories) {
@@ -237,6 +233,88 @@ public class CreateDrillActivity extends AppCompatActivity {
         alert.show();
     }
 
+    private void confirmNoCategoriesPopup(Drill drill) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No Categories Selected");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setMessage("Are you sure you don't want this drill to belong to any categories?\n"
+                + "This will prevent it from being selected during Drill Generation unless "
+                + "random is selected.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("I'm Sure", (dialog, position) -> {
+            if (0 == drill.getSubCategories().size()) {
+                confirmNoSubCategoriesPopup(drill);
+            } else {
+                checkNamePopup(drill);
+            }
+        });
+        builder.setNegativeButton("Go Back", (dialog, position) -> setUserEditable(true));
+        builder.create().show();
+    }
+
+    private void confirmNoSubCategoriesPopup(Drill drill) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("No sub-Categories Selected");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setMessage("Are you sure you don't want this drill to belong to any sub-categories?\n"
+                + "This will prevent it from being selected during Drill Generation unless "
+                + "random is selected.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("I'm Sure", (dialog, position) -> checkNamePopup(drill));
+        builder.setNegativeButton("Go Back", (dialog, position) -> setUserEditable(true));
+        builder.create().show();
+    }
+
+    private void checkNamePopup(Drill drill) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Double Check Name");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setMessage("Please double check the name, as it cannot be changed later:\n\""
+                + drill.getName() + "\"");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Looks Good", (dialog, position) -> viewModel.saveDrill(drill, new CreateNewDrillCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT).show();
+                    whatNextPopup();
+                });
+            }
+
+            @Override
+            public void onFailure(String msg) {
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "ERROR: Name already exists", Toast.LENGTH_SHORT).show();
+                    setUserEditable(true);
+                });
+            }
+        }));
+        builder.setNegativeButton("Change Name", (dialog, position) -> setUserEditable(true));
+        builder.create().show();
+    }
+
+    private void whatNextPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What next?");
+        builder.setIcon(R.drawable.next_icon);
+        builder.setCancelable(false);
+        builder.setPositiveButton("Create Another", (dialog, position) -> {
+            enteredName.setText(null);
+            confidenceSpinner.setSelection(0);
+            viewModel.getCheckedCategoryEntities().clear();
+            viewModel.getCheckedSubCategoryEntities().clear();
+            enteredNotes.setText(null);
+            setUserEditable(true);
+        });
+        builder.setNegativeButton("Back", (dialog, position) -> finish());
+        builder.setNeutralButton("Go Home", (dialog, position) -> {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        });
+        builder.create().show();
+    }
+
     private void setUserEditable(boolean editable) {
         enteredName.setEnabled(editable);
         confidenceSpinner.setEnabled(editable);
@@ -272,21 +350,17 @@ public class CreateDrillActivity extends AppCompatActivity {
                     " characters", Toast.LENGTH_SHORT).show();
             return null;
         }
-
         drill = new Drill(
                 name,
                 System.currentTimeMillis(),
                 true,
                 Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()),
                 notes,
-                0,
+                Drill.INVALID_SERVER_DRILL_ID,
                 viewModel.getCheckedCategoryEntities(),
                 viewModel.getCheckedSubCategoryEntities()
         );
 
         return drill;
     }
-
-    // TODO make sure we do input sanitation checking
-    // TODO Last drilled today BUT set it as a new drill
 }

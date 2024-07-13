@@ -65,6 +65,13 @@ public class ViewDrillsActivity extends AppCompatActivity {
         viewModel.populateDrills();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setLoading(true);
+        viewModel.rePopulateDrills();
+    }
+
     public void filterByCategory(View view) {
         filterCategoriesPopup(viewModel.getAllCategories());
     }
