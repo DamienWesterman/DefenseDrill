@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,21 +33,21 @@ import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewDrillCallback;
 import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
 import java.util.List;
 
-// TODO change some toasts to snackbars (across the whole app) so user can dismiss then (check ChatGPT)
-// TODO doc comments
+// TODO doc comments (note the required intents - none)
 public class CreateDrillActivity extends AppCompatActivity {
     private CreateDrillViewModel viewModel;
-    private Context context;
 
     private EditText enteredName;
     private Spinner confidenceSpinner;
     private Button categoriesButton;
     private Button subCategoriesButton;
     private EditText enteredNotes;
+    private Snackbar savingSnackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +55,6 @@ public class CreateDrillActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_drill);
 
         viewModel = new ViewModelProvider(this).get(CreateDrillViewModel.class);
-        context = this;
 
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
@@ -66,6 +64,8 @@ public class CreateDrillActivity extends AppCompatActivity {
         categoriesButton = findViewById(R.id.addCategoriesButton);
         subCategoriesButton = findViewById(R.id.addSubCategoriesButton);
         enteredNotes = findViewById(R.id.notes);
+        savingSnackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                "Saving in progress...", Snackbar.LENGTH_INDEFINITE);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
@@ -85,8 +85,8 @@ public class CreateDrillActivity extends AppCompatActivity {
     }
 
     public void saveDrill(View view) {
-        Drill drill = generateDrillFromUserInput();
         setUserEditable(false);
+        Drill drill = generateDrillFromUserInput();
         // TODO maybe have some sort of snackbar saying loading or something
         
         if (null == drill) {
@@ -102,15 +102,20 @@ public class CreateDrillActivity extends AppCompatActivity {
             // All checks passed, we are ready to save drill, have user double check name first
             checkNamePopup(drill);
         }
-        // TODO: MAKE SURE TO setUserEditable(true) IN _EVERY_ FLOW PATH
     }
 
     private void addCategoriesPopup(List<CategoryEntity> categories) {
         if (null == categories) {
-            Toast.makeText(this, "Issue retrieving categories", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "Issue retrieving categories", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         } else if (0 == categories.size()) {
-            Toast.makeText(this, "No Categories in database", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "No Categories in database", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         }
 
@@ -171,10 +176,16 @@ public class CreateDrillActivity extends AppCompatActivity {
 
     private void addSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
         if (null == subCategories) {
-            Toast.makeText(this, "Issue retrieving sub-categories", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "Issue retrieving sub-categories", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         } else if (0 == subCategories.size()) {
-            Toast.makeText(this, "No sub-Categories in database", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "No sub-Categories in database", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         }
 
@@ -276,7 +287,10 @@ public class CreateDrillActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> {
-                    Toast.makeText(context, "Successfully saved", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                            "Successfully saved", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
                     whatNextPopup();
                 });
             }
@@ -284,7 +298,10 @@ public class CreateDrillActivity extends AppCompatActivity {
             @Override
             public void onFailure(String msg) {
                 runOnUiThread(() -> {
-                    Toast.makeText(context, "ERROR: Name already exists", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                            "ERROR: Name already exists", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
                     setUserEditable(true);
                 });
             }
@@ -316,6 +333,13 @@ public class CreateDrillActivity extends AppCompatActivity {
     }
 
     private void setUserEditable(boolean editable) {
+        if (editable) {
+            if (savingSnackbar.isShown()) {
+                savingSnackbar.dismiss();
+            }
+        } else {
+            savingSnackbar.show();
+        }
         enteredName.setEnabled(editable);
         confidenceSpinner.setEnabled(editable);
         categoriesButton.setEnabled(editable);
@@ -336,18 +360,27 @@ public class CreateDrillActivity extends AppCompatActivity {
 
         name = enteredName.getText().toString();
         if (0 == name.length()) {
-            Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "Name cannot be empty", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return null;
         } else if (NAME_CHARACTER_LIMIT <= name.length()) {
-            Toast.makeText(this, "Name must be less than " + NAME_CHARACTER_LIMIT +
-                    " characters", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "Name must be less than " + NAME_CHARACTER_LIMIT + " characters",
+                    Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return null;
         }
 
         notes = enteredNotes.getText().toString();
         if (NOTES_CHARACTER_LIMIT <= notes.length()) {
-            Toast.makeText(this, "Notes must be less than " + NOTES_CHARACTER_LIMIT +
-                    " characters", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+                    "Notes must be less than " + NOTES_CHARACTER_LIMIT + " characters",
+                    Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return null;
         }
         drill = new Drill(

@@ -14,18 +14,19 @@ package com.damienwesterman.defensedrill.ui.view_models;
 import android.app.Activity;
 import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
-import android.widget.Toast;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Random;
@@ -95,12 +96,17 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     /**
-     * why we pass in app context, may be null if no toast to show
+     * why we pass in app context, may be null if no snackbar is wanted
      */
     public void saveDrill(Drill drill, Activity activity) {
         if (null == drill) {
             if (null != activity) {
-                activity.runOnUiThread(() -> Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> {
+                    Snackbar snackbar = Snackbar.make(activity.findViewById(R.id.activityDrillInfo),
+                            "Issue saving Drill", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
+                });
             }
             return;
         }
@@ -109,14 +115,21 @@ public class DrillInfoViewModel extends AndroidViewModel {
                repo.updateDrills(drill);
                currentDrill.postValue(drill);
                if (null != activity) {
-                   activity.runOnUiThread(() ->
-                           Toast.makeText(activity, "Successfully saved changes!",
-                                   Toast.LENGTH_SHORT).show());
+                   activity.runOnUiThread(() -> {
+                       Snackbar snackbar = Snackbar.make(activity.findViewById(R.id.activityDrillInfo),
+                               "Successfully saved changes!", Snackbar.LENGTH_INDEFINITE);
+                       snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                       snackbar.show();
+                   });
                }
            } catch (SQLiteConstraintException e) {
                if (null != activity) {
-                   activity.runOnUiThread(() ->
-                           Toast.makeText(activity, "Issue saving Drill", Toast.LENGTH_SHORT).show());
+                   activity.runOnUiThread(() -> {
+                       Snackbar snackbar = Snackbar.make(activity.findViewById(R.id.activityDrillInfo),
+                               "Issue saving Drill", Snackbar.LENGTH_INDEFINITE);
+                       snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                       snackbar.show();
+                   });
                }
            }
         });

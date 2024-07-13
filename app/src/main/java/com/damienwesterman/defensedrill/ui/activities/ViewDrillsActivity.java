@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +32,7 @@ import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.DrillAdapter;
 import com.damienwesterman.defensedrill.ui.view_models.DrillListViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO Doc comments
+ * TODO Doc comments (note the required intents - none)
  */
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
@@ -248,7 +248,10 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
     private void deleteDrillPopup(Drill drill) {
         if (null == drill) {
-            Toast.makeText(this, "Something went wrong trying to delete", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityAllDrills),
+                    "Something went wrong trying to delete", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         }
 

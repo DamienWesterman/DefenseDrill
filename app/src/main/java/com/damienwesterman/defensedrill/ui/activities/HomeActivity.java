@@ -14,7 +14,6 @@ package com.damienwesterman.defensedrill.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,11 +23,12 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
 /**
- * TODO doc comments
+ * TODO doc comments (note the required intents)
  * TODO Make sure all the ui classes are clean
  * TODO Double check everywhere for null checks
  */
@@ -42,7 +42,10 @@ public class HomeActivity extends AppCompatActivity {
         viewDrillsCard.setOnLongClickListener(view -> {
             // Just for now, create some mock entries in the database
             new Thread(this::mockDatabaseEntries).start();
-            Toast.makeText(this, "Added mocked database entries", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityHome),
+                    "Added mocked database entries", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return true;
         });
     }
@@ -58,9 +61,15 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement
-            Toast.makeText(this, "Feedback unimplemented", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityHome),
+                    "Feedback unimplemented", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
         } else {
-            Toast.makeText(this, "Unknown option", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityHome),
+                    "Unknown option", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
         }
     }
 

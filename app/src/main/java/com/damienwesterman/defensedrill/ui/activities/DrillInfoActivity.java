@@ -23,7 +23,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +34,7 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -112,7 +112,10 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void resetSkippedDrills(View view) {
         viewModel.resetSkippedDrills();
-        Toast.makeText(this, "Skipped drills have been reset", Toast.LENGTH_SHORT).show();
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                "Skipped drills have been reset", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+        snackbar.show();
     }
 
     public void saveDrillInfo(View view) {
@@ -283,10 +286,16 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == categoryEntities) {
-            Toast.makeText(this, "Issue retrieving categories", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                    "Issue retrieving categories", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         } else if (0 == categoryEntities.size()) {
-            Toast.makeText(this, "No Categories in database", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                    "No Categories in database", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         }
         List<CategoryEntity> categories = drill.getCategories();
@@ -348,10 +357,16 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == subCategoryEntities) {
-            Toast.makeText(this, "Issue retrieving sub-categories", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                    "Issue retrieving sub-categories", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         } else if (0 == subCategoryEntities.size()) {
-            Toast.makeText(this, "No sub-Categories in database", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                    "No sub-Categories in database", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return;
         }
         List<SubCategoryEntity> subCategories = drill.getSubCategories();
@@ -415,7 +430,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         Drill drill = collectDrillInfo();
 
         if (null == drill) {
-            Toast.makeText(this, "Issue marking as practiced", Toast.LENGTH_SHORT).show();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
+                    "Issue marking as practiced", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
             return null;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
