@@ -12,7 +12,7 @@
 package com.damienwesterman.defensedrill.ui.utils;
 
 // TODO doc comments
-public interface CreateNewDrillCallback {
+public interface CreateNewEntityCallback {
     void onSuccess();
     void onFailure(String msg);
 }

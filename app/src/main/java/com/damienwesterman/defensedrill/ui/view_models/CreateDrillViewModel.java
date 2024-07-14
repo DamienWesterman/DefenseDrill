@@ -21,7 +21,7 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewDrillCallback;
+import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
     }
 
     // TODO doc comments, onFailure() called when SQLiteConstraintException basically when name already exists
-    public void saveDrill(Drill drill, CreateNewDrillCallback callback) {
+    public void saveDrill(Drill drill, CreateNewEntityCallback callback) {
         executor.execute(() -> {
             try {
                 repo.insertDrills(drill);

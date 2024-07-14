@@ -56,7 +56,7 @@ public class DrillListViewModel extends AndroidViewModel {
 
     public void populateDrills() {
         if (null == drills.getValue()) {
-            executor.execute(() -> drills.postValue(repo.getAllDrills()));
+            rePopulateDrills();
         }
     }
 

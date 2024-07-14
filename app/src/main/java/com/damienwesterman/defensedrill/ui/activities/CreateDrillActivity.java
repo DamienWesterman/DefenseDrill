@@ -29,7 +29,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewDrillCallback;
+import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
@@ -282,7 +282,7 @@ public class CreateDrillActivity extends AppCompatActivity {
         builder.setMessage("Please double check the name, as it cannot be changed later:\n\""
                 + drill.getName() + "\"");
         builder.setCancelable(false);
-        builder.setPositiveButton("Looks Good", (dialog, position) -> viewModel.saveDrill(drill, new CreateNewDrillCallback() {
+        builder.setPositiveButton("Looks Good", (dialog, position) -> viewModel.saveDrill(drill, new CreateNewEntityCallback() {
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> {

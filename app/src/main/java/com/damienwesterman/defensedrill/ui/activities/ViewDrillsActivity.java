@@ -97,8 +97,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                // Once all the items are rendered: remove this listener, hide progress bar,
-                // and display the random option
+                // Once all the items are rendered: remove this listener, hide progress bar
                 recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 setLoading(false);
             }

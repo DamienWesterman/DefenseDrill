@@ -49,4 +49,10 @@
     <string name="add_categories">Add Categories</string>
     <string name="add_sub_categories">Add sub-Categories</string>
     <string name="save_drill">Save Drill</string>
+    <string name="categories">Categories</string>
+    <string name="all_categories_instructions">Click to view/edit a Category, hold to delete</string>
+    <string name="create_new_category">Create New Category</string>
+    <string name="sub_categories">Sub-Categories</string>
+    <string name="all_sub_categories_instructions">Click to view/edit a sub-Category, hold to delete</string>
+    <string name="create_new_sub_category">Create New sub-Category</string>
 </resources>
