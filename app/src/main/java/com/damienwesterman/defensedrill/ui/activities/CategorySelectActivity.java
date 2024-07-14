@@ -71,7 +71,7 @@ public class CategorySelectActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
-                recyclerView.setAdapter(new AbstractCategoryAdapter<>(categories,
+                recyclerView.setAdapter(new AbstractCategoryAdapter(categories,
                         // Card click listener
                         id -> {
                     Intent intent = new Intent(this, SubCategorySelectActivity.class);

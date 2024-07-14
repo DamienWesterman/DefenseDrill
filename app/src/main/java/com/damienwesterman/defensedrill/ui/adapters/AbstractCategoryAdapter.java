@@ -30,12 +30,12 @@ import com.damienwesterman.defensedrill.R;
 /**
  * TODO: Doc comments
  */
-public class AbstractCategoryAdapter<T extends AbstractCategoryEntity> extends RecyclerView.Adapter<CardViewHolder> {
-    private final List<T> categories;
+public class AbstractCategoryAdapter extends RecyclerView.Adapter<CardViewHolder> {
+    private final List<? extends AbstractCategoryEntity> categories;
     CardClickListener clickListener;
     LongCardClickListener longClickListener;
 
-    public AbstractCategoryAdapter(@NonNull List<T> categories, CardClickListener clickListener,
+    public AbstractCategoryAdapter(@NonNull List<? extends AbstractCategoryEntity> categories, CardClickListener clickListener,
                                    LongCardClickListener longClickListener) {
         this.categories = categories;
         this.clickListener = clickListener;
