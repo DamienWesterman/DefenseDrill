@@ -30,6 +30,7 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
@@ -105,16 +106,12 @@ public class CreateDrillActivity extends AppCompatActivity {
 
     private void addCategoriesPopup(List<CategoryEntity> categories) {
         if (null == categories) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "Issue retrieving categories", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "Issue retrieving categories");
             return;
         } else if (0 == categories.size()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "No Categories in database", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "No Categories in database");
             return;
         }
 
@@ -175,16 +172,12 @@ public class CreateDrillActivity extends AppCompatActivity {
 
     private void addSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
         if (null == subCategories) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "Issue retrieving sub-categories", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "Issue retrieving sub-categories");
             return;
         } else if (0 == subCategories.size()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "No sub-Categories in database", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "No sub-Categories in database");
             return;
         }
 
@@ -286,10 +279,8 @@ public class CreateDrillActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> {
-                    Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                            "Successfully saved", Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-                    snackbar.show();
+                    Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                            "Successfully saved");
                     whatNextPopup();
                 });
             }
@@ -297,10 +288,8 @@ public class CreateDrillActivity extends AppCompatActivity {
             @Override
             public void onFailure(String msg) {
                 runOnUiThread(() -> {
-                    Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                            "ERROR: Name already exists", Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-                    snackbar.show();
+                    Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                            "ERROR: Name already exists");
                     setUserEditable(true);
                 });
             }
@@ -359,27 +348,19 @@ public class CreateDrillActivity extends AppCompatActivity {
 
         name = enteredName.getText().toString();
         if (0 == name.length()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "Name cannot be empty", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "Name cannot be empty");
             return null;
         } else if (NAME_CHARACTER_LIMIT <= name.length()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "Name must be less than " + NAME_CHARACTER_LIMIT + " characters",
-                    Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "Name must be less than " + NAME_CHARACTER_LIMIT + " characters");
             return null;
         }
 
         notes = enteredNotes.getText().toString();
         if (NOTES_CHARACTER_LIMIT <= notes.length()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
-                    "Notes must be less than " + NOTES_CHARACTER_LIMIT + " characters",
-                    Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
+                    "Notes must be less than " + NOTES_CHARACTER_LIMIT + " characters");
             return null;
         }
         drill = new Drill(

@@ -24,9 +24,9 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Random;
@@ -101,12 +101,9 @@ public class DrillInfoViewModel extends AndroidViewModel {
     public void saveDrill(Drill drill, Activity activity) {
         if (null == drill) {
             if (null != activity) {
-                activity.runOnUiThread(() -> {
-                    Snackbar snackbar = Snackbar.make(activity.findViewById(R.id.activityDrillInfo),
-                            "Issue saving Drill", Snackbar.LENGTH_INDEFINITE);
-                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-                    snackbar.show();
-                });
+                activity.runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                        activity.findViewById(R.id.activityDrillInfo),
+                        "Issue saving Drill"));
             }
             return;
         }
@@ -115,21 +112,15 @@ public class DrillInfoViewModel extends AndroidViewModel {
                repo.updateDrills(drill);
                currentDrill.postValue(drill);
                if (null != activity) {
-                   activity.runOnUiThread(() -> {
-                       Snackbar snackbar = Snackbar.make(activity.findViewById(R.id.activityDrillInfo),
-                               "Successfully saved changes!", Snackbar.LENGTH_INDEFINITE);
-                       snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-                       snackbar.show();
-                   });
+                   activity.runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                           activity.findViewById(R.id.activityDrillInfo),
+                           "Successfully saved changes!"));
                }
            } catch (SQLiteConstraintException e) {
                if (null != activity) {
-                   activity.runOnUiThread(() -> {
-                       Snackbar snackbar = Snackbar.make(activity.findViewById(R.id.activityDrillInfo),
-                               "Issue saving Drill", Snackbar.LENGTH_INDEFINITE);
-                       snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-                       snackbar.show();
-                   });
+                   activity.runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                           activity.findViewById(R.id.activityDrillInfo),
+                           "Issue saving Drill"));
                }
            }
         });

@@ -30,9 +30,9 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.DrillAdapter;
+import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillListViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -247,10 +247,8 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
     private void deleteDrillPopup(Drill drill) {
         if (null == drill) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityAllDrills),
-                    "Something went wrong trying to delete", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
+                    "Something went wrong trying to delete");
             return;
         }
 

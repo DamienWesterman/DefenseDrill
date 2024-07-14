@@ -32,9 +32,9 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -112,10 +112,8 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void resetSkippedDrills(View view) {
         viewModel.resetSkippedDrills();
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                "Skipped drills have been reset", Snackbar.LENGTH_INDEFINITE);
-        snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-        snackbar.show();
+        Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                "Skipped drills have been reset");
     }
 
     public void saveDrillInfo(View view) {
@@ -286,16 +284,12 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == categoryEntities) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                    "Issue retrieving categories", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "Issue retrieving categories");
             return;
         } else if (0 == categoryEntities.size()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                    "No Categories in database", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "No Categories in database");
             return;
         }
         List<CategoryEntity> categories = drill.getCategories();
@@ -357,16 +351,12 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == subCategoryEntities) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                    "Issue retrieving sub-categories", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "Issue retrieving sub-categories");
             return;
         } else if (0 == subCategoryEntities.size()) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                    "No sub-Categories in database", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "No sub-Categories in database");
             return;
         }
         List<SubCategoryEntity> subCategories = drill.getSubCategories();
@@ -430,10 +420,8 @@ public class DrillInfoActivity extends AppCompatActivity {
         Drill drill = collectDrillInfo();
 
         if (null == drill) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityDrillInfo),
-                    "Issue marking as practiced", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "Issue marking as practiced");
             return null;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

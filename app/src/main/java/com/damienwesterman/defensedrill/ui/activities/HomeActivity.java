@@ -23,8 +23,8 @@ import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
+import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.utils.Constants;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -43,10 +43,8 @@ public class HomeActivity extends AppCompatActivity {
         viewDrillsCard.setOnLongClickListener(view -> {
             // Just for now, create some mock entries in the database
             new Thread(this::mockDatabaseEntries).start();
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityHome),
-                    "Added mocked database entries", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
+                    "Added mocked database entries");
             return true;
         });
     }
@@ -70,15 +68,11 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityHome),
-                    "Feedback unimplemented", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
+                    "Feedback unimplemented");
         } else {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityHome),
-                    "Unknown option", Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
-            snackbar.show();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
+                    "Unknown option");
         }
     }
 
