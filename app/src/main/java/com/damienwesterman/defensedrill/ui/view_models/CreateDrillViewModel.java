@@ -44,7 +44,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
     }
 
     // TODO doc comments, onFailure() called when SQLiteConstraintException basically when name already exists
-    public void saveDrill(Drill drill, CreateNewEntityCallback callback) {
+    public void saveDrill(Drill drill, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
             try {
                 repo.insertDrills(drill);

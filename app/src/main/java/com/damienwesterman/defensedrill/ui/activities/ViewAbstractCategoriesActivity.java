@@ -11,6 +11,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -100,6 +101,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     }
 
     public void createAbstractCategory(View view) {
+        createAbstractCategoryPopup();
     }
 
     private void setUpRecyclerView(List<AbstractCategoryEntity> abstractCategoryEntities) {
@@ -149,11 +151,33 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         }
     }
 
-    void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
+    private void createAbstractCategoryPopup() {
+        // TODO FINISH call restart on finish
+    }
 
+    void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
+        // TODO FINISH call restart on finish
     }
 
     void deleteAbstractCategoryPopup(AbstractCategoryEntity entity) {
+        if (null == entity) {
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityViewAbstractCategories),
+                    "Something went wrong trying to delete", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
+            return;
+        }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure you want to delete:");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setCancelable(true);
+        builder.setMessage(entity.getName());
+        builder.setNegativeButton("Cancel", null);
+        builder.setPositiveButton("Delete", (dialog, position) -> {
+            setLoading(true);
+            viewModel.deleteAbstractCategory(entity);
+        });
+        builder.create().show();
     }
 }

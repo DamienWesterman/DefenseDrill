@@ -12,14 +12,17 @@
 package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ public class SubCategoryListViewModel extends AndroidViewModel
         implements AbstractCategoryListViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> subCategories;
     private final DrillRepository repo;
-    private final ExecutorService executors = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public SubCategoryListViewModel(@NonNull Application application) {
         super(application);
@@ -55,17 +58,39 @@ public class SubCategoryListViewModel extends AndroidViewModel
 
     @Override
     public void rePopulateAbstractCategories() {
-        executors.execute(() -> subCategories.postValue(new ArrayList<>(repo.getAllSubCategories())));
+        executor.execute(() -> subCategories.postValue(new ArrayList<>(repo.getAllSubCategories())));
     }
 
     @Override
-    public void deleteAbstractCategory() {
-
+    public void deleteAbstractCategory(AbstractCategoryEntity entity) {
+        if (null != entity) {
+            executor.execute(() -> {
+                List<AbstractCategoryEntity> newSubCategories = subCategories.getValue();
+                if (null != newSubCategories) {
+                    if (SubCategoryEntity.class == entity.getClass()) {
+                        newSubCategories.remove(entity);
+                        SubCategoryEntity subCategory = (SubCategoryEntity) entity;
+                        subCategories.postValue(newSubCategories);
+                        repo.deleteSubCategories(subCategory);
+                    }
+                }
+            });
+        }
     }
 
     @Override
-    public void saveAbstractEntity(AbstractCategoryEntity entity, CreateNewEntityCallback callback) {
-
+    public void saveAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+        executor.execute(() -> {
+            try {
+                if (SubCategoryEntity.class == entity.getClass()) {
+                    SubCategoryEntity subCategory = (SubCategoryEntity) entity;
+                    repo.insertSubCategories(subCategory);
+                    callback.onSuccess();
+                }
+            } catch (SQLiteConstraintException e) {
+                callback.onFailure(e.getMessage());
+            }
+        });
     }
 
     @Override
@@ -73,8 +98,21 @@ public class SubCategoryListViewModel extends AndroidViewModel
 
     }
 
+    @Nullable
     @Override
     public AbstractCategoryEntity findById(long id) {
-        return null;
+        AbstractCategoryEntity ret = null;
+        List<AbstractCategoryEntity> allSubCategories = subCategories.getValue();
+
+        if (null != allSubCategories) {
+            for (AbstractCategoryEntity subCategory : allSubCategories) {
+                if (subCategory.getId() == id) {
+                    ret = subCategory;
+                    break;
+                }
+            }
+        }
+
+        return ret;
     }
 }

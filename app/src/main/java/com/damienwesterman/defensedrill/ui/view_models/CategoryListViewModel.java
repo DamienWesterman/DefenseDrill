@@ -12,13 +12,16 @@
 package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 
@@ -32,7 +35,7 @@ public class CategoryListViewModel extends AndroidViewModel
         implements AbstractCategoryListViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> categories;
     private final DrillRepository repo;
-    private final ExecutorService executors = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public CategoryListViewModel(@NonNull Application application) {
         super(application);
@@ -55,17 +58,39 @@ public class CategoryListViewModel extends AndroidViewModel
 
     @Override
     public void rePopulateAbstractCategories() {
-        executors.execute(() -> categories.postValue(new ArrayList<>(repo.getAllCategories())));
+        executor.execute(() -> categories.postValue(new ArrayList<>(repo.getAllCategories())));
     }
 
     @Override
-    public void deleteAbstractCategory() {
-
+    public void deleteAbstractCategory(AbstractCategoryEntity entity) {
+        if (null != entity) {
+            executor.execute(() -> {
+                List<AbstractCategoryEntity> newCategories = categories.getValue();
+                if (null != newCategories) {
+                    if (CategoryEntity.class == entity.getClass()) {
+                        newCategories.remove(entity);
+                        CategoryEntity category = (CategoryEntity) entity;
+                        categories.postValue(newCategories);
+                        repo.deleteCategories(category);
+                    }
+                }
+            });
+        }
     }
 
     @Override
-    public void saveAbstractEntity(AbstractCategoryEntity entity, CreateNewEntityCallback callback) {
-
+    public void saveAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+        executor.execute(() -> {
+            try {
+                if (CategoryEntity.class == entity.getClass()) {
+                    CategoryEntity category = (CategoryEntity) entity;
+                    repo.insertCategories(category);
+                    callback.onSuccess();
+                }
+            } catch (SQLiteConstraintException e) {
+                callback.onFailure(e.getMessage());
+            }
+        });
     }
 
     @Override
@@ -73,8 +98,21 @@ public class CategoryListViewModel extends AndroidViewModel
 
     }
 
+    @Nullable
     @Override
     public AbstractCategoryEntity findById(long id) {
-        return null;
+        AbstractCategoryEntity ret = null;
+        List<AbstractCategoryEntity> allCategories = categories.getValue();
+
+        if (null != allCategories) {
+            for (AbstractCategoryEntity category : allCategories) {
+                if (category.getId() == id) {
+                    ret = category;
+                    break;
+                }
+            }
+        }
+
+        return ret;
     }
 }

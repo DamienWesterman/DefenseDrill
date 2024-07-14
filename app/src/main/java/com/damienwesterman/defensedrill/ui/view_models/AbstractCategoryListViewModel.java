@@ -11,6 +11,8 @@
 
 package com.damienwesterman.defensedrill.ui.view_models;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
@@ -23,8 +25,9 @@ public interface AbstractCategoryListViewModel {
     LiveData<List<AbstractCategoryEntity>> getAbstractCategories();
     void populateAbstractCategories();
     void rePopulateAbstractCategories();
-    void deleteAbstractCategory();
-    void saveAbstractEntity(AbstractCategoryEntity entity, CreateNewEntityCallback callback);
+    void deleteAbstractCategory(AbstractCategoryEntity entity);
+    void saveAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback);
     void updateAbstractEntity(AbstractCategoryEntity entity);
+    @Nullable
     AbstractCategoryEntity findById(long id);
 }

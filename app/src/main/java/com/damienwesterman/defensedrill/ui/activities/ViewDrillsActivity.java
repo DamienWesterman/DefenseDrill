@@ -255,7 +255,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Are you sure you want to delete the following Drill:");
+        builder.setTitle("Are you sure you want to delete:");
         builder.setIcon(R.drawable.warning_icon);
         builder.setCancelable(true);
         builder.setMessage(drill.getName());
