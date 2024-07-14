@@ -21,6 +21,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
@@ -79,14 +80,12 @@ public class SubCategoryListViewModel extends AndroidViewModel
     }
 
     @Override
-    public void saveAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+    public void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
             try {
-                if (SubCategoryEntity.class == entity.getClass()) {
-                    SubCategoryEntity subCategory = (SubCategoryEntity) entity;
-                    repo.insertSubCategories(subCategory);
-                    callback.onSuccess();
-                }
+                SubCategoryEntity subCategory = new SubCategoryEntity(name, description);
+                repo.insertSubCategories(subCategory);
+                callback.onSuccess();
             } catch (SQLiteConstraintException e) {
                 callback.onFailure(e.getMessage());
             }
@@ -94,8 +93,18 @@ public class SubCategoryListViewModel extends AndroidViewModel
     }
 
     @Override
-    public void updateAbstractEntity(AbstractCategoryEntity entity) {
-
+    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+        executor.execute(() -> {
+            try {
+                if (SubCategoryEntity.class == entity.getClass()) {
+                    SubCategoryEntity subCategory = (SubCategoryEntity) entity;
+                    repo.updateSubCategories(subCategory);
+                    callback.onSuccess();
+                }
+            } catch (SQLiteConstraintException e) {
+                callback.onFailure(e.getMessage());
+            }
+        });
     }
 
     @Nullable

@@ -79,14 +79,12 @@ public class CategoryListViewModel extends AndroidViewModel
     }
 
     @Override
-    public void saveAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+    public void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
             try {
-                if (CategoryEntity.class == entity.getClass()) {
-                    CategoryEntity category = (CategoryEntity) entity;
-                    repo.insertCategories(category);
-                    callback.onSuccess();
-                }
+                CategoryEntity category = new CategoryEntity(name, description);
+                repo.insertCategories(category);
+                callback.onSuccess();
             } catch (SQLiteConstraintException e) {
                 callback.onFailure(e.getMessage());
             }
@@ -94,8 +92,18 @@ public class CategoryListViewModel extends AndroidViewModel
     }
 
     @Override
-    public void updateAbstractEntity(AbstractCategoryEntity entity) {
-
+    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+        executor.execute(() -> {
+            try {
+                if (CategoryEntity.class == entity.getClass()) {
+                    CategoryEntity category = (CategoryEntity) entity;
+                    repo.updateCategories(category);
+                    callback.onSuccess();
+                }
+            } catch (SQLiteConstraintException e) {
+                callback.onFailure(e.getMessage());
+            }
+        });
     }
 
     @Nullable

@@ -17,12 +17,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
+import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 import com.damienwesterman.defensedrill.ui.view_models.AbstractCategoryListViewModel;
 import com.damienwesterman.defensedrill.ui.view_models.CategoryListViewModel;
 import com.damienwesterman.defensedrill.ui.view_models.SubCategoryListViewModel;
@@ -40,6 +44,10 @@ import java.util.List;
 
 // TODO doc comments (necessary intents)
 public class ViewAbstractCategoriesActivity extends AppCompatActivity {
+    // The following are abstract limits and do not represent any limits imposed by the database
+    private static final int NAME_CHARACTER_LIMIT = 128;
+    private static final int DESCRIPTION_CHARACTER_LIMIT = 512;
+
     private String TAG = "ViewAbstractCategoriesActivity";
     private AbstractCategoryListViewModel viewModel;
     private ActivityMode activityMode;
@@ -129,15 +137,10 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             title.setText(R.string.categories);
             instructions.setText(R.string.all_categories_instructions);
             createButton.setText(R.string.create_new_category);
-        } else if (ActivityMode.MODE_SUB_CATEGORIES == activityMode) {
+        } else {
             title.setText(R.string.sub_categories);
             instructions.setText(R.string.all_sub_categories_instructions);
             createButton.setText(R.string.create_new_sub_category);
-        } else {
-            Snackbar snackbar = Snackbar.make(rootView, "Something went wrong",
-                    Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("OK", (view) -> snackbar.dismiss());
-            snackbar.show();
         }
     }
 
@@ -145,23 +148,183 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         if (loading) {
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
+            createButton.setEnabled(false);
         } else {
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            createButton.setEnabled(true);
         }
     }
 
     private void createAbstractCategoryPopup() {
-        // TODO FINISH call restart on finish
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_abstract_category_popup, null);
+
+        EditText nameEditText = dialogView.findViewById(R.id.nameEditText);
+        EditText descriptionEditText = dialogView.findViewById(R.id.descriptionEditText);
+
+        builder.setView(dialogView);
+        builder.setTitle(ActivityMode.MODE_CATEGORIES == activityMode ?
+                "Create Category" : "Create sub-Category");
+        builder.setIcon(R.drawable.add_circle_icon);
+        builder.setCancelable(true);
+        builder.setPositiveButton("Save", null);
+        builder.setNegativeButton("Back", (dialog, position) -> {
+            // Do nothing
+        });
+        AlertDialog alert = builder.create();
+        alert.setOnShowListener(dialogInterface -> alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+            String name = nameEditText.getText().toString();
+            String description = descriptionEditText.getText().toString();
+            if (0 == name.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Name can not be empty", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            } else if (NAME_CHARACTER_LIMIT <= name.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Name must be less than " + NAME_CHARACTER_LIMIT +  " characters",
+                        Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            }
+
+            if (0 == description.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Description can not be empty", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            } else if (DESCRIPTION_CHARACTER_LIMIT <= description.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Description must be less than " + DESCRIPTION_CHARACTER_LIMIT +  " characters",
+                        Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            }
+            setLoading(true);
+            viewModel.saveAbstractEntity(name, description, new CreateNewEntityCallback() {
+                @Override
+                public void onSuccess() {
+                    alert.dismiss();
+                    Snackbar snackbar = Snackbar.make(rootView,
+                            "Save successful!", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
+                    onRestart();
+                }
+
+                @Override
+                public void onFailure(String msg) {
+                    Snackbar snackbar = Snackbar.make(dialogView,
+                            "Name already exists", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
+                    runOnUiThread(() -> setLoading(false));
+                    // Do not dismiss
+                }
+            });
+        }));
+
+        alert.show();
     }
 
     void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
-        // TODO FINISH call restart on finish
+        if (null == entity) {
+            Snackbar snackbar = Snackbar.make(rootView,
+                    "Something went wrong", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+            snackbar.show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_abstract_category_popup, null);
+
+        EditText nameEditText = dialogView.findViewById(R.id.nameEditText);
+        EditText descriptionEditText = dialogView.findViewById(R.id.descriptionEditText);
+        nameEditText.setText(entity.getName());
+        descriptionEditText.setText(entity.getDescription());
+
+        builder.setView(dialogView);
+        builder.setTitle(ActivityMode.MODE_CATEGORIES == activityMode ?
+                "Create Category" : "Create sub-Category");
+        builder.setIcon(R.drawable.add_circle_icon);
+        builder.setCancelable(true);
+        builder.setPositiveButton("Save", null);
+        builder.setNegativeButton("Back", (dialog, position) -> {
+            // Do nothing
+        });
+        AlertDialog alert = builder.create();
+        alert.setOnShowListener(dialogInterface -> alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+            String name = nameEditText.getText().toString();
+            String description = descriptionEditText.getText().toString();
+            if (0 == name.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Name can not be empty", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            } else if (NAME_CHARACTER_LIMIT <= name.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Name must be less than " + NAME_CHARACTER_LIMIT +  " characters",
+                        Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            }
+
+            if (0 == description.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Description can not be empty", Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            } else if (DESCRIPTION_CHARACTER_LIMIT <= description.length()) {
+                Snackbar snackbar = Snackbar.make(dialogView,
+                        "Description must be less than " + DESCRIPTION_CHARACTER_LIMIT +  " characters",
+                        Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                snackbar.show();
+                return; // Do not dismiss
+            }
+            setLoading(true);
+            entity.setName(name);
+            entity.setDescription(description);
+            viewModel.updateAbstractEntity(entity, new CreateNewEntityCallback() {
+                @Override
+                public void onSuccess() {
+                    alert.dismiss();
+                    Snackbar snackbar = Snackbar.make(rootView,
+                            "Save successful!", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
+                    onRestart();
+                }
+
+                @Override
+                public void onFailure(String msg) {
+                    Snackbar snackbar = Snackbar.make(dialogView,
+                            "Name already exists", Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+                    snackbar.show();
+                    runOnUiThread(() -> setLoading(false));
+                    // Do not dismiss
+                }
+            });
+        }));
+
+        alert.show();
     }
 
     void deleteAbstractCategoryPopup(AbstractCategoryEntity entity) {
         if (null == entity) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.activityViewAbstractCategories),
+            Snackbar snackbar = Snackbar.make(rootView,
                     "Something went wrong trying to delete", Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
             snackbar.show();

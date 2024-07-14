@@ -55,4 +55,7 @@
     <string name="sub_categories">Sub-Categories</string>
     <string name="all_sub_categories_instructions">Click to view/edit a sub-Category, hold to delete</string>
     <string name="create_new_sub_category">Create New sub-Category</string>
+    <string name="enter_name">Enter name…</string>
+    <string name="enter_description">Enter description…</string>
+    <string name="description_label">Description:</string>
 </resources>

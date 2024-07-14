@@ -26,8 +26,8 @@ public interface AbstractCategoryListViewModel {
     void populateAbstractCategories();
     void rePopulateAbstractCategories();
     void deleteAbstractCategory(AbstractCategoryEntity entity);
-    void saveAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback);
-    void updateAbstractEntity(AbstractCategoryEntity entity);
+    void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback);
+    void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback);
     @Nullable
     AbstractCategoryEntity findById(long id);
 }
