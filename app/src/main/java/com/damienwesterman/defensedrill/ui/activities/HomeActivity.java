@@ -110,47 +110,47 @@ public class HomeActivity extends AppCompatActivity {
         knifeDefenseSubCategory = repo.getSubCategory(knifeDefenseSubCategory.getName());
 
         // Set up some drills
-        Drill jab = new Drill("Jab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill jab = new Drill("Jab", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         jab.addCategory(kickBoxingCategory);
         jab.addSubCategory(strikesSubCategory);
-        Drill cross = new Drill("Cross", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill cross = new Drill("Cross", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         cross.addCategory(kickBoxingCategory);
         cross.addSubCategory(strikesSubCategory);
-        Drill roundKick = new Drill("Round Kick", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill roundKick = new Drill("Round Kick", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         roundKick.addCategory(kickBoxingCategory);
         roundKick.addSubCategory(kicksSubCategory);
-        Drill elbow = new Drill("Elbow", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill elbow = new Drill("Elbow", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         elbow.addCategory(kravMagaCategory);
         elbow.addSubCategory(strikesSubCategory);
-        Drill knee = new Drill("Knee", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill knee = new Drill("Knee", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         knee.addCategory(kravMagaCategory);
         knee.addSubCategory(kicksSubCategory);
-        Drill oneHandChokeEscape = new Drill("One Hand Standing Choke Escape", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill oneHandChokeEscape = new Drill("One Hand Standing Choke Escape", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         oneHandChokeEscape.addCategory(kravMagaCategory);
         oneHandChokeEscape.addSubCategory(escapesSubCategory);
-        Drill shrimpEscape = new Drill("Shrimp Escape", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill shrimpEscape = new Drill("Shrimp Escape", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         shrimpEscape.addCategory(jiuJitsuCategory);
         shrimpEscape.addSubCategory(escapesSubCategory);
-        Drill gunToHeadDrill = new Drill("Gun to the Front of the Head", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill gunToHeadDrill = new Drill("Gun to the Front of the Head", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         gunToHeadDrill.addCategory(weaponsDefenseCategory);
         gunToHeadDrill.addSubCategory(gunDefenseSubCategory);
-        Drill gunToHeadBack = new Drill("Gun to the Back", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill gunToHeadBack = new Drill("Gun to the Back", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         gunToHeadBack.addCategory(weaponsDefenseCategory);
         gunToHeadBack.addSubCategory(gunDefenseSubCategory);
-        Drill slash = new Drill("Knife Slash", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill slash = new Drill("Knife Slash", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         slash.addCategory(weaponsDefenseCategory);
         slash.addSubCategory(knifeDefenseSubCategory);
-        Drill risingStab = new Drill("Rising Stab", System.currentTimeMillis(), true, Drill.HIGH_CONFIDENCE, "",
+        Drill risingStab = new Drill("Rising Stab", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
                 -1, new ArrayList<>(), new ArrayList<>());
         risingStab.addCategory(weaponsDefenseCategory);
         risingStab.addSubCategory(knifeDefenseSubCategory);
