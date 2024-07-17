@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.damienwesterman.defensedrill.R;
@@ -42,9 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         TitleDescCard viewDrillsCard = findViewById(R.id.viewDrillsCard);
         viewDrillsCard.setOnLongClickListener(view -> {
             // Just for now, create some mock entries in the database
-            new Thread(this::mockDatabaseEntries).start();
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
-                    "Added mocked database entries");
+            mockDatabaseConfirmationPopup();
             return true;
         });
     }
@@ -74,6 +73,21 @@ public class HomeActivity extends AppCompatActivity {
             Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
                     "Unknown option");
         }
+    }
+
+    private void mockDatabaseConfirmationPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Insert Mock Database?");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setMessage("This will delete ALL drills/ categories/ sub-categories " +
+                "and replace them with some demo ones. Are you sure you want to do this?");
+        builder.setPositiveButton("Do It.", (dialog, position) -> {
+            new Thread(this::mockDatabaseEntries).start();
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
+                    "Added mocked database entries");
+        });
+        builder.setNegativeButton("Never-mind", null);
+        builder.create().show();
     }
 
     // TODO Take out once the server is ready
