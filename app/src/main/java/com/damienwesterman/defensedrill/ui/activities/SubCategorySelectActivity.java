@@ -33,14 +33,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * TODO Doc comments
- * TODO note the required intents
+ * Activity during Drill Generation to select a sub-Category of drill, or random.
+ * <br><br>
+ * Proceeds {@link CategorySelectActivity}, then Launches {@link DrillInfoActivity} sending the
+ * selected Category and SubCategory.
+ * <br><br>
+ * INTENTS: Expects to receive a {@link Constants#INTENT_CATEGORY_CHOICE} intent.
  */
 public class SubCategorySelectActivity extends AppCompatActivity {
     SubCategorySelectViewModel viewModel;
     long selectedCategoryId;
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +73,9 @@ public class SubCategorySelectActivity extends AppCompatActivity {
         setUpRecyclerView();
     }
 
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
     public void randomSubCategoryClick(View view) {
         Intent intent = new Intent(this, DrillInfoActivity.class);
         intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, selectedCategoryId);
@@ -73,6 +83,12 @@ public class SubCategorySelectActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    /**
+     * Private helper method to set up the recyclerView list of SubCategories and their callback.
+     */
     private void setUpRecyclerView() {
         executor.execute(() -> {
             List<SubCategoryEntity> subCategories = viewModel.getSubCategories(selectedCategoryId);

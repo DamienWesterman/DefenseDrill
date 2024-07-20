@@ -31,12 +31,18 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
- * TODO doc comments
- * TODO Notate the required intents (none)
+ * Activity during Drill Generation to select a Category of drill, or random.
+ * <br><br>
+ * Then Launches {@link SubCategorySelectActivity} sending the selected Category.
+ * <br><br>
+ * INTENTS: None required.
  */
 public class CategorySelectActivity extends AppCompatActivity {
     CategorySelectViewModel viewModel;
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +53,21 @@ public class CategorySelectActivity extends AppCompatActivity {
         setUpRecyclerView();
     }
 
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
     public void randomCategoryClick(View view) {
         Intent intent = new Intent(this, SubCategorySelectActivity.class);
         intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
         startActivity(intent);
     }
 
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    /**
+     * Private helper method to set up the recyclerView list of Categories and their callback.
+     */
     private void setUpRecyclerView() {
         Executors.newSingleThreadExecutor().execute(() -> {
             List<CategoryEntity> categories = viewModel.getCategories();

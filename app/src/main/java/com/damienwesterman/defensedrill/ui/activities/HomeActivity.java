@@ -33,6 +33,7 @@ import java.util.ArrayList;
  * TODO doc comments (note the required intents)
  * TODO Make sure all the ui classes are clean
  * TODO Double check everywhere for null checks
+ * TODO All Activities in the following format: Activity methods, onClickListeners, Popups, private helpers
  */
 public class HomeActivity extends AppCompatActivity {
     @Override
