@@ -37,17 +37,25 @@ public class DrillListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Drill>> drills;
     private List<CategoryEntity> allCategories;
     private List<SubCategoryEntity> allSubCategories;
-
     private Set<Long> categoryFilterIds;
     private Set<Long> subCategoryFilterIds;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private SortOrder sortOrder;
+
+    public enum SortOrder {
+        SORT_NAME_ASCENDING,
+        SORT_NAME_DESCENDING,
+        SORT_DATE_ASCENDING,
+        SORT_DATE_DESCENDING
+    }
 
     public DrillListViewModel(@NonNull Application application) {
         super(application);
 
         repo = DrillRepository.getInstance(application);
         drills = new MutableLiveData<>();
+        sortOrder = SortOrder.SORT_NAME_ASCENDING;
     }
 
     public LiveData<List<Drill>> getDrills() {
@@ -56,12 +64,21 @@ public class DrillListViewModel extends AndroidViewModel {
 
     public void populateDrills() {
         if (null == drills.getValue()) {
-            rePopulateDrills();
+            resetDrills();
         }
     }
 
-    public void rePopulateDrills() {
+    public void resetDrills() {
         executor.execute(() -> drills.postValue(repo.getAllDrills()));
+    }
+
+    public void rePopulateDrills() {
+        if (null == drills.getValue()) {
+            resetDrills();
+        } else {
+            // Force reload
+            drills.postValue(drills.getValue());
+        }
     }
 
     public void filterDrills(List<Long> categoryIds, List<Long> subCategoryIds) {
@@ -142,5 +159,33 @@ public class DrillListViewModel extends AndroidViewModel {
                 }
             }
         });
+    }
+
+    public void setSortOrder(SortOrder newSortOrder) {
+        List<Drill> sortedDrills = drills.getValue();
+
+        if (null != sortedDrills) {
+            sortedDrills.sort((drill1, drill2) -> {
+                switch(newSortOrder) {
+                    case SORT_DATE_ASCENDING:
+                        return Long.compare(drill1.getLastDrilled(), drill2.getLastDrilled());
+                    case SORT_DATE_DESCENDING:
+                        return Long.compare(drill2.getLastDrilled(), drill1.getLastDrilled());
+                    case SORT_NAME_DESCENDING:
+                        return drill2.getName().compareTo(drill1.getName());
+                    case SORT_NAME_ASCENDING:
+                        // Fallthrough intentional
+                    default:
+                        return drill1.getName().compareTo(drill2.getName());
+
+                }
+            });
+            drills.postValue(sortedDrills);
+            sortOrder = newSortOrder;
+        }
+    }
+
+    public SortOrder getSortOrder() {
+        return sortOrder;
     }
 }

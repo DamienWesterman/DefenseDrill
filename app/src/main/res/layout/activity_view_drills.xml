@@ -31,6 +31,35 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/sortButton"
+            android:onClick="sortDrills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
+            android:text="@string/sort"
+            android:drawableLeft="@drawable/sort_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+        <Button
+            android:id="@+id/resetFiltersButton"
+            android:onClick="resetFilters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:text="@string/reset_filters"
+            android:drawableLeft="@drawable/filter_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
             android:id="@+id/categoryFilterButton"
             android:onClick="filterByCategory"
             android:layout_width="wrap_content"
@@ -53,15 +82,6 @@
             tools:ignore="ButtonStyle,RtlHardcoded" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/resetFiltersButton"
-        android:onClick="resetFilters"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/reset_filters"
-        android:drawableLeft="@drawable/filter_icon"
-        tools:ignore="ButtonStyle,RtlHardcoded" />
 
     <Button
         android:id="@+id/createDrillButton"

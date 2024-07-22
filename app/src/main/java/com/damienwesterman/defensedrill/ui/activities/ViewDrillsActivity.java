@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -45,9 +46,14 @@ import java.util.stream.Collectors;
  */
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
+    private DrillListViewModel.SortOrder sortOrder;
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    private Button sortButton;
+    private Button resetFiltersButton;
+    private Button categoryFilterButton;
+    private Button subCategoryFilterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +61,13 @@ public class ViewDrillsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_drills);
 
         viewModel = new ViewModelProvider(this).get(DrillListViewModel.class);
+        sortOrder = viewModel.getSortOrder();
         progressBar = findViewById(R.id.allDrillsProgressBar);
         recyclerView = findViewById(R.id.allDrillsRecyclerView);
+        sortButton = findViewById(R.id.sortButton);
+        resetFiltersButton = findViewById(R.id.resetFiltersButton);
+        categoryFilterButton = findViewById(R.id.categoryFilterButton);
+        subCategoryFilterButton = findViewById(R.id.subCategoryFilterButton);
 
         setLoading(true);
         viewModel.getDrills().observe(this, this::setUpRecyclerView);
@@ -83,7 +94,11 @@ public class ViewDrillsActivity extends AppCompatActivity {
     public void resetFilters(View view) {
         viewModel.setCategoryFilterIds(null);
         viewModel.setSubCategoryFilterIds(null);
-        viewModel.rePopulateDrills();
+        viewModel.resetDrills();
+    }
+
+    public void sortDrills(View view) {
+        sortDrillsPopup();
     }
 
     public void createDrill(View view) {
@@ -119,10 +134,83 @@ public class ViewDrillsActivity extends AppCompatActivity {
         if (loading) {
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
+            sortButton.setEnabled(false);
+            resetFiltersButton.setEnabled(false);
+            categoryFilterButton.setEnabled(false);
+            subCategoryFilterButton.setEnabled(false);
         } else {
             progressBar.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
+            sortButton.setEnabled(true);
+            resetFiltersButton.setEnabled(true);
+            categoryFilterButton.setEnabled(true);
+            subCategoryFilterButton.setEnabled(true);
         }
+    }
+
+    public DrillListViewModel.SortOrder indexToSortOrder(int index) {
+        switch(index) {
+            case 1:
+                return DrillListViewModel.SortOrder.SORT_NAME_DESCENDING;
+            case 2:
+                return DrillListViewModel.SortOrder.SORT_DATE_ASCENDING;
+            case 3:
+                return DrillListViewModel.SortOrder.SORT_DATE_DESCENDING;
+            case 0:
+                // Fallthrough intentional
+            default:
+                return DrillListViewModel.SortOrder.SORT_NAME_ASCENDING;
+        }
+    }
+
+    public int sortOrderToIndex(DrillListViewModel.SortOrder sortOrder) {
+        switch (sortOrder) {
+            case SORT_NAME_DESCENDING:
+                return 1;
+            case SORT_DATE_ASCENDING:
+                return 2;
+            case SORT_DATE_DESCENDING:
+                return 3;
+            case SORT_NAME_ASCENDING:
+                // Fallthrough intentional
+            default:
+                return 0;
+        }
+    }
+
+    private void sortDrillsPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] options = getResources().getStringArray(R.array.drills_sort_options);
+        final int[] selectedOption = { sortOrderToIndex(sortOrder) };
+
+        builder.setTitle("Sort By:");
+        builder.setIcon(R.drawable.sort_icon);
+        builder.setCancelable(true);
+        builder.setSingleChoiceItems(options, selectedOption[0], (dialog, position) -> selectedOption[0] = position);
+        builder.setPositiveButton("Sort", (dialog, position) -> {
+            DrillListViewModel.SortOrder selectedSortOrder = indexToSortOrder(selectedOption[0]);
+            if (selectedSortOrder == sortOrder) {
+                // Do nothing, no change
+                return;
+            }
+
+            setLoading(true);
+            viewModel.setSortOrder(selectedSortOrder);
+            DrillListViewModel.SortOrder newSortOrder = viewModel.getSortOrder();
+
+            if (newSortOrder == sortOrder) {
+                // Indicates an error and we didn't switch
+                Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
+                        "Could not switch sort order");
+                setLoading(false);
+            } else {
+                sortOrder = newSortOrder;
+                // RecyclerView callback will take care of setLoading(false)
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        builder.create().show();
     }
 
     private void filterCategoriesPopup(List<CategoryEntity> categories) {

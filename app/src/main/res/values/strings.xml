@@ -58,4 +58,11 @@
     <string name="enter_name">Enter name…</string>
     <string name="enter_description">Enter description…</string>
     <string name="description_label">Description:</string>
+    <string name="sort">Sort</string>
+    <string-array name="drills_sort_options">
+        <item>Name (A-Z)</item>
+        <item>Name (Z-A)</item>
+        <item>Last Drilled (Old-New)</item>
+        <item>Last Drilled (New-Old)</item>
+    </string-array>
 </resources>

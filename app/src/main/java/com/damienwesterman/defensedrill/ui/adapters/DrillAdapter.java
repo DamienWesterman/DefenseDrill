@@ -24,7 +24,10 @@ import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
 import com.damienwesterman.defensedrill.ui.utils.LongCardClickListener;
 import com.damienwesterman.defensedrill.ui.view_holders.CardViewHolder;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * TODO Doc comments
@@ -54,7 +57,10 @@ public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         holder.getCard().setTitle(drills.get(position).getName());
-        holder.getCard().setDescription("");
+        Date drilledDate = new Date(drills.get(position).getLastDrilled());
+        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+        String lastDrilled = "Last Drilled: " + dateFormatter.format(drilledDate);
+        holder.getCard().setDescription(lastDrilled);
         holder.setOnClickListener(clickListener, drills.get(position).getId());
         holder.setLongClickListener(longClickListener, drills.get(position).getId());
     }
