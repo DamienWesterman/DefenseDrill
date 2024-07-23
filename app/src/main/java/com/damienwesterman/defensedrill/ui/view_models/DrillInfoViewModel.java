@@ -100,13 +100,9 @@ public class DrillInfoViewModel extends AndroidViewModel {
      */
     public void saveDrill(Drill drill, Activity activity) {
         if (null == drill) {
-            if (null != activity) {
-                activity.runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                        activity.findViewById(R.id.activityDrillInfo),
-                        "Issue saving Drill"));
-            }
             return;
         }
+
         executor.execute(() -> {
            try {
                repo.updateDrills(drill);

@@ -144,6 +144,12 @@ public class DrillInfoActivity extends AppCompatActivity {
         viewModel.saveDrill(drill, this); // this method handles null check and feedback
     }
 
+    /**
+     * Asks the user to confirm a new confidence level, saves the drill, then goes to the
+     * {@link #createWhatNextPopup()}.
+     *
+     * @param view View.
+     */
     public void markAsPracticed(View view) {
         AlertDialog getConfidencePopup = createConfidencePopup();
         if (null != getConfidencePopup) {
@@ -322,10 +328,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         Drill drill = collectDrillInfo();
 
         if (null == drill) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "Issue marking as practiced");
             return null;
         }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] options = getResources().getStringArray(R.array.confidence_levels);
         final int[] selectedOption = { Constants.confidenceWeightToPosition(drill.getConfidence())};
@@ -402,16 +407,16 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     /**
+     * Create and return a fully configured AlertDialog for when there is no drill to display.
+     * <br><br>
+     * This should be called in the error condition that there is no drill to display. Can be caused
+     * by drill generation failing or a bad drill id. User feedback should be provided in the
+     * message so the user will know what is going on.
      *
-     *
-     * @param message
-     * @return
+     * @param message   String error message to display to the user.
+     * @return          AlertDialog object.
      */
     private AlertDialog createNoDrillPopup(@NonNull String message) {
-        if (null == message) {
-            return null;
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Drill not found!");
         builder.setIcon(R.drawable.warning_icon);
@@ -450,12 +455,20 @@ public class DrillInfoActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+    /**
+     * Launch an intent to go to the home screen.
+     *
+     * @param view View.
+     */
     public void goHome(View view) {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
+    /**
+     * Set up the view model and populate the screen.
+     */
     private void setUpViewModel() {
         viewModel = new ViewModelProvider(this).get(DrillInfoViewModel.class);
 
@@ -495,6 +508,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Find and save all the views on the screen.
+     */
     @SuppressLint("CutPasteId")
     private void saveViews() {
         drillProgressBar = findViewById(R.id.drillProgressBar);
@@ -515,8 +531,11 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
     }
 
+    /**
+     * Wrapper to call {@link #createNoDrillPopup(String)} and determine the appropriate error
+     * message.
+     */
     private void alertNoDrillFound() {
-        AlertDialog noDrillPopup;
         String alertMessage;
 
         switch(activityState) {
@@ -531,13 +550,12 @@ public class DrillInfoActivity extends AppCompatActivity {
                 alertMessage = getString(R.string.no_drill_found_by_id);
                 break;
         }
-        noDrillPopup = createNoDrillPopup(alertMessage);
-
-        if (null != noDrillPopup) {
-            noDrillPopup.show();
-        }
+        createNoDrillPopup(alertMessage).show();
     }
 
+    /**
+     * Set the UI to hide all Drill elements and display loading bar.
+     */
     private void changeUiToDrillLoading() {
         drillProgressBar.setVisibility(View.VISIBLE);
         drillName.setVisibility(View.GONE);
@@ -557,6 +575,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveDrillInfoButton.setVisibility(View.GONE);
     }
 
+    /**
+     * Display all drill elements and hide the loading bar.
+     */
     private void changeUiToDrillInfoShown() {
         drillProgressBar.setVisibility(View.GONE);
         drillName.setVisibility(View.VISIBLE);
@@ -577,19 +598,41 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     /**
+     * Create a drill object based on the the current user input on the screen. Handles and displays
+     * errors.
      *
-     * @return May return null // TODO
+     * @return Drill object or null on error.
      */
-    private Drill collectDrillInfo() {
+    private @Nullable Drill collectDrillInfo() {
         Drill drill = viewModel.getDrill().getValue();
-        if (null != drill) {
-            drill.setConfidence(
-                    Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()));
-            drill.setNotes(notes.getText().toString());
+        if (null == drill) {
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "An error occurred");
+            return null;
         }
+
+        drill.setConfidence(
+                Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()));
+
+        String notesString = notes.getText().toString();
+        // Arbitrary limit just for display purposes, does not represent any actual limit in the
+        // database layer
+        final int NOTES_CHARACTER_LIMIT = 2048;
+        if (NOTES_CHARACTER_LIMIT <= notesString.length()) {
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
+                    "Notes must be less than " + NOTES_CHARACTER_LIMIT + " characters");
+            return null;
+        }
+        drill.setNotes(notes.getText().toString());
+
         return drill;
     }
 
+    /**
+     * Populate the screen with information retrieved from the drill.
+     *
+     * @param drill Drill used to populate the screen.
+     */
     private void fillDrillInfo(Drill drill) {
         drillName.setText(drill.getName());
         confidenceSpinner.setSelection(Constants.confidenceWeightToPosition(drill.getConfidence()));

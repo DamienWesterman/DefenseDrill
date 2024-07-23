@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -38,7 +39,11 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO doc comments (note the required intents - none)
+/**
+ * Activity to create a new Drill.
+ * <br><br>
+ * INTENTS: None required.
+ */
 public class CreateDrillActivity extends AppCompatActivity {
     private CreateDrillViewModel viewModel;
 
@@ -49,6 +54,9 @@ public class CreateDrillActivity extends AppCompatActivity {
     private EditText enteredNotes;
     private Snackbar savingSnackbar;
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +84,9 @@ public class CreateDrillActivity extends AppCompatActivity {
         confidenceSpinner.setAdapter(adapter);
     }
 
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
     public void addCategories(View view) {
         addCategoriesPopup(viewModel.getAllCategories());
     }
@@ -84,10 +95,22 @@ public class CreateDrillActivity extends AppCompatActivity {
         addSubCategoriesPopup(viewModel.getAllSubCategories());
     }
 
+    /**
+     * Do input sanitation and save a new drill to the database.
+     * <br><br>
+     * The popup process for saving a drill is as follows (when applicable):
+     * <ol>
+     *     <li>{@link #confirmNoCategoriesPopup(Drill)}</li>
+     *     <li>{@link #confirmNoSubCategoriesPopup(Drill)}</li>
+     *     <li>{@link #checkNamePopup(Drill)}</li>
+     *     <li>{@link #whatNextPopup()}</li>
+     * </ol>
+     *
+     * @param view View.
+     */
     public void saveDrill(View view) {
         setUserEditable(false);
         Drill drill = generateDrillFromUserInput();
-        // TODO maybe have some sort of snackbar saying loading or something
         
         if (null == drill) {
             // User notification is handled in generateDrillFromUserInput()
@@ -104,6 +127,18 @@ public class CreateDrillActivity extends AppCompatActivity {
         }
     }
 
+    // =============================================================================================
+    // Popup Methods
+    // =============================================================================================
+
+    /**
+     * Create and show a popup to add categories.
+     * <br><br>
+     * Displays the passed list as a popup of checked boxes, then saves the
+     * checked categories to the viewModel for later access.
+     *
+     * @param categories List of categories.
+     */
     private void addCategoriesPopup(List<CategoryEntity> categories) {
         if (null == categories) {
             Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
@@ -170,6 +205,14 @@ public class CreateDrillActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Create and show a popup to add sub-categories.
+     * <br><br>
+     * Displays the passed list as a popup of checked boxes, then saves the
+     * checked sub-categories to the viewModel for later access.
+     *
+     * @param subCategories List of categories.
+     */
     private void addSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
         if (null == subCategories) {
             Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
@@ -236,6 +279,11 @@ public class CreateDrillActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Create and show a popup to confirm the user intended to create a drill with no categories.
+     *
+     * @param drill Drill being created.
+     */
     private void confirmNoCategoriesPopup(Drill drill) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No Categories Selected");
@@ -255,6 +303,11 @@ public class CreateDrillActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    /**
+     * Create and show a popup to confirm the user intended to create a drill with no sub-categories.
+     *
+     * @param drill Drill being created.
+     */
     private void confirmNoSubCategoriesPopup(Drill drill) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No sub-Categories Selected");
@@ -268,6 +321,12 @@ public class CreateDrillActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    /**
+     * Create and show a popup to confirm the name of the drill with the user. Saves drill in the
+     * database if user accepts the name.
+     *
+     * @param drill Drill being created.
+     */
     private void checkNamePopup(Drill drill) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Double Check Name");
@@ -298,6 +357,16 @@ public class CreateDrillActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    /**
+     * Create a show a popup asking the user what they want to do next.
+     * <br><br>
+     * User can choose to:
+     * <ul>
+     *     <li>Create another drill</li>
+     *     <li>Go back [to the previous activity]</li>
+     *     <li>Go to the home screen</li>
+     * </ul>
+     */
     private void whatNextPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("What next?");
@@ -320,6 +389,16 @@ public class CreateDrillActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+
+    /**
+     * Set the UI state to accepting user input or not allowing the user to modify the drill info
+     * fields.
+     *
+     * @param editable boolean if user is able to edit the drill info fields.
+     */
     private void setUserEditable(boolean editable) {
         if (editable) {
             if (savingSnackbar.isShown()) {
@@ -336,7 +415,16 @@ public class CreateDrillActivity extends AppCompatActivity {
     }
 
     // TODO Doc comments, also does input sanitation, nullable if issue
-    private Drill generateDrillFromUserInput() {
+
+    /**
+     * Gather all the user input from the fields and convert it into a Drill object. Performs input
+     * sanitation.
+     * <br><br>
+     * Will display an error message to the user if input sanitation failed.
+     *
+     * @return Drill object created from user input or null if input sanitation failed.
+     */
+    private @Nullable Drill generateDrillFromUserInput() {
         // Both of these are limits just for display purposes on other screen. They are a little
         // arbitrary and do not represent actual limits in the database layer.
         final int NAME_CHARACTER_LIMIT = 256;

@@ -42,7 +42,18 @@ import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
 
-// TODO doc comments (necessary intents)
+/**
+ * Activity to display, edit, and create categories or sub-categories (determined by the intent).
+ * <br><br>
+ * This is a generic activity that can be launched to display two different (and very similar)
+ * screens. It can act as the screen for Customize Categories OR Customize Sub-Categories. Which one
+ * is determined by the intent passed in. This screen allows a user to view all of an
+ * AbstractCategory's entries, edit them (by click), delete them (by long click), or create a new
+ * one.
+ * <br><br>
+ * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_VIEW_CATEGORIES} or
+ * {@link Constants#INTENT_VIEW_SUB_CATEGORIES} to determine what screen to show.
+ */
 public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     // The following are abstract limits and do not represent any limits imposed by the database
     private static final int NAME_CHARACTER_LIMIT = 128;
@@ -52,7 +63,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     private AbstractCategoryListViewModel viewModel;
     private ActivityMode activityMode;
 
-    // TODO go through all snackbars and make the R.id.OVERALL_VIEW a field, maybe abstract out the call itself
+    // TODO go through all snackbars and make the R.id.OVERALL_VIEW a field
     private View rootView;
     private TextView title;
     private TextView instructions;
@@ -108,6 +119,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         viewModel.rePopulateAbstractCategories();
     }
 
+    // TODO Doc comments
     public void createAbstractCategory(View view) {
         createAbstractCategoryPopup();
     }
@@ -237,8 +249,8 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
 
         builder.setView(dialogView);
         builder.setTitle(ActivityMode.MODE_CATEGORIES == activityMode ?
-                "Create Category" : "Create sub-Category");
-        builder.setIcon(R.drawable.add_circle_icon);
+                "Edit Category" : "Edit sub-Category");
+        builder.setIcon(R.drawable.edit_icon);
         builder.setCancelable(true);
         builder.setPositiveButton("Save", null);
         builder.setNegativeButton("Back", (dialog, position) -> {
