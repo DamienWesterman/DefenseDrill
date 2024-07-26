@@ -34,12 +34,17 @@ public class Constants {
     public static final String INTENT_VIEW_CATEGORIES = INTENT_PREFIX + "view_categories";
     /** Value does not matter */
     public static final String INTENT_VIEW_SUB_CATEGORIES = INTENT_PREFIX + "view_sub_categories";
-    /** Value does not matter */
-    public static final String INTENT_CREATE_CATEGORY = INTENT_PREFIX + "create_category";
-    /** Value does not matter */
-    public static final String INTENT_CREATE_SUB_CATEGORY = INTENT_PREFIX + "create_sub_category";
 
-    // TODO doc comments
+    /**
+     * Converts a confidence weight into its respective position in the confidence_levels string
+     * array in res/values/strings.xml. For use in a spinner with indexed positions.
+     * <br><br>
+     * Yeah yeah not a Constant but whatever, it goes here because I say it does.
+     *
+     * @param weight    int value of weight, see around {@link Drill#LOW_CONFIDENCE} for values.
+     * @return          int value of position relevant to list in
+     *                  {@link com.damienwesterman.defensedrill.R.array#confidence_levels}.
+     */
     public static int confidenceWeightToPosition(int weight) {
         int position;
         switch(weight) {
@@ -58,7 +63,16 @@ public class Constants {
         return position;
     }
 
-    // TODO doc comments
+    /**
+     * Converts a position index from the confidence_levels string array in res/values/strings.xm
+     * into its respective confidence weight. For use in a spinner with indexed positions.
+     * <br><br>
+     * Yeah yeah not a Constant but whatever, it goes here because I say it does.
+     *
+     * @param position  int value of position relevant to list in
+     *                  {@link com.damienwesterman.defensedrill.R.array#confidence_levels}.
+     * @return          int value of weight, see around {@link Drill#LOW_CONFIDENCE} for values.
+     */
     public static int confidencePositionToWeight(int position) {
         int confidence;
         switch(position) {

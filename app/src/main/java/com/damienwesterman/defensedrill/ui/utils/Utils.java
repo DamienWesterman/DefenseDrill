@@ -15,8 +15,17 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
-// TODO Doc comments
+/**
+ * Static utilities for the UI layer.
+ */
 public class Utils {
+    /**
+     * Create and display a snackbar. The snackbar will have a single "OK" button that dismisses the
+     * snackbar.
+     *
+     * @param rootView  View object to display the snackbar in.
+     * @param message   String message to display to the user.
+     */
     public static void displayDismissibleSnackbar(View rootView, String message) {
         if (null == rootView || null == message) {
             return;

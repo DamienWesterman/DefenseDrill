@@ -13,10 +13,14 @@ import androidx.cardview.widget.CardView;
 import com.damienwesterman.defensedrill.R;
 
 /**
- * TODO: document your custom view class.
+ * Custom implementation of {@link CardView}. Has a title line and a description line in a Card.
+ * Allows setting of title and description in XML layout file using:
+ * <ul>
+ *     <li>{@code app:title="string"}</li>
+ *     <li>{@code app:description="string"}</li>
+ * </ul>
  */
 public class TitleDescCard extends CardView {
-    private final static String DEFAULT_TEXT = "";
     private TextView titleView;
     private TextView descView;
 
@@ -35,6 +39,30 @@ public class TitleDescCard extends CardView {
         init(context, attrs);
     }
 
+    public void setTitle(@Nullable String title) {
+        if (null == title || title.isEmpty()) {
+            titleView.setVisibility(GONE);
+        } else {
+            titleView.setVisibility(VISIBLE);
+            titleView.setText(title);
+        }
+    }
+
+    public void setDescription(@Nullable String description) {
+        if (null == description || description.isEmpty()) {
+            descView.setVisibility(GONE);
+        } else {
+            descView.setVisibility(VISIBLE);
+            descView.setText(description);
+        }
+    }
+
+    /**
+     * Helper method to allow the setting of title and description from XML.
+     *
+     * @param context   Context.
+     * @param attrs     AttributeSet.
+     */
     private void init(Context context, AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.layout_title_desc_card, this, true);
 
@@ -46,29 +74,11 @@ public class TitleDescCard extends CardView {
             String title = typedArray.getString(R.styleable.TitleDescCard_title);
             String description = typedArray.getString(R.styleable.TitleDescCard_description);
 
-            setTitle(title != null ? title : DEFAULT_TEXT);
-            setDescription(description != null ? description : DEFAULT_TEXT);
+            setTitle(title);
+            setDescription(description);
 
             typedArray.recycle();
         }
 
-    }
-
-    public void setTitle(String title) {
-        if (null == title || title.isEmpty()) {
-            titleView.setVisibility(GONE);
-        } else {
-            titleView.setVisibility(VISIBLE);
-            titleView.setText(title);
-        }
-    }
-
-    public void setDescription(String description) {
-        if (null == description || description.isEmpty()) {
-            descView.setVisibility(GONE);
-        } else {
-            descView.setVisibility(VISIBLE);
-            descView.setText(description);
-        }
     }
 }

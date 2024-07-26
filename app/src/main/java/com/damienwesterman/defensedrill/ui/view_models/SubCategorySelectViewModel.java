@@ -38,7 +38,7 @@ public class SubCategorySelectViewModel extends AndroidViewModel {
     }
 
     // TODO Yeah change all this stuff to be LiveData in everywhere to make it cleaner
-    // Refactor to do all background stuff in the ViewModel
+    // TODO Refactor to do all background stuff in the ViewModel
     public List<SubCategoryEntity> getSubCategories(long id) {
         if (null == categories) {
             if (Constants.USER_RANDOM_SELECTION == id) {

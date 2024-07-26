@@ -29,11 +29,13 @@ import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
 
+// TODO Make sure all the ui classes are clean
+// TODO Double check everywhere for null checks
 /**
- * TODO doc comments (note the required intents)
- * TODO Make sure all the ui classes are clean
- * TODO Double check everywhere for null checks
- * TODO All Activities in the following format: Activity methods, onClickListeners, Popups, private helpers
+ * Home screen activity and entry point for the application. Displays the different general
+ * functionalities of the app. CRUD operations in the database, Drill generation, and feedback.
+ * <br><br>
+ * INTENTS: None expected.
  */
 public class HomeActivity extends AppCompatActivity {
     @Override

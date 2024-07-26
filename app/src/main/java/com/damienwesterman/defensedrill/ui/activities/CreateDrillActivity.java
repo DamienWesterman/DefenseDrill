@@ -130,7 +130,6 @@ public class CreateDrillActivity extends AppCompatActivity {
     // =============================================================================================
     // Popup Methods
     // =============================================================================================
-
     /**
      * Create and show a popup to add categories.
      * <br><br>
@@ -413,8 +412,6 @@ public class CreateDrillActivity extends AppCompatActivity {
         subCategoriesButton.setEnabled(editable);
         enteredNotes.setEnabled(editable);
     }
-
-    // TODO Doc comments, also does input sanitation, nullable if issue
 
     /**
      * Gather all the user input from the fields and convert it into a Drill object. Performs input

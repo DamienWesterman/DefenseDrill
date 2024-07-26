@@ -30,7 +30,11 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * TODO Doc comments
+ * RecyclerView Adapter class for use with Drill objects.
+ * <br><br>
+ * Each item represents one Drill, displaying the name and last drilled date in a
+ * {@link com.damienwesterman.defensedrill.ui.utils.TitleDescCard}. Uses {@link CardViewHolder}.
+ * Allows the caller to set an onClickListener and a LongClickListener.
  */
 public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final List<Drill> drills;

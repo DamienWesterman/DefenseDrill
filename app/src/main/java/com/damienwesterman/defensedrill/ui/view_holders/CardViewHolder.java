@@ -22,7 +22,8 @@ import com.damienwesterman.defensedrill.ui.utils.LongCardClickListener;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 
 /**
- * TODO: Doc comments
+ * Custom ViewHolder for use in a RecyclerView. Uses the {@link TitleDescCard} as its view for
+ * each element. Allows setting of onClickListener and onLongClickListener.
  */
 public class CardViewHolder extends RecyclerView.ViewHolder {
     private final TitleDescCard card;

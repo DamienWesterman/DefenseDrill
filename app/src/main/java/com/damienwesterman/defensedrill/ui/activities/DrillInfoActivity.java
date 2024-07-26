@@ -161,7 +161,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
     }
 
-
     // =============================================================================================
     // Popup / AlertDialog Methods
     // =============================================================================================
@@ -460,7 +459,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      *
      * @param view View.
      */
-    public void goHome(View view) {
+    private void goHome(View view) {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

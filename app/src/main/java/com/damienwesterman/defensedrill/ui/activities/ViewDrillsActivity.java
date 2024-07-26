@@ -42,7 +42,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO Doc comments (note the required intents - none)
+ * Activity to display, edit, and create drills.
+ * <br><br>
+ * This screen allows a user to view all Drills, edit them (by click), delete them (by long click),
+ * or create a new one (by launching {@link CreateDrillActivity}).
+ * <br><br>
+ * INTENTS: None expected.
  */
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
@@ -55,6 +60,9 @@ public class ViewDrillsActivity extends AppCompatActivity {
     private Button categoryFilterButton;
     private Button subCategoryFilterButton;
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +91,9 @@ public class ViewDrillsActivity extends AppCompatActivity {
         viewModel.rePopulateDrills();
     }
 
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
     public void filterByCategory(View view) {
         filterCategoriesPopup(viewModel.getAllCategories());
     }
@@ -106,78 +117,13 @@ public class ViewDrillsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void setUpRecyclerView(List<Drill> drills) {
-        setLoading(true);
-
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                // Once all the items are rendered: remove this listener, hide progress bar
-                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                setLoading(false);
-            }
-        });
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new DrillAdapter(drills,
-                // Click listener
-                id -> {
-            Intent intent = new Intent(this, DrillInfoActivity.class);
-            intent.putExtra(Constants.INTENT_DRILL_ID, id);
-            startActivity(intent);
-        },
-                // Long click listener
-                id -> deleteDrillPopup(viewModel.findDrillById(id))));
-    }
-
-    public void setLoading(boolean loading) {
-        if (loading) {
-            progressBar.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-            sortButton.setEnabled(false);
-            resetFiltersButton.setEnabled(false);
-            categoryFilterButton.setEnabled(false);
-            subCategoryFilterButton.setEnabled(false);
-        } else {
-            progressBar.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-            sortButton.setEnabled(true);
-            resetFiltersButton.setEnabled(true);
-            categoryFilterButton.setEnabled(true);
-            subCategoryFilterButton.setEnabled(true);
-        }
-    }
-
-    public DrillListViewModel.SortOrder indexToSortOrder(int index) {
-        switch(index) {
-            case 1:
-                return DrillListViewModel.SortOrder.SORT_NAME_DESCENDING;
-            case 2:
-                return DrillListViewModel.SortOrder.SORT_DATE_ASCENDING;
-            case 3:
-                return DrillListViewModel.SortOrder.SORT_DATE_DESCENDING;
-            case 0:
-                // Fallthrough intentional
-            default:
-                return DrillListViewModel.SortOrder.SORT_NAME_ASCENDING;
-        }
-    }
-
-    public int sortOrderToIndex(DrillListViewModel.SortOrder sortOrder) {
-        switch (sortOrder) {
-            case SORT_NAME_DESCENDING:
-                return 1;
-            case SORT_DATE_ASCENDING:
-                return 2;
-            case SORT_DATE_DESCENDING:
-                return 3;
-            case SORT_NAME_ASCENDING:
-                // Fallthrough intentional
-            default:
-                return 0;
-        }
-    }
-
+    // =============================================================================================
+    // Popup / AlertDialog Methods
+    // =============================================================================================
+    /**
+     * Create and show a popup that allows the user to select the sort oder for the drills list.
+     * Then sets the sort order and refreshes the list.
+     */
     private void sortDrillsPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] options = getResources().getStringArray(R.array.drills_sort_options);
@@ -213,6 +159,14 @@ public class ViewDrillsActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    /**
+     * Create and show a popup to allow the user to filter the drills list by categories.
+     * <br><br>
+     * Displays the passed in list of categories as check boxes so the user can select to filter by
+     * multiple categories. Once accepted will then apply the filter and refresh the list.
+     *
+     * @param categories List of possible Categories to filter by.
+     */
     private void filterCategoriesPopup(List<CategoryEntity> categories) {
         final Set<Long> categoryFilterIds = viewModel.getCategoryFilterIds();
         final Set<Long> subCategoryFilterIds = viewModel.getSubCategoryFilterIds();
@@ -273,6 +227,14 @@ public class ViewDrillsActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Create and show a popup to allow the user to filter the drills list by sub-categories.
+     * <br><br>
+     * Displays the passed in list of sub-categories as check boxes so the user can select to filter
+     * by multiple sub-categories. Once accepted will then apply the filter and refresh the list.
+     *
+     * @param subCategories List of possible SubCategories to filter by.
+     */
     private void filterSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
         final Set<Long> categoryFilterIds = viewModel.getCategoryFilterIds();
         final Set<Long> subCategoryFilterIds = viewModel.getSubCategoryFilterIds();
@@ -333,6 +295,12 @@ public class ViewDrillsActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Create and show a popup to confirm a user wants to delete a drill. Will then delete the drill
+     * if accepted and refresh the list.
+     *
+     * @param drill Drill to potentially delete
+     */
     private void deleteDrillPopup(Drill drill) {
         if (null == drill) {
             Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
@@ -351,5 +319,91 @@ public class ViewDrillsActivity extends AppCompatActivity {
             viewModel.deleteDrill(drill);
         });
         builder.create().show();
+    }
+
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    /**
+     * Callback method for when the drills list has been loaded from the database. Sets the UI and
+     * attaches click listeners.
+     *
+     * @param drills List of Drill objects.
+     */
+    private void setUpRecyclerView(List<Drill> drills) {
+        setLoading(true);
+
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Once all the items are rendered: remove this listener, hide progress bar
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                setLoading(false);
+            }
+        });
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new DrillAdapter(drills,
+                // Click listener
+                id -> {
+            Intent intent = new Intent(this, DrillInfoActivity.class);
+            intent.putExtra(Constants.INTENT_DRILL_ID, id);
+            startActivity(intent);
+        },
+                // Long click listener
+                id -> deleteDrillPopup(viewModel.findDrillById(id))));
+    }
+
+    /**
+     * Update the UI if we are currently loading or displaying the list.
+     *
+     * @param loading True if we want to display loading screen, false if we want to display list.
+     */
+    private void setLoading(boolean loading) {
+        if (loading) {
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            sortButton.setEnabled(false);
+            resetFiltersButton.setEnabled(false);
+            categoryFilterButton.setEnabled(false);
+            subCategoryFilterButton.setEnabled(false);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            sortButton.setEnabled(true);
+            resetFiltersButton.setEnabled(true);
+            categoryFilterButton.setEnabled(true);
+            subCategoryFilterButton.setEnabled(true);
+        }
+    }
+
+    private DrillListViewModel.SortOrder indexToSortOrder(int index) {
+        switch(index) {
+            case 1:
+                return DrillListViewModel.SortOrder.SORT_NAME_DESCENDING;
+            case 2:
+                return DrillListViewModel.SortOrder.SORT_DATE_ASCENDING;
+            case 3:
+                return DrillListViewModel.SortOrder.SORT_DATE_DESCENDING;
+            case 0:
+                // Fallthrough intentional
+            default:
+                return DrillListViewModel.SortOrder.SORT_NAME_ASCENDING;
+        }
+    }
+
+    private int sortOrderToIndex(DrillListViewModel.SortOrder sortOrder) {
+        switch (sortOrder) {
+            case SORT_NAME_DESCENDING:
+                return 1;
+            case SORT_DATE_ASCENDING:
+                return 2;
+            case SORT_DATE_DESCENDING:
+                return 3;
+            case SORT_NAME_ASCENDING:
+                // Fallthrough intentional
+            default:
+                return 0;
+        }
     }
 }

@@ -49,7 +49,7 @@ import java.util.List;
  * screens. It can act as the screen for Customize Categories OR Customize Sub-Categories. Which one
  * is determined by the intent passed in. This screen allows a user to view all of an
  * AbstractCategory's entries, edit them (by click), delete them (by long click), or create a new
- * one.
+ * one (by popup).
  * <br><br>
  * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_VIEW_CATEGORIES} or
  * {@link Constants#INTENT_VIEW_SUB_CATEGORIES} to determine what screen to show.
@@ -76,6 +76,9 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         MODE_SUB_CATEGORIES
     }
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,55 +122,20 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         viewModel.rePopulateAbstractCategories();
     }
 
-    // TODO Doc comments
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
     public void createAbstractCategory(View view) {
         createAbstractCategoryPopup();
     }
 
-    private void setUpRecyclerView(List<AbstractCategoryEntity> abstractCategoryEntities) {
-        setLoading(true);
-
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                // Once all the items are rendered: remove this listener, hide progress bar
-                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                setLoading(false);
-            }
-        });
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new AbstractCategoryAdapter(abstractCategoryEntities,
-                // Click listener
-                id -> viewEditAbstractCategoryPopup(viewModel.findById(id)),
-                // Long Click listener
-                id -> deleteAbstractCategoryPopup(viewModel.findById(id))));
-    }
-
-    private void setScreenTextByMode() {
-        if (ActivityMode.MODE_CATEGORIES == activityMode) {
-            title.setText(R.string.categories);
-            instructions.setText(R.string.all_categories_instructions);
-            createButton.setText(R.string.create_new_category);
-        } else {
-            title.setText(R.string.sub_categories);
-            instructions.setText(R.string.all_sub_categories_instructions);
-            createButton.setText(R.string.create_new_sub_category);
-        }
-    }
-
-    private void setLoading(boolean loading) {
-        if (loading) {
-            progressBar.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-            createButton.setEnabled(false);
-        } else {
-            progressBar.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-            createButton.setEnabled(true);
-        }
-    }
-
+    // =============================================================================================
+    // Popup / AlertDialog Methods
+    // =============================================================================================
+    /**
+     * Create and show a popup to create a new abstract category. Performs input validation.
+     * Saves the abstract category if the user confirms and passes validation.
+     */
     private void createAbstractCategoryPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -231,7 +199,13 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         alert.show();
     }
 
-    void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
+    /**
+     * Create and show a popup to edit an existing abstract category. Performs input validation.
+     * Saves the abstract category if the user confirms and passes validation.
+     *
+     * @param entity AbstractCategoryEntity to view and edit.
+     */
+    private void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
         if (null == entity) {
             Utils.displayDismissibleSnackbar(rootView,
                     "Something went wrong");
@@ -304,7 +278,13 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         alert.show();
     }
 
-    void deleteAbstractCategoryPopup(AbstractCategoryEntity entity) {
+    /**
+     * Create and show a popup to confirm to the user their intent to delete an abstract category.
+     * Deletes the abstract category if the user says yes and refreshes the list.
+     *
+     * @param entity AbstractCategoryEntity to potentially delete.
+     */
+    private void deleteAbstractCategoryPopup(AbstractCategoryEntity entity) {
         if (null == entity) {
             Utils.displayDismissibleSnackbar(rootView,
                     "Something went wrong trying to delete");
@@ -322,5 +302,66 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             viewModel.deleteAbstractCategory(entity);
         });
         builder.create().show();
+    }
+
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    /**
+     * Callback method for when the abstract categories list has been loaded from the database. Sets
+     * the UI and attaches click listeners.
+     *
+     * @param abstractCategoryEntities List of AbstractCategoryEntity objects.
+     */
+    private void setUpRecyclerView(List<AbstractCategoryEntity> abstractCategoryEntities) {
+        setLoading(true);
+
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Once all the items are rendered: remove this listener, hide progress bar
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                setLoading(false);
+            }
+        });
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new AbstractCategoryAdapter(abstractCategoryEntities,
+                // Click listener
+                id -> viewEditAbstractCategoryPopup(viewModel.findById(id)),
+                // Long Click listener
+                id -> deleteAbstractCategoryPopup(viewModel.findById(id))));
+    }
+
+    /**
+     * Sets the screen's text to reflect if it is in Category mode or Sub-Category mode.
+     */
+    private void setScreenTextByMode() {
+        if (ActivityMode.MODE_CATEGORIES == activityMode) {
+            title.setText(R.string.categories);
+            instructions.setText(R.string.all_categories_instructions);
+            createButton.setText(R.string.create_new_category);
+        } else {
+            title.setText(R.string.sub_categories);
+            instructions.setText(R.string.all_sub_categories_instructions);
+            createButton.setText(R.string.create_new_sub_category);
+        }
+    }
+
+    /**
+     * Update the UI if we are currently loading or displaying the list.
+     *
+     * @param loading True if we want to display loading screen, false if we want to display list.
+     */
+    private void setLoading(boolean loading) {
+        if (loading) {
+            progressBar.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            createButton.setEnabled(false);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            createButton.setEnabled(true);
+        }
     }
 }
