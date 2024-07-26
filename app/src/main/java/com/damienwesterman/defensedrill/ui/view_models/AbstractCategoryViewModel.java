@@ -21,7 +21,7 @@ import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 import java.util.List;
 
 // TODO doc comments
-public interface AbstractCategoryListViewModel {
+public interface AbstractCategoryViewModel {
     LiveData<List<AbstractCategoryEntity>> getAbstractCategories();
     void populateAbstractCategories();
     void rePopulateAbstractCategories();

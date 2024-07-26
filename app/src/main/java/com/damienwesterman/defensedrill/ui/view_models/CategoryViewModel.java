@@ -31,13 +31,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // TODO doc comments
-public class CategoryListViewModel extends AndroidViewModel
-        implements AbstractCategoryListViewModel {
+public class CategoryViewModel extends AndroidViewModel
+        implements AbstractCategoryViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> categories;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public CategoryListViewModel(@NonNull Application application) {
+    public CategoryViewModel(@NonNull Application application) {
         super(application);
 
         repo = DrillRepository.getInstance(application);
@@ -122,5 +122,17 @@ public class CategoryListViewModel extends AndroidViewModel
         }
 
         return ret;
+    }
+
+    public static List<CategoryEntity> getCategoryList(@NonNull List<AbstractCategoryEntity> abstractCategories) {
+        List<CategoryEntity> categories = new ArrayList<>(abstractCategories.size());
+
+        for (AbstractCategoryEntity abstractCategory : abstractCategories) {
+            if (abstractCategory instanceof CategoryEntity) {
+                categories.add((CategoryEntity) abstractCategory);
+            }
+        }
+
+        return categories;
     }
 }

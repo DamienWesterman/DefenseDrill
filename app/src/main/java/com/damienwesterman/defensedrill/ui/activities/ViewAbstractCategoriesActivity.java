@@ -35,9 +35,9 @@ import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
-import com.damienwesterman.defensedrill.ui.view_models.AbstractCategoryListViewModel;
-import com.damienwesterman.defensedrill.ui.view_models.CategoryListViewModel;
-import com.damienwesterman.defensedrill.ui.view_models.SubCategoryListViewModel;
+import com.damienwesterman.defensedrill.ui.view_models.AbstractCategoryViewModel;
+import com.damienwesterman.defensedrill.ui.view_models.CategoryViewModel;
+import com.damienwesterman.defensedrill.ui.view_models.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     private static final int DESCRIPTION_CHARACTER_LIMIT = 512;
 
     private String TAG = "ViewAbstractCategoriesActivity";
-    private AbstractCategoryListViewModel viewModel;
+    private AbstractCategoryViewModel viewModel;
     private ActivityMode activityMode;
 
     // TODO go through all snackbars and make the R.id.OVERALL_VIEW a field
@@ -86,11 +86,11 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent.hasExtra(Constants.INTENT_VIEW_CATEGORIES)) {
-            viewModel = new ViewModelProvider(this).get(CategoryListViewModel.class);
+            viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
             activityMode = ActivityMode.MODE_CATEGORIES;
             TAG += "|Categories";
         } else if (intent.hasExtra(Constants.INTENT_VIEW_SUB_CATEGORIES)) {
-            viewModel = new ViewModelProvider(this).get(SubCategoryListViewModel.class);
+            viewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
             activityMode = ActivityMode.MODE_SUB_CATEGORIES;
             TAG += "|SubCategories";
         } else {

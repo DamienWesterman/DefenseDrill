@@ -21,7 +21,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
@@ -32,13 +31,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // TODO doc comments
-public class SubCategoryListViewModel extends AndroidViewModel
-        implements AbstractCategoryListViewModel {
+public class SubCategoryViewModel extends AndroidViewModel
+        implements AbstractCategoryViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> subCategories;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public SubCategoryListViewModel(@NonNull Application application) {
+    public SubCategoryViewModel(@NonNull Application application) {
         super(application);
 
         repo = DrillRepository.getInstance(application);
@@ -57,9 +56,19 @@ public class SubCategoryListViewModel extends AndroidViewModel
         }
     }
 
+    public void populateAbstractCategories(long categoryId) {
+        if (null == subCategories.getValue()) {
+            rePopulateAbstractCategories(categoryId);
+        }
+    }
+
     @Override
     public void rePopulateAbstractCategories() {
         executor.execute(() -> subCategories.postValue(new ArrayList<>(repo.getAllSubCategories())));
+    }
+
+    public void rePopulateAbstractCategories(long categoryId) {
+        executor.execute(() -> subCategories.postValue(new ArrayList<>(repo.getAllSubCategories(categoryId))));
     }
 
     @Override
@@ -123,5 +132,17 @@ public class SubCategoryListViewModel extends AndroidViewModel
         }
 
         return ret;
+    }
+
+    public static List<SubCategoryEntity> getSubCategoryList(@NonNull List<AbstractCategoryEntity> abstractCategories) {
+        List<SubCategoryEntity> subCategories = new ArrayList<>(abstractCategories.size());
+
+        for (AbstractCategoryEntity abstractCategory : abstractCategories) {
+            if (abstractCategory instanceof SubCategoryEntity) {
+                subCategories.add((SubCategoryEntity) abstractCategory);
+            }
+        }
+
+        return subCategories;
     }
 }
