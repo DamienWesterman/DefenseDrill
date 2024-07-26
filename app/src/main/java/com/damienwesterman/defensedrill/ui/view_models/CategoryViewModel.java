@@ -16,7 +16,6 @@ import android.database.sqlite.SQLiteConstraintException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -31,8 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // TODO doc comments
-public class CategoryViewModel extends AndroidViewModel
-        implements AbstractCategoryViewModel {
+public class CategoryViewModel extends AbstractCategoryViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> categories;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
