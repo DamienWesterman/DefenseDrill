@@ -20,10 +20,23 @@ android {
         enabled = true
     }
 
+    signingConfigs {
+        release {
+            storeFile file('C:\\Program Files\\keystore\\defense_drill.jks')
+            storePassword System.getenv("DEFENSE_DRILL_STORE_PASSWORD")
+            keyAlias 'defenseDrillKey'
+            keyPassword System.getenv("DEFENSE_DRILL_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
