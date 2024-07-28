@@ -29,8 +29,6 @@ import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
 
-// TODO Make sure all the ui classes are clean
-// TODO Double check everywhere for null checks
 /**
  * Home screen activity and entry point for the application. Displays the different general
  * functionalities of the app. CRUD operations in the database, Drill generation, and feedback.
@@ -73,7 +71,7 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(Constants.INTENT_VIEW_SUB_CATEGORIES, "");
             startActivity(intent);
         } else if (R.id.feedbackCard == cardId) {
-            // TODO implement
+            // TODO implement feedback
             Utils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
         } else {
             Utils.displayDismissibleSnackbar(rootView, "Unknown option");
