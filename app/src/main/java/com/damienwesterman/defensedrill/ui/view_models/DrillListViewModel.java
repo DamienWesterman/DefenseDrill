@@ -31,7 +31,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * TODO Doc comments
+ * View model for {@link Drill} objects geared towards displaying a list of all drills, and allowing
+ * deletion of drills.
  */
 public class DrillListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Drill>> drills;
@@ -58,53 +59,93 @@ public class DrillListViewModel extends AndroidViewModel {
         sortOrder = SortOrder.SORT_NAME_ASCENDING;
     }
 
+    /**
+     * Get the LiveData object to observe for the list of Drill objects.
+     *
+     * @return LiveData object.
+     */
     public LiveData<List<Drill>> getDrills() {
         return drills;
     }
 
+    /**
+     * Populate our list of Drills if it has not already been done.
+     */
     public void populateDrills() {
         if (null == drills.getValue()) {
-            resetDrills();
+            rePopulateDrills();
         }
     }
 
-    public void resetDrills() {
+    /**
+     * Force re-load  the Drills from the database, even if they are already loaded.
+     */
+    public void rePopulateDrills() {
         executor.execute(() -> drills.postValue(repo.getAllDrills()));
     }
 
-    public void rePopulateDrills() {
-        if (null == drills.getValue()) {
-            resetDrills();
-        } else {
-            // Force reload
-            drills.postValue(drills.getValue());
-        }
-    }
-
-    public void filterDrills(List<Long> categoryIds, List<Long> subCategoryIds) {
+    /**
+     * Filter the list of drills by category and sub-category IDs.
+     * <br><br>
+     * Can filter by multiple of either IDs. This is a whitelist filter, so it will show Drills that
+     * match ANY categories AND sub-categories in the list. If either category or sub-category list
+     * is null, then it will match all of that respective null list.
+     *
+     * @param categoryIds       List of category IDs to filter by.
+     * @param subCategoryIds    List of sub-category IDs to filter by.
+     */
+    public void filterDrills(@Nullable List<Long> categoryIds,@Nullable List<Long> subCategoryIds) {
         executor.execute(() -> drills.postValue(repo.getAllDrills(categoryIds, subCategoryIds)));
     }
 
-    public List<CategoryEntity> getAllCategories() {
+    /**
+     * Get the list of all categories in the database.
+     * <br><br>
+     * {@link #loadAllCategories()} should have been called prior otherwise will return null.
+     *
+     * @return List of CategoryEntity objects.
+     */
+    public @Nullable List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
-    public List<SubCategoryEntity> getAllSubCategories() {
+    /**
+     * Get the list of all sub-categories in the database.
+     * <br><br>
+     * {@link #loadAllSubCategories()} should have been called prior otherwise will return null.
+     *
+     * @return List of SubCategoryEntity objects.
+     */
+    public @Nullable List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 
+    /**
+     * Load all categories from the database. Should be called before {@link #getAllCategories()}.
+     */
     public void loadAllCategories() {
         if (null == allCategories) {
             executor.execute(() -> allCategories = repo.getAllCategories());
         }
     }
 
+    /**
+     * Load all sub-categories from the database. Should be called before
+     * {@link #getAllSubCategories()}.
+     */
     public void loadAllSubCategories() {
         if (null == allSubCategories) {
             executor.execute(() -> allSubCategories = repo.getAllSubCategories());
         }
     }
 
+    /**
+     * Return a set of category IDs currently being filtered.
+     * <br><br>
+     * Saved here to persist destructive actions (i.e. screen rotations).
+     *
+     * @return  Set of category IDs.
+     */
     public Set<Long> getCategoryFilterIds() {
         if (null == categoryFilterIds) {
             categoryFilterIds = allCategories.stream().map(CategoryEntity::getId)
@@ -118,6 +159,13 @@ public class DrillListViewModel extends AndroidViewModel {
         this.categoryFilterIds = categoryFilterIds;
     }
 
+    /**
+     * Return a set of sub-category IDs currently being filtered.
+     * <br><br>
+     * Saved here to persist destructive actions (i.e. screen rotations).
+     *
+     * @return  Set of sub-category IDs.
+     */
     public Set<Long> getSubCategoryFilterIds() {
         if (null == subCategoryFilterIds) {
             subCategoryFilterIds = allSubCategories.stream().map(SubCategoryEntity::getId)
@@ -131,7 +179,12 @@ public class DrillListViewModel extends AndroidViewModel {
         this.subCategoryFilterIds = subCategoryFilterIds;
     }
 
-
+    /**
+     * Retrieve a single Drill by the associated database ID.
+     *
+     * @param id    ID of the desired drill.
+     * @return      The Drill that maps to the given ID, or null if is doesn't exist.
+     */
     public @Nullable Drill findDrillById(long id) {
         Drill ret = null;
         List<Drill> allDrills = drills.getValue();
@@ -161,6 +214,15 @@ public class DrillListViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Sort the list of drills by the given {@link SortOrder}.
+     * <br><br>
+     * Will sort the list of drills using the given sort order, then will refresh the list and the
+     * observable will be called again. Causes no effect if the new sort order is the same as the
+     * old.
+     *
+     * @param newSortOrder New order to sort by.
+     */
     public void setSortOrder(SortOrder newSortOrder) {
         List<Drill> sortedDrills = drills.getValue();
 
@@ -185,6 +247,11 @@ public class DrillListViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Return the current sort order.
+     *
+     * @return Current sort order.
+     */
     public SortOrder getSortOrder() {
         return sortOrder;
     }

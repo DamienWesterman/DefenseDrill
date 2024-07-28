@@ -16,6 +16,15 @@ package com.damienwesterman.defensedrill.ui.utils;
  * create operation succeeds or fails.
  */
 public interface CreateNewEntityCallback {
+    /**
+     * Callback for when an object was successfully added to the database..
+     */
     void onSuccess();
-    void onFailure(String msg);
+
+    /**
+     * Callback for when an object failed to be added to the database.
+     *
+     * @param error Error message of what went wrong.
+     */
+    void onFailure(String error);
 }

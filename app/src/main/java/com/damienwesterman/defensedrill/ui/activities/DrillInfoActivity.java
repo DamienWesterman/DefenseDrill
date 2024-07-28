@@ -34,6 +34,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
@@ -141,7 +142,21 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void saveDrillInfo(View view) {
         Drill drill = collectDrillInfo();
-        viewModel.saveDrill(drill, this); // this method handles null check and feedback
+        viewModel.saveDrill(drill, new CreateNewEntityCallback() { // this method handles null check
+            @Override
+            public void onSuccess() {
+                runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                        findViewById(R.id.activityDrillInfo), "Successfully saved changes!"
+                ));
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                        findViewById(R.id.activityDrillInfo), error
+                ));
+            }
+        });
     }
 
     /**
@@ -159,6 +174,12 @@ public class DrillInfoActivity extends AppCompatActivity {
             });
             getConfidencePopup.show();
         }
+    }
+
+    public void goHome(View view) {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     // =============================================================================================
@@ -216,7 +237,23 @@ public class DrillInfoActivity extends AppCompatActivity {
                         // Not checked but in list - remove
                         drill.removeCategory(categoryEntities.get(i));
                     }
-                    viewModel.saveDrill(drill, this);
+                    viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                                    findViewById(R.id.activityDrillInfo),
+                                    "Successfully saved changes!"
+                            ));
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                                    findViewById(R.id.activityDrillInfo),
+                                    "Failed to update categories"
+                            ));
+                        }
+                    });
                 }
                 alert.dismiss();
             });
@@ -291,7 +328,23 @@ public class DrillInfoActivity extends AppCompatActivity {
                         // Not checked but in list - remove
                         drill.removeSubCategory(subCategoryEntities.get(i));
                     }
-                    viewModel.saveDrill(drill, this);
+                    viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                                    findViewById(R.id.activityDrillInfo),
+                                    "Successfully saved changes!"
+                            ));
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                                    findViewById(R.id.activityDrillInfo),
+                                    "Failed to update sub-categories"
+                            ));
+                        }
+                    });
                 }
                 alert.dismiss();
             });
@@ -343,13 +396,37 @@ public class DrillInfoActivity extends AppCompatActivity {
             drill.setConfidence(Constants.confidencePositionToWeight(selectedOption[0]));
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
-            viewModel.saveDrill(drill, this);
+            viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+                @Override
+                public void onSuccess() {
+                    runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                            findViewById(R.id.activityDrillInfo), "Successfully saved changes!"
+                    ));
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                            findViewById(R.id.activityDrillInfo), error
+                    ));
+                }
+            });
             dialog.dismiss();
         });
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
-            viewModel.saveDrill(drill, null);
+            viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+                @Override
+                public void onSuccess() {
+                    // Do nothing
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    // Do nothing
+                }
+            });
            dialog.dismiss();
         });
 
@@ -454,17 +531,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    /**
-     * Launch an intent to go to the home screen.
-     *
-     * @param view View.
-     */
-    private void goHome(View view) {
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
     /**
      * Set up the view model and populate the screen.
      */

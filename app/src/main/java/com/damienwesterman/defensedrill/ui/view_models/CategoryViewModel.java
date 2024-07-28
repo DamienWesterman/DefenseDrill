@@ -29,7 +29,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// TODO doc comments
+/**
+ * View model for {@link CategoryEntity}, geared towards a list of them and allowing CRUD
+ * functionality.
+ */
 public class CategoryViewModel extends AbstractCategoryViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> categories;
     private final DrillRepository repo;
@@ -42,11 +45,17 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         categories = new MutableLiveData<>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LiveData<List<AbstractCategoryEntity>> getAbstractCategories() {
         return categories;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void populateAbstractCategories() {
         if (null == categories.getValue()) {
@@ -54,11 +63,17 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void rePopulateAbstractCategories() {
         executor.execute(() -> categories.postValue(new ArrayList<>(repo.getAllCategories())));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteAbstractCategory(AbstractCategoryEntity entity) {
         if (null != entity) {
@@ -76,6 +91,9 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
@@ -89,6 +107,9 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
@@ -104,6 +125,9 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Nullable
     @Override
     public AbstractCategoryEntity findById(long id) {
@@ -122,6 +146,13 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         return ret;
     }
 
+    /**
+     * Static helper method to convert a list of AbstractCategoryEntity objects to a list of
+     * CategoryEntity objects.
+     *
+     * @param abstractCategories    List of AbstractCategoryEntity objects.
+     * @return                      Converted list of CategoryEntity objects.
+     */
     public static List<CategoryEntity> getCategoryList(@NonNull List<AbstractCategoryEntity> abstractCategories) {
         List<CategoryEntity> categories = new ArrayList<>(abstractCategories.size());
 

@@ -15,6 +15,7 @@ import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.damienwesterman.defensedrill.data.CategoryEntity;
@@ -28,7 +29,9 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-// TODO doc comments
+/**
+ * View model for {@link Drill} objects geared towards creation of a new Drill.
+ */
 public class CreateDrillViewModel extends AndroidViewModel {
     private final DrillRepository repo;
     private List<CategoryEntity> allCategories;
@@ -43,7 +46,12 @@ public class CreateDrillViewModel extends AndroidViewModel {
         repo = DrillRepository.getInstance(application);
     }
 
-    // TODO doc comments, onFailure() called when SQLiteConstraintException basically when name already exists
+    /**
+     * Attempt to add a new drill to the database.
+     *
+     * @param drill     Drill to attempt to add to the database.
+     * @param callback  Callback to call when the insert is finished.
+     */
     public void saveDrill(Drill drill, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
             try {
@@ -55,28 +63,73 @@ public class CreateDrillViewModel extends AndroidViewModel {
         });
     }
 
-    public List<CategoryEntity> getAllCategories() {
+    /**
+     * Get the list of all categories in the database.
+     * <br><br>
+     * {@link #loadAllCategories()} should have been called prior otherwise will return null.
+     *
+     * @return List of CategoryEntity objects.
+     */
+    public @Nullable List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
-    public List<SubCategoryEntity> getAllSubCategories() {
+    /**
+     * Get the list of all sub-categories in the database.
+     * <br><br>
+     * {@link #loadAllSubCategories()} should have been called prior otherwise will return null.
+     *
+     * @return List of SubCategoryEntity objects.
+     */
+    public @Nullable List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 
+    /**
+     * Get the list of categories the user has checked.
+     * <br><br>
+     * Saved here to persist across destructive events (i.e. screen rotations). Can modify the list
+     * that is returned and it will be persisted, for example:
+     * <br><br>
+     * {@code createDrillViewModel.getCheckedCategoryEntities().add(category);}
+     * <br><br>
+     * The newly added category will exist in the list maintained by this view model.
+     *
+     * @return Persisted list of CategoryEntity objects.
+     */
     public List<CategoryEntity> getCheckedCategoryEntities() {
         return this.checkedCategoryEntities;
     }
 
+    /**
+     * Get the list of sub-categories the user has checked.
+     * <br><br>
+     * Saved here to persist across destructive events (i.e. screen rotations). Can modify the list
+     * that is returned and it will be persisted, for example:
+     * <br><br>
+     * {@code createDrillViewModel.getCheckedSubCategoryEntities().add(subCategory);}
+     * <br><br>
+     * The newly added sub-category will exist in the list maintained by this view model.
+     *
+     * @return Persisted list of SubCategoryEntity objects.
+     */
     public List<SubCategoryEntity> getCheckedSubCategoryEntities() {
         return this.checkedSubCategoryEntities;
     }
 
+    /**
+     * Load all categories from the database. Should be called before {@link #getAllCategories()}.
+     */
     public void loadAllCategories() {
         if (null == allCategories) {
             executor.execute(() -> allCategories = repo.getAllCategories());
         }
     }
 
+    /**
+     * Load all sub-categories from the database. Should be called before
+     * {@link #getAllSubCategories()}.
+     */
     public void loadAllSubCategories() {
         if (null == allSubCategories) {
             executor.execute(() -> allSubCategories = repo.getAllSubCategories());

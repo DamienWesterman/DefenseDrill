@@ -95,17 +95,27 @@ public class ViewDrillsActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void filterByCategory(View view) {
-        filterCategoriesPopup(viewModel.getAllCategories());
+        List<CategoryEntity> categories = viewModel.getAllCategories();
+        if (null == categories) {
+            // Categories haven't loaded yet, do nothing
+            return;
+        }
+        filterCategoriesPopup(categories);
     }
 
     public void filterBySubCategory(View view) {
-        filterSubCategoriesPopup(viewModel.getAllSubCategories());
+        List<SubCategoryEntity> subCategories = viewModel.getAllSubCategories();
+        if (null == subCategories) {
+            // SubCategories haven't loaded yet, do nothing
+            return;
+        }
+        filterSubCategoriesPopup(subCategories);
     }
 
     public void resetFilters(View view) {
         viewModel.setCategoryFilterIds(null);
         viewModel.setSubCategoryFilterIds(null);
-        viewModel.resetDrills();
+        viewModel.rePopulateDrills();
     }
 
     public void sortDrills(View view) {
