@@ -1,1 +1,3 @@
 /build
+/debug/output-metadata.json
+/release/output-metadata.json
