@@ -161,19 +161,12 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     /**
      * Asks the user to confirm a new confidence level, saves the drill, then goes to the
-     * {@link #createWhatNextPopup()}.
+     * {@link #whatNextPopup()}.
      *
      * @param view View.
      */
     public void markAsPracticed(View view) {
-        AlertDialog getConfidencePopup = createConfidencePopup();
-        if (null != getConfidencePopup) {
-            getConfidencePopup.setOnDismissListener(dialog -> {
-                AlertDialog whatNextPopup = createWhatNextPopup();
-                whatNextPopup.show();
-            });
-            getConfidencePopup.show();
-        }
+        confidencePopup();
     }
 
     public void goHome(View view) {
@@ -360,19 +353,18 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     /**
-     * Create and return a fully configured AlertDialog for a "create confidence" popup.
+     * Create and show a popup to allow the user to set a new confidence level.
      * <br><br>
-     * The popup will have a radio button group of
-     * confidence levels for the user to select from. It will then save the new confidence level and
-     * launch {@link #createWhatNextPopup()}.
-     *
-     * @return AlertDialog object or null if there is an issue getting the drill.
+     * The popup will have a radio button group of confidence levels for the user to select from
+     * after marking a drill as practiced. It will then save the new confidence level and launch
+     * {@link #whatNextPopup()}.
      */
-    private @Nullable AlertDialog createConfidencePopup() {
+    private void confidencePopup() {
         Drill drill = collectDrillInfo();
 
         if (null == drill) {
-            return null;
+            Utils.displayDismissibleSnackbar(rootView, "Issue marking as practiced");
+            return;
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -381,8 +373,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
         builder.setTitle("Enter new confidence level:");
         builder.setIcon(R.drawable.thumbs_up_down_icon);
-        // TODO allow the user to go back or something without saving, why did I do this??
-        builder.setCancelable(false);
+        builder.setCancelable(true);
         builder.setSingleChoiceItems(options, selectedOption[0], (dialog, position) -> selectedOption[0] = position);
         builder.setPositiveButton("Save", (dialog, position) -> {
             drill.setConfidence(Constants.confidencePositionToWeight(selectedOption[0]));
@@ -403,7 +394,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                     ));
                 }
             });
-            dialog.dismiss();
+            whatNextPopup();
         });
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
@@ -419,21 +410,19 @@ public class DrillInfoActivity extends AppCompatActivity {
                     // Do nothing
                 }
             });
-           dialog.dismiss();
+            whatNextPopup();
         });
 
-        return builder.create();
+        builder.create().show();
     }
 
     /**
-     * Create and return a fully configured AlertDialog for a "what's next" popup.
+     * Create and show a popup allowing the user to decide what to do next.
      * <br><br>
      * Gives the user the option of what to do next, dependant on the activity type. WARNING: This
      * function may not return and may send us to another screen.
-     *
-     * @return AlertDialog object.
      */
-    private AlertDialog createWhatNextPopup() {
+    private void whatNextPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         CharSequence[] options = {"Next Drill", "New Category"};
         builder.setTitle("What next?");
@@ -471,7 +460,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             builder.setNeutralButton("Close popup", (dialog, position) -> { });
         }
 
-        return builder.create();
+        builder.create().show();
     }
 
     /**
