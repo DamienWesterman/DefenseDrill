@@ -23,8 +23,6 @@ import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 
 import java.util.List;
 
-// TODO update ALL viewModels to make sure that they check the return code of the insert and update.
-// TODO actually pass a meaningful message back into onFailure
 /**
  * Abstract superclass for view models for any {@link AbstractCategoryEntity} subclass.
  * <br><br>

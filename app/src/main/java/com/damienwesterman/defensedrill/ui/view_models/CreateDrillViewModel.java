@@ -55,10 +55,13 @@ public class CreateDrillViewModel extends AndroidViewModel {
     public void saveDrill(Drill drill, @NonNull CreateNewEntityCallback callback) {
         executor.execute(() -> {
             try {
-                repo.insertDrills(drill);
-                callback.onSuccess();
+                if (!repo.insertDrills(drill)) {
+                    callback.onFailure("Something went wrong");
+                } else {
+                    callback.onSuccess();
+                }
             } catch (SQLiteConstraintException e) {
-                callback.onFailure(e.getMessage());
+                callback.onFailure("ERROR: Name already exists");
             }
         });
     }

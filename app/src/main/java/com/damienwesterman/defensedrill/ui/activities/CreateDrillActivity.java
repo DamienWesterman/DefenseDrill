@@ -341,9 +341,9 @@ public class CreateDrillActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(String msg) {
+            public void onFailure(String error) {
                 runOnUiThread(() -> {
-                    Utils.displayDismissibleSnackbar(rootView, "ERROR: Name already exists");
+                    Utils.displayDismissibleSnackbar(rootView, error);
                     setUserEditable(true);
                 });
             }

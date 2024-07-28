@@ -118,7 +118,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * Attempt to add a new drill to the database.
      *
      * @param drill     Drill to attempt to add to the database.
-     * @param callback  Callback to call when the insert is finished.
+     * @param callback  Callback to call when the update is finished.
      */
     public void saveDrill(Drill drill, CreateNewEntityCallback callback) {
         if (null == drill) {
@@ -128,9 +128,12 @@ public class DrillInfoViewModel extends AndroidViewModel {
 
         executor.execute(() -> {
            try {
-               repo.updateDrills(drill);
-               currentDrill.postValue(drill);
-               callback.onSuccess();
+               if (!repo.updateDrills(drill)) {
+                   callback.onFailure("Something went wrong");
+               } else {
+                   currentDrill.postValue(drill);
+                   callback.onSuccess();
+               }
            } catch (SQLiteConstraintException e) {
                callback.onFailure("Issue saving Drill");
            }

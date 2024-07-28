@@ -99,10 +99,13 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         executor.execute(() -> {
             try {
                 CategoryEntity category = new CategoryEntity(name, description);
-                repo.insertCategories(category);
-                callback.onSuccess();
+                if(!repo.insertCategories(category)) {
+                    callback.onFailure("Something went wrong");
+                } else {
+                    callback.onSuccess();
+                }
             } catch (SQLiteConstraintException e) {
-                callback.onFailure(e.getMessage());
+                callback.onFailure("Name already exists");
             }
         });
     }
@@ -116,11 +119,14 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
             try {
                 if (CategoryEntity.class == entity.getClass()) {
                     CategoryEntity category = (CategoryEntity) entity;
-                    repo.updateCategories(category);
-                    callback.onSuccess();
+                    if (!repo.updateCategories(category)) {
+                        callback.onFailure("Something went wrong");
+                    } else {
+                        callback.onSuccess();
+                    }
                 }
             } catch (SQLiteConstraintException e) {
-                callback.onFailure(e.getMessage());
+                callback.onFailure("Name already exists");
             }
         });
     }

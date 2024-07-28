@@ -186,9 +186,8 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String msg) {
-                    Utils.displayDismissibleSnackbar(dialogView,
-                            "Name already exists");
+                public void onFailure(String error) {
+                    Utils.displayDismissibleSnackbar(dialogView, error);
                     runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
                 }
@@ -265,9 +264,8 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String msg) {
-                    Utils.displayDismissibleSnackbar(dialogView,
-                            "Name already exists");
+                public void onFailure(String error) {
+                    Utils.displayDismissibleSnackbar(dialogView, error);
                     runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
                 }

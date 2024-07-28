@@ -121,10 +121,13 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
         executor.execute(() -> {
             try {
                 SubCategoryEntity subCategory = new SubCategoryEntity(name, description);
-                repo.insertSubCategories(subCategory);
-                callback.onSuccess();
+                if (!repo.insertSubCategories(subCategory)) {
+                    callback.onFailure("Something went wrong");
+                } else {
+                    callback.onSuccess();
+                }
             } catch (SQLiteConstraintException e) {
-                callback.onFailure(e.getMessage());
+                callback.onFailure("Name already exists");
             }
         });
     }
@@ -138,11 +141,14 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
             try {
                 if (SubCategoryEntity.class == entity.getClass()) {
                     SubCategoryEntity subCategory = (SubCategoryEntity) entity;
-                    repo.updateSubCategories(subCategory);
-                    callback.onSuccess();
+                    if (!repo.updateSubCategories(subCategory)) {
+                        callback.onFailure("Something went wrong");
+                    } else {
+                        callback.onSuccess();
+                    }
                 }
             } catch (SQLiteConstraintException e) {
-                callback.onFailure(e.getMessage());
+                callback.onFailure("Name already exists");
             }
         });
     }
