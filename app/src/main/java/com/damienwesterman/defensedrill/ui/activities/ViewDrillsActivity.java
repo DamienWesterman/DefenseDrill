@@ -97,19 +97,21 @@ public class ViewDrillsActivity extends AppCompatActivity {
     public void filterByCategory(View view) {
         List<CategoryEntity> categories = viewModel.getAllCategories();
         if (null == categories) {
-            // Categories haven't loaded yet, do nothing
-            return;
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
+                    "Categories still loading, please try again...");
+        } else {
+            filterCategoriesPopup(categories);
         }
-        filterCategoriesPopup(categories);
     }
 
     public void filterBySubCategory(View view) {
         List<SubCategoryEntity> subCategories = viewModel.getAllSubCategories();
         if (null == subCategories) {
-            // SubCategories haven't loaded yet, do nothing
-            return;
+            Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
+                    "Sub-categories still loading, please try again...");
+        } else {
+            filterSubCategoriesPopup(subCategories);
         }
-        filterSubCategoriesPopup(subCategories);
     }
 
     public void resetFilters(View view) {
