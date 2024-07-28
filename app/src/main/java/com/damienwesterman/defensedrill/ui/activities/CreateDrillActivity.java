@@ -47,6 +47,7 @@ import java.util.List;
 public class CreateDrillActivity extends AppCompatActivity {
     private CreateDrillViewModel viewModel;
 
+    private View rootView;
     private EditText enteredName;
     private Spinner confidenceSpinner;
     private Button categoriesButton;
@@ -67,12 +68,13 @@ public class CreateDrillActivity extends AppCompatActivity {
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
 
+        rootView = findViewById(R.id.activityCreateDrill);
         enteredName = findViewById(R.id.nameEditText);
         confidenceSpinner = findViewById(R.id.confidenceSpinner);
         categoriesButton = findViewById(R.id.addCategoriesButton);
         subCategoriesButton = findViewById(R.id.addSubCategoriesButton);
         enteredNotes = findViewById(R.id.notes);
-        savingSnackbar = Snackbar.make(findViewById(R.id.activityCreateDrill),
+        savingSnackbar = Snackbar.make(rootView,
                 "Saving in progress...", Snackbar.LENGTH_INDEFINITE);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -140,12 +142,10 @@ public class CreateDrillActivity extends AppCompatActivity {
      */
     private void addCategoriesPopup(List<CategoryEntity> categories) {
         if (null == categories) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "Issue retrieving categories");
+            Utils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
         } else if (0 == categories.size()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "No Categories in database");
+            Utils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
 
@@ -214,12 +214,10 @@ public class CreateDrillActivity extends AppCompatActivity {
      */
     private void addSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
         if (null == subCategories) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "Issue retrieving sub-categories");
+            Utils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
         } else if (0 == subCategories.size()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "No sub-Categories in database");
+            Utils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }
 
@@ -337,8 +335,7 @@ public class CreateDrillActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> {
-                    Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                            "Successfully saved");
+                    Utils.displayDismissibleSnackbar(rootView, "Successfully saved");
                     whatNextPopup();
                 });
             }
@@ -346,8 +343,7 @@ public class CreateDrillActivity extends AppCompatActivity {
             @Override
             public void onFailure(String msg) {
                 runOnUiThread(() -> {
-                    Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                            "ERROR: Name already exists");
+                    Utils.displayDismissibleSnackbar(rootView, "ERROR: Name already exists");
                     setUserEditable(true);
                 });
             }
@@ -433,19 +429,18 @@ public class CreateDrillActivity extends AppCompatActivity {
 
         name = enteredName.getText().toString();
         if (0 == name.length()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "Name cannot be empty");
+            Utils.displayDismissibleSnackbar(rootView, "Name cannot be empty");
             return null;
         } else if (NAME_CHARACTER_LIMIT <= name.length()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "Name must be less than " + NAME_CHARACTER_LIMIT + " characters");
+            Utils.displayDismissibleSnackbar(rootView, "Name must be less than "
+                    + NAME_CHARACTER_LIMIT + " characters");
             return null;
         }
 
         notes = enteredNotes.getText().toString();
         if (NOTES_CHARACTER_LIMIT <= notes.length()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityCreateDrill),
-                    "Notes must be less than " + NOTES_CHARACTER_LIMIT + " characters");
+            Utils.displayDismissibleSnackbar(rootView, "Notes must be less than "
+                    + NOTES_CHARACTER_LIMIT + " characters");
             return null;
         }
         drill = new Drill(

@@ -63,7 +63,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     private AbstractCategoryViewModel viewModel;
     private ActivityMode activityMode;
 
-    // TODO go through all snackbars and make the R.id.OVERALL_VIEW a field
     private View rootView;
     private TextView title;
     private TextView instructions;

@@ -75,20 +75,21 @@ public class DrillInfoActivity extends AppCompatActivity {
     private DrillInfoViewModel viewModel;
     private ActivityState activityState;
 
-    ProgressBar drillProgressBar;
-    TextView drillName;
-    TextView lastDrilledLabel;
-    TextView lastDrilledDate;
-    TextView confidenceLabel;
-    Spinner confidenceSpinner;
-    Button editCategoriesButton;
-    Button editSubCategoriesButton;
-    TextView notesLabel;
-    EditText notes;
-    Button regenerateButton;
-    Button resetSkippedDrillsButton;
-    Button markAsPracticedButton;
-    Button saveDrillInfoButton;
+    private View rootView;
+    private ProgressBar drillProgressBar;
+    private TextView drillName;
+    private TextView lastDrilledLabel;
+    private TextView lastDrilledDate;
+    private TextView confidenceLabel;
+    private Spinner confidenceSpinner;
+    private Button editCategoriesButton;
+    private Button editSubCategoriesButton;
+    private TextView notesLabel;
+    private EditText notes;
+    private Button regenerateButton;
+    private Button resetSkippedDrillsButton;
+    private Button markAsPracticedButton;
+    private Button saveDrillInfoButton;
 
     // =============================================================================================
     // Activity Methods
@@ -136,8 +137,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void resetSkippedDrills(View view) {
         viewModel.resetSkippedDrills();
-        Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                "Skipped drills have been reset");
+        Utils.displayDismissibleSnackbar(rootView, "Skipped drills have been reset");
     }
 
     public void saveDrillInfo(View view) {
@@ -146,14 +146,14 @@ public class DrillInfoActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                        findViewById(R.id.activityDrillInfo), "Successfully saved changes!"
+                        rootView, "Successfully saved changes!"
                 ));
             }
 
             @Override
             public void onFailure(String error) {
                 runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                        findViewById(R.id.activityDrillInfo), error
+                        rootView, error
                 ));
             }
         });
@@ -196,12 +196,10 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == categoryEntities) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "Issue retrieving categories");
+            Utils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
         } else if (0 == categoryEntities.size()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "No Categories in database");
+            Utils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
         List<CategoryEntity> categories = drill.getCategories();
@@ -241,16 +239,14 @@ public class DrillInfoActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                                    findViewById(R.id.activityDrillInfo),
-                                    "Successfully saved changes!"
+                                    rootView, "Successfully saved changes!"
                             ));
                         }
 
                         @Override
                         public void onFailure(String error) {
                             runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                                    findViewById(R.id.activityDrillInfo),
-                                    "Failed to update categories"
+                                    rootView, "Failed to update categories"
                             ));
                         }
                     });
@@ -287,12 +283,10 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == subCategoryEntities) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "Issue retrieving sub-categories");
+            Utils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
         } else if (0 == subCategoryEntities.size()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "No sub-Categories in database");
+            Utils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }
         List<SubCategoryEntity> subCategories = drill.getSubCategories();
@@ -332,16 +326,14 @@ public class DrillInfoActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                                    findViewById(R.id.activityDrillInfo),
-                                    "Successfully saved changes!"
+                                    rootView, "Successfully saved changes!"
                             ));
                         }
 
                         @Override
                         public void onFailure(String error) {
                             runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                                    findViewById(R.id.activityDrillInfo),
-                                    "Failed to update sub-categories"
+                                    rootView, "Failed to update sub-categories"
                             ));
                         }
                     });
@@ -400,14 +392,14 @@ public class DrillInfoActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                            findViewById(R.id.activityDrillInfo), "Successfully saved changes!"
+                            rootView, "Successfully saved changes!"
                     ));
                 }
 
                 @Override
                 public void onFailure(String error) {
                     runOnUiThread(() -> Utils.displayDismissibleSnackbar(
-                            findViewById(R.id.activityDrillInfo), error
+                            rootView, error
                     ));
                 }
             });
@@ -578,6 +570,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      */
     @SuppressLint("CutPasteId")
     private void saveViews() {
+        rootView = findViewById(R.id.activityDrillInfo);
         drillProgressBar = findViewById(R.id.drillProgressBar);
         drillName = findViewById(R.id.drillName);
         lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
@@ -671,8 +664,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private @Nullable Drill collectDrillInfo() {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "An error occurred");
+            Utils.displayDismissibleSnackbar(rootView, "An error occurred");
             return null;
         }
 
@@ -684,8 +676,8 @@ public class DrillInfoActivity extends AppCompatActivity {
         // database layer
         final int NOTES_CHARACTER_LIMIT = 2048;
         if (NOTES_CHARACTER_LIMIT <= notesString.length()) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityDrillInfo),
-                    "Notes must be less than " + NOTES_CHARACTER_LIMIT + " characters");
+            Utils.displayDismissibleSnackbar(rootView, "Notes must be less than "
+                    + NOTES_CHARACTER_LIMIT + " characters");
             return null;
         }
         drill.setNotes(notes.getText().toString());

@@ -53,6 +53,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
     private DrillListViewModel.SortOrder sortOrder;
 
+    private View rootView;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private Button sortButton;
@@ -70,6 +71,8 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(DrillListViewModel.class);
         sortOrder = viewModel.getSortOrder();
+
+        rootView = findViewById(R.id.activityAllDrills);
         progressBar = findViewById(R.id.allDrillsProgressBar);
         recyclerView = findViewById(R.id.allDrillsRecyclerView);
         sortButton = findViewById(R.id.sortButton);
@@ -97,8 +100,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     public void filterByCategory(View view) {
         List<CategoryEntity> categories = viewModel.getAllCategories();
         if (null == categories) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
-                    "Categories still loading, please try again...");
+            Utils.displayDismissibleSnackbar(rootView, "Categories still loading, please try again...");
         } else {
             filterCategoriesPopup(categories);
         }
@@ -107,7 +109,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     public void filterBySubCategory(View view) {
         List<SubCategoryEntity> subCategories = viewModel.getAllSubCategories();
         if (null == subCategories) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
+            Utils.displayDismissibleSnackbar(rootView,
                     "Sub-categories still loading, please try again...");
         } else {
             filterSubCategoriesPopup(subCategories);
@@ -158,8 +160,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
             if (newSortOrder == sortOrder) {
                 // Indicates an error and we didn't switch
-                Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
-                        "Could not switch sort order");
+                Utils.displayDismissibleSnackbar(rootView, "Could not switch sort order");
                 setLoading(false);
             } else {
                 sortOrder = newSortOrder;
@@ -315,8 +316,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      */
     private void deleteDrillPopup(Drill drill) {
         if (null == drill) {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityAllDrills),
-                    "Something went wrong trying to delete");
+            Utils.displayDismissibleSnackbar(rootView, "Something went wrong trying to delete");
             return;
         }
 

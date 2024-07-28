@@ -38,10 +38,14 @@ import java.util.ArrayList;
  * INTENTS: None expected.
  */
 public class HomeActivity extends AppCompatActivity {
+    private View rootView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        rootView = findViewById(R.id.activityHome);
 
         TitleDescCard viewDrillsCard = findViewById(R.id.viewDrillsCard);
         viewDrillsCard.setOnLongClickListener(view -> {
@@ -70,11 +74,9 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
-                    "Feedback unimplemented");
+            Utils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
         } else {
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
-                    "Unknown option");
+            Utils.displayDismissibleSnackbar(rootView, "Unknown option");
         }
     }
 
@@ -86,8 +88,7 @@ public class HomeActivity extends AppCompatActivity {
                 "and replace them with some demo ones. Are you sure you want to do this?");
         builder.setPositiveButton("Do It.", (dialog, position) -> {
             new Thread(this::mockDatabaseEntries).start();
-            Utils.displayDismissibleSnackbar(findViewById(R.id.activityHome),
-                    "Added mocked database entries");
+            Utils.displayDismissibleSnackbar(rootView, "Added mocked database entries");
         });
         builder.setNegativeButton("Never-mind", null);
         builder.create().show();
