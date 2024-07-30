@@ -62,7 +62,7 @@
         <Button
             android:id="@+id/categoryFilterButton"
             android:onClick="filterByCategory"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
             android:layout_weight="1"
@@ -73,7 +73,7 @@
         <Button
             android:id="@+id/subCategoryFilterButton"
             android:onClick="filterBySubCategory"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
             android:layout_weight="1"

@@ -185,7 +185,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
         List<SubCategoryEntity> subCategories = new ArrayList<>(abstractCategories.size());
 
         for (AbstractCategoryEntity abstractCategory : abstractCategories) {
-            if (abstractCategory instanceof SubCategoryEntity) {
+            if (SubCategoryEntity.class == abstractCategory.getClass()) {
                 subCategories.add((SubCategoryEntity) abstractCategory);
             }
         }

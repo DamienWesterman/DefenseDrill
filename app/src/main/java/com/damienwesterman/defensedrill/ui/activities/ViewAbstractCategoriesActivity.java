@@ -14,7 +14,6 @@ package com.damienwesterman.defensedrill.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -59,7 +58,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     private static final int NAME_CHARACTER_LIMIT = 128;
     private static final int DESCRIPTION_CHARACTER_LIMIT = 512;
 
-    private String TAG = "ViewAbstractCategoriesActivity";
     private AbstractCategoryViewModel viewModel;
     private ActivityMode activityMode;
 
@@ -87,13 +85,10 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         if (intent.hasExtra(Constants.INTENT_VIEW_CATEGORIES)) {
             viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
             activityMode = ActivityMode.MODE_CATEGORIES;
-            TAG += "|Categories";
         } else if (intent.hasExtra(Constants.INTENT_VIEW_SUB_CATEGORIES)) {
             viewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
             activityMode = ActivityMode.MODE_SUB_CATEGORIES;
-            TAG += "|SubCategories";
         } else {
-            Log.e(TAG, "No category specified in the intent");
             // Toast so it persists screens
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
             finish();
@@ -110,8 +105,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         setLoading(true);
         viewModel.getAbstractCategories().observe(this, this::setUpRecyclerView);
         viewModel.populateAbstractCategories();
-
-        Log.i(TAG, "Started");
     }
 
     @Override

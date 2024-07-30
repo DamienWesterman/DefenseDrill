@@ -28,7 +28,7 @@ import java.util.List;
 import com.damienwesterman.defensedrill.R;
 
 /**
- * RecyclerView Adapter class for use with AbstractCategoryEntity objects.
+ * RecyclerView Adapter class for use with {@link AbstractCategoryEntity} objects.
  * <br><br>
  * Each item represents one AbstractCategoryEntity, displaying the name and description in a
  * {@link com.damienwesterman.defensedrill.ui.utils.TitleDescCard}. Uses {@link CardViewHolder}.

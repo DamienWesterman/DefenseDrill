@@ -17,7 +17,7 @@ package com.damienwesterman.defensedrill.ui.utils;
  */
 public interface CreateNewEntityCallback {
     /**
-     * Callback for when an object was successfully added to the database..
+     * Callback for when an object was successfully added to the database.
      */
     void onSuccess();
 

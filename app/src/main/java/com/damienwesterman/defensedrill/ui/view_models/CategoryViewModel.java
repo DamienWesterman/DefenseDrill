@@ -163,7 +163,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         List<CategoryEntity> categories = new ArrayList<>(abstractCategories.size());
 
         for (AbstractCategoryEntity abstractCategory : abstractCategories) {
-            if (abstractCategory instanceof CategoryEntity) {
+            if (CategoryEntity.class == abstractCategory.getClass()) {
                 categories.add((CategoryEntity) abstractCategory);
             }
         }
