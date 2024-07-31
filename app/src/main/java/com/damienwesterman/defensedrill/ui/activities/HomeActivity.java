@@ -38,6 +38,9 @@ import java.util.ArrayList;
 public class HomeActivity extends AppCompatActivity {
     private View rootView;
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
     public void onCardClick(View view) {
         // Add cards to delete things
         int cardId = view.getId();
@@ -78,6 +84,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+
+    // =============================================================================================
+    // Popup / AlertDialog Methods
+    // =============================================================================================
     private void mockDatabaseConfirmationPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Insert Mock Database?");
@@ -92,6 +102,10 @@ public class HomeActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
     // TODO Take out once the server is ready
     private void mockDatabaseEntries() {
         DrillRepository repo = DrillRepository.getInstance(this.getApplicationContext());

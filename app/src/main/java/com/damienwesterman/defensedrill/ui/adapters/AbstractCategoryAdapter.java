@@ -36,8 +36,8 @@ import com.damienwesterman.defensedrill.R;
  */
 public class AbstractCategoryAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final List<? extends AbstractCategoryEntity> categories;
-    CardClickListener clickListener;
-    LongCardClickListener longClickListener;
+    final CardClickListener clickListener;
+    final LongCardClickListener longClickListener;
 
     public AbstractCategoryAdapter(@NonNull List<? extends AbstractCategoryEntity> categories, CardClickListener clickListener,
                                    LongCardClickListener longClickListener) {

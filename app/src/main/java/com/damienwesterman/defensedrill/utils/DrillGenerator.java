@@ -56,8 +56,8 @@ public class DrillGenerator {
      * @param random    Random object to use for random Drill selection. Can be seeded.
      */
     public DrillGenerator(@NotNull List<Drill> drills, @NotNull Random random) {
-        this.originalDrills = null != drills ? drills : new ArrayList<>();
-        this.random = null != random ? random : new Random();
+        this.originalDrills = drills;
+        this.random = random;
         this.drillPossibilities = idDrillMapFromDrillList(originalDrills);
         this.lastGeneratedDrillId = -1;
     }
@@ -86,10 +86,9 @@ public class DrillGenerator {
         if (0 <= lastGeneratedDrillId) {
             // Only remove the last generated drill if we have a valid lastGeneratedDrillId
             drillPossibilities.remove(lastGeneratedDrillId);
-        } else {
-            // Do nothing. Could have an invalid lastGeneratedDrillId if resetSkippedDrills() was
-            // called
         }
+        // Else do nothing. Could have an invalid lastGeneratedDrillId if resetSkippedDrills() was
+        // called.
 
         return generateDrill();
     }

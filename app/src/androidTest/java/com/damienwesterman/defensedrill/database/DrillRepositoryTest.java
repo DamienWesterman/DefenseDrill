@@ -43,8 +43,8 @@ import java.util.stream.Collectors;
  */
 @RunWith(AndroidJUnit4.class)
 public class DrillRepositoryTest {
-    static Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-    static DrillRepository repo = DrillRepository.getInstance(appContext);
+    static final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    static final DrillRepository repo = DrillRepository.getInstance(appContext);
     Drill drill1;
     Drill drill2;
     Drill drill3;

@@ -146,7 +146,9 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             // Do nothing
         });
         AlertDialog alert = builder.create();
-        alert.setOnShowListener(dialogInterface -> alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+        alert.setOnShowListener(dialogInterface ->
+                alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+            // "Save" button
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
             if (0 == name.length()) {
@@ -222,7 +224,9 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             // Do nothing
         });
         AlertDialog alert = builder.create();
-        alert.setOnShowListener(dialogInterface -> alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+        alert.setOnShowListener(dialogInterface ->
+                alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+            // "Save" button
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
             if (0 == name.length()) {

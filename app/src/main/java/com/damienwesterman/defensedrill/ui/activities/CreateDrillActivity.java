@@ -36,8 +36,10 @@ import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Activity to create a new Drill.
@@ -64,7 +66,6 @@ public class CreateDrillActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_drill);
 
         viewModel = new ViewModelProvider(this).get(CreateDrillViewModel.class);
-
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
 
@@ -111,12 +112,12 @@ public class CreateDrillActivity extends AppCompatActivity {
      * @param view View.
      */
     public void saveDrill(View view) {
-        setUserEditable(false);
+        setViewsEnabled(false);
         Drill drill = generateDrillFromUserInput();
         
         if (null == drill) {
-            // User notification is handled in generateDrillFromUserInput()
-            setUserEditable(true);
+            // User error feedback is handled in generateDrillFromUserInput()
+            setViewsEnabled(true);
         } else if (0 == drill.getCategories().size()) {
             // Will then check subCategories and call checkNamePopup()
             confirmNoCategoriesPopup(drill);
@@ -149,7 +150,7 @@ public class CreateDrillActivity extends AppCompatActivity {
             return;
         }
 
-        List<CategoryEntity> checkedCategoryEntities = viewModel.getCheckedCategoryEntities();
+        Set<CategoryEntity> checkedCategoryEntities = viewModel.getCheckedCategoryEntities();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] categoryNames = categories
@@ -179,7 +180,7 @@ public class CreateDrillActivity extends AppCompatActivity {
                         // Checked but not already in list - add
                         checkedCategoryEntities.add(categories.get(i));
                     } else if (!checkedCategories[i]) {
-                        // Not checked but in list - remove
+                        // Not checked - remove if in list
                         checkedCategoryEntities.remove(categories.get(i));
                     }
                 }
@@ -221,7 +222,7 @@ public class CreateDrillActivity extends AppCompatActivity {
             return;
         }
 
-        List<SubCategoryEntity> checkedSubCategoryEntities = viewModel.getCheckedSubCategoryEntities();
+        Set<SubCategoryEntity> checkedSubCategoryEntities = viewModel.getCheckedSubCategoryEntities();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] subCategoryNames = subCategories
@@ -251,7 +252,7 @@ public class CreateDrillActivity extends AppCompatActivity {
                         // Checked but not already in list - add
                         checkedSubCategoryEntities.add(subCategories.get(i));
                     } else if (!checkedSubCategories[i]) {
-                        // Not checked but in list - remove
+                        // Not checked - remove if in list
                         checkedSubCategoryEntities.remove(subCategories.get(i));
                     }
                 }
@@ -296,7 +297,7 @@ public class CreateDrillActivity extends AppCompatActivity {
                 checkNamePopup(drill);
             }
         });
-        builder.setNegativeButton("Go Back", (dialog, position) -> setUserEditable(true));
+        builder.setNegativeButton("Go Back", (dialog, position) -> setViewsEnabled(true));
         builder.create().show();
     }
 
@@ -314,7 +315,7 @@ public class CreateDrillActivity extends AppCompatActivity {
                 + "random is selected.");
         builder.setCancelable(false);
         builder.setPositiveButton("I'm Sure", (dialog, position) -> checkNamePopup(drill));
-        builder.setNegativeButton("Go Back", (dialog, position) -> setUserEditable(true));
+        builder.setNegativeButton("Go Back", (dialog, position) -> setViewsEnabled(true));
         builder.create().show();
     }
 
@@ -344,11 +345,11 @@ public class CreateDrillActivity extends AppCompatActivity {
             public void onFailure(String error) {
                 runOnUiThread(() -> {
                     Utils.displayDismissibleSnackbar(rootView, error);
-                    setUserEditable(true);
+                    setViewsEnabled(true);
                 });
             }
         }));
-        builder.setNegativeButton("Change Name", (dialog, position) -> setUserEditable(true));
+        builder.setNegativeButton("Change Name", (dialog, position) -> setViewsEnabled(true));
         builder.create().show();
     }
 
@@ -368,14 +369,10 @@ public class CreateDrillActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.next_icon);
         builder.setCancelable(false);
         builder.setPositiveButton("Create Another", (dialog, position) -> {
-            enteredName.setText(null);
-            confidenceSpinner.setSelection(0);
-            viewModel.getCheckedCategoryEntities().clear();
-            viewModel.getCheckedSubCategoryEntities().clear();
-            enteredNotes.setText(null);
-            setUserEditable(true);
+            clearUserInputFields();
+            setViewsEnabled(true);
         });
-        builder.setNegativeButton("Back", (dialog, position) -> finish());
+        builder.setNegativeButton("Finish", (dialog, position) -> finish());
         builder.setNeutralButton("Go Home", (dialog, position) -> {
             Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -387,26 +384,38 @@ public class CreateDrillActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-
     /**
-     * Set the UI state to accepting user input or not allowing the user to modify the drill info
-     * fields.
+     * Change the state of the UI to allow a user to edit input views.
+     * <br><br>
+     * If saving is in progress, then we want to display a snackbar that says so, and make sure the
+     * views are not editable.
      *
-     * @param editable boolean if user is able to edit the drill info fields.
+     * @param enabled boolean if we are in the process of saving.
      */
-    private void setUserEditable(boolean editable) {
-        if (editable) {
+    private void setViewsEnabled(boolean enabled) {
+        if (enabled) {
             if (savingSnackbar.isShown()) {
                 savingSnackbar.dismiss();
             }
         } else {
             savingSnackbar.show();
         }
-        enteredName.setEnabled(editable);
-        confidenceSpinner.setEnabled(editable);
-        categoriesButton.setEnabled(editable);
-        subCategoriesButton.setEnabled(editable);
-        enteredNotes.setEnabled(editable);
+        enteredName.setEnabled(enabled);
+        confidenceSpinner.setEnabled(enabled);
+        categoriesButton.setEnabled(enabled);
+        subCategoriesButton.setEnabled(enabled);
+        enteredNotes.setEnabled(enabled);
+    }
+
+    /**
+     * Set all fields to their defaults.
+     */
+    private void clearUserInputFields() {
+        enteredName.setText(null);
+        confidenceSpinner.setSelection(0);
+        viewModel.getCheckedCategoryEntities().clear();
+        viewModel.getCheckedSubCategoryEntities().clear();
+        enteredNotes.setText(null);
     }
 
     /**
@@ -418,7 +427,7 @@ public class CreateDrillActivity extends AppCompatActivity {
      * @return Drill object created from user input or null if input sanitation failed.
      */
     private @Nullable Drill generateDrillFromUserInput() {
-        // Both of these are limits just for display purposes on other screen. They are a little
+        // Both of these are limits just for display purposes on other screens. They are a little
         // arbitrary and do not represent actual limits in the database layer.
         final int NAME_CHARACTER_LIMIT = 256;
         final int NOTES_CHARACTER_LIMIT = 2048;
@@ -445,13 +454,13 @@ public class CreateDrillActivity extends AppCompatActivity {
         }
         drill = new Drill(
                 name,
-                System.currentTimeMillis(),
-                true,
+                System.currentTimeMillis(), // Last drilled date
+                true,                       // new drill
                 Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()),
                 notes,
                 Drill.INVALID_SERVER_DRILL_ID,
-                viewModel.getCheckedCategoryEntities(),
-                viewModel.getCheckedSubCategoryEntities()
+                new ArrayList<>(viewModel.getCheckedCategoryEntities()),
+                new ArrayList<>(viewModel.getCheckedSubCategoryEntities())
         );
 
         return drill;

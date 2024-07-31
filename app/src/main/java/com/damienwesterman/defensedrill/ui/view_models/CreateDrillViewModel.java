@@ -24,8 +24,9 @@ import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -36,8 +37,8 @@ public class CreateDrillViewModel extends AndroidViewModel {
     private final DrillRepository repo;
     private List<CategoryEntity> allCategories;
     private List<SubCategoryEntity> allSubCategories;
-    private final List<CategoryEntity> checkedCategoryEntities = new ArrayList<>();
-    private final List<SubCategoryEntity> checkedSubCategoryEntities = new ArrayList<>();
+    private final Set<CategoryEntity> checkedCategoryEntities = new HashSet<>();
+    private final Set<SubCategoryEntity> checkedSubCategoryEntities = new HashSet<>();
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     public CreateDrillViewModel(@NonNull Application application) {
@@ -100,7 +101,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
      *
      * @return Persisted list of CategoryEntity objects.
      */
-    public List<CategoryEntity> getCheckedCategoryEntities() {
+    public Set<CategoryEntity> getCheckedCategoryEntities() {
         return this.checkedCategoryEntities;
     }
 
@@ -116,7 +117,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
      *
      * @return Persisted list of SubCategoryEntity objects.
      */
-    public List<SubCategoryEntity> getCheckedSubCategoryEntities() {
+    public Set<SubCategoryEntity> getCheckedSubCategoryEntities() {
         return this.checkedSubCategoryEntities;
     }
 

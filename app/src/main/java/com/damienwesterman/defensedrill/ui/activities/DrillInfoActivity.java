@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,8 +43,10 @@ import com.damienwesterman.defensedrill.utils.Constants;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Displays information about a Drill and allows users to modify and take actions relating to it.
@@ -57,7 +60,7 @@ import java.util.Locale;
  * INTENTS: Expects to receive ONE of the following -
  * <ul>
  *    <li> A {@link Constants#INTENT_CATEGORY_CHOICE} AND {@link Constants#INTENT_SUB_CATEGORY_CHOICE}
- *         intent. These are then used to generate a pick a drill.</li>
+ *         intent. These are then used to generate a drill.</li>
  *    <li> A {@link Constants#INTENT_DRILL_ID} intent.</li>
  * </ul>
  */
@@ -99,13 +102,19 @@ public class DrillInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drill_info);
 
+        saveViews();
+        setUiLoading(true);
+
         if (getIntent().hasExtra(Constants.INTENT_DRILL_ID)) {
             activityState = ActivityState.DISPLAYING_DRILL;
-        } else {
+        } else if (getIntent().hasExtra(Constants.INTENT_CATEGORY_CHOICE)
+                    && getIntent().hasExtra(Constants.INTENT_SUB_CATEGORY_CHOICE)) {
             activityState = ActivityState.GENERATED_DRILL;
+        } else {
+            // Did not receive the proper intents. Toast so it persists screens
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            finish();
         }
-
-        saveViews();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
@@ -130,7 +139,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     public void regenerateDrill(View view) {
-        changeUiToDrillLoading();
+        setUiLoading(true);
         activityState = ActivityState.REGENERATED_DRILL;
         viewModel.regenerateDrill();
     }
@@ -195,7 +204,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             Utils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
-        List<CategoryEntity> categories = drill.getCategories();
+        Set<CategoryEntity> checkedCategoryEntities = new HashSet<>(drill.getCategories());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] categoryNames = categoryEntities
@@ -203,7 +212,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         final boolean[] checkedCategories = new boolean[categoryNames.length];
 
         for (int i = 0; i < checkedCategories.length; i++) {
-            if (categories.contains(categoryEntities.get(i))) {
+            if (checkedCategoryEntities.contains(categoryEntities.get(i))) {
                 checkedCategories[i] = true;
             }
         }
@@ -221,11 +230,11 @@ public class DrillInfoActivity extends AppCompatActivity {
             alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
                 // "Save"
                 for (int i = 0; i < checkedCategories.length; i++) {
-                    if (checkedCategories[i] && !categories.contains(categoryEntities.get(i))) {
+                    if (checkedCategories[i] && !checkedCategoryEntities.contains(categoryEntities.get(i))) {
                         // Checked but not already in list - add
                         drill.addCategory(categoryEntities.get(i));
                     } else if (!checkedCategories[i]) {
-                        // Not checked but in list - remove
+                        // Not checked - remove if in list
                         drill.removeCategory(categoryEntities.get(i));
                     }
                     viewModel.saveDrill(drill, new CreateNewEntityCallback() {
@@ -282,7 +291,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             Utils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }
-        List<SubCategoryEntity> subCategories = drill.getSubCategories();
+        Set<SubCategoryEntity> checkedSubCategoryEntities = new HashSet<>(drill.getSubCategories());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] subCategoryNames = subCategoryEntities
@@ -290,7 +299,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         final boolean[] checkedSubCategories = new boolean[subCategoryNames.length];
 
         for (int i = 0; i < checkedSubCategories.length; i++) {
-            if (subCategories.contains(subCategoryEntities.get(i))) {
+            if (checkedSubCategoryEntities.contains(subCategoryEntities.get(i))) {
                 checkedSubCategories[i] = true;
             }
         }
@@ -308,11 +317,11 @@ public class DrillInfoActivity extends AppCompatActivity {
             alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
                 // "Save"
                 for (int i = 0; i < checkedSubCategories.length; i++) {
-                    if (checkedSubCategories[i] && !subCategories.contains(subCategoryEntities.get(i))) {
+                    if (checkedSubCategories[i] && !checkedSubCategoryEntities.contains(subCategoryEntities.get(i))) {
                         // Checked but not already in list - add
                         drill.addSubCategory(subCategoryEntities.get(i));
                     } else if (!checkedSubCategories[i]) {
-                        // Not checked but in list - remove
+                        // Not checked - remove if in list
                         drill.removeSubCategory(subCategoryEntities.get(i));
                     }
                     viewModel.saveDrill(drill, new CreateNewEntityCallback() {
@@ -428,12 +437,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setTitle("What next?");
         builder.setIcon(R.drawable.next_icon);
         builder.setCancelable(true);
-        if (ActivityState.DISPLAYING_DRILL != activityState) {
+
+        if (ActivityState.GENERATED_DRILL == activityState
+                || ActivityState.REGENERATED_DRILL == activityState) {
             builder.setItems(options, (dialog, position) -> {
                 switch (position) {
                     case 0:
                         // Next Drill
-                        changeUiToDrillLoading();
+                        setUiLoading(true);
                         activityState = ActivityState.REGENERATED_DRILL;
                         viewModel.regenerateDrill();
                         break;
@@ -446,6 +457,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                 }
             });
         }
+
         builder.setPositiveButton("Go Home", (dialog, position) -> {
            Intent intent = new Intent(this, HomeActivity.class);
            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -455,6 +467,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             if (ActivityState.DISPLAYING_DRILL == activityState) {
                 finish();
             }
+            // else if we are in drill generation, just allow it to close the popup
         });
         if (ActivityState.DISPLAYING_DRILL == activityState) {
             builder.setNeutralButton("Close popup", (dialog, position) -> { });
@@ -464,16 +477,15 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     /**
-     * Create and return a fully configured AlertDialog for when there is no drill to display.
+     * Create and show popup for when there is no drill to display.
      * <br><br>
      * This should be called in the error condition that there is no drill to display. Can be caused
      * by drill generation failing or a bad drill id. User feedback should be provided in the
      * message so the user will know what is going on.
      *
      * @param message   String error message to display to the user.
-     * @return          AlertDialog object.
      */
-    private AlertDialog createNoDrillPopup(@NonNull String message) {
+    private void noDrillPopup(@NonNull String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Drill not found!");
         builder.setIcon(R.drawable.warning_icon);
@@ -488,7 +500,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             case REGENERATED_DRILL:
                 // Fallthrough intentional
                 builder.setNeutralButton("Reset skipped Drills", (dialog, position) -> {
-                    changeUiToDrillLoading();
+                    setUiLoading(true);
                     viewModel.resetSkippedDrills();
                     activityState = ActivityState.GENERATED_DRILL;
                     viewModel.regenerateDrill();
@@ -501,12 +513,13 @@ public class DrillInfoActivity extends AppCompatActivity {
                 });
                 break;
             case DISPLAYING_DRILL:
-                builder.setNegativeButton("Back", (dialog, position) -> finish());
+                // Fallthrough intentional
             default:
-
+                builder.setNegativeButton("Back", (dialog, position) -> finish());
+                break;
         }
 
-        return builder.create();
+        builder.create().show();
     }
 
     // =============================================================================================
@@ -525,7 +538,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             }
 
             fillDrillInfo(drill);
-            changeUiToDrillInfoShown();
+            setUiLoading(false);
 
             // TODO: Eventually incorporate functionality to display the links for how to
             //       descriptions and videos
@@ -534,23 +547,26 @@ public class DrillInfoActivity extends AppCompatActivity {
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
 
-        changeUiToDrillLoading();
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill) {
             // First time loading activity
             Intent intent = getIntent();
-            if (intent.hasExtra(Constants.INTENT_DRILL_ID)) {
+            if (ActivityState.DISPLAYING_DRILL == activityState) {
                 long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
                 viewModel.populateDrill(drillId);
-            } else {
+            } else if (ActivityState.GENERATED_DRILL == activityState) {
                 long categoryId = intent.getLongExtra(Constants.INTENT_CATEGORY_CHOICE, -1);
                 long subCategoryId = intent.getLongExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, -1);
                 viewModel.populateDrill(categoryId, subCategoryId);
+            } else {
+                // Not in a correct state. Toast so it persists screens
+                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                finish();
             }
         } else {
             // Screen rotation or something, re-load existing drill from viewModel
             fillDrillInfo(drill);
-            changeUiToDrillInfoShown();
+            setUiLoading(false);
         }
     }
 
@@ -570,16 +586,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         editSubCategoriesButton = findViewById(R.id.editSubCategoriesButton);
         notesLabel = findViewById(R.id.notesLabel);
         notes = findViewById(R.id.notes);
-        if (ActivityState.DISPLAYING_DRILL != activityState) {
-            regenerateButton = findViewById(R.id.regenerateButton);
-            resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
-        }
+        regenerateButton = findViewById(R.id.regenerateButton);
+        resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
         markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
         saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
     }
 
     /**
-     * Wrapper to call {@link #createNoDrillPopup(String)} and determine the appropriate error
+     * Wrapper to call {@link #noDrillPopup(String)} and determine the appropriate error
      * message.
      */
     private void alertNoDrillFound() {
@@ -597,51 +611,50 @@ public class DrillInfoActivity extends AppCompatActivity {
                 alertMessage = getString(R.string.no_drill_found_by_id);
                 break;
         }
-        createNoDrillPopup(alertMessage).show();
+        noDrillPopup(alertMessage);
     }
 
     /**
-     * Set the UI to hide all Drill elements and display loading bar.
+     * Set the UI to hide all Drill elements and display loading bar or vise versa.
+     *
+     * @param loading boolean if we want to have the UI as loading or not.
      */
-    private void changeUiToDrillLoading() {
-        drillProgressBar.setVisibility(View.VISIBLE);
-        drillName.setVisibility(View.GONE);
-        lastDrilledLabel.setVisibility(View.GONE);
-        lastDrilledDate.setVisibility(View.GONE);
-        confidenceLabel.setVisibility(View.GONE);
-        confidenceSpinner.setVisibility(View.GONE);
-        editCategoriesButton.setVisibility(View.GONE);
-        editSubCategoriesButton.setVisibility(View.GONE);
-        notesLabel.setVisibility(View.GONE);
-        notes.setVisibility(View.GONE);
-        if (ActivityState.DISPLAYING_DRILL != activityState) {
+    private void setUiLoading(boolean loading) {
+        if (loading) {
+            drillProgressBar.setVisibility(View.VISIBLE);
+            drillName.setVisibility(View.GONE);
+            lastDrilledLabel.setVisibility(View.GONE);
+            lastDrilledDate.setVisibility(View.GONE);
+            confidenceLabel.setVisibility(View.GONE);
+            confidenceSpinner.setVisibility(View.GONE);
+            editCategoriesButton.setVisibility(View.GONE);
+            editSubCategoriesButton.setVisibility(View.GONE);
+            notesLabel.setVisibility(View.GONE);
+            notes.setVisibility(View.GONE);
             regenerateButton.setVisibility(View.GONE);
             resetSkippedDrillsButton.setVisibility(View.GONE);
+            markAsPracticedButton.setVisibility(View.GONE);
+            saveDrillInfoButton.setVisibility(View.GONE);
+        } else {
+            drillProgressBar.setVisibility(View.GONE);
+            drillName.setVisibility(View.VISIBLE);
+            lastDrilledLabel.setVisibility(View.VISIBLE);
+            lastDrilledDate.setVisibility(View.VISIBLE);
+            confidenceLabel.setVisibility(View.VISIBLE);
+            confidenceSpinner.setVisibility(View.VISIBLE);
+            editCategoriesButton.setVisibility(View.VISIBLE);
+            editSubCategoriesButton.setVisibility(View.VISIBLE);
+            notesLabel.setVisibility(View.VISIBLE);
+            notes.setVisibility(View.VISIBLE);
+            if (ActivityState.GENERATED_DRILL == activityState
+                    || ActivityState.REGENERATED_DRILL == activityState) {
+                // Do not set these to visible unless we are in an activity state that uses them
+                regenerateButton.setVisibility(View.VISIBLE);
+                resetSkippedDrillsButton.setVisibility(View.VISIBLE);
+            }
+            markAsPracticedButton.setVisibility(View.VISIBLE);
+            saveDrillInfoButton.setVisibility(View.VISIBLE);
         }
-        markAsPracticedButton.setVisibility(View.GONE);
-        saveDrillInfoButton.setVisibility(View.GONE);
-    }
-
-    /**
-     * Display all drill elements and hide the loading bar.
-     */
-    private void changeUiToDrillInfoShown() {
-        drillProgressBar.setVisibility(View.GONE);
-        drillName.setVisibility(View.VISIBLE);
-        lastDrilledLabel.setVisibility(View.VISIBLE);
-        lastDrilledDate.setVisibility(View.VISIBLE);
-        confidenceLabel.setVisibility(View.VISIBLE);
-        confidenceSpinner.setVisibility(View.VISIBLE);
-        editCategoriesButton.setVisibility(View.VISIBLE);
-        editSubCategoriesButton.setVisibility(View.VISIBLE);
-        notesLabel.setVisibility(View.VISIBLE);
-        notes.setVisibility(View.VISIBLE);
-        if (ActivityState.DISPLAYING_DRILL != activityState) {
-            regenerateButton.setVisibility(View.VISIBLE);
-            resetSkippedDrillsButton.setVisibility(View.VISIBLE);
-        }
-        markAsPracticedButton.setVisibility(View.VISIBLE);
-        saveDrillInfoButton.setVisibility(View.VISIBLE);
     }
 
     /**

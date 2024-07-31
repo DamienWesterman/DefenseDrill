@@ -20,6 +20,11 @@ import com.google.android.material.snackbar.Snackbar;
  */
 public class Utils {
     /**
+     * No need to have instances of this class.
+     */
+    private Utils() { }
+
+    /**
      * Create and display a snackbar. The snackbar will have a single "OK" button that dismisses the
      * snackbar.
      *

@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.Objects;
+
 public abstract class AbstractCategoryEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -89,5 +91,10 @@ public abstract class AbstractCategoryEntity {
         return this.id == a.id
                 && 0 == this.name.compareTo(a.name)
                 && 0 == this.description.compareTo(a.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description);
     }
 }

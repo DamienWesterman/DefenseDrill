@@ -38,8 +38,8 @@ import java.util.Locale;
  */
 public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final List<Drill> drills;
-    CardClickListener clickListener;
-    LongCardClickListener longClickListener;
+    final CardClickListener clickListener;
+    final LongCardClickListener longClickListener;
 
     public DrillAdapter(@NonNull List<Drill> drills, CardClickListener clickListener,
                         LongCardClickListener longClickListener) {

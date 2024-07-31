@@ -36,6 +36,11 @@ public class Constants {
     public static final String INTENT_VIEW_SUB_CATEGORIES = INTENT_PREFIX + "view_sub_categories";
 
     /**
+     * No need to have instances of this class.
+     */
+    private Constants() { }
+
+    /**
      * Converts a confidence weight into its respective position in the confidence_levels string
      * array in res/values/strings.xml. For use in a spinner with indexed positions.
      * <br><br>
