@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityCreateDrill"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".ui.activities.CreateDrillActivity">
+
+        <TextView
+            android:id="@+id/createDrillTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:text="@string/create_new_drill_title" />
+
+        <TextView
+            android:id="@+id/nameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:textStyle="italic"
+            android:text="@string/name_label"
+            android:textColor="@color/field_label" />
+
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:inputType="textMultiLine|textCapSentences"
+            android:textSize="24sp"
+            android:hint="@string/enter_a_name_for_the_drill"
+            android:autofillHints="" />
+
+        <TextView
+            android:id="@+id/confidenceLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            android:text="@string/confidence_label"
+            android:textColor="@color/field_label" />
+
+        <Spinner
+            android:id="@+id/confidenceSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/addCategoriesButton"
+            android:onClick="addCategories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/add_categories"
+            android:drawableLeft="@drawable/add_circle_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+        <Button
+            android:id="@+id/addSubCategoriesButton"
+            android:onClick="addSubCategories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_sub_categories"
+            android:drawableLeft="@drawable/add_circle_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+        <TextView
+            android:id="@+id/notesLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            android:text="@string/notes_label"
+            android:textColor="@color/field_label" />
+
+        <EditText
+            android:id="@+id/notes"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:inputType="textMultiLine|textCapSentences"
+            android:textSize="24sp"
+            android:hint="@string/notes_hint"
+            android:autofillHints="" />
+
+        <Button
+            android:id="@+id/saveDrillButton"
+            android:onClick="saveDrill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/save_drill"
+            android:drawableLeft="@drawable/save_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+    </LinearLayout>
+</ScrollView>

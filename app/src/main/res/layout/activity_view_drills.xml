@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activities.ViewDrillsActivity"
+    android:id="@+id/activityAllDrills" >
+
+    <TextView
+        android:id="@+id/allDrillsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/drills"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/allDrillsInstruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/all_drills_instruction"
+        android:textAlignment="center"
+        android:textStyle="italic"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/sortButton"
+            android:onClick="sortDrills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
+            android:text="@string/sort"
+            android:drawableLeft="@drawable/sort_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+        <Button
+            android:id="@+id/resetFiltersButton"
+            android:onClick="resetFilters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:text="@string/reset_filters"
+            android:drawableLeft="@drawable/filter_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/categoryFilterButton"
+            android:onClick="filterByCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
+            android:text="@string/filter_by_category"
+            android:drawableLeft="@drawable/filter_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+        <Button
+            android:id="@+id/subCategoryFilterButton"
+            android:onClick="filterBySubCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:text="@string/filter_by_sub_category"
+            android:drawableLeft="@drawable/filter_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/createDrillButton"
+        android:onClick="createDrill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/create_new_drill"
+        android:drawableLeft="@drawable/add_circle_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded" />
+
+    <View
+        android:id="@+id/allDrillsDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/dividerColor"/>
+
+    <ProgressBar
+        android:id="@+id/allDrillsProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/allDrillsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

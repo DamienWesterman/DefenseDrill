@@ -13,14 +13,54 @@
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
         <activity
-            android:name=".activities.CategorySelectActivity"
+            android:name=".ui.activities.ViewAbstractCategoriesActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.CreateDrillActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.ViewDrillsActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.ViewDrillsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.DrillInfoActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".activities.HomeActivity"
+            android:name=".ui.activities.SubCategorySelectActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.CategorySelectActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.CategorySelectActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

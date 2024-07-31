@@ -13,7 +13,7 @@ package com.damienwesterman.defensedrill.utils;
 
 import androidx.annotation.Nullable;
 
-import com.damienwesterman.defensedrill.database.Drill;
+import com.damienwesterman.defensedrill.data.Drill;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,8 +56,8 @@ public class DrillGenerator {
      * @param random    Random object to use for random Drill selection. Can be seeded.
      */
     public DrillGenerator(@NotNull List<Drill> drills, @NotNull Random random) {
-        this.originalDrills = null != drills ? drills : new ArrayList<>();
-        this.random = null != random ? random : new Random();
+        this.originalDrills = drills;
+        this.random = random;
         this.drillPossibilities = idDrillMapFromDrillList(originalDrills);
         this.lastGeneratedDrillId = -1;
     }
@@ -86,10 +86,9 @@ public class DrillGenerator {
         if (0 <= lastGeneratedDrillId) {
             // Only remove the last generated drill if we have a valid lastGeneratedDrillId
             drillPossibilities.remove(lastGeneratedDrillId);
-        } else {
-            // Do nothing. Could have an invalid lastGeneratedDrillId if resetSkippedDrills() was
-            // called
         }
+        // Else do nothing. Could have an invalid lastGeneratedDrillId if resetSkippedDrills() was
+        // called.
 
         return generateDrill();
     }
@@ -174,14 +173,14 @@ public class DrillGenerator {
 
     /**
      * Private helper function to get the weighted value of a Drill's last drilled date. Essentially
-     * returns the number of (30 day) months since the Drill has last been drilled, emphasizing
+     * returns the number of weeks since the Drill has last been drilled, emphasizing
      * Drills that haven't been practiced in a while.
      *
      * @param date  Date in milliseconds.
      * @return      Weight factor of the last time a Drill was drilled.
      */
     private int getDateWeightFactor(long date) {
-        final long THIRTY_DAYS_IN_MILLIS = 30L * 24 * 60 * 60 * 1000;
+        final long ONE_WEEK_IN_MILLIS = 7L * 24 * 60 * 60 * 1000;
         long currTime = System.currentTimeMillis();
         long timeDiff = currTime - date;
 
@@ -189,8 +188,8 @@ public class DrillGenerator {
             // Invalid date
             return 0;
         } else {
-            // Return the number of months since last drilled
-            return (int) (timeDiff % THIRTY_DAYS_IN_MILLIS);
+            // Return the number of weeks since last drilled
+            return (int) (timeDiff % ONE_WEEK_IN_MILLIS);
         }
     }
 }

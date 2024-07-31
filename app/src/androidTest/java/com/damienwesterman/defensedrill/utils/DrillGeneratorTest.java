@@ -22,8 +22,8 @@ import android.content.Context;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.damienwesterman.defensedrill.database.Drill;
-import com.damienwesterman.defensedrill.database.DrillRepository;
+import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.DrillRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +42,8 @@ import java.util.Set;
 public class DrillGeneratorTest {
     private static final int NUM_TESTS = 10;
 
-    static Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-    static DrillRepository repo = DrillRepository.getInstance(appContext);
+    static final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    static final DrillRepository repo = DrillRepository.getInstance(appContext);
 
     @Before
     public void setup() {

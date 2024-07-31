@@ -22,9 +22,9 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('C:\\Program Files\\keystore\\defense_drill.jks')
+            storeFile file(System.getenv("DEFENSE_DRILL_STORE_FILE"))
             storePassword System.getenv("DEFENSE_DRILL_STORE_PASSWORD")
-            keyAlias 'defenseDrillKey'
+            keyAlias System.getenv("DEFENSE_DRILL_KEY_ALIAS")
             keyPassword System.getenv("DEFENSE_DRILL_KEY_PASSWORD")
         }
     }
