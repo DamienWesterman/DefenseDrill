@@ -11,6 +11,7 @@
 
 package com.damienwesterman.defensedrill.ui.utils;
 
-public interface LongCardClickListener {
-    void onLongCardClick(long id);
+@FunctionalInterface
+public interface CardLongClickListener {
+    void onCardLongClick(long id);
 }

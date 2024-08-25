@@ -35,7 +35,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
@@ -151,7 +151,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void saveDrillInfo(View view) {
         Drill drill = collectDrillInfo();
-        viewModel.saveDrill(drill, new CreateNewEntityCallback() { // this method handles null check
+        viewModel.saveDrill(drill, new OperationCompleteCallback() { // this method handles null check
             @Override
             public void onSuccess() {
                 runOnUiThread(() -> Utils.displayDismissibleSnackbar(
@@ -237,7 +237,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                         // Not checked - remove if in list
                         drill.removeCategory(categoryEntities.get(i));
                     }
-                    viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+                    viewModel.saveDrill(drill, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> Utils.displayDismissibleSnackbar(
@@ -324,7 +324,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                         // Not checked - remove if in list
                         drill.removeSubCategory(subCategoryEntities.get(i));
                     }
-                    viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+                    viewModel.saveDrill(drill, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> Utils.displayDismissibleSnackbar(
@@ -388,7 +388,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             drill.setConfidence(Constants.confidencePositionToWeight(selectedOption[0]));
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
-            viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+            viewModel.saveDrill(drill, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     runOnUiThread(() -> Utils.displayDismissibleSnackbar(
@@ -408,7 +408,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
-            viewModel.saveDrill(drill, new CreateNewEntityCallback() {
+            viewModel.saveDrill(drill, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     // Do nothing
