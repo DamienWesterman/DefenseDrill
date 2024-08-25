@@ -22,7 +22,7 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +53,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
      * @param drill     Drill to attempt to add to the database.
      * @param callback  Callback to call when the insert is finished.
      */
-    public void saveDrill(Drill drill, @NonNull CreateNewEntityCallback callback) {
+    public void saveDrill(Drill drill, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (!repo.insertDrills(drill)) {

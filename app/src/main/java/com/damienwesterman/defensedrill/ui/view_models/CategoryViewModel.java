@@ -22,7 +22,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +95,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback) {
+    public void saveAbstractEntity(String name, String description, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 CategoryEntity category = new CategoryEntity(name, description);
@@ -114,7 +114,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (CategoryEntity.class == entity.getClass()) {

@@ -19,7 +19,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.List;
 
@@ -67,7 +67,7 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      * @param description   Description of the abstract category.
      * @param callback      Callback to call when the insert is finished.
      */
-    public abstract void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback);
+    public abstract void saveAbstractEntity(String name, String description, @NonNull OperationCompleteCallback callback);
 
     /**
      * Attempt to update an AbstractCategoryEntity in the database.
@@ -77,7 +77,7 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      * @param entity    AbstractCategoryEntity object to attempt to update.
      * @param callback  Callback to call when the update is finished.
      */
-    public abstract void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback);
+    public abstract void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback);
 
     /**
      * Retrieve a single AbstractCategoryEntity by the associated database ID.

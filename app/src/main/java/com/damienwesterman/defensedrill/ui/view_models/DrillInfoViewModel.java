@@ -23,7 +23,7 @@ import com.damienwesterman.defensedrill.data.CategoryEntity;
 import com.damienwesterman.defensedrill.data.Drill;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
@@ -120,7 +120,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param drill     Drill to attempt to add to the database.
      * @param callback  Callback to call when the update is finished.
      */
-    public void saveDrill(Drill drill, CreateNewEntityCallback callback) {
+    public void saveDrill(Drill drill, OperationCompleteCallback callback) {
         if (null == drill) {
             callback.onFailure("Issue saving Drill");
             return;

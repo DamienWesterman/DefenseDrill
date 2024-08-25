@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.AbstractCategoryViewModel;
 import com.damienwesterman.defensedrill.ui.view_models.CategoryViewModel;
@@ -171,7 +171,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 return; // Do not dismiss
             }
             setLoading(true);
-            viewModel.saveAbstractEntity(name, description, new CreateNewEntityCallback() {
+            viewModel.saveAbstractEntity(name, description, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     alert.dismiss();
@@ -251,7 +251,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             setLoading(true);
             entity.setName(name);
             entity.setDescription(description);
-            viewModel.updateAbstractEntity(entity, new CreateNewEntityCallback() {
+            viewModel.updateAbstractEntity(entity, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     alert.dismiss();

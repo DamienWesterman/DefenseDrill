@@ -22,7 +22,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.data.DrillRepository;
 import com.damienwesterman.defensedrill.data.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CreateNewEntityCallback;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +117,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void saveAbstractEntity(String name, String description, @NonNull CreateNewEntityCallback callback) {
+    public void saveAbstractEntity(String name, String description, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 SubCategoryEntity subCategory = new SubCategoryEntity(name, description);
@@ -136,7 +136,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull CreateNewEntityCallback callback) {
+    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (SubCategoryEntity.class == entity.getClass()) {

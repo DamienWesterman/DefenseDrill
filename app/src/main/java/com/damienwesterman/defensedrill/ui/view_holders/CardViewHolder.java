@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
-import com.damienwesterman.defensedrill.ui.utils.LongCardClickListener;
+import com.damienwesterman.defensedrill.ui.utils.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 
 /**
@@ -45,10 +45,10 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setLongClickListener(LongCardClickListener longClickListener, long id) {
+    public void setLongClickListener(CardLongClickListener longClickListener, long id) {
         if (null != longClickListener) {
             card.setOnLongClickListener(v -> {
-                longClickListener.onLongCardClick(id);
+                longClickListener.onCardLongClick(id);
                 return true;
             });
         }
