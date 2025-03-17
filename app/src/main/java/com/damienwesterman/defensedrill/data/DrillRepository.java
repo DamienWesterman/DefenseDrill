@@ -29,10 +29,14 @@ package com.damienwesterman.defensedrill.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -83,6 +87,7 @@ public class DrillRepository {
      *
      * @return  List of Drill objects.
      */
+    @NonNull
     public synchronized List<Drill> getAllDrills() {
         return this.drillDao.getAllDrills();
     }
@@ -93,6 +98,7 @@ public class DrillRepository {
      * @param categoryId   ID of the specific category of drills.
      * @return          List of Drill objects.
      */
+    @NonNull
     public synchronized List<Drill> getAllDrillsByCategoryId(long categoryId) {
         return this.drillDao.findAllDrillsByCategory(categoryId);
     }
@@ -103,6 +109,7 @@ public class DrillRepository {
      * @param subCategoryId    ID of the specific sub category of drills.
      * @return              List of Drill objects.
      */
+    @NonNull
     public synchronized List<Drill> getAllDrillsBySubCategoryId(long subCategoryId) {
         return this.drillDao.findAllDrillsBySubCategory(subCategoryId);
     }
@@ -114,6 +121,7 @@ public class DrillRepository {
      * @param subCategoryId    ID of the specific sub category of drills.
      * @return              List of Drill objects.
      */
+    @NonNull
     public synchronized List<Drill> getAllDrills(long categoryId, long subCategoryId) {
         return this.drillDao.findAllDrillsByCategoryAndSubCategory(categoryId, subCategoryId);
     }
@@ -127,7 +135,8 @@ public class DrillRepository {
      * @param subCategoryIds    List of IDs of the sub category of drills.
      * @return                  List of Drill objects.
      */
-    public synchronized List<Drill> getAllDrills(List<Long> categoryIds, List<Long> subCategoryIds) {
+    @NonNull
+    public synchronized List<Drill> getAllDrills(@Nullable List<Long> categoryIds, @Nullable List<Long> subCategoryIds) {
         List<Drill> ret;
 
         if (null == categoryIds && null == subCategoryIds) {
@@ -149,7 +158,8 @@ public class DrillRepository {
      * @param id    ID of the drill to find.
      * @return      Drill object or null if the id does not exist in the database.
      */
-    public synchronized Drill getDrill(long id) {
+    @NonNull
+    public synchronized Optional<Drill> getDrill(long id) {
         return this.drillDao.findDrillById(id);
     }
 
@@ -159,9 +169,10 @@ public class DrillRepository {
      * @param name  Name of the drill to find.
      * @return      Drill object or null if the name does not exist in the database.
      */
-    public synchronized Drill getDrill(String name) {
-        if (null == name) {
-            return null;
+    @NonNull
+    public synchronized Optional<Drill> getDrill(@NonNull String name) {
+        if (name.isEmpty()) {
+            return Optional.empty();
         }
         return this.drillDao.findDrillByName(name);
     }
@@ -198,8 +209,9 @@ public class DrillRepository {
                 }
 
                 // Need to extract the auto generated ID in order to update the join tables
-                Drill insertedDrill = drillDao.findDrillByName(drill.getName());
-                if (null != insertedDrill) {
+                Optional<Drill> optInsertedDrill = drillDao.findDrillByName(drill.getName());
+                if (optInsertedDrill.isPresent()) {
+                    Drill insertedDrill = optInsertedDrill.get();
                     long drillId = insertedDrill.getId();
 
                     for (CategoryEntity category : drill.getCategories()) {
@@ -343,6 +355,7 @@ public class DrillRepository {
      *
      * @return  List of CategoryEntity objects.
      */
+    @NonNull
     public synchronized List<CategoryEntity> getAllCategories() {
         return this.categoryDao.getAll();
     }
@@ -353,7 +366,8 @@ public class DrillRepository {
      * @param id    Category ID.
      * @return      CategoryEntity object or null if the id does not exist in the database.
      */
-    public synchronized CategoryEntity getCategory(long id) {
+    @NonNull
+    public synchronized Optional<CategoryEntity> getCategory(long id) {
         return this.categoryDao.findById(id);
     }
 
@@ -363,9 +377,10 @@ public class DrillRepository {
      * @param name  Category name.
      * @return      CategoryEntity object or null if the name does not exist in the database.
      */
-    public synchronized CategoryEntity getCategory(String name) {
-        if (null == name) {
-            return null;
+    @NonNull
+    public synchronized Optional<CategoryEntity> getCategory(@NonNull String name) {
+        if (name.isEmpty()) {
+            return Optional.empty();
         }
         return this.categoryDao.findByName(name);
     }
@@ -451,6 +466,7 @@ public class DrillRepository {
      *
      * @return  List of SubCategoryEntity objects.
      */
+    @NonNull
     public synchronized List<SubCategoryEntity> getAllSubCategories() {
         return this.subCategoryDao.getAll();
     }
@@ -461,6 +477,7 @@ public class DrillRepository {
      * @param categoryId   ID of the category to search for its subCategories.
      * @return          List of SubCategoryEntity objects.
      */
+    @NonNull
     public synchronized List<SubCategoryEntity> getAllSubCategories(long categoryId) {
         return this.subCategoryDao.findAllByCategory(categoryId);
     }
@@ -471,7 +488,8 @@ public class DrillRepository {
      * @param id    SubCategory ID.
      * @return      SubCategoryEntity object or null if the id does not exist in the database.
      */
-    public synchronized SubCategoryEntity getSubCategory(long id) {
+    @NonNull
+    public synchronized Optional<SubCategoryEntity> getSubCategory(long id) {
         return this.subCategoryDao.findById(id);
     }
 
@@ -481,9 +499,10 @@ public class DrillRepository {
      * @param name  SubCategory name.
      * @return      SubCategoryEntity object or null if the name does not exist in the database.
      */
-    public synchronized SubCategoryEntity getSubCategory(String name) {
-        if (null == name) {
-            return null;
+    @NonNull
+    public synchronized Optional<SubCategoryEntity> getSubCategory(@NonNull String name) {
+        if (name.isEmpty()) {
+            return Optional.empty();
         }
         return this.subCategoryDao.findByName(name);
     }
