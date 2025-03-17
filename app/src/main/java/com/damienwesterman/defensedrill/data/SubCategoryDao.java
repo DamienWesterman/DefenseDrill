@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.data;
 
+import androidx.annotation.NonNull;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -33,10 +34,12 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import java.util.List;
+import java.util.Optional;
 
 @Dao
 /* package-private */ interface SubCategoryDao {
     @Query("SELECT * FROM " + SubCategoryEntity.TABLE_NAME + " ORDER BY name")
+    @NonNull
     List<SubCategoryEntity> getAll();
 
     @Query(
@@ -47,13 +50,16 @@ import java.util.List;
             "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillCatJoin.category_id = cat.id " +
             "WHERE cat.id = :categoryId ORDER BY sub.name"
     )
+    @NonNull
     List<SubCategoryEntity> findAllByCategory(long categoryId);
 
     @Query("SELECT * FROM " + SubCategoryEntity.TABLE_NAME + " WHERE id = :id")
-    SubCategoryEntity findById(long id);
+    @NonNull
+    Optional<SubCategoryEntity> findById(long id);
 
     @Query("SELECT * FROM " + SubCategoryEntity.TABLE_NAME + " WHERE name = :name")
-    SubCategoryEntity findByName(String name);
+    @NonNull
+    Optional<SubCategoryEntity> findByName(@NonNull String name);
 
     @Insert
     long[] insert(SubCategoryEntity... subCategories);

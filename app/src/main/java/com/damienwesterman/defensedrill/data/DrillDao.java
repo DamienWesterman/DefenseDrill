@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.data;
 
+import androidx.annotation.NonNull;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -35,11 +36,13 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
+import java.util.Optional;
 
 @Dao
 /* package-private */ interface DrillDao {
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " ORDER BY name")
+    @NonNull
     List<Drill> getAllDrills();
 
     @Transaction
@@ -49,6 +52,7 @@ import java.util.List;
             "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillcatJoin.category_id = cat.id " +
             "WHERE cat.id = :categoryId ORDER BY drill.name"
     )
+    @NonNull
     List<Drill> findAllDrillsByCategory(long categoryId);
 
     @Transaction
@@ -58,7 +62,8 @@ import java.util.List;
                     "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillcatJoin.category_id = cat.id " +
                     "WHERE cat.id IN (:categoryIds) ORDER BY drill.name"
     )
-    List<Drill> findAllDrillsByCategory(List<Long> categoryIds);
+    @NonNull
+    List<Drill> findAllDrillsByCategory(@NonNull List<Long> categoryIds);
 
     @Transaction
     @Query(
@@ -67,6 +72,7 @@ import java.util.List;
             "JOIN " + SubCategoryEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_category_id = sub.id " +
             "WHERE sub.id = :subCategoryId ORDER BY drill.name"
     )
+    @NonNull
     List<Drill> findAllDrillsBySubCategory(long subCategoryId);
 
     @Transaction
@@ -76,7 +82,8 @@ import java.util.List;
                     "JOIN " + SubCategoryEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_category_id = sub.id " +
                     "WHERE sub.id IN (:subCategoryIds) ORDER BY drill.name"
     )
-    List<Drill> findAllDrillsBySubCategory(List<Long> subCategoryIds);
+    @NonNull
+    List<Drill> findAllDrillsBySubCategory(@NonNull List<Long> subCategoryIds);
 
     @Transaction
     @Query(
@@ -87,6 +94,7 @@ import java.util.List;
             "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillCatJoin.category_id = cat.id " +
             "WHERE cat.id = :categoryId AND sub.id = :subCategoryId ORDER BY drill.name"
     )
+    @NonNull
     List<Drill> findAllDrillsByCategoryAndSubCategory(long categoryId, long subCategoryId);
 
     @Transaction
@@ -98,32 +106,40 @@ import java.util.List;
                     "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillCatJoin.category_id = cat.id " +
                     "WHERE cat.id IN (:categoryIds) AND sub.id IN (:subCategoryIds) ORDER BY drill.name"
     )
-    List<Drill> findAllDrillsByCategoryAndSubCategory(List<Long> categoryIds, List<Long> subCategoryIds);
+    @NonNull
+    List<Drill> findAllDrillsByCategoryAndSubCategory(@NonNull List<Long> categoryIds, @NonNull List<Long> subCategoryIds);
 
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE id = :id")
-    Drill findDrillById(long id);
+    @NonNull
+    Optional<Drill> findDrillById(long id);
 
     @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE name = :name")
-    Drill findDrillByName(String name);
+    @NonNull
+    Optional<Drill> findDrillByName(@NonNull String name);
 
     @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME)
+    @NonNull
     List<DrillCategoryJoinEntity> getAllCategoryJoin();
 
     @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
     List<DrillCategoryJoinEntity> findAllCategoryJoinByDrillId(long drillId);
 
     @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME + " WHERE category_id = :categoryId")
+    @NonNull
     List<DrillCategoryJoinEntity> findAllCategoryJoinByCategoryId(long categoryId);
 
     @Query("SELECT * FROM " + DrillSubCategoryJoinEntity.TABLE_NAME)
+    @NonNull
     List<DrillSubCategoryJoinEntity> getAllSubCategoryJoin();
 
     @Query("SELECT * FROM " + DrillSubCategoryJoinEntity.TABLE_NAME + " WHERE drill_id = :drillId")
+    @NonNull
     List<DrillSubCategoryJoinEntity> findAllSubCategoryJoinByDrillId(long drillId);
 
     @Query("SELECT * FROM " + DrillSubCategoryJoinEntity.TABLE_NAME + " WHERE sub_category_id = :subCategoryId")
+    @NonNull
     List<DrillSubCategoryJoinEntity> findAllSubCategoryJoinByCategoryId(long subCategoryId);
 
     // Allow DrillEntity inserts to throw if there is an issue. Join tables should just replace for

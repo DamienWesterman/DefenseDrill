@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.data;
 
+import androidx.annotation.NonNull;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -33,17 +34,21 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import java.util.List;
+import java.util.Optional;
 
 @Dao
 /* package-private */ interface CategoryDao {
     @Query("SELECT * FROM " + CategoryEntity.TABLE_NAME + " ORDER BY name")
+    @NonNull
     List<CategoryEntity> getAll();
 
     @Query("SELECT * FROM " + CategoryEntity.TABLE_NAME + " WHERE id = :id")
-    CategoryEntity findById(long id);
+    @NonNull
+    Optional<CategoryEntity> findById(long id);
 
     @Query("SELECT * FROM " + CategoryEntity.TABLE_NAME + " WHERE name = :name")
-    CategoryEntity findByName(String name);
+    @NonNull
+    Optional<CategoryEntity> findByName(@NonNull String name);
 
     @Insert
     long[] insert(CategoryEntity... categories);

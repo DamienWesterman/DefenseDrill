@@ -122,6 +122,7 @@ public class HomeActivity extends AppCompatActivity {
     // Private Helper Methods
     // =============================================================================================
     // TODO Take out once the server is ready
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void mockDatabaseEntries() {
         DrillRepository repo = DrillRepository.getInstance(this.getApplicationContext());
 
@@ -136,10 +137,10 @@ public class HomeActivity extends AppCompatActivity {
         CategoryEntity jiuJitsuCategory = new CategoryEntity("Jiu-Jitsu", "Ground based grapples.");
         CategoryEntity weaponsDefenseCategory = new CategoryEntity("Weapons Defense", "How to deal with an attacker with a weapon.");
         repo.insertCategories(kickBoxingCategory, kravMagaCategory, jiuJitsuCategory, weaponsDefenseCategory);
-        kickBoxingCategory = repo.getCategory(kickBoxingCategory.getName());
-        kravMagaCategory = repo.getCategory(kravMagaCategory.getName());
-        jiuJitsuCategory = repo.getCategory(jiuJitsuCategory.getName());
-        weaponsDefenseCategory = repo.getCategory(weaponsDefenseCategory.getName());
+        kickBoxingCategory = repo.getCategory(kickBoxingCategory.getName()).get();
+        kravMagaCategory = repo.getCategory(kravMagaCategory.getName()).get();
+        jiuJitsuCategory = repo.getCategory(jiuJitsuCategory.getName()).get();
+        weaponsDefenseCategory = repo.getCategory(weaponsDefenseCategory.getName()).get();
 
         // Set up subCategories
         SubCategoryEntity strikesSubCategory = new SubCategoryEntity("Strikes", "Using your upper body to strike your opponent.");
@@ -148,11 +149,11 @@ public class HomeActivity extends AppCompatActivity {
         SubCategoryEntity gunDefenseSubCategory = new SubCategoryEntity("Gun Defense", "Dealing with an attacker who has a gun.");
         SubCategoryEntity knifeDefenseSubCategory = new SubCategoryEntity("Knife Defense", "Dealing with an attacker who has a knife");
         repo.insertSubCategories(strikesSubCategory, kicksSubCategory, escapesSubCategory, gunDefenseSubCategory, knifeDefenseSubCategory);
-        strikesSubCategory = repo.getSubCategory(strikesSubCategory.getName());
-        kicksSubCategory = repo.getSubCategory(kicksSubCategory.getName());
-        escapesSubCategory = repo.getSubCategory(escapesSubCategory.getName());
-        gunDefenseSubCategory = repo.getSubCategory(gunDefenseSubCategory.getName());
-        knifeDefenseSubCategory = repo.getSubCategory(knifeDefenseSubCategory.getName());
+        strikesSubCategory = repo.getSubCategory(strikesSubCategory.getName()).get();
+        kicksSubCategory = repo.getSubCategory(kicksSubCategory.getName()).get();
+        escapesSubCategory = repo.getSubCategory(escapesSubCategory.getName()).get();
+        gunDefenseSubCategory = repo.getSubCategory(gunDefenseSubCategory.getName()).get();
+        knifeDefenseSubCategory = repo.getSubCategory(knifeDefenseSubCategory.getName()).get();
 
         // Set up some drills
         Drill jab = new Drill("Jab", System.currentTimeMillis(), false, Drill.LOW_CONFIDENCE, "",
