@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.damienwesterman.defensedrill"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -70,5 +70,4 @@ dependencies {
     // Lombok
     implementation "org.projectlombok:lombok:1.18.36"
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
-
 }

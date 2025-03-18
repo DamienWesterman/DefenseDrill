@@ -51,6 +51,7 @@ import java.util.ArrayList;
  * INTENTS: None expected.
  */
 public class HomeActivity extends AppCompatActivity {
+    // TODO: FIXME: START HERE: Prompt the user for the server endpoint and store it
     private View rootView;
 
     // =============================================================================================
