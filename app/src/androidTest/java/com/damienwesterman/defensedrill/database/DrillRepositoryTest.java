@@ -13,8 +13,6 @@ package com.damienwesterman.defensedrill.database;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -42,6 +40,7 @@ import java.util.stream.Collectors;
  * Tests the {@link DrillRepository} database access class.
  */
 @RunWith(AndroidJUnit4.class)
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class DrillRepositoryTest {
     static final Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
     static final DrillRepository repo = DrillRepository.getInstance(appContext);
@@ -117,9 +116,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsByCategoryId_noMatchingDrills() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         drill1.getCategories().add(category1);
         drill2.getCategories().add(category2);
@@ -131,9 +130,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsByCategoryId_oneMatchingDrills() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         drill1.getCategories().add(category1);
         drill2.getCategories().add(category2);
@@ -146,9 +145,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsByCategoryId_multipleMatchingDrills() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         drill1.getCategories().add(category1);
         drill2.getCategories().add(category1);
@@ -161,8 +160,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsByCategoryId_nonExistentCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
         drill2.getCategories().add(category2);
@@ -175,8 +174,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsByCategoryId_invalidCategoryId() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
         drill2.getCategories().add(category2);
@@ -189,9 +188,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsBySubCategoryId_noMatchingDrills() {
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill2.getSubCategories().add(subCategory2);
@@ -203,9 +202,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsBySubCategoryId_oneMatchingDrills() {
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill2.getSubCategories().add(subCategory2);
@@ -218,9 +217,9 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsBySubCategoryId_multipleMatchingDrills() {
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill2.getSubCategories().add(subCategory1);
@@ -233,8 +232,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsBySubCategoryId_nonExistentSubCategory() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill2.getSubCategories().add(subCategory2);
@@ -247,8 +246,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrillsBySubCategoryId_invalidCategoryId() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill2.getSubCategories().add(subCategory2);
@@ -261,14 +260,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_noMatchingDrillForCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addSubCategory(subCategory1);
         drill2.addSubCategory(subCategory2);
@@ -281,14 +280,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_noMatchingDrillForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill2.addCategory(category2);
@@ -301,14 +300,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_noMatchingDrillForCategoryORSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         repo.insertDrills(drill1, drill2, drill3);
 
@@ -318,14 +317,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryOneDifferentDrillForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill2.addSubCategory(subCategory1);
@@ -337,14 +336,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_MultipleMatchingDrillsForCategoryOneDifferentDrillForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill2.addSubCategory(subCategory1);
@@ -357,14 +356,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryMultipleDifferentDrillsForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill2.addSubCategory(subCategory1);
@@ -379,14 +378,14 @@ public class DrillRepositoryTest {
         Drill drill4 = new Drill("drill four", 4, false, Drill.HIGH_CONFIDENCE, "notes four", 4,
                 new ArrayList<>(), new ArrayList<>());
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill2.addSubCategory(subCategory1);
@@ -400,14 +399,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryOneForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -423,14 +422,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_oneMatchingDrillForCategoryMultipleForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -446,14 +445,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_MultipleMatchingDrillsForCategoryOneForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -469,14 +468,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_multipleMatchingDrillsForCategoryMultipleForSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -492,13 +491,13 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_noDrillsForNonExistentCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -514,13 +513,13 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_noDrillsForNonExistentSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -536,12 +535,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_noDrillsForNonExistentCategoryANDnonExistentSubCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -557,12 +556,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_invalidCategoryNoMatchingDrillForSubCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category2);
         drill1.addSubCategory(subCategory2);
@@ -574,12 +573,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_invalidCategoryYesMatchingDrillForSubCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -591,12 +590,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_NoMatchingDrillForCategoryInvalidSubCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category2);
         drill1.addSubCategory(subCategory2);
@@ -608,12 +607,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_YesMatchingDrillForCategoryInvalidSubCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -625,12 +624,12 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllDrills_categoryANDsubCategoryParameters_invalidCategoryInvalidSubCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -646,31 +645,26 @@ public class DrillRepositoryTest {
     @Test
     public void test_getDrill_idParameter_noExistingDrill() {
         repo.insertDrills(drill1);
-        assertNull(repo.getDrill(repo.getDrill(drill1.getName()).getId() + 1));
+        assertFalse(repo.getDrill(repo.getDrill(drill1.getName()).get().getId() + 1).isPresent());
     }
 
     @Test
     public void test_getDrill_idParameter_yesExistingDrill() {
         repo.insertDrills(drill1);
         Drill returnedDrill = repo.getAllDrills().get(0); // should not throw
-        assertNotNull(repo.getDrill(returnedDrill.getId()));
+        assertTrue(repo.getDrill(returnedDrill.getId()).isPresent());
     }
 
     @Test
     public void test_getDrill_stringParameter_noExistingDrill() {
         repo.insertDrills(drill1);
-        assertNull(repo.getDrill(drill2.getName()));
+        assertFalse(repo.getDrill(drill2.getName()).isPresent());
     }
 
     @Test
     public void test_getDrill_stringParameter_yesExistingDrill() {
         repo.insertDrills(drill1);
-        assertNotNull(repo.getDrill(drill1.getName()));
-    }
-
-    @Test
-    public void test_getDrill_stringParameter_nullDrillArgument() {
-        assertNull(repo.getDrill(null)); // Also making sure this does not throw
+        assertTrue(repo.getDrill(drill1.getName()).isPresent());
     }
 
     @Test
@@ -692,29 +686,29 @@ public class DrillRepositoryTest {
     @Test
     public void test_insertDrills_insertWithCategories() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
         drill1.getCategories().add(category2);
 
         assertTrue(repo.insertDrills(drill1));
 
-        assertEquals(2, repo.getDrill(drill1.getName()).getCategories().size());
+        assertEquals(2, repo.getDrill(drill1.getName()).get().getCategories().size());
     }
 
     @Test
     public void test_insertDrills_insertWithSubCategories() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill1.getSubCategories().add(subCategory2);
 
         assertTrue(repo.insertDrills(drill1));
 
-        assertEquals(2, repo.getDrill(drill1.getName()).getSubCategories().size());
+        assertEquals(2, repo.getDrill(drill1.getName()).get().getSubCategories().size());
     }
 
     @Test
@@ -726,16 +720,10 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_insertDrills_throwsWhenGivenNullName() {
-        drill1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertDrills(drill1));
-    }
-
-    @Test
     public void test_insertDrills_throwsWhenGivenNonExistentCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
         drill1.getCategories().add(category2);
@@ -747,8 +735,8 @@ public class DrillRepositoryTest {
     @Test
     public void test_insertDrills_throwsWhenGivenNonExistentSubCategory() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill1.getSubCategories().add(subCategory2);
@@ -786,114 +774,114 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_updateOneDrill() {
         repo.insertDrills(drill1);
-        drill1 = repo.getDrill(drill1.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
         String newName = "new name";
         drill1.setName(newName);
         assertTrue(repo.updateDrills(drill1));
 
-        assertEquals(0, newName.compareTo(repo.getDrill(drill1.getId()).getName()));
+        assertEquals(0, newName.compareTo(repo.getDrill(drill1.getId()).get().getName()));
     }
 
     @Test
     public void test_updateDrills_updateMultipleDrills() {
         repo.insertDrills(drill1, drill2);
-        drill1 = repo.getDrill(drill1.getName());
-        drill2 = repo.getDrill(drill2.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
+        drill2 = repo.getDrill(drill2.getName()).get();
         String newName1 = "new name";
         String newName2 = "new name two";
         drill1.setName(newName1);
         drill2.setName(newName2);
         assertTrue(repo.updateDrills(drill1, drill2));
 
-        assertEquals(0, newName1.compareTo(repo.getDrill(drill1.getId()).getName()));
-        assertEquals(0, newName2.compareTo(repo.getDrill(drill2.getId()).getName()));
+        assertEquals(0, newName1.compareTo(repo.getDrill(drill1.getId()).get().getName()));
+        assertEquals(0, newName2.compareTo(repo.getDrill(drill2.getId()).get().getName()));
     }
 
     @Test
     public void test_updateDrills_addCategories() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
 
         repo.insertDrills(drill1);
 
-        Drill insertedDrill = repo.getDrill(drill1.getName());
+        Drill insertedDrill = repo.getDrill(drill1.getName()).get();
 
         assertEquals(1, insertedDrill.getCategories().size());
 
         insertedDrill.getCategories().add(category2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(2, repo.getDrill(insertedDrill.getId()).getCategories().size());
+        assertEquals(2, repo.getDrill(insertedDrill.getId()).get().getCategories().size());
     }
 
     @Test
     public void test_updateDrills_removeCategories() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
         drill1.getCategories().add(category2);
 
         repo.insertDrills(drill1);
 
-        Drill insertedDrill = repo.getDrill(drill1.getName());
+        Drill insertedDrill = repo.getDrill(drill1.getName()).get();
 
         assertEquals(2, insertedDrill.getCategories().size());
 
         insertedDrill.removeCategory(category2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(1, repo.getDrill(insertedDrill.getId()).getCategories().size());
+        assertEquals(1, repo.getDrill(insertedDrill.getId()).get().getCategories().size());
     }
 
     @Test
     public void test_updateDrills_addSubCategories() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
 
         repo.insertDrills(drill1);
-        Drill insertedDrill = repo.getDrill(drill1.getName());
+        Drill insertedDrill = repo.getDrill(drill1.getName()).get();
 
         assertEquals(1, insertedDrill.getSubCategories().size());
 
         insertedDrill.getSubCategories().add(subCategory2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(2, repo.getDrill(insertedDrill.getId()).getSubCategories().size());
+        assertEquals(2, repo.getDrill(insertedDrill.getId()).get().getSubCategories().size());
     }
 
     @Test
     public void test_updateDrills_removeSubCategories() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill1.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1);
-        Drill insertedDrill = repo.getDrill(drill1.getName());
+        Drill insertedDrill = repo.getDrill(drill1.getName()).get();
 
         assertEquals(2, insertedDrill.getSubCategories().size());
 
         insertedDrill.removeSubCategory(subCategory2);
         assertTrue(repo.updateDrills(insertedDrill));
 
-        assertEquals(1, repo.getDrill(insertedDrill.getId()).getSubCategories().size());
+        assertEquals(1, repo.getDrill(insertedDrill.getId()).get().getSubCategories().size());
     }
 
     @Test
     public void test_updateDrills_throwsWhenViolateUniqueKey() {
         repo.insertDrills(drill1, drill2);
-        drill1 = repo.getDrill(drill1.getName());
-        drill2 = repo.getDrill(drill2.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
+        drill2 = repo.getDrill(drill2.getName()).get();
         String sameName = "same name";
         drill1.setName(sameName);
         drill2.setName(sameName);
@@ -901,25 +889,17 @@ public class DrillRepositoryTest {
     }
 
     @Test
-    public void test_updateDrills_throwsWhenGivenNullName() {
-        repo.insertDrills(drill1);
-        drill1 = repo.getDrill(drill1.getName());
-        drill1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateDrills(drill1));
-    }
-
-    @Test
     public void test_updateDrills_throwsWhenGivenNonExistentCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         drill1.getCategories().add(category1);
         drill1.getCategories().add(category2);
 
         repo.insertDrills(drill1);
 
-        Drill insertedDrill = repo.getDrill(drill1.getName());
+        Drill insertedDrill = repo.getDrill(drill1.getName()).get();
         insertedDrill.getCategories().add(category3);
 
         assertThrows(SQLiteConstraintException.class, () -> repo.updateDrills(insertedDrill));
@@ -928,15 +908,15 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_throwsWhenGivenNonExistentSubCategory() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
 
         drill1.getSubCategories().add(subCategory1);
         drill1.getSubCategories().add(subCategory2);
 
         repo.insertDrills(drill1);
 
-        Drill insertedDrill = repo.getDrill(drill1.getName());
+        Drill insertedDrill = repo.getDrill(drill1.getName()).get();
         insertedDrill.getSubCategories().add(subCategory3);
 
         assertThrows(SQLiteConstraintException.class, () -> repo.updateDrills(insertedDrill));
@@ -963,7 +943,7 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_nullCategoryTreatedAsEmptyArray() {
         repo.insertDrills(drill1);
-        drill1 = repo.getDrill(drill1.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
         drill1.setCategories(null);
         assertTrue(repo.updateDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
@@ -972,7 +952,7 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateDrills_nullSubCategoryTreatedAsEmptyArray() {
         repo.insertDrills(drill1);
-        drill1 = repo.getDrill(drill1.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
         drill1.setSubCategories(null);
         assertTrue(repo.updateDrills(drill1)); // Making sure this does not throw
         assertEquals(1, repo.getAllDrills().size());
@@ -982,7 +962,7 @@ public class DrillRepositoryTest {
     @Test
     public void test_deleteDrills_deleteExistingDrill() {
         repo.insertDrills(drill1, drill2);
-        drill1 = repo.getDrill(drill1.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
         repo.deleteDrills(drill1);
         assertEquals(1, repo.getAllDrills().size());
     }
@@ -1041,31 +1021,26 @@ public class DrillRepositoryTest {
     @Test
     public void test_getCategory_idParameter_noExistingCategory() {
         repo.insertCategories(category1);
-        assertNull(repo.getCategory(repo.getCategory(category1.getName()).getId() + 1));
+        assertFalse(repo.getCategory(repo.getCategory(category1.getName()).get().getId() + 1).isPresent());
     }
 
     @Test
     public void test_getCategory_idParameter_yesExistingCategory() {
         repo.insertCategories(category1);
         CategoryEntity returnedCategory = repo.getAllCategories().get(0); // should not throw
-        assertNotNull(repo.getCategory(returnedCategory.getId()));
+        assertTrue(repo.getCategory(returnedCategory.getId()).isPresent());
     }
 
     @Test
     public void test_getCategory_stringParameter_noExistingCategory() {
         repo.insertCategories(category1);
-        assertNull(repo.getCategory(category2.getName()));
+        assertFalse(repo.getCategory(category2.getName()).isPresent());
     }
 
     @Test
     public void test_getCategory_stringParameter_yesExistingCategory() {
         repo.insertCategories(category1);
-        assertNotNull(repo.getCategory(category1.getName()));
-    }
-
-    @Test
-    public void test_getCategory_stringParameter_nullArgument() {
-        assertNull(repo.getCategory(null));
+        assertTrue(repo.getCategory(category1.getName()).isPresent());
     }
 
     @Test
@@ -1074,12 +1049,6 @@ public class DrillRepositoryTest {
         category1.setName(sameName);
         category2.setName(sameName);
         assertThrows(SQLiteConstraintException.class, () -> repo.insertCategories(category1, category2));
-    }
-
-    @Test
-    public void test_insertCategory_throwsWhenGivenNullName() {
-        category1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertCategories(category1));
     }
 
     @Test
@@ -1097,46 +1066,38 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateCategory_updateOneCategory() {
         repo.insertCategories(category1);
-        category1 = repo.getCategory(category1.getName());
+        category1 = repo.getCategory(category1.getName()).get();
         String newName = "new name";
         category1.setName(newName);
         assertTrue(repo.updateCategories(category1));
 
-        assertEquals(0, newName.compareTo(repo.getCategory(category1.getId()).getName()));
+        assertEquals(0, newName.compareTo(repo.getCategory(category1.getId()).get().getName()));
     }
 
     @Test
     public void test_updateCategory_updateMultipleCategories() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
         String newName1 = "new name 1";
         String newName2 = "new name 2";
         category1.setName(newName1);
         category2.setName(newName2);
         assertTrue(repo.updateCategories(category1, category2));
 
-        assertEquals(0, newName1.compareTo(repo.getCategory(category1.getId()).getName()));
-        assertEquals(0, newName2.compareTo(repo.getCategory(category2.getId()).getName()));
+        assertEquals(0, newName1.compareTo(repo.getCategory(category1.getId()).get().getName()));
+        assertEquals(0, newName2.compareTo(repo.getCategory(category2.getId()).get().getName()));
     }
 
     @Test
     public void test_updateCategory_throwsWhenViolateUniqueKey() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
         String sameName = "same name";
         category1.setName(sameName);
         category2.setName(sameName);
         assertThrows(SQLiteConstraintException.class, () -> repo.updateCategories(category1, category2));
-    }
-
-    @Test
-    public void test_updateCategory_throwsWhenGivenNullName() {
-        repo.insertCategories(category1);
-        category1 = repo.getCategory(category1.getName());
-        category1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateCategories(category1));
     }
 
     @Test
@@ -1160,7 +1121,7 @@ public class DrillRepositoryTest {
     @Test
     public void test_deleteCategories_deleteExistingCategory() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
+        category1 = repo.getCategory(category1.getName()).get();
         repo.deleteCategories(category1);
         assertEquals(1, repo.getAllCategories().size());
     }
@@ -1189,14 +1150,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_deleteCategories_removesFromDrills() {
         repo.insertCategories(category1, category2);
-        category1 = repo.getCategory(category1.getName());
+        category1 = repo.getCategory(category1.getName()).get();
         drill1.addCategory(category1);
         repo.insertDrills(drill1);
-        drill1 = repo.getDrill(drill1.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
 
         assertEquals(1, drill1.getCategories().size());
         repo.deleteCategories(category1);
-        drill1 = repo.getDrill(drill1.getId());
+        drill1 = repo.getDrill(drill1.getId()).get();
 
         assertEquals(0, drill1.getCategories().size());
     }
@@ -1234,14 +1195,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllSubCategories_categoryParameter_noMatchingSubCategories() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -1256,14 +1217,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllSubCategories_categoryParameter_oneMatchingSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -1278,14 +1239,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllSubCategories_categoryParameter_multipleMatchingSubCategories() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -1300,14 +1261,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllSubCategories_categoryParameter_multipleDrillsSameSubCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
-        category3 = repo.getCategory(category3.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
+        category3 = repo.getCategory(category3.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -1322,13 +1283,13 @@ public class DrillRepositoryTest {
     @Test
     public void test_getAllSubCategories_categoryParameter_nonExistentCategory() {
         repo.insertCategories(category1, category2, category3);
-        category1 = repo.getCategory(category1.getName());
-        category2 = repo.getCategory(category2.getName());
+        category1 = repo.getCategory(category1.getName()).get();
+        category2 = repo.getCategory(category2.getName()).get();
 
         repo.insertSubCategories(subCategory1, subCategory2, subCategory3);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
-        subCategory3 = repo.getSubCategory(subCategory3.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
+        subCategory3 = repo.getSubCategory(subCategory3.getName()).get();
 
         drill1.addCategory(category1);
         drill1.addSubCategory(subCategory1);
@@ -1348,31 +1309,26 @@ public class DrillRepositoryTest {
     @Test
     public void test_getSubCategory_idParameter_noExistingSubCategory() {
         repo.insertSubCategories(subCategory1);
-        assertNull(repo.getSubCategory(repo.getSubCategory(subCategory1.getName()).getId() + 1));
+        assertFalse(repo.getSubCategory(repo.getSubCategory(subCategory1.getName()).get().getId() + 1).isPresent());
     }
 
     @Test
     public void test_getSubCategory_idParameter_yesExistingSubCategory() {
         repo.insertSubCategories(subCategory1);
         SubCategoryEntity returnedSubCategory = repo.getAllSubCategories().get(0); // should not throw
-        assertNotNull(repo.getSubCategory(returnedSubCategory.getId()));
+        assertTrue(repo.getSubCategory(returnedSubCategory.getId()).isPresent());
     }
 
     @Test
     public void test_getSubCategory_stringParameter_noExistingSubCategory() {
         repo.insertSubCategories(subCategory1);
-        assertNull(repo.getSubCategory(subCategory2.getName()));
+        assertFalse(repo.getSubCategory(subCategory2.getName()).isPresent());
     }
 
     @Test
     public void test_getSubCategory_stringParameter_yesExistingSubCategory() {
         repo.insertSubCategories(subCategory1);
-        assertNotNull(repo.getSubCategory(subCategory1.getName()));
-    }
-
-    @Test
-    public void test_getSubCategory_stringParameter_nullArgument() {
-        assertNull(repo.getSubCategory(null));
+        assertTrue(repo.getSubCategory(subCategory1.getName()).isPresent());
     }
 
     @Test
@@ -1381,12 +1337,6 @@ public class DrillRepositoryTest {
         subCategory1.setName(sameName);
         subCategory2.setName(sameName);
         assertThrows(SQLiteConstraintException.class, () -> repo.insertSubCategories(subCategory1, subCategory2));
-    }
-
-    @Test
-    public void test_insertSubCategory_throwsWhenGivenNullName() {
-        subCategory1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.insertSubCategories(subCategory1));
     }
 
     @Test
@@ -1404,46 +1354,38 @@ public class DrillRepositoryTest {
     @Test
     public void test_updateSubCategory_updateOneSubCategory() {
         repo.insertSubCategories(subCategory1);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
         String newName = "new name";
         subCategory1.setName(newName);
         assertTrue(repo.updateSubCategories(subCategory1));
 
-        assertEquals(0, newName.compareTo(repo.getSubCategory(subCategory1.getId()).getName()));
+        assertEquals(0, newName.compareTo(repo.getSubCategory(subCategory1.getId()).get().getName()));
     }
 
     @Test
     public void test_updateSubCategory_updateMultipleSubCategories() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
         String newName1 = "new name 1";
         String newName2 = "new name 2";
         subCategory1.setName(newName1);
         subCategory2.setName(newName2);
         assertTrue(repo.updateSubCategories(subCategory1, subCategory2));
 
-        assertEquals(0, newName1.compareTo(repo.getSubCategory(subCategory1.getId()).getName()));
-        assertEquals(0, newName2.compareTo(repo.getSubCategory(subCategory2.getId()).getName()));
+        assertEquals(0, newName1.compareTo(repo.getSubCategory(subCategory1.getId()).get().getName()));
+        assertEquals(0, newName2.compareTo(repo.getSubCategory(subCategory2.getId()).get().getName()));
     }
 
     @Test
     public void test_updateSubCategory_throwsWhenViolateUniqueKey() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory2 = repo.getSubCategory(subCategory2.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
+        subCategory2 = repo.getSubCategory(subCategory2.getName()).get();
         String sameName = "same name";
         subCategory1.setName(sameName);
         subCategory2.setName(sameName);
         assertThrows(SQLiteConstraintException.class, () -> repo.updateSubCategories(subCategory1, subCategory2));
-    }
-
-    @Test
-    public void test_updateSubCategory_throwsWhenGivenNullName() {
-        repo.insertSubCategories(subCategory1);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
-        subCategory1.setName(null);
-        assertThrows(SQLiteConstraintException.class, () -> repo.updateSubCategories(subCategory1));
     }
 
     @Test
@@ -1467,7 +1409,7 @@ public class DrillRepositoryTest {
     @Test
     public void test_deleteSubCategories_deleteExistingSubCategory() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
         repo.deleteSubCategories(subCategory1);
         assertEquals(1, repo.getAllSubCategories().size());
     }
@@ -1496,14 +1438,14 @@ public class DrillRepositoryTest {
     @Test
     public void test_deleteSubCategories_removesFromDrills() {
         repo.insertSubCategories(subCategory1, subCategory2);
-        subCategory1 = repo.getSubCategory(subCategory1.getName());
+        subCategory1 = repo.getSubCategory(subCategory1.getName()).get();
         drill1.addSubCategory(subCategory1);
         repo.insertDrills(drill1);
-        drill1 = repo.getDrill(drill1.getName());
+        drill1 = repo.getDrill(drill1.getName()).get();
 
         assertEquals(1, drill1.getSubCategories().size());
         repo.deleteSubCategories(subCategory1);
-        drill1 = repo.getDrill(drill1.getId());
+        drill1 = repo.getDrill(drill1.getId()).get();
 
         assertEquals(0, drill1.getSubCategories().size());
     }

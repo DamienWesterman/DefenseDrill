@@ -80,7 +80,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param drillId ID of the drill.
      */
     public void populateDrill(long drillId) {
-        executor.execute(() -> currentDrill.postValue(repo.getDrill(drillId)));
+        executor.execute(() -> currentDrill.postValue(repo.getDrill(drillId).orElse(null)));
     }
 
     /**
