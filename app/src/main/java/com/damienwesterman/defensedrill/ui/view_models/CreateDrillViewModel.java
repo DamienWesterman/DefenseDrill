@@ -33,10 +33,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.HashSet;

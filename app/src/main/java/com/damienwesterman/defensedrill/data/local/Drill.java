@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
 import androidx.room.Embedded;
 import androidx.room.Ignore;

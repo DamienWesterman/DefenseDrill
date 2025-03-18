@@ -45,7 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.Utils;

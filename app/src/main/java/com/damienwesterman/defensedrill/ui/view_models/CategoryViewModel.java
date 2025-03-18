@@ -34,9 +34,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.ArrayList;

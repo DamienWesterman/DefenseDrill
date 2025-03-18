@@ -34,10 +34,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 
 import java.util.List;
 import java.util.Set;

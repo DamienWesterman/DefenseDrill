@@ -42,9 +42,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.ui.view_models.CreateDrillViewModel;
