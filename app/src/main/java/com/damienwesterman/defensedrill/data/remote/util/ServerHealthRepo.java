@@ -24,13 +24,12 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.authentication;
+package com.damienwesterman.defensedrill.data.remote.util;
 
 /**
- * TODO: Doc comments
+ * Provides methods to test the health of a spring server.
  */
-public class AuthRepo {
-    // TODO: Learn https://square.github.io/retrofit/
+public class ServerHealthRepo {
     // TODO: FINISH ME
     // TODO: Make singleton
 }

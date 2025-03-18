@@ -30,4 +30,6 @@ package com.damienwesterman.defensedrill.data.remote.api;
  * TODO: Doc comments
  */
 public class ApiRepo {
+    // TODO: FINISH ME
+    // TODO: Make singleton
 }

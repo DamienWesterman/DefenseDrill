@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,8 +52,7 @@ import java.util.ArrayList;
  * INTENTS: None expected.
  */
 public class HomeActivity extends AppCompatActivity {
-    // TODO: FIXME: START HERE: Prompt the user for the server endpoint and store it
-    private View rootView;
+    private LinearLayout rootView;
 
     // =============================================================================================
     // Activity Methods
@@ -92,6 +92,8 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
             intent.putExtra(Constants.INTENT_VIEW_SUB_CATEGORIES, "");
             startActivity(intent);
+        } else if (R.id.networkSetup == cardId) {
+            Utils.displayServerSelectPopup(this, this, null);
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement feedback
             Utils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");

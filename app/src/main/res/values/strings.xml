@@ -59,6 +59,14 @@
     <string name="enter_description">Enter description…</string>
     <string name="description_label">Description:</string>
     <string name="sort">Sort</string>
+    <string name="network_setup_description">Setup connection to the DefenseDrill online Drill Database by specifying the connection details and logging in.</string>
+    <string name="network_setup_title">Setup Online Connection</string>
+    <string name="usernameLabel">Username</string>
+    <string name="enter_username">Enter username…</string>
+    <string name="password_label">Password:</string>
+    <string name="enter_password">Enter password…</string>
+    <string name="server_url_label">DefenseDrill URL:</string>
+    <string name="url_example">ex: https://defensedrill.com</string>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>
