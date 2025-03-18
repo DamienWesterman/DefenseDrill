@@ -26,8 +26,15 @@
 
 package com.damienwesterman.defensedrill.data.remote.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * TODO: Doc comments
  */
+@Getter
+@AllArgsConstructor
 public class LoginDTO {
+    private final String username;
+    private final String password;
 }
