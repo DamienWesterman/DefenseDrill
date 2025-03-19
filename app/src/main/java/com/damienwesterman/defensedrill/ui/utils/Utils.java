@@ -93,21 +93,35 @@ public class Utils {
 
         AlertDialog alert = builder.create();
         alert.setOnShowListener(dialogInterface ->
-                alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
-                    // Disable user input and show spinner
-                    urlText.setEnabled(false);
-                    progressBar.setVisibility(View.VISIBLE);
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                // Disable user input and show spinner
+                urlText.setEnabled(false);
+                progressBar.setVisibility(View.VISIBLE);
 
-                    String enteredUrl = urlText.getText().toString();
-                    // TODO: Actually use this
-                    new Thread(() -> ServerHealthRepo.isServerHealthy(enteredUrl)).start(); ;
+                String enteredUrl = urlText.getText().toString();
+                ServerHealthRepo.isServerHealthy(enteredUrl, new OperationCompleteCallback() {
+                    @Override
+                    public void onSuccess() {
+                        SharedPrefs.getInstance(context).setServerUrl(enteredUrl);
+                        if (null != callback) {
+                            callback.onSuccess();
+                        }
+                        alert.dismiss();
+                    }
 
-                    // TODO: Try connecting and testing the field by trying to connect to actuator/up
-                    // TODO: if it returns 200 then close dialog if callback is null, otherwise call success
-                    // TODO: if fails, offer user to try again and let them know server could be down,
+                    @Override
+                    public void onFailure(String error) {
+                        if (null != callback) {
+                            callback.onFailure(error);
+                        }
+                        alert.dismiss();
+                    }
+                });
+
+                // TODO: if it returns 200 then close dialog if callback is null, otherwise call success
+                // TODO: if fails, offer user to try again and let them know server could be down,
                     // otherwise close if callback is null or call on fail
-                    alert.dismiss();
-                })
+            })
         );
 
         alert.show();
@@ -125,6 +139,7 @@ public class Utils {
         builder.setPositiveButton("Do It.", (dialog, position) -> {
             // TODO: make input field inaccessible and show loading thing
             // TODO: Try to login
+            // TODO: If the call fails, ask the user if they want to launch displayServerSelectPopup()
             // TODO: if we get a 401 (..or does it return with a redirect? Test this), then tell the
                 // user that the credentials were invalid, ask them to try again (and re-enable
                 // input fields) or close (in which case if null close dialog otherwise call fail

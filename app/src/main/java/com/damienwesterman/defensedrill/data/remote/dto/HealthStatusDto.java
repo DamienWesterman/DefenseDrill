@@ -23,23 +23,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.damienwesterman.defensedrill.data.remote.dto;
 
-package com.damienwesterman.defensedrill.data.remote.util;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDto;
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-
-/**
- * Retrofit interface for spring server health API calls.
- */
-/* package-private */ interface ServerHealthDao {
-    /**
-     * Check the health status of the server.
-     *
-     * @return API return
-     */
-    @GET("actuator/health")
-    Call<HealthStatusDto> getServerStatus();
+@Getter
+@ToString
+@RequiredArgsConstructor
+public class HealthStatusDto {
+    private final String status;
 }

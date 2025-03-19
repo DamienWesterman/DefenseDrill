@@ -39,6 +39,7 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
 import com.damienwesterman.defensedrill.utils.Constants;
@@ -93,7 +94,18 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(Constants.INTENT_VIEW_SUB_CATEGORIES, "");
             startActivity(intent);
         } else if (R.id.networkSetup == cardId) {
-            Utils.displayServerSelectPopup(this, this, null);
+            Utils.displayServerSelectPopup(this, this,
+                    new OperationCompleteCallback() {
+                @Override
+                public void onSuccess() {
+                    Utils.displayDismissibleSnackbar(rootView, "Saved Server URL");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Utils.displayDismissibleSnackbar(rootView, error);
+                }
+            });
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement feedback
             Utils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
