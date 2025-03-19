@@ -44,7 +44,7 @@ import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
-import com.damienwesterman.defensedrill.ui.utils.Utils;
+import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
@@ -106,18 +106,18 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     // On Server Setup Success
-                    Utils.displayDismissibleSnackbar(rootView, "Saved Server URL");
+                    UiUtils.displayDismissibleSnackbar(rootView, "Saved Server URL");
                     CommonPopups.displayLoginPopup(context, activity, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             // On Login Success
-                            Utils.displayDismissibleSnackbar(rootView, "Login Successful!");
+                            UiUtils.displayDismissibleSnackbar(rootView, "Login Successful!");
                         }
 
                         @Override
                         public void onFailure(String error) {
                             // On Login Failure
-                            Utils.displayDismissibleSnackbar(rootView, error);
+                            UiUtils.displayDismissibleSnackbar(rootView, error);
                         }
                     });
                 }
@@ -125,14 +125,14 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(String error) {
                     // On Server Setup Failure
-                    Utils.displayDismissibleSnackbar(rootView, error);
+                    UiUtils.displayDismissibleSnackbar(rootView, error);
                 }
             });
         } else if (R.id.feedbackCard == cardId) {
             // TODO implement feedback
-            Utils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
+            UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
         } else {
-            Utils.displayDismissibleSnackbar(rootView, "Unknown option");
+            UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }
     }
 
@@ -148,7 +148,7 @@ public class HomeActivity extends AppCompatActivity {
                 "and replace them with some demo ones. Are you sure you want to do this?");
         builder.setPositiveButton("Do It.", (dialog, position) -> {
             new Thread(this::mockDatabaseEntries).start();
-            Utils.displayDismissibleSnackbar(rootView, "Added mocked database entries");
+            UiUtils.displayDismissibleSnackbar(rootView, "Added mocked database entries");
         });
         builder.setNegativeButton("Never-mind", null);
         builder.create().show();

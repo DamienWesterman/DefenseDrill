@@ -51,7 +51,7 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
-import com.damienwesterman.defensedrill.ui.utils.Utils;
+import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
@@ -161,7 +161,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     public void resetSkippedDrills(View view) {
         viewModel.resetSkippedDrills();
-        Utils.displayDismissibleSnackbar(rootView, "Skipped drills have been reset");
+        UiUtils.displayDismissibleSnackbar(rootView, "Skipped drills have been reset");
     }
 
     public void saveDrillInfo(View view) {
@@ -169,14 +169,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         viewModel.saveDrill(drill, new OperationCompleteCallback() { // this method handles null check
             @Override
             public void onSuccess() {
-                runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                         rootView, "Successfully saved changes!"
                 ));
             }
 
             @Override
             public void onFailure(String error) {
-                runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                         rootView, error
                 ));
             }
@@ -213,10 +213,10 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == categoryEntities) {
-            Utils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
         } else if (0 == categoryEntities.size()) {
-            Utils.displayDismissibleSnackbar(rootView, "No Categories in database");
+            UiUtils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
         Set<CategoryEntity> checkedCategoryEntities = new HashSet<>(drill.getCategories());
@@ -255,14 +255,14 @@ public class DrillInfoActivity extends AppCompatActivity {
                     viewModel.saveDrill(drill, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
-                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                            runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                                     rootView, "Successfully saved changes!"
                             ));
                         }
 
                         @Override
                         public void onFailure(String error) {
-                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                            runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                                     rootView, "Failed to update categories"
                             ));
                         }
@@ -300,10 +300,10 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill || null == subCategoryEntities) {
-            Utils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
         } else if (0 == subCategoryEntities.size()) {
-            Utils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
+            UiUtils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }
         Set<SubCategoryEntity> checkedSubCategoryEntities = new HashSet<>(drill.getSubCategories());
@@ -342,14 +342,14 @@ public class DrillInfoActivity extends AppCompatActivity {
                     viewModel.saveDrill(drill, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
-                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                            runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                                     rootView, "Successfully saved changes!"
                             ));
                         }
 
                         @Override
                         public void onFailure(String error) {
-                            runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                            runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                                     rootView, "Failed to update sub-categories"
                             ));
                         }
@@ -387,7 +387,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         Drill drill = collectDrillInfo();
 
         if (null == drill) {
-            Utils.displayDismissibleSnackbar(rootView, "Issue marking as practiced");
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue marking as practiced");
             return;
         }
 
@@ -406,14 +406,14 @@ public class DrillInfoActivity extends AppCompatActivity {
             viewModel.saveDrill(drill, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
-                    runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                    runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                             rootView, "Successfully saved changes!"
                     ));
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    runOnUiThread(() -> Utils.displayDismissibleSnackbar(
+                    runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                             rootView, error
                     ));
                 }
@@ -681,7 +681,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private @Nullable Drill collectDrillInfo() {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill) {
-            Utils.displayDismissibleSnackbar(rootView, "An error occurred");
+            UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
             return null;
         }
 
@@ -693,7 +693,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         // database layer
         final int NOTES_CHARACTER_LIMIT = 2048;
         if (NOTES_CHARACTER_LIMIT <= notesString.length()) {
-            Utils.displayDismissibleSnackbar(rootView, "Notes must be less than "
+            UiUtils.displayDismissibleSnackbar(rootView, "Notes must be less than "
                     + NOTES_CHARACTER_LIMIT + " characters");
             return null;
         }

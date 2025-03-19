@@ -26,33 +26,18 @@
 
 package com.damienwesterman.defensedrill.ui.utils;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-
-import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.local.SharedPrefs;
-import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
  * Static utilities for the UI layer.
  */
-public class Utils {
+public class UiUtils {
     /**
      * No need to have instances of this class.
      */
-    private Utils() { }
+    private UiUtils() { }
 
     /**
      * Create and display a snackbar. The snackbar will have a single "OK" button that dismisses the
