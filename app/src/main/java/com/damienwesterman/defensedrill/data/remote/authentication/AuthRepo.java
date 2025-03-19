@@ -59,8 +59,8 @@ public class AuthRepo {
                                     @NonNull LoginDTO login) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
-                .addConverterFactory(GsonConverterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
         AuthDao dao = retrofit.create(AuthDao.class);
 
@@ -91,10 +91,6 @@ public class AuthRepo {
             @Override
             public void onFailure(@NonNull Call<String> call,
                                   @NonNull Throwable throwable) {
-                // TODO: FIXME: START HERE
-                // When signing in with correct details and receiving a String response, throwing the following:
-                    // Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 1 path $
-                Log.e(TAG, throwable.getLocalizedMessage());
                 callback.onFailure(resources.getString(R.string.server_connection_issue));
             }
         });

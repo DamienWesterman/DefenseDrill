@@ -42,7 +42,7 @@ public class NetworkUtils {
      * @param context Application Context.
      * @return true if the user is connected to a network.
      */
-    public boolean isNetworkConnected(Context context) {
+    public static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (null == cm) {

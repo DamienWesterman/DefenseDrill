@@ -28,18 +28,28 @@ package com.damienwesterman.defensedrill.data.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 /**
  * Provides streamlined interaction with Shared Preferences.
  */
 public class SharedPrefs {
+    private static final String TAG = SharedPrefs.class.getSimpleName();
     private static final String SHARED_PREFERENCES = "defense_drill_shared_preferences";
+    private static final String ENCRYPTED_SHARED_PREFERENCES
+            = "defense_drill_encrypted_shared_preferences";
     private static final String KEY_SERVER_URL = "server_url";
     private static final String KEY_JWT = "jwt";
 
     private final SharedPreferences sharedPrefs;
+    private final SharedPreferences encryptedSharedPrefs;
 
     private static SharedPrefs instance;
 
@@ -51,6 +61,29 @@ public class SharedPrefs {
     private SharedPrefs(@NonNull Context applicationContext) {
         sharedPrefs = applicationContext
                 .getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+
+        try {
+            MasterKey key = new MasterKey.Builder(applicationContext)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encryptedSharedPrefs = EncryptedSharedPreferences.create(
+                    applicationContext,
+                    ENCRYPTED_SHARED_PREFERENCES,
+                    key,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (GeneralSecurityException e) {
+            // This should be a big issue as it should not happen
+            Log.e(TAG, "GeneralSecurityException during encryptedSharedPrefs generation", e);
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            // This should be a big issue as it should not happen
+            Log.e(TAG, "IOException during encryptedSharedPrefs generation", e);
+            throw new RuntimeException(e);
+        }
+
     }
 
     /**
@@ -87,7 +120,7 @@ public class SharedPrefs {
 
     @NonNull
     public String getJwt() {
-        return sharedPrefs.getString(KEY_JWT, "");
+        return encryptedSharedPrefs.getString(KEY_JWT, "");
     }
 
     /**
@@ -97,7 +130,7 @@ public class SharedPrefs {
      * @return true if saved successfully
      */
     public boolean setJwt(@NonNull String jwt) {
-        SharedPreferences.Editor editor = sharedPrefs.edit();
+        SharedPreferences.Editor editor = encryptedSharedPrefs.edit();
         editor.putString(KEY_JWT, jwt);
         return editor.commit();
     }

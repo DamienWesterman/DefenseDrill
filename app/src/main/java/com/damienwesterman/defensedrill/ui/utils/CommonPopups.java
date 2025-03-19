@@ -44,6 +44,7 @@ import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.authentication.AuthRepo;
 import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
 import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
+import com.damienwesterman.defensedrill.data.remote.util.NetworkUtils;
 
 /**
  * Common Popups used in multiple different activities.
@@ -54,7 +55,7 @@ public class CommonPopups {
      */
     private CommonPopups() { }
 
-    // TODO: If this is only called from one place, remove from Utils
+    // TODO: If this is only called from one place, remove from CommonPopups
     /**
      * Display a popup for the user to input the backend server URL, and if successful save it.
      *
@@ -65,6 +66,14 @@ public class CommonPopups {
     public static void displayServerSelectPopup(@NonNull Context context,
                                                 @NonNull Activity activity,
                                                 @Nullable OperationCompleteCallback callback) {
+        if (!NetworkUtils.isNetworkConnected(context)) {
+            if (null != callback) {
+                callback.onFailure("No internet connection.");
+            }
+
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = activity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_server_url_popup, null);
@@ -122,10 +131,18 @@ public class CommonPopups {
      * @param activity Activity
      * @param callback Callback, only calls onSuccess() upon successful login, never calls onFailure()
      */
-    // TODO: If this is only called from one place, remove from Utils
+    // TODO: If this is only called from one place, remove from CommonPopups
     public static void displayLoginPopup(@NonNull Context context,
                                          @NonNull Activity activity,
                                          @Nullable OperationCompleteCallback callback) {
+        if (!NetworkUtils.isNetworkConnected(context)) {
+            if (null != callback) {
+                callback.onFailure("No internet connection.");
+            }
+
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = activity.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_login_popup, null);
@@ -144,6 +161,7 @@ public class CommonPopups {
 
         AlertDialog alert = builder.create();
         // Customize PositiveButton functionality so it does not always close the dialog
+        final boolean[] loginFailed = { false };
         alert.setOnShowListener(dialogInterface ->
             alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
                 usernameText.setEnabled(false);
@@ -162,6 +180,7 @@ public class CommonPopups {
                                 if (null != callback) {
                                     callback.onSuccess();
                                 }
+                                loginFailed[0] = false;
                                 alert.dismiss();
                             }
 
@@ -172,6 +191,7 @@ public class CommonPopups {
                                 errorMessage.setText(error);
                                 errorMessage.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
+                                loginFailed[0] = true;
                             }
                         },
                         jwt -> SharedPrefs.getInstance(context).setJwt(jwt),
@@ -181,15 +201,17 @@ public class CommonPopups {
                                 .password(enteredPassword)
                                 .build()
                 );
-                // TODO: Try to login
-                // TODO: if we get a 401 (..or does it return with a redirect? Test this), then tell the
-                // user that the credentials were invalid, ask them to try again (and re-enable
-                // input fields) or close (in which case if null close dialog otherwise call fail
-                // TODO: If we succeed, store the JWT and if callback null close otherwise call success
-                // TODO: can we encrypt the JWT? Research if this is necessary
         }));
 
-        // TODO: Can we have an onClose listener or something and set a variable that if onFailure happened and we close, then call the caller's onFailure (-_-)
+        alert.setOnDismissListener(dialogInterface -> {
+            // If the user canceled after failing, call onFailure()
+            if (loginFailed[0]) {
+                if (null != callback) {
+                    callback.onFailure("Failed to log in");
+                }
+            }
+        });
+
         alert.show();
     }
 }
