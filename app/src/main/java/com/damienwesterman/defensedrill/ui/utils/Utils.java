@@ -41,6 +41,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
@@ -96,6 +97,10 @@ public class Utils {
                     // Disable user input and show spinner
                     urlText.setEnabled(false);
                     progressBar.setVisibility(View.VISIBLE);
+
+                    String enteredUrl = urlText.getText().toString();
+                    // TODO: Actually use this
+                    new Thread(() -> ServerHealthRepo.isServerHealthy(enteredUrl)).start(); ;
 
                     // TODO: Try connecting and testing the field by trying to connect to actuator/up
                     // TODO: if it returns 200 then close dialog if callback is null, otherwise call success

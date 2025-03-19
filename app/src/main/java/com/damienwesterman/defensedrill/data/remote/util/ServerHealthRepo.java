@@ -26,10 +26,40 @@
 
 package com.damienwesterman.defensedrill.data.remote.util;
 
+import android.util.Log;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 /**
- * Provides methods to test the health of a spring server.
+ * Provides methods for checking the health of a spring server.
  */
 public class ServerHealthRepo {
-    // TODO: FINISH ME
-    // TODO: Make singleton
+    private final static String TAG = ServerHealthRepo.class.getSimpleName();
+    /**
+     * Check if the server is returning a healthy state.
+     *
+     * @param serverUrl Server URL.
+     * @return true if server reported it is healthy.
+     */
+    public static boolean isServerHealthy(String serverUrl) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(serverUrl)
+                .build();
+        ServerHealthDao dao = retrofit.create(ServerHealthDao.class);
+
+        Call<Void> serverRet = dao.getServerStatus();
+        try {
+            Response<Void> response = serverRet.execute();
+            Log.i(TAG, "response.code=" + response.code());
+            return HttpURLConnection.HTTP_OK == response.code();
+        } catch (IOException e) {
+            Log.e(TAG, e.toString());
+            return false;
+        }
+    }
 }
