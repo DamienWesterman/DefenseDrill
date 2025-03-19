@@ -28,7 +28,7 @@ package com.damienwesterman.defensedrill.data.remote.util;
 
 import androidx.annotation.NonNull;
 
-import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDto;
+import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.net.HttpURLConnection;
@@ -43,7 +43,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Provides methods for checking the health of a spring server.
  */
 public class ServerHealthRepo {
-    private final static String TAG = ServerHealthRepo.class.getSimpleName();
     private final static String HEALTHY_RESPONSE = "UP";
 
     /**
@@ -53,18 +52,19 @@ public class ServerHealthRepo {
      * @param callback Callback for operation completion, calls onSuccess() if the server returns
      *                 it is healthy, otherwise calls onFailure
      */
-    public static void isServerHealthy(String serverUrl, OperationCompleteCallback callback) {
+    public static void isServerHealthy(@NonNull String serverUrl,
+                                       @NonNull OperationCompleteCallback callback) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ServerHealthDao dao = retrofit.create(ServerHealthDao.class);
 
-        Call<HealthStatusDto> serverRet = dao.getServerStatus();
-        serverRet.enqueue(new Callback<HealthStatusDto>() {
+        Call<HealthStatusDTO> serverRet = dao.getServerStatus();
+        serverRet.enqueue(new Callback<HealthStatusDTO>() {
             @Override
-            public void onResponse(@NonNull Call<HealthStatusDto> call,
-                                   @NonNull Response<HealthStatusDto> response) {
+            public void onResponse(@NonNull Call<HealthStatusDTO> call,
+                                   @NonNull Response<HealthStatusDTO> response) {
                 if (HttpURLConnection.HTTP_OK == response.code()
                         && null != response.body()
                         && response.body().getStatus().equals(HEALTHY_RESPONSE)) {
@@ -75,7 +75,7 @@ public class ServerHealthRepo {
             }
 
             @Override
-            public void onFailure(@NonNull Call<HealthStatusDto> call,
+            public void onFailure(@NonNull Call<HealthStatusDTO> call,
                                   @NonNull Throwable throwable) {
                 callback.onFailure("Network Issue");
             }

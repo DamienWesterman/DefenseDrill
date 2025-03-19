@@ -26,7 +26,7 @@
 
 package com.damienwesterman.defensedrill.data.remote.util;
 
-import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDto;
+import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDTO;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -41,5 +41,5 @@ import retrofit2.http.GET;
      * @return API return
      */
     @GET("actuator/health")
-    Call<HealthStatusDto> getServerStatus();
+    Call<HealthStatusDTO> getServerStatus();
 }

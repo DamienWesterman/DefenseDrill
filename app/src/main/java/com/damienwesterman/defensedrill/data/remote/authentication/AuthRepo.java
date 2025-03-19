@@ -26,11 +26,77 @@
 
 package com.damienwesterman.defensedrill.data.remote.authentication;
 
+import android.content.res.Resources;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+
+import java.net.HttpURLConnection;
+import java.util.function.Consumer;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
+
 /**
  * TODO: Doc comments
  */
 public class AuthRepo {
-    // TODO: Learn https://square.github.io/retrofit/
-    // TODO: FINISH ME
-    // TODO: Make singleton
+    private static final String TAG = AuthRepo.class.getSimpleName();
+
+    // TODO: Doc comments
+    public static void attemptLogin(@NonNull String serverUrl,
+                                    @NonNull OperationCompleteCallback callback,
+                                    @NonNull Consumer<String> jwtConsumer,
+                                    @NonNull Resources resources,
+                                    @NonNull LoginDTO login) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(serverUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build();
+        AuthDao dao = retrofit.create(AuthDao.class);
+
+        Call<String> serverRet = dao.login(login);
+        serverRet.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@NonNull Call<String> call,
+                                   @NonNull Response<String> response) {
+                if (HttpURLConnection.HTTP_OK == response.code()) {
+                    if (null != response.body()) {
+                        // Success
+                        jwtConsumer.accept(response.body());
+                        callback.onSuccess();
+                    } else {
+                        // This should not happen
+                        Log.e(TAG, "Login attempt returned HTTP_OK but response.body() is null");
+                        callback.onFailure("Unexpected Error");
+                    }
+                } else if (HttpURLConnection.HTTP_UNAUTHORIZED == response.code()) {
+                    callback.onFailure(resources.getString(R.string.login_failure_message));
+                } else {
+                    // This should not happen
+                    Log.e(TAG, "Login attempt returned status code: " + response.code());
+                    callback.onFailure("Unexpected Error");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call,
+                                  @NonNull Throwable throwable) {
+                // TODO: FIXME: START HERE
+                // When signing in with correct details and receiving a String response, throwing the following:
+                    // Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 1 path $
+                Log.e(TAG, throwable.getLocalizedMessage());
+                callback.onFailure(resources.getString(R.string.server_connection_issue));
+            }
+        });
+    }
 }

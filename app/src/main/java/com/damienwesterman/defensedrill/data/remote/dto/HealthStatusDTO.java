@@ -23,21 +23,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.damienwesterman.defensedrill.data.remote.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-/**
- * TODO: Doc comments
- */
 @Getter
+@ToString
 @RequiredArgsConstructor
-@Builder
-public class LoginDTO {
-    private final String username;
-    private final String password;
+public class HealthStatusDTO {
+    private final String status;
 }

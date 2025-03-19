@@ -68,6 +68,8 @@
     <string name="server_url_label">DefenseDrill URL:</string>
     <string name="url_example">ex: https://defensedrill.com</string>
     <string name="server_health_error_message">Something went wrong. Please double check the URL. It is also possible the server is offline.</string>
+    <string name="server_connection_issue">Could not connect to server. Please check your internet connection and server URL.</string>
+    <string name="login_failure_message">Login failed, please double check your username or password.</string>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

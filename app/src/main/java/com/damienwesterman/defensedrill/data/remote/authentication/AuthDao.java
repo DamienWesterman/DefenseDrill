@@ -23,15 +23,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.damienwesterman.defensedrill.data.remote.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+package com.damienwesterman.defensedrill.data.remote.authentication;
 
-@Getter
-@ToString
-@RequiredArgsConstructor
-public class HealthStatusDto {
-    private final String status;
+import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
+
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+
+/**
+ * Retrofit interface for logging in and retrieving the JWT.
+ */
+/* package-private */ interface AuthDao {
+    @POST("authenticate/user") // We want to authenticate as a user for the extended expiration
+    Call<String> login(@Body LoginDTO login);
 }

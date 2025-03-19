@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 import com.damienwesterman.defensedrill.ui.utils.Utils;
@@ -56,6 +58,7 @@ import java.util.ArrayList;
 public class HomeActivity extends AppCompatActivity {
     private LinearLayout rootView;
     private Context context;
+    private Activity activity;
 
     // =============================================================================================
     // Activity Methods
@@ -67,6 +70,7 @@ public class HomeActivity extends AppCompatActivity {
 
         rootView = findViewById(R.id.activityHome);
         context = this;
+        activity = this;
 
         TitleDescCard viewDrillsCard = findViewById(R.id.viewDrillsCard);
         viewDrillsCard.setOnLongClickListener(view -> {
@@ -97,16 +101,30 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(Constants.INTENT_VIEW_SUB_CATEGORIES, "");
             startActivity(intent);
         } else if (R.id.networkSetup == cardId) {
-            Utils.displayServerSelectPopup(this, this,
+            CommonPopups.displayServerSelectPopup(this, this,
                     new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
+                    // On Server Setup Success
                     Utils.displayDismissibleSnackbar(rootView, "Saved Server URL");
-                    Utils.displayLoginPopup(context, null);
+                    CommonPopups.displayLoginPopup(context, activity, new OperationCompleteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // On Login Success
+                            Utils.displayDismissibleSnackbar(rootView, "Login Successful!");
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            // On Login Failure
+                            Utils.displayDismissibleSnackbar(rootView, error);
+                        }
+                    });
                 }
 
                 @Override
                 public void onFailure(String error) {
+                    // On Server Setup Failure
                     Utils.displayDismissibleSnackbar(rootView, error);
                 }
             });

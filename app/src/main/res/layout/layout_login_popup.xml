@@ -47,6 +47,17 @@
             android:hint="@string/enter_password"
             android:autofillHints="" />
 
+        <!--    Text to be set by the controller    -->
+        <TextView
+            android:id="@+id/loginErrorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:textStyle="italic"
+            android:textColor="@color/error"
+            android:visibility="gone" />
+
         <ProgressBar
             android:id="@+id/loginProgressBar"
             style="?android:attr/progressBarStyle"
