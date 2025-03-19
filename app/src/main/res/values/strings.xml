@@ -70,6 +70,8 @@
     <string name="server_health_error_message">Something went wrong. Please double check the URL. It is also possible the server is offline.</string>
     <string name="server_connection_issue">Could not connect to server. Please check your internet connection and server URL.</string>
     <string name="login_failure_message">Login failed, please double check your username or password.</string>
+    <string name="customize_database_title">Customize Database</string>
+    <string name="customize_database_description">Make modifications to your saved Drills, Categories, and Sub-Categories. View them, create them, remove them, and edit them.</string>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>
