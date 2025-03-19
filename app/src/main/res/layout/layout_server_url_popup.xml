@@ -28,6 +28,17 @@
             android:hint="@string/url_example"
             android:autofillHints="" />
 
+        <TextView
+            android:id="@+id/serverErrorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:text="@string/server_health_error_message"
+            android:textStyle="italic"
+            android:textColor="@color/error"
+            android:visibility="gone" />
+
         <ProgressBar
             android:id="@+id/serverUrlProgressBar"
             style="?android:attr/progressBarStyle"

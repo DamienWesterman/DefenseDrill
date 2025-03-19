@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,8 +72,14 @@ public class Utils {
         snackbar.show();
     }
 
-    // TODO: doc comments
     // TODO: If this is only called from one place, remove from Utils
+    /**
+     * Display a popup for the user to input the backend server URL, and if successful save it.
+     *
+     * @param context Context
+     * @param activity Activity
+     * @param callback Callback, only calls onSuccess() upon successful save, never calls onFailure()
+     */
     public static void displayServerSelectPopup(@NonNull Context context,
                                                 @NonNull Activity activity,
                                                 @Nullable OperationCompleteCallback callback) {
@@ -81,22 +88,25 @@ public class Utils {
         View dialogView = inflater.inflate(R.layout.layout_server_url_popup, null);
 
         EditText urlText = dialogView.findViewById(R.id.urlText);
+        TextView errorMessage = dialogView.findViewById(R.id.serverErrorMessage);
         ProgressBar progressBar = dialogView.findViewById(R.id.serverUrlProgressBar);
         urlText.setText(SharedPrefs.getInstance(context).getServerUrl());
 
         builder.setView(dialogView);
         builder.setTitle("Enter Server URL");
-        builder.setIcon(R.drawable.warning_icon); // TODO: Cloud icon
+        builder.setIcon(R.drawable.cloud_icon);
         builder.setCancelable(true);
         builder.setPositiveButton("Confirm",null);
         builder.setNegativeButton("Cancel", null);
 
         AlertDialog alert = builder.create();
+        // Customize PositiveButton functionality so it does not always close the dialog
         alert.setOnShowListener(dialogInterface ->
             alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
                 // Disable user input and show spinner
                 urlText.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
+                errorMessage.setVisibility(View.GONE);
 
                 String enteredUrl = urlText.getText().toString();
                 ServerHealthRepo.isServerHealthy(enteredUrl, new OperationCompleteCallback() {
@@ -111,16 +121,11 @@ public class Utils {
 
                     @Override
                     public void onFailure(String error) {
-                        if (null != callback) {
-                            callback.onFailure(error);
-                        }
-                        alert.dismiss();
+                        urlText.setEnabled(true);
+                        progressBar.setVisibility(View.GONE);
+                        errorMessage.setVisibility(View.VISIBLE);
                     }
                 });
-
-                // TODO: if it returns 200 then close dialog if callback is null, otherwise call success
-                // TODO: if fails, offer user to try again and let them know server could be down,
-                    // otherwise close if callback is null or call on fail
             })
         );
 

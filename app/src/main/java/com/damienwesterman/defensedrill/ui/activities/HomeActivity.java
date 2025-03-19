@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
  */
 public class HomeActivity extends AppCompatActivity {
     private LinearLayout rootView;
+    private Context context;
 
     // =============================================================================================
     // Activity Methods
@@ -64,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         rootView = findViewById(R.id.activityHome);
+        context = this;
 
         TitleDescCard viewDrillsCard = findViewById(R.id.viewDrillsCard);
         viewDrillsCard.setOnLongClickListener(view -> {
@@ -99,6 +102,7 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Utils.displayDismissibleSnackbar(rootView, "Saved Server URL");
+                    Utils.displayLoginPopup(context, null);
                 }
 
                 @Override
