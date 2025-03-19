@@ -138,7 +138,7 @@ public class Utils {
                                          @Nullable OperationCompleteCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Insert Mock Database?");
-        builder.setIcon(R.drawable.warning_icon); // TODO: Lock icon?
+        builder.setIcon(R.drawable.blur_circle_icon);
         builder.setMessage("This will delete ALL drills/ categories/ sub-categories " +
                 "and replace them with some demo ones. Are you sure you want to do this?");
         builder.setPositiveButton("Do It.", (dialog, position) -> {
