@@ -70,8 +70,8 @@ public class AuthRepo {
                 .build();
         AuthDao dao = retrofit.create(AuthDao.class);
 
-        Call<String> serverRet = dao.login(login);
-        serverRet.enqueue(new Callback<String>() {
+        Call<String> serverCall = dao.login(login);
+        serverCall.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call,
                                    @NonNull Response<String> response) {

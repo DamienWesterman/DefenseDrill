@@ -37,9 +37,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 /**
  * Drill class contains all the information about a single drill.
  */
+@ToString
+@EqualsAndHashCode
 public class Drill {
     public static final int HIGH_CONFIDENCE = 0;
     public static final int MEDIUM_CONFIDENCE = 2;
@@ -77,7 +83,7 @@ public class Drill {
     /**
      * Parameterized constructor - ROOM DB ONLY
      *
-     * @param drillEntity   DrillEntity
+     * @param drillEntity       DrillEntity
      * @param categories        CategoryEntity list
      * @param subCategories     SubCategoryEntity list
      */
@@ -212,18 +218,5 @@ public class Drill {
 
     public void removeSubCategory(SubCategoryEntity subCategory) {
         this.subCategories.remove(subCategory);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Drill drill = (Drill) o;
-        return drillEntity.equals(drill.drillEntity) && categories.equals(drill.categories) && subCategories.equals(drill.subCategories);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(drillEntity, categories, subCategories);
     }
 }

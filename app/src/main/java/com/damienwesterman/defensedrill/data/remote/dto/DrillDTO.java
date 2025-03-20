@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -66,7 +67,18 @@ public class DrillDTO {
      */
     @NonNull
     public Drill toDrill() {
-        // TODO: finish me
-        return null;
+        // TODO: Properly implement
+        Drill ret = new Drill(
+                name,
+                0,
+                true,
+                Drill.LOW_CONFIDENCE,
+                "",
+                id, // serverId
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
+
+        return ret;
     }
 }
