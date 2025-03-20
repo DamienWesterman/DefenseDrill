@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.data.remote.authentication;
 
 import android.content.res.Resources;
 import android.util.Log;
+import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 
@@ -57,6 +58,11 @@ public class AuthRepo {
                                     @NonNull Consumer<String> jwtConsumer,
                                     @NonNull Resources resources,
                                     @NonNull LoginDTO login) {
+        if (!URLUtil.isValidUrl(serverUrl)) {
+            callback.onFailure("Invalid server URL: '" + serverUrl + "'");
+            return;
+        }
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())

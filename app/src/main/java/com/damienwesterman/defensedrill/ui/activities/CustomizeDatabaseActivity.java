@@ -5,20 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
-import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.utils.Constants;
@@ -28,6 +22,9 @@ import java.util.ArrayList;
 public class CustomizeDatabaseActivity extends AppCompatActivity {
     private LinearLayout rootView;
 
+    // =============================================================================================
+    // Activity Methods
+    // =============================================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +43,6 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void onCardClick(View view) {
-        // Add cards to delete things
         int cardId = view.getId();
         if (R.id.viewDrillsCard == cardId) {
             Intent intent = new Intent(this, ViewDrillsActivity.class);

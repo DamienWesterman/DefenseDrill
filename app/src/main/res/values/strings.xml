@@ -59,8 +59,6 @@
     <string name="enter_description">Enter description…</string>
     <string name="description_label">Description:</string>
     <string name="sort">Sort</string>
-    <string name="network_setup_description">Setup connection to the DefenseDrill online Drill Database by specifying the connection details and logging in.</string>
-    <string name="network_setup_title">Setup Online Connection</string>
     <string name="usernameLabel">Username</string>
     <string name="enter_username">Enter username…</string>
     <string name="password_label">Password:</string>
@@ -72,6 +70,18 @@
     <string name="login_failure_message">Login failed, please double check your username or password.</string>
     <string name="customize_database_title">Customize Database</string>
     <string name="customize_database_description">Make modifications to your saved Drills, Categories, and Sub-Categories. View them, create them, remove them, and edit them.</string>
+    <string name="web_drill_options_title">Web Drill Options</string>
+    <string name="web_drill_options_description">Interactive with the online Drill Database, download drills, set up the connection, and log in or out.</string>
+    <string name="download_from_database_title">Download From Database</string>
+    <string name="download_from_database_description">Download Drills, Categories, and Sub-Categories form the DefenseDrill Online Database</string>
+    <string name="check_for_updates_card_title">Check for Database Updates</string>
+    <string name="check_for_updates_card_description">Check the online database for updates to your Drills or for new ones!</string>
+    <string name="login_title">Login</string>
+    <string name="login_description">Log in to the online DefenseDrill database.</string>
+    <string name="logout_title">Logout</string>
+    <string name="logout_description">Log out of the online DefenseDrill database.</string>
+    <string name="enter_server_url_title">Enter Server URL</string>
+    <string name="enter_server_url_description">Specify the URL to your online DefenseDrill database.</string>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

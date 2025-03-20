@@ -26,6 +26,8 @@
 
 package com.damienwesterman.defensedrill.data.remote.util;
 
+import android.webkit.URLUtil;
+
 import androidx.annotation.NonNull;
 
 import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDTO;
@@ -54,6 +56,11 @@ public class ServerHealthRepo {
      */
     public static void isServerHealthy(@NonNull String serverUrl,
                                        @NonNull OperationCompleteCallback callback) {
+        if (!URLUtil.isValidUrl(serverUrl)) {
+            callback.onFailure("Invalid server URL: '" + serverUrl + "'");
+            return;
+        }
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(serverUrl)
                 .addConverterFactory(GsonConverterFactory.create())
