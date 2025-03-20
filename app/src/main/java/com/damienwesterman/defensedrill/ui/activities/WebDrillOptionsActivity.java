@@ -1,9 +1,34 @@
+/****************************\
+ *      ________________      *
+ *     /  _             \     *
+ *     \   \ |\   _  \  /     *
+ *      \  / | \ / \  \/      *
+ *      /  \ | / | /  /\      *
+ *     /  _/ |/  \__ /  \     *
+ *     \________________/     *
+ *                            *
+ \****************************/
+/*
+ * Copyright 2025 Damien Westerman
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.damienwesterman.defensedrill.ui.activities;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -62,8 +85,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         } else if (R.id.loginCard == cardId) {
             loginPopup();
         } else if (R.id.logoutCard == cardId) {
-            // TODO: logoutPopup()
-            UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: logoutCard");
+            logoutPopup();
         } else if (R.id.serverUrlCard == cardId) {
             serverSelectPopup(true);
         } else {
@@ -166,16 +188,18 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     }
 
     /**
-     * Display a popup for the user to input the backend server URL, and if successful save it.
-     *
-     * @param isCancelable Is the user allowed to close the popup
-     * @param context Context
-     * @param activity Activity
-     * @param callback Callback, only calls onSuccess() upon successful save, never calls onFailure()
+     * Display the popup for a user to log out.
      */
-    public static void displayServerSelectPopup(boolean isCancelable,
-                                                @NonNull Context context,
-                                                @NonNull Activity activity,
-                                                @Nullable OperationCompleteCallback callback) {
+    private void logoutPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Logout");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setMessage("Are you sure you want to log out?");
+        builder.setPositiveButton("Log Out", (dialog, position) -> {
+            new Thread(() -> SharedPrefs.getInstance(this).setJwt("")).start();
+            UiUtils.displayDismissibleSnackbar(rootView, "Logout Successful!");
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.create().show();
     }
 }
