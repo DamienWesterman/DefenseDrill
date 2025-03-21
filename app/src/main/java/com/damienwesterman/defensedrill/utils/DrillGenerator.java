@@ -28,7 +28,7 @@ package com.damienwesterman.defensedrill.utils;
 
 import androidx.annotation.Nullable;
 
-import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.local.Drill;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.damienwesterman.defensedrill"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -46,6 +46,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.activity:activity:1.8.0'
     androidTestImplementation "androidx.test:runner:1.5.2"
     androidTestImplementation "androidx.test:rules:1.5.0"
 
@@ -66,4 +67,16 @@ dependencies {
 
     // Mockito
     testImplementation 'org.mockito:mockito-core:4.2.0'
+
+    // Lombok
+    implementation "org.projectlombok:lombok:1.18.36"
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
+
+    // Android security
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
 }

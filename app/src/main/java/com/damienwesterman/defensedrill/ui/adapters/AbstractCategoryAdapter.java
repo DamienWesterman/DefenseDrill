@@ -33,7 +33,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
 import com.damienwesterman.defensedrill.ui.utils.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.view_holders.CardViewHolder;

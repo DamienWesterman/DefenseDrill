@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

@@ -33,7 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.List;

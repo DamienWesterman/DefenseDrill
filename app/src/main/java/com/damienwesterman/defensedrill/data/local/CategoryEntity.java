@@ -24,15 +24,27 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 
 import org.jetbrains.annotations.NotNull;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = CategoryEntity.TABLE_NAME)
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@SuperBuilder
+@Getter
+@Setter
 public class CategoryEntity extends AbstractCategoryEntity {
     @Ignore
     public static final String TABLE_NAME = "category";
@@ -44,7 +56,7 @@ public class CategoryEntity extends AbstractCategoryEntity {
      * @param name          Name of the category.
      * @param description   Description of the category.
      */
-    protected CategoryEntity(long id, @NotNull String name, String description) {
+    protected CategoryEntity(long id, @NotNull String name, @NonNull String description) {
         super(id, name, description);
     }
 
@@ -55,7 +67,7 @@ public class CategoryEntity extends AbstractCategoryEntity {
      * @param description   Description of the category.
      */
     @Ignore
-    public CategoryEntity(String name, @NotNull String description) {
+    public CategoryEntity(@NonNull String name, @NotNull String description) {
         super(name, description);
     }
 

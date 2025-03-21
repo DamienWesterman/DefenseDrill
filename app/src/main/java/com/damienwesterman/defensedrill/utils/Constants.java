@@ -26,7 +26,7 @@
 
 package com.damienwesterman.defensedrill.utils;
 
-import com.damienwesterman.defensedrill.data.Drill;
+import com.damienwesterman.defensedrill.data.local.Drill;
 
 public class Constants {
     public static final long USER_RANDOM_SELECTION = -1;
