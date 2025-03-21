@@ -25,7 +25,7 @@ android {
             storeFile file(System.getenv("DEFENSE_DRILL_STORE_FILE"))
             storePassword System.getenv("DEFENSE_DRILL_STORE_PASSWORD")
             keyAlias System.getenv("DEFENSE_DRILL_KEY_ALIAS")
-            keyPassword System.getenv("DEFENSE_DRILL_KEY_PASSWORD")
+             keyPassword System.getenv("DEFENSE_DRILL_KEY_PASSWORD")
         }
     }
 
@@ -79,4 +79,9 @@ dependencies {
 
     // Android security
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // RxJava
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:3.0.0'
 }

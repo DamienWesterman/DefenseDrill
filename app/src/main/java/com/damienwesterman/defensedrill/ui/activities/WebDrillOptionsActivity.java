@@ -52,9 +52,6 @@ import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class WebDrillOptionsActivity extends AppCompatActivity {
     private LinearLayout rootView;
     private Context context;
