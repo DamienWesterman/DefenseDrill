@@ -30,6 +30,7 @@ import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -41,5 +42,5 @@ import retrofit2.http.Headers;
 /* package-private */ interface ApiDao {
     @GET("api/drill")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
-    Call<List<DrillDTO>>getAllDrills(@Header("Cookie") String jwtHeader);
+    Observable<List<DrillDTO>> getAllDrills(@Header("Cookie") String jwtHeader);
 }

@@ -30,6 +30,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -48,9 +49,15 @@ import com.damienwesterman.defensedrill.data.remote.api.ApiRepo;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.util.NetworkUtils;
 import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
+import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class WebDrillOptionsActivity extends AppCompatActivity {
     private LinearLayout rootView;
@@ -84,7 +91,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         if (R.id.downloadFromDatabaseCard == cardId) {
             // TODO: Launch this activity
             // TODO: Make sure to check JWT first so we can prompt user, or something because we also need to know when it returns 401, maybe an exception then?
-            loadAllFromDatabase();
+            new DownloadDatabaseUseCase().execute(context);
             UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: downloadFromDatabaseCard");
         } else if (R.id.checkForUpdatesCard == cardId) {
             // TODO: Launch this activity (subsequent PR)
@@ -208,48 +215,5 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         });
         builder.setNegativeButton("Cancel", null);
         builder.create().show();
-    }
-
-    // =============================================================================================
-    // Private Helper Methods
-    // =============================================================================================
-    // TODO: doc comments for all below
-    private boolean loadAllFromDatabase() {
-        return loadCategoriesFromDatabase()
-                && loadSubCategoriesFromDatabase()
-                && loadDrillsFromDatabase();
-    }
-
-    private boolean loadCategoriesFromDatabase() {
-        return false;
-    }
-
-    private boolean loadSubCategoriesFromDatabase() {
-        return false;
-    }
-
-    private boolean loadDrillsFromDatabase() {
-        ApiRepo.getAllDrills(
-                SharedPrefs.getInstance(context).getServerUrl(),
-                SharedPrefs.getInstance(context).getJwt(),
-                new OperationCompleteCallback() {
-                    @Override
-                    public void onSuccess() {
-
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-
-                    }
-                },
-                drillDTOs -> {
-                    new Thread( () ->
-                            DrillRepository.getInstance(context).insertDrills(drillDTOs.stream()
-                                    .map(DrillDTO::toDrill).toArray(Drill[]::new))
-                    ).start();
-                }
-        );
-        return false;
     }
 }
