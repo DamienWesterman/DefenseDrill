@@ -75,6 +75,8 @@ public class HomeActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, WebDrillOptionsActivity.class);
                 startActivity(intent);
             }
+        } else if (R.id.feedbackCard == cardId) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }
