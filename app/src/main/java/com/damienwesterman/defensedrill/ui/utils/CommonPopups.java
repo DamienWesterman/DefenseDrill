@@ -35,16 +35,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.local.SharedPrefs;
-import com.damienwesterman.defensedrill.data.remote.authentication.AuthRepo;
+import com.damienwesterman.defensedrill.data.remote.AuthRepo;
 import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
-import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
-import com.damienwesterman.defensedrill.data.remote.util.NetworkUtils;
+import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 
 import javax.inject.Inject;
 
@@ -58,10 +55,10 @@ import dagger.hilt.android.scopes.ActivityScoped;
 public class CommonPopups {
     private final Context context;
     private final Activity activity;
-    private final SharedPrefs sharedPrefs;
+    private final AuthRepo authRepo;
 
     @Inject
-    public CommonPopups(@ActivityContext Context activityContext, SharedPrefs sharedPrefs) {
+    public CommonPopups(@ActivityContext Context activityContext, AuthRepo authRepo) {
         this.context = activityContext;
         if (activityContext instanceof Activity) {
             this.activity = (Activity) activityContext;
@@ -70,9 +67,9 @@ public class CommonPopups {
                 This should never happen, with @ActivityScoped and @ActivityContext, activityContext
                 should always be an instance of Activity
              */
-            throw new RuntimeException("activityContext no an instance of Activity");
+            throw new RuntimeException("activityContext not an instance of Activity");
         }
-        this.sharedPrefs = sharedPrefs;
+        this.authRepo = authRepo;
     }
 
     /**
@@ -82,7 +79,7 @@ public class CommonPopups {
      */
     // TODO: If this is only called from one place, remove from CommonPopups
     public void displayLoginPopup(@Nullable OperationCompleteCallback callback) {
-        if (!NetworkUtils.isNetworkConnected(context)) {
+        if (!CheckPhoneInternetConnection.isNetworkConnected(context)) {
             if (null != callback) {
                 callback.onFailure("No internet connection.");
             }
@@ -119,8 +116,11 @@ public class CommonPopups {
                 String enteredUsername = usernameText.getText().toString();
                 String enteredPassword = passwordText.getText().toString();
 
-                AuthRepo.attemptLogin(
-                        sharedPrefs.getServerUrl(),
+                authRepo.attemptLogin(
+                        LoginDTO.builder()
+                            .username(enteredUsername)
+                            .password(enteredPassword)
+                            .build(),
                         new OperationCompleteCallback() {
                             @Override
                             public void onSuccess() {
@@ -140,13 +140,7 @@ public class CommonPopups {
                                 progressBar.setVisibility(View.GONE);
                                 loginFailed[0] = true;
                             }
-                        },
-                        sharedPrefs::setJwt,
-                        context.getResources(),
-                        LoginDTO.builder()
-                                .username(enteredUsername)
-                                .password(enteredPassword)
-                                .build()
+                        }
                 );
         }));
 

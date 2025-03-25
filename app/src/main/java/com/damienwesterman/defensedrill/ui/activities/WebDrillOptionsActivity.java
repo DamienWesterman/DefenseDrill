@@ -30,7 +30,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -43,14 +42,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.local.Drill;
-import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
-import com.damienwesterman.defensedrill.data.remote.api.ApiRepo;
-import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
-import com.damienwesterman.defensedrill.data.remote.util.NetworkUtils;
-import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
-import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
+import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
+import com.damienwesterman.defensedrill.data.remote.ServerHealthRepo;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
@@ -59,10 +53,6 @@ import com.damienwesterman.defensedrill.ui.view_models.DrillApiViewModel;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
@@ -73,6 +63,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     SharedPrefs sharedPrefs;
     @Inject
     CommonPopups commonPopups;
+    @Inject
+    ServerHealthRepo serverHealthRepo; // TODO: remove and move to view-model
 
     private DrillApiViewModel viewModel;
 
@@ -129,7 +121,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * @param isCancelable Can the user cancel the popup
      */
     private void serverSelectPopup(boolean isCancelable) {
-        if (!NetworkUtils.isNetworkConnected(context)) {
+        if (!CheckPhoneInternetConnection.isNetworkConnected(context)) {
             UiUtils.displayDismissibleSnackbar(rootView, "No internet connection.");
             if (!isCancelable) {
                 finish();
@@ -174,7 +166,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                     errorMessage.setVisibility(View.GONE);
 
                     String enteredUrl = urlText.getText().toString();
-                    ServerHealthRepo.isServerHealthy(enteredUrl, new OperationCompleteCallback() {
+                    // TODO Remove and move to view-model
+                    serverHealthRepo.isServerHealthy(enteredUrl, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             sharedPrefs.setServerUrl(enteredUrl);

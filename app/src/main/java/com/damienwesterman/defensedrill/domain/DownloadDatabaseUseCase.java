@@ -29,7 +29,7 @@ package com.damienwesterman.defensedrill.domain;
 import android.util.Log;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
-import com.damienwesterman.defensedrill.data.remote.api.ApiRepo;
+import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 
 import javax.inject.Inject;
 
@@ -47,11 +47,11 @@ public class DownloadDatabaseUseCase {
     // TODO: Put it all together here (keep some hashsets/maps of the categories/subcategories based on serverId)
     // TODO: Call it from the UI with proper callbacks and things (progress widget, feedback, etc.)
     // TODO: Test what happens when we fail (so network issue -unplug computer, no internet, bad jwt, database issue, or something)
-    private final SharedPrefs sharedPrefs;
+    private final ApiRepo apiRepo;
 
     @Inject
-    public DownloadDatabaseUseCase(SharedPrefs sharedPrefs) {
-        this.sharedPrefs = sharedPrefs;
+    public DownloadDatabaseUseCase(SharedPrefs sharedPrefs, ApiRepo apiRepo) {
+        this.apiRepo = apiRepo;
     }
 
     public void execute() {
@@ -63,9 +63,7 @@ public class DownloadDatabaseUseCase {
     // =============================================================================================
     private void loadDrillsFromDatabase() {
         // TODO: properly implement
-        Disposable disposable = ApiRepo.getAllDrills(
-                        sharedPrefs.getServerUrl(),
-                        sharedPrefs.getJwt())
+        Disposable disposable = apiRepo.getAllDrills()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

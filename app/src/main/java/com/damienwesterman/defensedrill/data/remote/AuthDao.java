@@ -24,22 +24,18 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.util;
+package com.damienwesterman.defensedrill.data.remote;
 
-import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
 
 import retrofit2.Call;
-import retrofit2.http.GET;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
 /**
- * Retrofit interface for spring server health API calls.
+ * Retrofit interface for logging in and retrieving the JWT.
  */
-/* package-private */ interface ServerHealthDao {
-    /**
-     * Check the health status of the server.
-     *
-     * @return API return
-     */
-    @GET("actuator/health")
-    Call<HealthStatusDTO> getServerStatus();
+/* package-private */ interface AuthDao {
+    @POST("authenticate/user") // We want to authenticate as a user for the extended expiration
+    Call<String> login(@Body LoginDTO login);
 }

@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.util;
+package com.damienwesterman.defensedrill.domain;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -34,7 +34,7 @@ import android.net.NetworkCapabilities;
 /**
  * Common utilities for networking operations.
  */
-public class NetworkUtils {
+public class CheckPhoneInternetConnection {
     /**
      * Checks if the user is connected to any network. Ideal to check before attempting to perform
      * networking operations.

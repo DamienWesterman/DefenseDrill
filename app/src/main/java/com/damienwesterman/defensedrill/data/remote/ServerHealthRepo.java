@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.util;
+package com.damienwesterman.defensedrill.data.remote;
 
 import android.webkit.URLUtil;
 
@@ -34,6 +34,8 @@ import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.net.HttpURLConnection;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,6 +49,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ServerHealthRepo {
     private final static String HEALTHY_RESPONSE = "UP";
 
+    @Inject
+    public ServerHealthRepo() { }
+
     /**
      * Check if the server is returning a healthy state.
      *
@@ -54,8 +59,8 @@ public class ServerHealthRepo {
      * @param callback Callback for operation completion, calls onSuccess() if the server returns
      *                 it is healthy, otherwise calls onFailure
      */
-    public static void isServerHealthy(@NonNull String serverUrl,
-                                       @NonNull OperationCompleteCallback callback) {
+    public void isServerHealthy(@NonNull String serverUrl,
+                                @NonNull OperationCompleteCallback callback) {
         if (!URLUtil.isValidUrl(serverUrl)) {
             callback.onFailure("Invalid server URL: '" + serverUrl + "'");
             return;

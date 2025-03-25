@@ -81,7 +81,6 @@ public class SharedPrefs {
             Log.e(TAG, "IOException during encryptedSharedPrefs generation", e);
             throw new RuntimeException(e);
         }
-
     }
 
     @NonNull

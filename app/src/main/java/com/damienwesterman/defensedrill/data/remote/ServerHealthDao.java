@@ -24,23 +24,22 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.api;
+package com.damienwesterman.defensedrill.data.remote;
 
-import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.HealthStatusDTO;
 
-import java.util.List;
-
-import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
 
 /**
- * Retrofit interface for retrieving info from the DefenseDrill API.
+ * Retrofit interface for spring server health API calls.
  */
-/* package-private */ interface ApiDao {
-    @GET("api/drill")
-    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
-    Observable<List<DrillDTO>> getAllDrills(@Header("Cookie") String jwtHeader);
+/* package-private */ interface ServerHealthDao {
+    /**
+     * Check the health status of the server.
+     *
+     * @return API return
+     */
+    @GET("actuator/health")
+    Call<HealthStatusDTO> getServerStatus();
 }

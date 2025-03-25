@@ -24,18 +24,20 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.api;
+package com.damienwesterman.defensedrill.data.remote;
 
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 
 import java.util.List;
 
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
 import io.reactivex.rxjava3.core.Observable;
+import lombok.RequiredArgsConstructor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -43,16 +45,23 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 /**
  * TODO: Doc comments
  */
+@RequiredArgsConstructor
 public class ApiRepo {
-    private final static String TAG = ApiRepo.class.getSimpleName();
+    private final SharedPrefs sharedPrefs;
 
     // TODO: Doc comments
-    public static Observable<List<DrillDTO>> getAllDrills(@NonNull String serverUrl,
-                                          @NonNull String jwt) throws IllegalArgumentException {
+    // TODO: make sure caller checks JWT first or something and displays popup if empty
+    public Observable<List<DrillDTO>> getAllDrills()
+            throws IllegalArgumentException {
+        String serverUrl = sharedPrefs.getServerUrl();
         if (!URLUtil.isValidUrl(serverUrl)) {
             throw new IllegalArgumentException("Invalid server URL: '" + serverUrl + "'");
         }
 
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
         String jwtHeader = "jwt=" + jwt;
 
         Retrofit retrofit = new Retrofit.Builder()

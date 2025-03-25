@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.di;
 import android.content.Context;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 
 import javax.inject.Singleton;
 
@@ -43,10 +44,21 @@ import dagger.hilt.components.SingletonComponent;
  */
 @Module
 @InstallIn(SingletonComponent.class)
-public class AppModule {
+public class AppDependenciesModule {
     @Provides
     @Singleton
     public static SharedPrefs getSharedPrefs(@ApplicationContext Context applicationContext) {
         return new SharedPrefs(applicationContext);
     }
+
+    @Provides
+    @Singleton
+    public static ApiRepo getApiRepo(SharedPrefs sharedPrefs) {
+        return new ApiRepo(sharedPrefs);
+    }
+
+    /*
+        AuthRepo and ServerHealthRepo do not need to be singletons, as they should be seldom used
+        under normal use cases.
+     */
 }

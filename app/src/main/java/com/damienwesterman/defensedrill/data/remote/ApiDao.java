@@ -24,18 +24,22 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.remote.authentication;
+package com.damienwesterman.defensedrill.data.remote;
 
-import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.POST;
+import java.util.List;
+
+import io.reactivex.rxjava3.core.Observable;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 
 /**
- * Retrofit interface for logging in and retrieving the JWT.
+ * Retrofit interface for retrieving info from the DefenseDrill API.
  */
-/* package-private */ interface AuthDao {
-    @POST("authenticate/user") // We want to authenticate as a user for the extended expiration
-    Call<String> login(@Body LoginDTO login);
+/* package-private */ interface ApiDao {
+    @GET("api/drill")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<List<DrillDTO>> getAllDrills(@Header("Cookie") String jwtHeader);
 }

@@ -34,7 +34,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.remote.util.NetworkUtils;
+import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
 /**
@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CustomizeDatabaseActivity.class);
             startActivity(intent);
         } else if (R.id.webDrillOptionsCard == cardId) {
-            if (!NetworkUtils.isNetworkConnected(this)) {
+            if (!CheckPhoneInternetConnection.isNetworkConnected(this)) {
                 UiUtils.displayDismissibleSnackbar(rootView, "No internet connection.");
             } else {
                 Intent intent = new Intent(this, WebDrillOptionsActivity.class);
