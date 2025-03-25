@@ -51,14 +51,12 @@ public class SharedPrefs {
     private final SharedPreferences sharedPrefs;
     private final SharedPreferences encryptedSharedPrefs;
 
-    private static SharedPrefs instance;
-
     /**
      * Private constructor.
      *
      * @param applicationContext Application Context
      */
-    private SharedPrefs(@NonNull Context applicationContext) {
+    public SharedPrefs(Context applicationContext) {
         sharedPrefs = applicationContext
                 .getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
 
@@ -84,21 +82,6 @@ public class SharedPrefs {
             throw new RuntimeException(e);
         }
 
-    }
-
-    /**
-     * Get running SharedPrefs instance.
-     *
-     * @param applicationContext Application Context.
-     * @return Running SharedPrefs instance.
-     */
-    @NonNull
-    public static SharedPrefs getInstance(@NonNull Context applicationContext) {
-        if (null == instance) {
-            instance = new SharedPrefs(applicationContext.getApplicationContext());
-        }
-
-        return instance;
     }
 
     @NonNull

@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
@@ -53,17 +54,27 @@ import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
+import com.damienwesterman.defensedrill.ui.view_models.DrillApiViewModel;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+@AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
     private LinearLayout rootView;
     private Context context;
     private Activity activity;
-    // TODO: Maybe save server URL here so we don't have to keep getting it, than change where necessary
+    @Inject
+    SharedPrefs sharedPrefs;
+    @Inject
+    CommonPopups commonPopups;
+
+    private DrillApiViewModel viewModel;
 
     // =============================================================================================
     // Activity Methods
@@ -77,8 +88,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         context = this;
         activity = this;
 
+        viewModel = new ViewModelProvider(this).get(DrillApiViewModel.class);
+
         // Need to make sure a server is set before most interactions
-        if (SharedPrefs.getInstance(context).getServerUrl().isEmpty()) {
+        if (sharedPrefs.getServerUrl().isEmpty()) {
             serverSelectPopup(false);
         }
     }
@@ -91,7 +104,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         if (R.id.downloadFromDatabaseCard == cardId) {
             // TODO: Launch this activity
             // TODO: Make sure to check JWT first so we can prompt user, or something because we also need to know when it returns 401, maybe an exception then?
-            new DownloadDatabaseUseCase().execute(context);
+            viewModel.downloadDb();
             UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: downloadFromDatabaseCard");
         } else if (R.id.checkForUpdatesCard == cardId) {
             // TODO: Launch this activity (subsequent PR)
@@ -131,7 +144,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         EditText urlText = dialogView.findViewById(R.id.urlText);
         TextView errorMessage = dialogView.findViewById(R.id.serverErrorMessage);
         ProgressBar progressBar = dialogView.findViewById(R.id.serverUrlProgressBar);
-        String currentServerUrl = SharedPrefs.getInstance(context).getServerUrl();
+        String currentServerUrl = sharedPrefs.getServerUrl();
         urlText.setText(currentServerUrl);
 
         builder.setView(dialogView);
@@ -145,8 +158,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
             builder.setNegativeButton("Cancel", (dialogInterface, i) -> finish());
         }
         if (!currentServerUrl.isEmpty()) {
-            builder.setNeutralButton("Delete Saved URL", (dialogInterface, i) ->
-                    SharedPrefs.getInstance(context).setServerUrl(""));
+            builder.setNeutralButton("Delete Saved URL", (dialogInterface, i) -> {
+                    sharedPrefs.setServerUrl("");
+                    finish();
+            });
         }
 
         AlertDialog alert = builder.create();
@@ -162,7 +177,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                     ServerHealthRepo.isServerHealthy(enteredUrl, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
-                            SharedPrefs.getInstance(context).setServerUrl(enteredUrl);
+                            sharedPrefs.setServerUrl(enteredUrl);
                             UiUtils.displayDismissibleSnackbar(rootView, "Saved Server URL");
                             alert.dismiss();
                         }
@@ -186,7 +201,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * Display the popup for user login.
      */
     private void loginPopup() {
-        CommonPopups.displayLoginPopup(context, activity, new OperationCompleteCallback() {
+        commonPopups.displayLoginPopup(new OperationCompleteCallback() {
             @Override
             public void onSuccess() {
                 // On Login Success
@@ -210,7 +225,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.warning_icon);
         builder.setMessage("Are you sure you want to log out?");
         builder.setPositiveButton("Log Out", (dialog, position) -> {
-            new Thread(() -> SharedPrefs.getInstance(this).setJwt("")).start();
+            new Thread(() -> sharedPrefs.setJwt("")).start();
             UiUtils.displayDismissibleSnackbar(rootView, "Logout Successful!");
         });
         builder.setNegativeButton("Cancel", null);

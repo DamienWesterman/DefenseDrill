@@ -26,12 +26,14 @@
 
 package com.damienwesterman.defensedrill.domain;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.api.ApiRepo;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.scopes.ViewModelScoped;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -39,26 +41,31 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 /**
  * TODO DOC COMMENTS
  */
+@ViewModelScoped
 public class DownloadDatabaseUseCase {
-    // TODO: FIXME: START HERE
-    // TODO: Learn Hilt/Dagger
-    // TODO: Make this a HiltDependency class or something (maybe need to change SharedPrefs to be as well
     // TODO: Create other API elements (get all drills and get all subcategories)
     // TODO: Put it all together here (keep some hashsets/maps of the categories/subcategories based on serverId)
     // TODO: Call it from the UI with proper callbacks and things (progress widget, feedback, etc.)
     // TODO: Test what happens when we fail (so network issue -unplug computer, no internet, bad jwt, database issue, or something)
+    private final SharedPrefs sharedPrefs;
 
-    public void execute(Context context) {
-        loadDrillsFromDatabase(context);
+    @Inject
+    public DownloadDatabaseUseCase(SharedPrefs sharedPrefs) {
+        this.sharedPrefs = sharedPrefs;
+    }
+
+    public void execute() {
+        loadDrillsFromDatabase();
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    private void loadDrillsFromDatabase(Context context) {
+    private void loadDrillsFromDatabase() {
+        // TODO: properly implement
         Disposable disposable = ApiRepo.getAllDrills(
-                        SharedPrefs.getInstance(context).getServerUrl(),
-                        SharedPrefs.getInstance(context).getJwt())
+                        sharedPrefs.getServerUrl(),
+                        sharedPrefs.getJwt())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

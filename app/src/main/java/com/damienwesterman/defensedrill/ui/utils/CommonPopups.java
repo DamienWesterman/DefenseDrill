@@ -46,26 +46,42 @@ import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
 import com.damienwesterman.defensedrill.data.remote.util.ServerHealthRepo;
 import com.damienwesterman.defensedrill.data.remote.util.NetworkUtils;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ActivityContext;
+import dagger.hilt.android.scopes.ActivityScoped;
+
 /**
  * Common Popups used in multiple different activities.
  */
+@ActivityScoped
 public class CommonPopups {
-    /**
-     * No need to have instances of this class.
-     */
-    private CommonPopups() { }
+    private final Context context;
+    private final Activity activity;
+    private final SharedPrefs sharedPrefs;
+
+    @Inject
+    public CommonPopups(@ActivityContext Context activityContext, SharedPrefs sharedPrefs) {
+        this.context = activityContext;
+        if (activityContext instanceof Activity) {
+            this.activity = (Activity) activityContext;
+        } else {
+            /*
+                This should never happen, with @ActivityScoped and @ActivityContext, activityContext
+                should always be an instance of Activity
+             */
+            throw new RuntimeException("activityContext no an instance of Activity");
+        }
+        this.sharedPrefs = sharedPrefs;
+    }
 
     /**
      * Display a popup for the user to log in to the backend server.
      *
-     * @param context Context
-     * @param activity Activity
      * @param callback Callback, only calls onSuccess() upon successful login, never calls onFailure()
      */
     // TODO: If this is only called from one place, remove from CommonPopups
-    public static void displayLoginPopup(@NonNull Context context,
-                                         @NonNull Activity activity,
-                                         @Nullable OperationCompleteCallback callback) {
+    public void displayLoginPopup(@Nullable OperationCompleteCallback callback) {
         if (!NetworkUtils.isNetworkConnected(context)) {
             if (null != callback) {
                 callback.onFailure("No internet connection.");
@@ -104,7 +120,7 @@ public class CommonPopups {
                 String enteredPassword = passwordText.getText().toString();
 
                 AuthRepo.attemptLogin(
-                        SharedPrefs.getInstance(context).getServerUrl(),
+                        sharedPrefs.getServerUrl(),
                         new OperationCompleteCallback() {
                             @Override
                             public void onSuccess() {
@@ -125,7 +141,7 @@ public class CommonPopups {
                                 loginFailed[0] = true;
                             }
                         },
-                        jwt -> SharedPrefs.getInstance(context).setJwt(jwt),
+                        sharedPrefs::setJwt,
                         context.getResources(),
                         LoginDTO.builder()
                                 .username(enteredUsername)

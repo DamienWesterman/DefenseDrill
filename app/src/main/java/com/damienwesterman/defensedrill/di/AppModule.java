@@ -24,34 +24,29 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.ui.view_models;
+package com.damienwesterman.defensedrill.di;
 
-import android.app.Application;
+import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 
-import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
+import javax.inject.Singleton;
 
-import javax.inject.Inject;
-
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
 
 /**
- * ViewModel for interacting with the DefenseDrill API Backend.
+ * TODO Doc comments
  */
-@HiltViewModel
-public class DrillApiViewModel extends AndroidViewModel {
-    private final DownloadDatabaseUseCase downloadDb;
-
-    @Inject
-    public DrillApiViewModel(@NonNull Application application, DownloadDatabaseUseCase downloadDb) {
-        super(application);
-
-        this.downloadDb = downloadDb;
-    }
-
-    public void downloadDb() {
-        downloadDb.execute();
+@Module
+@InstallIn(SingletonComponent.class)
+public class AppModule {
+    @Provides
+    @Singleton
+    public static SharedPrefs getSharedPrefs(@ApplicationContext Context applicationContext) {
+        return new SharedPrefs(applicationContext);
     }
 }
