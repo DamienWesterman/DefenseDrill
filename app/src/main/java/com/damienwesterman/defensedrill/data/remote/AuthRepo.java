@@ -28,7 +28,6 @@ package com.damienwesterman.defensedrill.data.remote;
 
 import android.content.Context;
 import android.util.Log;
-import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 
@@ -45,9 +44,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * TODO: Doc comments
@@ -56,30 +52,20 @@ public class AuthRepo {
     private static final String TAG = AuthRepo.class.getSimpleName();
     private final Context applicationContext;
     private final SharedPrefs sharedPrefs;
+    private final AuthDao authDao;
 
     @Inject
-    public AuthRepo(@ApplicationContext Context applicationContext, SharedPrefs sharedPrefs) {
+    /* package-private */ AuthRepo(@ApplicationContext Context applicationContext,
+                                   SharedPrefs sharedPrefs, AuthDao authDao) {
         this.applicationContext = applicationContext;
         this.sharedPrefs = sharedPrefs;
+        this.authDao = authDao;
     }
 
     // TODO: Doc comments
     public void attemptLogin(@NonNull LoginDTO login,
                              @NonNull OperationCompleteCallback callback) {
-        String serverUrl = sharedPrefs.getServerUrl();
-        if (!URLUtil.isValidUrl(serverUrl)) {
-            callback.onFailure("Invalid server URL: '" + serverUrl + "'");
-            return;
-        }
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(serverUrl)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        AuthDao dao = retrofit.create(AuthDao.class);
-
-        Call<String> serverCall = dao.login(login);
+        Call<String> serverCall = authDao.login(login);
         serverCall.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call,

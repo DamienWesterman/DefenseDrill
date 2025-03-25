@@ -45,7 +45,6 @@ public class SharedPrefs {
     private static final String SHARED_PREFERENCES = "defense_drill_shared_preferences";
     private static final String ENCRYPTED_SHARED_PREFERENCES
             = "defense_drill_encrypted_shared_preferences";
-    private static final String KEY_SERVER_URL = "server_url";
     private static final String KEY_JWT = "jwt";
 
     private final SharedPreferences sharedPrefs;
@@ -81,23 +80,6 @@ public class SharedPrefs {
             Log.e(TAG, "IOException during encryptedSharedPrefs generation", e);
             throw new RuntimeException(e);
         }
-    }
-
-    @NonNull
-    public String getServerUrl() {
-        return sharedPrefs.getString(KEY_SERVER_URL, "");
-    }
-
-    /**
-     * Save server URL.
-     *
-     * @param serverUrl Server URL
-     * @return true if saved successfully
-     */
-    public boolean setServerUrl(@NonNull String serverUrl) {
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(KEY_SERVER_URL, serverUrl);
-        return editor.commit();
     }
 
     @NonNull

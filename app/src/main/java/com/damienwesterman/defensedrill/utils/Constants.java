@@ -26,10 +26,13 @@
 
 package com.damienwesterman.defensedrill.utils;
 
+import com.damienwesterman.defensedrill.BuildConfig;
 import com.damienwesterman.defensedrill.data.local.Drill;
 
 public class Constants {
     public static final long USER_RANDOM_SELECTION = -1;
+
+    public static final String SERVER_URL = BuildConfig.SERVER_URL;
 
     /** Low Confidence index position of strings.xml's confidence_levels string-array */
     private static final int LOW_CONFIDENCE_POSITION = 0;

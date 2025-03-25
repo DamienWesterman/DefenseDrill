@@ -26,7 +26,7 @@ android {
             storeFile file(System.getenv("DEFENSE_DRILL_STORE_FILE"))
             storePassword System.getenv("DEFENSE_DRILL_STORE_PASSWORD")
             keyAlias System.getenv("DEFENSE_DRILL_KEY_ALIAS")
-             keyPassword System.getenv("DEFENSE_DRILL_KEY_PASSWORD")
+            keyPassword System.getenv("DEFENSE_DRILL_KEY_PASSWORD")
         }
     }
 
@@ -40,9 +40,23 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            buildConfigField "String", "SERVER_URL", "\"${System.getenv("DEFENSE_DRILL_SERVER_URL") ?: ""}\""
+        }
+        debug {
+            buildConfigField "String", "SERVER_URL", "\"${System.getenv("DEFENSE_DRILL_SERVER_URL") ?: ""}\""
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
