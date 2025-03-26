@@ -45,6 +45,8 @@ import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Activity during Drill Generation to select a Category of drill, or random.
  * <br><br>
@@ -52,6 +54,7 @@ import java.util.List;
  * <br><br>
  * INTENTS: None required.
  */
+@AndroidEntryPoint
 public class CategorySelectActivity extends AppCompatActivity {
     CategoryViewModel viewModel;
 

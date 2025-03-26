@@ -44,19 +44,25 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * View model for {@link CategoryEntity}, geared towards a list of them and allowing CRUD
  * functionality.
  */
+@HiltViewModel
 public class CategoryViewModel extends AbstractCategoryViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> categories;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public CategoryViewModel(@NonNull Application application) {
+    @Inject
+    public CategoryViewModel(@NonNull Application application, DrillRepository repo) {
         super(application);
 
-        repo = DrillRepository.getInstance(application);
+        this.repo = repo;
         categories = new MutableLiveData<>();
     }
 

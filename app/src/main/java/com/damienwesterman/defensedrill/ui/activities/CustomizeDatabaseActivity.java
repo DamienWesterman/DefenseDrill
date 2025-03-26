@@ -70,7 +70,7 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
         builder.setMessage("This will delete ALL drills/ categories/ sub-categories " +
                 "and replace them with some demo ones. Are you sure you want to do this?");
         builder.setPositiveButton("Do It.", (dialog, position) -> {
-            new Thread(this::mockDatabaseEntries).start();
+//            new Thread(this::mockDatabaseEntries).start(); // TODO: remove
             UiUtils.displayDismissibleSnackbar(rootView, "Added mocked database entries");
         });
         builder.setNegativeButton("Never-mind", null);
@@ -81,6 +81,7 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
     // Private Helper Methods
     // =============================================================================================
     // TODO Take out once the server is ready
+    /*
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void mockDatabaseEntries() {
         DrillRepository repo = DrillRepository.getInstance(this.getApplicationContext());
@@ -160,5 +161,5 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
         risingStab.addCategory(weaponsDefenseCategory);
         risingStab.addSubCategory(knifeDefenseSubCategory);
         repo.insertDrills(jab, cross, roundKick, elbow, knee, oneHandChokeEscape, shrimpEscape, gunToHeadDrill, gunToHeadBack, slash, risingStab);
-    }
+    } */
 }

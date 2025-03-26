@@ -24,11 +24,9 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.di;
+package com.damienwesterman.defensedrill.data.local;
 
 import android.content.Context;
-
-import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 
 import javax.inject.Singleton;
 
@@ -38,15 +36,18 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
-/**
- * TODO Doc comments
- */
 @Module
 @InstallIn(SingletonComponent.class)
-public class AppDependenciesModule {
+public class LocalDependenciesModule {
     @Provides
     @Singleton
     public static SharedPrefs getSharedPrefs(@ApplicationContext Context applicationContext) {
         return new SharedPrefs(applicationContext);
+    }
+
+    @Provides
+    @Singleton
+    public static DrillRepository getDrillRepository(@ApplicationContext Context applicationContext) {
+        return new DrillRepository(DrillDatabase.instantiate(applicationContext));
     }
 }

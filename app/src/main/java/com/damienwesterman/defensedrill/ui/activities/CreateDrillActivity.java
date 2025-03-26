@@ -56,11 +56,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Activity to create a new Drill.
  * <br><br>
  * INTENTS: None required.
  */
+@AndroidEntryPoint
 public class CreateDrillActivity extends AppCompatActivity {
     private CreateDrillViewModel viewModel;
 

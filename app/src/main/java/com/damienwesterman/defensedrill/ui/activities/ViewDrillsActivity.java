@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Activity to display, edit, and create drills.
  * <br><br>
@@ -64,6 +66,7 @@ import java.util.stream.Collectors;
  * <br><br>
  * INTENTS: None expected.
  */
+@AndroidEntryPoint
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
     private DrillListViewModel.SortOrder sortOrder;

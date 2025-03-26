@@ -63,6 +63,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Displays information about a Drill and allows users to modify and take actions relating to it.
  * <br><br>
@@ -79,6 +81,7 @@ import java.util.Set;
  *    <li> A {@link Constants#INTENT_DRILL_ID} intent.</li>
  * </ul>
  */
+@AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
