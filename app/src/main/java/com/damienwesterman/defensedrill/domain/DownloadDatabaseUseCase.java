@@ -43,18 +43,21 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 @ViewModelScoped
 public class DownloadDatabaseUseCase {
-    // TODO: Create other API elements (get all drills and get all subcategories)
+    // TODO: Make sure to handle all response codes somewhere - somehow (such as 500, 401)
     // TODO: Put it all together here (keep some hashsets/maps of the categories/subcategories based on serverId)
     // TODO: Call it from the UI with proper callbacks and things (progress widget, feedback, etc.)
     // TODO: Test what happens when we fail (so network issue -unplug computer, no internet, bad jwt, database issue, or something)
     private final ApiRepo apiRepo;
 
     @Inject
-    public DownloadDatabaseUseCase(SharedPrefs sharedPrefs, ApiRepo apiRepo) {
+    public DownloadDatabaseUseCase(ApiRepo apiRepo) {
         this.apiRepo = apiRepo;
     }
 
     public void execute() {
+
+        loadCategoriesFromDatabase();
+        loadSubCategoriesFromDatabase();
         loadDrillsFromDatabase();
     }
 
@@ -75,5 +78,31 @@ public class DownloadDatabaseUseCase {
 
 //            DrillRepository.getInstance(context).insertDrills(drillDTOs.stream()
 //                    .map(DrillDTO::toDrill).toArray(Drill[]::new))
+    }
+
+    private void loadCategoriesFromDatabase() {
+        // TODO: properly implement
+        Disposable disposable = apiRepo.getAllCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        categories -> {
+                            categories.forEach( category -> Log.i("DxTag", category.getName()));
+                        },
+                        throwable -> Log.e("DxTag", "We have an issue: " + throwable.getLocalizedMessage())
+                );
+    }
+
+    private void loadSubCategoriesFromDatabase() {
+        // TODO: properly implement
+        Disposable disposable = apiRepo.getAllSubCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        subCategories -> {
+                            subCategories.forEach( subCategory -> Log.i("DxTag", subCategory.getName()));
+                        },
+                        throwable -> Log.e("DxTag", "We have an issue: " + throwable.getLocalizedMessage())
+                );
     }
 }

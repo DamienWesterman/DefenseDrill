@@ -26,7 +26,9 @@
 
 package com.damienwesterman.defensedrill.data.remote;
 
+import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 
 import java.util.List;
 
@@ -42,4 +44,12 @@ import retrofit2.http.Headers;
     @GET("api/drill")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
     Observable<List<DrillDTO>> getAllDrills(@Header("Cookie") String jwtHeader);
+
+    @GET("api/category")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<List<CategoryDTO>> getAllCategories(@Header("Cookie") String jwtHeader);
+
+    @GET("api/sub_category")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<List<SubCategoryDTO>> getAllSubCategories(@Header("Cookie") String jwtHeader);
 }

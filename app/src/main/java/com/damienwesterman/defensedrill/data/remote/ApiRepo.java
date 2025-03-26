@@ -27,7 +27,9 @@
 package com.damienwesterman.defensedrill.data.remote;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 
 import java.util.List;
 
@@ -54,5 +56,31 @@ public class ApiRepo {
         String jwtHeader = "jwt=" + jwt;
 
         return apiDao.getAllDrills(jwtHeader);
+    }
+
+    // TODO: Doc comments
+    // TODO: make sure caller checks JWT first or something and displays popup if empty
+    public Observable<List<CategoryDTO>> getAllCategories()
+            throws IllegalArgumentException {
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
+        String jwtHeader = "jwt=" + jwt;
+
+        return apiDao.getAllCategories(jwtHeader);
+    }
+
+    // TODO: Doc comments
+    // TODO: make sure caller checks JWT first or something and displays popup if empty
+    public Observable<List<SubCategoryDTO>> getAllSubCategories()
+            throws IllegalArgumentException {
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
+        String jwtHeader = "jwt=" + jwt;
+
+        return apiDao.getAllSubCategories(jwtHeader);
     }
 }
