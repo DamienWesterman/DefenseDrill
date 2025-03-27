@@ -28,11 +28,14 @@ package com.damienwesterman.defensedrill.data.remote.dto;
 
 import androidx.annotation.NonNull;
 
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,11 +66,13 @@ public class DrillDTO {
     /**
      * Convert the DTO into the locally used Drill object.
      *
+     * @param categoryMap Map of CategoryEntity objects mapped by their Server Id.
+     * @param subCategoryMap Map of SubCategoryEntity objects mapped by their Server Id.
      * @return Drill object.
      */
     @NonNull
-    public Drill toDrill() {
-        // TODO: Properly implement
+    public Drill toDrill(@NonNull final Map<Long, CategoryEntity> categoryMap,
+                         @NonNull final Map<Long, SubCategoryEntity> subCategoryMap) {
         Drill ret = new Drill(
                 name,
                 0,
@@ -78,6 +83,24 @@ public class DrillDTO {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
+
+        for (CategoryDTO category : this.categories) {
+            if (categoryMap.containsKey(category.getId())) {
+                if (null == categoryMap.get(category.getId())) {
+                    continue;
+                }
+                ret.addCategory(categoryMap.get(category.getId()));
+            }
+        }
+
+        for (SubCategoryDTO subCategory : this.subCategories) {
+            if (subCategoryMap.containsKey(subCategory.getId())) {
+                if (null == subCategoryMap.get(subCategory.getId())) {
+                    continue;
+                }
+                ret.addSubCategory(subCategoryMap.get(subCategory.getId()));
+            }
+        }
 
         return ret;
     }

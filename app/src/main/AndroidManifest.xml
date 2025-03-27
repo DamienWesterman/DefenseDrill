@@ -35,7 +35,7 @@
         <activity
             android:name=".ui.activities.ViewAbstractCategoriesActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.HomeActivity">
+            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -51,7 +51,7 @@
         <activity
             android:name=".ui.activities.ViewDrillsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.HomeActivity">
+            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

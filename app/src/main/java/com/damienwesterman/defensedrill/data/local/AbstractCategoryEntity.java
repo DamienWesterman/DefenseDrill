@@ -27,24 +27,23 @@
 package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@EqualsAndHashCode
+@ToString
 public abstract class AbstractCategoryEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;

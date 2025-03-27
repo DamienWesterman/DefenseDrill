@@ -46,6 +46,7 @@ public class SharedPrefs {
     private static final String ENCRYPTED_SHARED_PREFERENCES
             = "defense_drill_encrypted_shared_preferences";
     private static final String KEY_JWT = "jwt";
+    private static final String KEY_LAST_DRILL_UPDATE_TIME = "last_drill_update_time";
 
     private final SharedPreferences sharedPrefs;
     private final SharedPreferences encryptedSharedPrefs;
@@ -87,15 +88,23 @@ public class SharedPrefs {
         return encryptedSharedPrefs.getString(KEY_JWT, "");
     }
 
-    /**
-     * Save the JWT.
-     *
-     * @param jwt String JWT
-     * @return true if saved successfully
-     */
     public boolean setJwt(@NonNull String jwt) {
         SharedPreferences.Editor editor = encryptedSharedPrefs.edit();
         editor.putString(KEY_JWT, jwt);
+        return editor.commit();
+    }
+
+    public long getLastDrillUpdateTime() {
+        return sharedPrefs.getLong(KEY_LAST_DRILL_UPDATE_TIME, 0);
+    }
+
+    public boolean setLastDrillUpdateTime(long lastDrillUpdateTime) {
+        if (0 > lastDrillUpdateTime) {
+            return false;
+        }
+
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putLong(KEY_LAST_DRILL_UPDATE_TIME, lastDrillUpdateTime);
         return editor.commit();
     }
 }

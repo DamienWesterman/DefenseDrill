@@ -52,6 +52,6 @@ public class DrillApiViewModel extends AndroidViewModel {
     }
 
     public void downloadDb() {
-        downloadDb.execute();
+        new Thread(downloadDb::execute).start();
     }
 }

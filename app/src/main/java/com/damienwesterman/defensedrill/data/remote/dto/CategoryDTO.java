@@ -59,6 +59,10 @@ public class CategoryDTO {
      */
     @NonNull
     public CategoryEntity toCategoryEntity() {
-        return null;
+        return CategoryEntity.builder()
+                .name(this.name)
+                .description(this.description)
+                .serverId(this.id)
+                .build();
     }
 }

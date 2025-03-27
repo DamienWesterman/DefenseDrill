@@ -58,6 +58,10 @@ public class SubCategoryDTO {
      */
     @NonNull
     public SubCategoryEntity toSubCategoryEntity() {
-        return null;
+        return SubCategoryEntity.builder()
+                .name(this.name)
+                .description(this.description)
+                .serverId(this.id)
+                .build();
     }
 }

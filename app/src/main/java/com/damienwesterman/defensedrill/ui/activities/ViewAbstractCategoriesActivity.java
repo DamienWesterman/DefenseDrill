@@ -56,6 +56,8 @@ import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Activity to display, edit, and create categories or sub-categories (determined by the intent).
  * <br><br>
@@ -68,6 +70,7 @@ import java.util.List;
  * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_VIEW_CATEGORIES} or
  * {@link Constants#INTENT_VIEW_SUB_CATEGORIES} to determine what screen to show.
  */
+@AndroidEntryPoint
 public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     // The following are abstract limits and do not represent any limits imposed by the database
     private static final int NAME_CHARACTER_LIMIT = 128;
