@@ -28,6 +28,8 @@ package com.damienwesterman.defensedrill.domain;
 
 import android.util.Log;
 
+import androidx.room.Transaction;
+
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
@@ -38,6 +40,7 @@ import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -45,7 +48,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.scopes.ViewModelScoped;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -53,7 +55,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 /**
  * TODO DOC COMMENTS
  */
-@ViewModelScoped
 public class DownloadDatabaseUseCase {
     // TODO: Make sure to handle all response codes somewhere - somehow (such as 500, 401)
     // TODO: Make sure to check first for existing names (maybe create a db method to get all by list of names)
@@ -85,7 +86,6 @@ public class DownloadDatabaseUseCase {
 // TODO: Remove (..obviously)
 drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0]));
 drillRepo.deleteSubCategories(drillRepo.getAllSubCategories().toArray(new SubCategoryEntity[0]));
-drillRepo.deleteCategories(drillRepo.getAllCategories().toArray(new CategoryEntity[0]));
         Disposable disposable = loadCategoriesFromDatabase()
                 .flatMap(categories -> loadSubCategoriesFromDatabase())
                 .flatMap(subCategories -> loadDrillsFromDatabase())
@@ -101,54 +101,104 @@ drillRepo.deleteCategories(drillRepo.getAllCategories().toArray(new CategoryEnti
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+    @Transaction
     private Observable<List<DrillDTO>> loadDrillsFromDatabase() {
         // TODO: properly implement
         return apiRepo.getAllDrills()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnNext(
-                    drills -> drillRepo.insertDrills(drills.stream()
-                            .map(drill -> drill.toDrill(categoryMap, subCategoryMap))
-                            .toArray(Drill[]::new))
+                drills -> drillRepo.insertDrills(drills.stream()
+                        .map(drill -> drill.toDrill(categoryMap, subCategoryMap))
+                        .toArray(Drill[]::new))
             );
     }
 
+    @Transaction
     private Observable<List<CategoryDTO>> loadCategoriesFromDatabase() {
         // TODO: properly implement
         return apiRepo.getAllCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnNext(
-                    categories -> {
-                        // This will throw if there are any issues
+                categories -> {
+                    List<CategoryEntity> existingCategories = drillRepo.getAllCategories();
+                    Map<String, CategoryEntity> existingNamesMap = existingCategories.stream()
+                            .collect(Collectors.toMap(CategoryEntity::getName, Function.identity()));
+                    // Map the categories by the server ID for efficient lookup
+                    categoryMap = existingCategories.stream()
+                            .filter(category -> null != category.getServerId())
+                            .collect(Collectors.toMap(CategoryEntity::getServerId, Function.identity()));
+                    List<CategoryEntity> categoriesToUpdate = new ArrayList<>();
+
+                    /*
+                    We want to filter this list so that certain categories that may already
+                    be in the database are not persisted again, causing issue. We are filtering
+                    in place as the list ends in this method and is not used again.
+                     */
+                    categories.removeIf(category -> {
+                        // TODO: FIXME: START HERE Continue testing, changing the names and things that already have server IDs or something
+                        if (categoryMap.containsKey(category.getId())) {
+                            /*
+                            We have already downloaded this from the API, should be updated via
+                            the update from API functionality
+                             */
+                            Log.i("DxTag", "DUPLICATE SERVER ID: " + category.getName());
+                            return true;
+                        }
+
+                        if (existingNamesMap.containsKey(category.getName())) {
+                            CategoryEntity duplicateCategory = existingNamesMap.get(category.getName());
+                            Log.i("DxTag", "DUPLICATE NAME: " + category.getName());
+                            if (null != duplicateCategory.getServerId()) {
+                                // If the name exists and is not assigned a server ID, update it
+                                Log.i("DxTag", "DUPLICATE NAME AND NOSERVER ID: " + category.getName());
+                                duplicateCategory.setServerId(category.getId());
+                                categoriesToUpdate.add(duplicateCategory);
+                            }
+                            return true;
+                        }
+
+                        return false;
+                    });
+
+                    // These will throw if there are any issues
+                    if (!categories.isEmpty()) {
                         drillRepo.insertCategories(categories.stream()
                                 .map(CategoryDTO::toCategoryEntity)
                                 .toArray(CategoryEntity[]::new));
+                    }
+                    if (!categoriesToUpdate.isEmpty()) {
+                        drillRepo.updateCategories(
+                                categoriesToUpdate.toArray(new CategoryEntity[0]));
+                    }
 
-                        List<CategoryEntity> savedCategories = drillRepo.getAllCategories();
-                        categoryMap = savedCategories.stream()
+                    if (!categories.isEmpty() || !categoriesToUpdate.isEmpty()) {
+                        // Only need to update categoryMap if we added to the database
+                        categoryMap = drillRepo.getAllCategories().stream()
                                 .filter(category -> null != category.getServerId())
                                 .collect(Collectors.toMap(CategoryEntity::getServerId, Function.identity()));
                     }
+                }
             );
     }
 
+    @Transaction
     private Observable<List<SubCategoryDTO>> loadSubCategoriesFromDatabase() {
         // TODO: properly implement
         return apiRepo.getAllSubCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnNext(
-                    subCategories -> {
-                        drillRepo.insertSubCategories(subCategories.stream()
-                                .map(SubCategoryDTO::toSubCategoryEntity)
-                                .toArray(SubCategoryEntity[]::new));
+                subCategories -> {
+                    drillRepo.insertSubCategories(subCategories.stream()
+                            .map(SubCategoryDTO::toSubCategoryEntity)
+                            .toArray(SubCategoryEntity[]::new));
 
-                        List<SubCategoryEntity> savedSubCategories = drillRepo.getAllSubCategories();
-                        subCategoryMap = savedSubCategories.stream()
-                                .filter(subCategory -> null != subCategory.getServerId())
-                                .collect(Collectors.toMap(SubCategoryEntity::getServerId, Function.identity()));
-                    }
+                    subCategoryMap = drillRepo.getAllSubCategories().stream()
+                            .filter(subCategory -> null != subCategory.getServerId())
+                            .collect(Collectors.toMap(SubCategoryEntity::getServerId, Function.identity()));
+                }
             );
     }
 }

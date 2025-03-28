@@ -48,6 +48,7 @@ import lombok.ToString;
 @Builder
 @ToString
 public class CategoryDTO {
+    /** Server ID */
     private Long id;
     private String name;
     private String description;

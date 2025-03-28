@@ -31,6 +31,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
@@ -41,6 +42,14 @@ import java.util.Optional;
     @Query("SELECT * FROM " + SubCategoryEntity.TABLE_NAME + " ORDER BY name")
     @NonNull
     List<SubCategoryEntity> getAll();
+
+    @Transaction
+    @Query(
+            "SELECT * FROM " + SubCategoryEntity.TABLE_NAME +
+                    " WHERE name IN (:names) ORDER BY name"
+    )
+    @NonNull
+    List<SubCategoryEntity> findAllByName(@NonNull List<String> names);
 
     @Query(
             "SELECT DISTINCT sub.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
