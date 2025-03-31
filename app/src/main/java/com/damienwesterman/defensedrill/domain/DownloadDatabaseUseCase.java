@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.domain;
 
+import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import androidx.room.Transaction;
@@ -39,7 +40,9 @@ import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,21 +50,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * TODO DOC COMMENTS
  */
 public class DownloadDatabaseUseCase {
-    // TODO: Make sure to handle all response codes somewhere - somehow (such as 500, 401)
-    // TODO: Call it from the UI with proper callbacks and things (progress widget, feedback, etc.)
-    // TODO: Test what happens when we fail (so network issue -unplug computer, no internet, expired jwt, database issue, or something), try to have cases for all the types of exceptions thrown and proper user feedback
-    // TODO: Make sure to implement the disposable properly
-    // TODO: Test the timing on everything, how long does each part of this save operation take and where can we cut time and optimize things
+    private static final String TAG = DownloadDatabaseUseCase.class.getSimpleName();
+
     private final ApiRepo apiRepo;
     private final DrillRepository drillRepo;
     private final SharedPrefs sharedPrefs;
@@ -80,23 +82,47 @@ public class DownloadDatabaseUseCase {
         this.subCategoryMap = Map.of();
     }
 
-    public void execute() {
-        // TODO: Add a callback or something and call it
-        Disposable disposable = loadCategoriesFromDatabase()
-                .flatMap(categories -> loadSubCategoriesFromDatabase())
-                .flatMap(subCategories -> loadDrillsFromDatabase())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        drills ->  {
-                            Log.i("DxTag", "Everything is loaded!");
-                            Log.i("DxTag", "From Thread: " + Thread.currentThread().getName());
-                            sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
-                        },
-                        throwable -> {
-                            Log.e("DxTag", "We have an issue: " + throwable.getLocalizedMessage());
-                            Log.i("DxTag", "From Thread: " + Thread.currentThread().getName());
+    // TODO: Doc comments
+    public Disposable execute(OperationCompleteCallback callback) {
+        return loadCategoriesFromDatabase()
+            .flatMap(categories -> loadSubCategoriesFromDatabase())
+            .flatMap(subCategories -> loadDrillsFromDatabase())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                drills ->  {
+                    sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
+                    callback.onSuccess();
+                },
+                throwable -> {
+                    String errorMessage;
+                    if (throwable instanceof HttpException) {
+                        // getLocalizedMessage(): HTTP 401 Unauthorized
+                        HttpException httpException = (HttpException) throwable;
+
+                        if (httpException.code() == HttpsURLConnection.HTTP_UNAUTHORIZED) {
+                            errorMessage = "Unauthorized, please log in again";
+
+                        // TODO: Subsequent PR - Double check what the return type looks like in a 201, can be seen when we implement the update functionality
+                        } else {
+                            // Should not get here
+                            Log.e(TAG, "Received unexpected HttpException: "
+                                    + httpException.getMessage());
+                            errorMessage = "Server issue, please try again later";
                         }
-                );
+                    } else if (throwable instanceof SocketTimeoutException) {
+                        // getLocalizedMessage(): failed to connect to your.server.org/1.1.1.1 (port 99999) from /2.2.2.2 (port 99999) after 10000ms
+                        errorMessage = "Issue connecting to the server, try again later";
+                    } else if (throwable instanceof SQLiteConstraintException) {
+                        // getLocalizedMessage(): UNIQUE constraint failed: drill.name (code 2067 SQLITE_CONSTRAINT_UNIQUE[2067])
+                        Log.e(TAG, "Sqlite issue: " + throwable.getLocalizedMessage());
+                        errorMessage = "Issue saving drills to your phone";
+                    } else {
+                        errorMessage = "An unexpected error has occurred";
+                    }
+
+                    callback.onFailure(errorMessage);
+                }
+            );
     }
 
     // =============================================================================================

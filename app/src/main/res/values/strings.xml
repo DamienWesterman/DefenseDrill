@@ -82,6 +82,7 @@
     <string name="logout_description">Log out of the online DefenseDrill database.</string>
     <string name="enter_server_url_title">Enter Server URL</string>
     <string name="enter_server_url_description">Specify the URL to your online DefenseDrill database.</string>
+    <string name="please_wait">Please Wait…</string>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

@@ -70,23 +70,28 @@ public class AuthRepo {
             @Override
             public void onResponse(@NonNull Call<String> call,
                                    @NonNull Response<String> response) {
-                if (HttpURLConnection.HTTP_OK == response.code()) {
-                    if (null != response.body()) {
-                        // Success
-                        sharedPrefs.setJwt(response.body());
-                        callback.onSuccess();
-                    } else {
+                switch (response.code()) {
+                    case HttpURLConnection.HTTP_OK:
+                        if (null != response.body()) {
+                            // Success
+                            sharedPrefs.setJwt(response.body());
+                            callback.onSuccess();
+                        } else {
+                            // This should not happen
+                            Log.e(TAG, "Login attempt returned HTTP_OK but response.body() is null");
+                            callback.onFailure("Unexpected Error");
+                        }
+
+                        break;
+                    case HttpURLConnection.HTTP_UNAUTHORIZED:
+                        callback.onFailure(applicationContext.getResources()
+                                .getString(R.string.login_failure_message));
+                        break;
+                    default:
                         // This should not happen
-                        Log.e(TAG, "Login attempt returned HTTP_OK but response.body() is null");
+                        Log.e(TAG, "Login attempt returned status code: " + response.code());
                         callback.onFailure("Unexpected Error");
-                    }
-                } else if (HttpURLConnection.HTTP_UNAUTHORIZED == response.code()) {
-                    callback.onFailure(applicationContext.getResources()
-                                            .getString(R.string.login_failure_message));
-                } else {
-                    // This should not happen
-                    Log.e(TAG, "Login attempt returned status code: " + response.code());
-                    callback.onFailure("Unexpected Error");
+                        break;
                 }
             }
 

@@ -32,10 +32,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * ViewModel for interacting with the DefenseDrill API Backend.
@@ -43,6 +45,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class DrillApiViewModel extends AndroidViewModel {
     private final DownloadDatabaseUseCase downloadDb;
+    private Disposable disposable;
 
     @Inject
     public DrillApiViewModel(@NonNull Application application, DownloadDatabaseUseCase downloadDb) {
@@ -51,7 +54,28 @@ public class DrillApiViewModel extends AndroidViewModel {
         this.downloadDb = downloadDb;
     }
 
-    public void downloadDb() {
-        new Thread(downloadDb::execute).start();
+    public void downloadDb(OperationCompleteCallback callback) {
+        disposable = downloadDb.execute(new OperationCompleteCallback() {
+            @Override
+            public void onSuccess() {
+                callback.onSuccess();
+                disposable = null;
+            }
+
+            @Override
+            public void onFailure(String error) {
+                callback.onFailure(error);
+                disposable = null;
+            }
+        });
+    }
+
+    public void stopDownload() {
+        if (null != disposable) {
+            if (!disposable.isDisposed()) {
+                disposable.dispose();
+                disposable = null;
+            }
+        }
     }
 }

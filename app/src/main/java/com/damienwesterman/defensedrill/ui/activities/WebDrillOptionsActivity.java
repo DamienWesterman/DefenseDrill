@@ -26,11 +26,12 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
@@ -76,15 +78,24 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.downloadFromDatabaseCard == cardId) {
-            // TODO: Launch this activity
-            // TODO: Make sure to check JWT first so we can prompt user, or something because we also need to know when it returns 401, maybe an exception then?
-            viewModel.downloadDb();
-            UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: downloadFromDatabaseCard");
+            handleDownloadDrills();
         } else if (R.id.checkForUpdatesCard == cardId) {
             // TODO: Launch this activity (subsequent PR)
             UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: checkForUpdatesCard");
         } else if (R.id.loginCard == cardId) {
-            loginPopup();
+            commonPopups.displayLoginPopup(new OperationCompleteCallback() {
+                @Override
+                public void onSuccess() {
+                    // On Login Success
+                    UiUtils.displayDismissibleSnackbar(rootView, "Login Successful!");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    // On Login Failure
+                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                }
+            });
         } else if (R.id.logoutCard == cardId) {
             logoutPopup();
         } else {
@@ -95,25 +106,6 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     // =============================================================================================
     // Popup / AlertDialog Methods
     // =============================================================================================
-    /**
-     * Display the popup for user login.
-     */
-    private void loginPopup() {
-        commonPopups.displayLoginPopup(new OperationCompleteCallback() {
-            @Override
-            public void onSuccess() {
-                // On Login Success
-                UiUtils.displayDismissibleSnackbar(rootView, "Login Successful!");
-            }
-
-            @Override
-            public void onFailure(String error) {
-                // On Login Failure
-                UiUtils.displayDismissibleSnackbar(rootView, error);
-            }
-        });
-    }
-
     /**
      * Display the popup for a user to log out.
      */
@@ -128,5 +120,70 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         });
         builder.setNegativeButton("Cancel", null);
         builder.create().show();
+    }
+
+    // TODO: Doc comments
+    private void loadAllDrillsPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_loading_popup, null);
+
+        TextView loadingText = dialogView.findViewById(R.id.pleaseWaitLabel);
+        ProgressBar progressBar = dialogView.findViewById(R.id.loadingProgressBar);
+        TextView errorMessage = dialogView.findViewById(R.id.loadingErrorMessage);
+
+        builder.setView(dialogView);
+        builder.setTitle("Downloading Drills");
+        builder.setIcon(R.drawable.cloud_icon);
+        builder.setCancelable(false);
+        builder.setNegativeButton("Cancel", (dialogInterface, i) -> viewModel.stopDownload());
+
+        AlertDialog alert = builder.create();
+
+        viewModel.downloadDb(new OperationCompleteCallback() {
+            @Override
+            public void onSuccess() {
+                alert.dismiss();
+                UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
+            }
+
+            @Override
+            public void onFailure(String error) {
+                loadingText.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setText(error);
+                errorMessage.setVisibility(View.VISIBLE);
+            }
+        });
+
+        alert.show();
+    }
+
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    // TODO: Doc comments
+    private void handleDownloadDrills() {
+        if (!CheckPhoneInternetConnection.isNetworkConnected(this)) {
+            UiUtils.displayDismissibleSnackbar(rootView, "No internet connection");
+            return;
+        }
+
+        if (sharedPrefs.getJwt().isEmpty()) {
+            commonPopups.displayLoginPopup(new OperationCompleteCallback() {
+                @Override
+                public void onSuccess() {
+                    loadAllDrillsPopup();
+                    UiUtils.displayDismissibleSnackbar(rootView, "Login Successful!");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                }
+            });
+        } else {
+            loadAllDrillsPopup();
+        }
     }
 }
