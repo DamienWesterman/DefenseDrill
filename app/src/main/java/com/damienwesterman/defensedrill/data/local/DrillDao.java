@@ -47,7 +47,7 @@ import java.util.Optional;
 
     @Transaction
     @Query(
-            "SELECT * FROM " + DrillEntity.TABLE_NAME +
+            "SELECT DISTINCT * FROM " + DrillEntity.TABLE_NAME +
                     " WHERE name IN (:names) ORDER BY name"
     )
     @NonNull
@@ -65,7 +65,7 @@ import java.util.Optional;
 
     @Transaction
     @Query(
-            "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
+            "SELECT DISTINCT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
                     "JOIN " + DrillCategoryJoinEntity.TABLE_NAME + " AS drillcatJoin ON drill.id = drillcatJoin.drill_id " +
                     "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillcatJoin.category_id = cat.id " +
                     "WHERE cat.id IN (:categoryIds) ORDER BY drill.name"
@@ -85,7 +85,7 @@ import java.util.Optional;
 
     @Transaction
     @Query(
-            "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
+            "SELECT DISTINCT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
                     "JOIN " + DrillSubCategoryJoinEntity.TABLE_NAME + " AS drillSubJoin ON drill.id = drillSubJoin.drill_id " +
                     "JOIN " + SubCategoryEntity.TABLE_NAME + " AS sub ON drillSubJoin.sub_category_id = sub.id " +
                     "WHERE sub.id IN (:subCategoryIds) ORDER BY drill.name"
@@ -107,7 +107,7 @@ import java.util.Optional;
 
     @Transaction
     @Query(
-            "SELECT drill.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
+            "SELECT DISTINCT drill.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
                     "JOIN " + DrillSubCategoryJoinEntity.TABLE_NAME + " AS drillSubJoin ON sub.id = drillSubJoin.sub_category_id " +
                     "JOIN " + DrillEntity.TABLE_NAME + " AS drill ON drillSubJoin.drill_id = drill.id " +
                     "JOIN " + DrillCategoryJoinEntity.TABLE_NAME + " AS drillCatJoin ON drill.id = drillCatJoin.drill_id " +
