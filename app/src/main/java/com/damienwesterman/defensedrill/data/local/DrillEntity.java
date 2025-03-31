@@ -52,7 +52,7 @@ import java.util.Objects;
     private String notes;
     /** ID of this drill on the server, for retrieving instructions and videos */
     @ColumnInfo(name = "server_drill_id")
-    private long serverDrillId;
+    private Long serverDrillId;
 
     /**
      * Default Constructor.
@@ -64,7 +64,7 @@ import java.util.Objects;
         this.newDrill = true;
         this.confidence = Drill.LOW_CONFIDENCE;
         this.notes = "";
-        this.serverDrillId = -1;
+        this.serverDrillId = null;
     }
 
     /**

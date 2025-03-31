@@ -35,10 +35,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -54,6 +54,8 @@ public class Drill {
     @Embedded
     private DrillEntity drillEntity;
 
+    @Setter
+    @Getter
     @Relation(
             parentColumn = "id",
             entityColumn = "id",
@@ -62,6 +64,8 @@ public class Drill {
     )
     private List<CategoryEntity> categories;
 
+    @Setter
+    @Getter
     @Relation(
             parentColumn = "id",
             entityColumn = "id",
@@ -87,7 +91,7 @@ public class Drill {
      * @param categories        CategoryEntity list
      * @param subCategories     SubCategoryEntity list
      */
-    protected Drill(DrillEntity drillEntity, List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
+    Drill(DrillEntity drillEntity, List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
         this.drillEntity = drillEntity;
         this.categories = categories;
         this.subCategories = subCategories;
@@ -118,14 +122,14 @@ public class Drill {
     /**
      * Internal use only
      */
-    protected DrillEntity getDrillEntity() {
+    DrillEntity getDrillEntity() {
         return drillEntity;
     }
 
     /**
      * Room DB only
      */
-    protected void setDrillEntity(DrillEntity drillEntity) {
+    void setDrillEntity(DrillEntity drillEntity) {
         this.drillEntity = drillEntity;
     }
 
@@ -136,7 +140,7 @@ public class Drill {
     /**
      * Room DB only
      */
-    protected void setId(long id) {
+    void setId(long id) {
         this.drillEntity.setId(id);
     }
 
@@ -180,20 +184,12 @@ public class Drill {
         this.drillEntity.setNotes(notes);
     }
 
-    public long getServerDrillId() {
+    public Long getServerDrillId() {
         return this.drillEntity.getServerDrillId();
     }
 
-    public void setServerDrillId(long serverDrillId) {
+    public void setServerDrillId(Long serverDrillId) {
         this.drillEntity.setServerDrillId(serverDrillId);
-    }
-
-    public List<CategoryEntity> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryEntity> categories) {
-        this.categories = categories;
     }
 
     public void addCategory(CategoryEntity category) {
@@ -202,14 +198,6 @@ public class Drill {
 
     public void removeCategory(CategoryEntity category) {
         this.categories.remove(category);
-    }
-
-    public List<SubCategoryEntity> getSubCategories() {
-        return subCategories;
-    }
-
-    public void setSubCategories(List<SubCategoryEntity> subCategories) {
-        this.subCategories = subCategories;
     }
 
     public void addSubCategory(SubCategoryEntity subCategory) {
