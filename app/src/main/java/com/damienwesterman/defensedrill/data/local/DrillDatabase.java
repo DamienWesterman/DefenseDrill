@@ -28,7 +28,6 @@ package com.damienwesterman.defensedrill.data.local;
 
 import android.content.Context;
 
-import androidx.annotation.VisibleForTesting;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -47,11 +46,6 @@ import androidx.room.RoomDatabase;
 }, version = 1, exportSchema = false)
 /* package-private */ abstract class DrillDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "drill_database";
-
-    /**
-     * Private constructor.
-     */
-    private DrillDatabase() { }
 
     /**
      * Build the DrillDatabase object.

@@ -56,9 +56,11 @@ public class CommonPopups {
     private final Context context;
     private final Activity activity;
     private final AuthRepo authRepo;
+    private final CheckPhoneInternetConnection internetConnection;
 
     @Inject
-    public CommonPopups(@ActivityContext Context activityContext, AuthRepo authRepo) {
+    public CommonPopups(@ActivityContext Context activityContext, AuthRepo authRepo,
+                        CheckPhoneInternetConnection internetConnection) {
         this.context = activityContext;
         if (activityContext instanceof Activity) {
             this.activity = (Activity) activityContext;
@@ -70,6 +72,7 @@ public class CommonPopups {
             throw new RuntimeException("activityContext not an instance of Activity");
         }
         this.authRepo = authRepo;
+        this.internetConnection = internetConnection;
     }
 
     /**
@@ -78,7 +81,7 @@ public class CommonPopups {
      * @param callback Callback
      */
     public void displayLoginPopup(@Nullable OperationCompleteCallback callback) {
-        if (!CheckPhoneInternetConnection.isNetworkConnected(context)) {
+        if (!internetConnection.isNetworkConnected()) {
             if (null != callback) {
                 callback.onFailure("No internet connection.");
             }

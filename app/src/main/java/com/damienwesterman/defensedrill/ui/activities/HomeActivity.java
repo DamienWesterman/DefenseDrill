@@ -37,14 +37,21 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Home screen activity and entry point for the application. Displays the different general
  * functionalities of the app. CRUD operations in the database, Drill generation, and feedback.
  * <br><br>
  * INTENTS: None expected.
  */
+@AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
     private LinearLayout rootView;
+    @Inject
+    CheckPhoneInternetConnection internetConnection;
 
     // =============================================================================================
     // Activity Methods
@@ -69,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CustomizeDatabaseActivity.class);
             startActivity(intent);
         } else if (R.id.webDrillOptionsCard == cardId) {
-            if (!CheckPhoneInternetConnection.isNetworkConnected(this)) {
+            if (!internetConnection.isNetworkConnected()) {
                 UiUtils.displayDismissibleSnackbar(rootView, "No internet connection.");
             } else {
                 Intent intent = new Intent(this, WebDrillOptionsActivity.class);

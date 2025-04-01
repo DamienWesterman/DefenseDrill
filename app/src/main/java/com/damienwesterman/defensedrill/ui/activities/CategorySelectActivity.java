@@ -56,7 +56,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class CategorySelectActivity extends AppCompatActivity {
-    CategoryViewModel viewModel;
 
     // =============================================================================================
     // Activity Methods
@@ -66,7 +65,7 @@ public class CategorySelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_select);
 
-        viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        CategoryViewModel viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         viewModel.getAbstractCategories().observe(this, this::setUpRecyclerView);
         viewModel.populateAbstractCategories();
     }

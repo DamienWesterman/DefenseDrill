@@ -31,18 +31,28 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
 /**
- * Static use case to check if the phone has a network connection.
+ * Use case to check if the phone has a network connection.
  */
 public class CheckPhoneInternetConnection {
+    private final Context context;
+
+    @Inject
+    public CheckPhoneInternetConnection(@ApplicationContext Context context) {
+        this.context = context;
+    }
+
     /**
      * Checks if the user is connected to any network. Ideal to check before attempting to perform
      * networking operations.
      *
-     * @param context Application Context.
      * @return true if the user is connected to a network.
      */
-    public static boolean isNetworkConnected(Context context) {
+    public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (null == cm) {

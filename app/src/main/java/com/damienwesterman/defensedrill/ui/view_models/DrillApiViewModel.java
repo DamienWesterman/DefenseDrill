@@ -59,17 +59,7 @@ public class DrillApiViewModel extends AndroidViewModel {
      * @param callback Callback
      */
     public void downloadDb(OperationCompleteCallback callback) {
-        downloadDb.download(new OperationCompleteCallback() {
-            @Override
-            public void onSuccess() {
-                callback.onSuccess();
-            }
-
-            @Override
-            public void onFailure(String error) {
-                callback.onFailure(error);
-            }
-        });
+        downloadDb.download(callback);
     }
 
     /**

@@ -62,6 +62,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     SharedPrefs sharedPrefs;
     @Inject
     CommonPopups commonPopups;
+    @Inject
+    CheckPhoneInternetConnection internetConnection;
 
     private DrillApiViewModel viewModel;
 
@@ -171,12 +173,11 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-
     /**
      * Perform some checks before setting up the download all drills operation.
      */
     private void handleDownloadDrills() {
-        if (!CheckPhoneInternetConnection.isNetworkConnected(this)) {
+        if (!internetConnection.isNetworkConnected()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No internet connection");
             return;
         }
