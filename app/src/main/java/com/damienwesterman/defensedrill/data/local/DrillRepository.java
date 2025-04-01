@@ -24,9 +24,8 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
 
 import androidx.annotation.NonNull;
@@ -43,8 +42,6 @@ import java.util.stream.Collectors;
 
 /**
  * This class is used to interact with the SQLite database.
- * <br>
- * Call {@link DrillRepository#getInstance(Context)} to use the repo.
  * <br><br>
  * All methods are synchronized, and thus all calls are thread safe.
  */
@@ -56,30 +53,11 @@ public class DrillRepository {
     private final CategoryDao categoryDao;
     private final SubCategoryDao subCategoryDao;
 
-    /**
-     * Private constructor, access class with {@link #getInstance(Context context)}.
-     *
-     * @param context   Application context.
-     */
-    private DrillRepository(Context context) {
-        this.db = DrillDatabase.getInstance(context);
+    /* package-private */ DrillRepository(DrillDatabase db) {
+        this.db = db;
         this.drillDao = this.db.getDrillDao();
         this.categoryDao = this.db.getCategoryDao();
         this.subCategoryDao = this.db.getSubCategoryDao();
-    }
-
-    /**
-     * Get running DrillRepository instance.
-     *
-     * @param context Application context.
-     * @return DrillRepository instance.
-     */
-    public synchronized static DrillRepository getInstance(Context context) {
-        if ( null == instance) {
-            instance = new DrillRepository(context.getApplicationContext());
-        }
-
-        return instance;
     }
 
     /**

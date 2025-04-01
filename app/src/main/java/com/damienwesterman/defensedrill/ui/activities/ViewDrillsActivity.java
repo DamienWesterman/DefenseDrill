@@ -42,11 +42,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.DrillAdapter;
-import com.damienwesterman.defensedrill.ui.utils.Utils;
+import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillListViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Activity to display, edit, and create drills.
  * <br><br>
@@ -64,6 +66,7 @@ import java.util.stream.Collectors;
  * <br><br>
  * INTENTS: None expected.
  */
+@AndroidEntryPoint
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
     private DrillListViewModel.SortOrder sortOrder;
@@ -115,7 +118,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     public void filterByCategory(View view) {
         List<CategoryEntity> categories = viewModel.getAllCategories();
         if (null == categories) {
-            Utils.displayDismissibleSnackbar(rootView, "Categories still loading, please try again...");
+            UiUtils.displayDismissibleSnackbar(rootView, "Categories still loading, please try again...");
         } else {
             filterCategoriesPopup(categories);
         }
@@ -124,7 +127,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     public void filterBySubCategory(View view) {
         List<SubCategoryEntity> subCategories = viewModel.getAllSubCategories();
         if (null == subCategories) {
-            Utils.displayDismissibleSnackbar(rootView,
+            UiUtils.displayDismissibleSnackbar(rootView,
                     "Sub-categories still loading, please try again...");
         } else {
             filterSubCategoriesPopup(subCategories);
@@ -175,7 +178,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
             if (newSortOrder == sortOrder) {
                 // Indicates an error and we didn't switch
-                Utils.displayDismissibleSnackbar(rootView, "Could not switch sort order");
+                UiUtils.displayDismissibleSnackbar(rootView, "Could not switch sort order");
                 setLoading(false);
             } else {
                 sortOrder = newSortOrder;
@@ -331,7 +334,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      */
     private void deleteDrillPopup(Drill drill) {
         if (null == drill) {
-            Utils.displayDismissibleSnackbar(rootView, "Something went wrong trying to delete");
+            UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong trying to delete");
             return;
         }
 

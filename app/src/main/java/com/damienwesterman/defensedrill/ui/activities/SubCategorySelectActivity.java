@@ -39,15 +39,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.view_models.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.view_models.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Activity during Drill Generation to select a sub-Category of drill, or random.
@@ -57,6 +59,7 @@ import java.util.List;
  * <br><br>
  * INTENTS: Expects to receive a {@link Constants#INTENT_CATEGORY_CHOICE} intent.
  */
+@AndroidEntryPoint
 public class SubCategorySelectActivity extends AppCompatActivity {
     private static final String RANDOM_CATEGORY_NAME = "Random";
 

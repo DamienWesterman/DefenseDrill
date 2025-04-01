@@ -24,54 +24,45 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+@NoArgsConstructor
+@RequiredArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode
+@ToString
 public abstract class AbstractCategoryEntity {
     @PrimaryKey(autoGenerate = true)
     private long id;
     @NonNull
     private String name;
+    @NonNull
     private String description;
+    private Long serverId;
 
-    /**
-     * Fully parameterized constructor - for Room DB only.
-     *
-     * @param id            RoomDB generated id.
-     * @param name          Name of the category.
-     * @param description   Description of the category.
-     */
-    protected AbstractCategoryEntity(long id, @NonNull String name, String description) {
+    protected AbstractCategoryEntity(long id, @NotNull String name, @NonNull String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    /**
-     * Usable fully parameterized constructor.
-     *
-     * @param name          Name of the category.
-     * @param description   Description of the category.
+    /*
+     * Manual Getters and Setters are necessary because the database subclasses are compiled before
+     * Lombok compiles the getters and setters, and results in errors.
      */
-    @Ignore
-    public AbstractCategoryEntity(@NonNull String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
-
-    /**
-     * Default Constructor.
-     */
-    @Ignore
-    public AbstractCategoryEntity() {
-        this.name = "";
-        this.description = "";
-    }
 
     public long getId() {
         return id;
@@ -81,7 +72,8 @@ public abstract class AbstractCategoryEntity {
         this.id = id;
     }
 
-    @NonNull public String getName() {
+    @NonNull
+    public String getName() {
         return name;
     }
 
@@ -89,27 +81,20 @@ public abstract class AbstractCategoryEntity {
         this.name = name;
     }
 
+    @NonNull
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(@NonNull String description) {
         this.description = description;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (null == o || getClass() != o.getClass()) {
-            return false;
-        }
-        AbstractCategoryEntity a = (AbstractCategoryEntity) o;
-        return this.id == a.id
-                && 0 == this.name.compareTo(a.name)
-                && 0 == this.description.compareTo(a.description);
+    public Long getServerId() {
+        return serverId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description);
+    public void setServerId(Long serverId) {
+        this.serverId = serverId;
     }
 }

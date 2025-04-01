@@ -45,16 +45,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
-import com.damienwesterman.defensedrill.ui.utils.Utils;
+import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.AbstractCategoryViewModel;
 import com.damienwesterman.defensedrill.ui.view_models.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.view_models.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Activity to display, edit, and create categories or sub-categories (determined by the intent).
@@ -68,6 +70,7 @@ import java.util.List;
  * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_VIEW_CATEGORIES} or
  * {@link Constants#INTENT_VIEW_SUB_CATEGORIES} to determine what screen to show.
  */
+@AndroidEntryPoint
 public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     // The following are abstract limits and do not represent any limits imposed by the database
     private static final int NAME_CHARACTER_LIMIT = 128;
@@ -167,21 +170,21 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
             if (0 == name.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Name can not be empty");
                 return; // Do not dismiss
             } else if (NAME_CHARACTER_LIMIT <= name.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Name must be less than " + NAME_CHARACTER_LIMIT +  " characters");
                 return; // Do not dismiss
             }
 
             if (0 == description.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Description can not be empty");
                 return; // Do not dismiss
             } else if (DESCRIPTION_CHARACTER_LIMIT <= description.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Description must be less than " + DESCRIPTION_CHARACTER_LIMIT +  " characters");
                 return; // Do not dismiss
             }
@@ -190,14 +193,14 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     alert.dismiss();
-                    Utils.displayDismissibleSnackbar(rootView,
+                    UiUtils.displayDismissibleSnackbar(rootView,
                             "Save successful!");
                     onRestart();
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    Utils.displayDismissibleSnackbar(dialogView, error);
+                    UiUtils.displayDismissibleSnackbar(dialogView, error);
                     runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
                 }
@@ -215,7 +218,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
      */
     private void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
         if (null == entity) {
-            Utils.displayDismissibleSnackbar(rootView,
+            UiUtils.displayDismissibleSnackbar(rootView,
                     "Something went wrong");
             return;
         }
@@ -245,21 +248,21 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
             if (0 == name.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Name can not be empty");
                 return; // Do not dismiss
             } else if (NAME_CHARACTER_LIMIT <= name.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Name must be less than " + NAME_CHARACTER_LIMIT +  " characters");
                 return; // Do not dismiss
             }
 
             if (0 == description.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Description can not be empty");
                 return; // Do not dismiss
             } else if (DESCRIPTION_CHARACTER_LIMIT <= description.length()) {
-                Utils.displayDismissibleSnackbar(dialogView,
+                UiUtils.displayDismissibleSnackbar(dialogView,
                         "Description must be less than " + DESCRIPTION_CHARACTER_LIMIT +  " characters");
                 return; // Do not dismiss
             }
@@ -270,14 +273,14 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     alert.dismiss();
-                    Utils.displayDismissibleSnackbar(rootView,
+                    UiUtils.displayDismissibleSnackbar(rootView,
                             "Save successful!");
                     onRestart();
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    Utils.displayDismissibleSnackbar(dialogView, error);
+                    UiUtils.displayDismissibleSnackbar(dialogView, error);
                     runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
                 }
@@ -295,7 +298,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
      */
     private void deleteAbstractCategoryPopup(AbstractCategoryEntity entity) {
         if (null == entity) {
-            Utils.displayDismissibleSnackbar(rootView,
+            UiUtils.displayDismissibleSnackbar(rootView,
                     "Something went wrong trying to delete");
             return;
         }

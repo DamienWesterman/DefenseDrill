@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
 import android.content.Context;
 
@@ -46,26 +46,16 @@ import androidx.room.RoomDatabase;
 }, version = 1, exportSchema = false)
 /* package-private */ abstract class DrillDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "drill_database";
-    private static DrillDatabase instance;
 
     /**
-     * Default constructor. Do not use. Access class with {@link #getInstance(Context context)}.
-     */
-    protected DrillDatabase() { }
-
-    /**
-     * Get running DrillRepository instance.
+     * Build the DrillDatabase object.
      *
-     * @param context Application context.
-     * @return DrillRepository instance.
+     * @param applicationContext Application Context.
+     * @return DrillDatabase Object.
      */
-    public synchronized static DrillDatabase getInstance(Context context) {
-        if ( null == instance) {
-            instance = Room.databaseBuilder(context.getApplicationContext(), DrillDatabase.class,
-                    DATABASE_NAME).build();
-        }
-
-        return instance;
+    /* package-private */ static DrillDatabase instantiate(Context applicationContext) {
+        return Room.databaseBuilder(applicationContext, DrillDatabase.class,
+                DATABASE_NAME).build();
     }
 
     public abstract DrillDao getDrillDao();

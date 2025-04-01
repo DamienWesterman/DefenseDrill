@@ -34,9 +34,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.damienwesterman.defensedrill.data.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.ArrayList;
@@ -44,19 +44,25 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * View model for {@link SubCategoryEntity}, geared towards a list of them and allowing CRUD
  * functionality.
  */
+@HiltViewModel
 public class SubCategoryViewModel extends AbstractCategoryViewModel {
     private final MutableLiveData<List<AbstractCategoryEntity>> subCategories;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public SubCategoryViewModel(@NonNull Application application) {
+    @Inject
+    public SubCategoryViewModel(@NonNull Application application, DrillRepository repo) {
         super(application);
 
-        repo = DrillRepository.getInstance(application);
+        this.repo = repo;
         subCategories = new MutableLiveData<>();
     }
 

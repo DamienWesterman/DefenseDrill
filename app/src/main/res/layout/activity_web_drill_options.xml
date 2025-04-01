@@ -6,55 +6,55 @@
 
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/activityHome"
+        android:id="@+id/activityWebDrillOptions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:context=".ui.activities.HomeActivity" >
 
         <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-            android:id="@+id/generateDrillCard"
+            android:id="@+id/downloadFromDatabaseCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="8dp"
-            app:title="@string/generate_drill_title"
-            app:description="@string/generate_drills_description"
+            app:title="@string/download_from_database_title"
+            app:description="@string/download_from_database_description"
             android:onClick="onCardClick"/>
 
         <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-            android:id="@+id/customizeDatabaseCard"
+            android:id="@+id/checkForUpdatesCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="8dp"
-            app:title="@string/customize_database_title"
-            app:description="@string/customize_database_description"
+            app:title="@string/check_for_updates_card_title"
+            app:description="@string/check_for_updates_card_description"
             android:onClick="onCardClick"/>
 
         <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-            android:id="@+id/webDrillOptionsCard"
+            android:id="@+id/loginCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="8dp"
-            app:title="@string/web_drill_options_title"
-            app:description="@string/web_drill_options_description"
-            android:onClick="onCardClick" />
+            app:title="@string/login_title"
+            app:description="@string/login_description"
+            android:onClick="onCardClick"/>
 
         <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
-            android:id="@+id/feedbackCard"
+            android:id="@+id/logoutCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="8dp"
-            app:title="@string/feedback_title"
-            app:description="@string/feedback_description"
-            android:onClick="onCardClick" />
+            app:title="@string/logout_title"
+            app:description="@string/logout_description"
+            android:onClick="onCardClick"/>
 
     </LinearLayout>
 </ScrollView>

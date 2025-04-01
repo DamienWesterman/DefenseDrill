@@ -33,10 +33,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.HashSet;
@@ -45,9 +45,14 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * View model for {@link Drill} objects geared towards creation of a new Drill.
  */
+@HiltViewModel
 public class CreateDrillViewModel extends AndroidViewModel {
     private final DrillRepository repo;
     private List<CategoryEntity> allCategories;
@@ -56,10 +61,11 @@ public class CreateDrillViewModel extends AndroidViewModel {
     private final Set<SubCategoryEntity> checkedSubCategoryEntities = new HashSet<>();
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    public CreateDrillViewModel(@NonNull Application application) {
+    @Inject
+    public CreateDrillViewModel(@NonNull Application application, DrillRepository repo) {
         super(application);
 
-        repo = DrillRepository.getInstance(application);
+        this.repo = repo;
     }
 
     /**

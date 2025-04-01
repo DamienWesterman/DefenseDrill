@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -52,7 +52,7 @@ import java.util.Objects;
     private String notes;
     /** ID of this drill on the server, for retrieving instructions and videos */
     @ColumnInfo(name = "server_drill_id")
-    private long serverDrillId;
+    private Long serverDrillId;
 
     /**
      * Default Constructor.
@@ -64,7 +64,7 @@ import java.util.Objects;
         this.newDrill = true;
         this.confidence = Drill.LOW_CONFIDENCE;
         this.notes = "";
-        this.serverDrillId = -1;
+        this.serverDrillId = null;
     }
 
     /**
@@ -158,11 +158,11 @@ import java.util.Objects;
         this.notes = notes;
     }
 
-    public long getServerDrillId() {
+    public Long getServerDrillId() {
         return this.serverDrillId;
     }
 
-    public void setServerDrillId(long serverDrillId) {
+    public void setServerDrillId(Long serverDrillId) {
         this.serverDrillId = serverDrillId;
     }
 

@@ -34,10 +34,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 
 import java.util.List;
 import java.util.Set;
@@ -45,10 +45,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * View model for {@link Drill} objects geared towards displaying a list of all drills, and allowing
  * deletion of drills.
  */
+@HiltViewModel
 public class DrillListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Drill>> drills;
     private List<CategoryEntity> allCategories;
@@ -66,10 +71,11 @@ public class DrillListViewModel extends AndroidViewModel {
         SORT_DATE_DESCENDING
     }
 
-    public DrillListViewModel(@NonNull Application application) {
+    @Inject
+    public DrillListViewModel(@NonNull Application application, DrillRepository repo) {
         super(application);
 
-        repo = DrillRepository.getInstance(application);
+        this.repo = repo;
         drills = new MutableLiveData<>();
         sortOrder = SortOrder.SORT_NAME_ASCENDING;
     }

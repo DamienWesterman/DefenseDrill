@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?><ScrollView
+    android:id="@+id/layoutLogin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/usernameLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:text="@string/usernameLabel"
+            android:textStyle="italic"
+            android:textColor="@color/field_label" />
+
+        <EditText
+            android:id="@+id/usernameText"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:inputType="textMultiLine|textCapSentences"
+            android:textSize="24sp"
+            android:hint="@string/enter_username"
+            android:autofillHints="" />
+
+        <TextView
+            android:id="@+id/passwordLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:text="@string/password_label"
+            android:textStyle="italic"
+            android:textColor="@color/field_label" />
+
+        <EditText
+            android:id="@+id/passwordText"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:textSize="24sp"
+            android:hint="@string/enter_password"
+            android:autofillHints="" />
+
+        <!--    Text to be set by the controller    -->
+        <TextView
+            android:id="@+id/loginErrorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            android:textStyle="italic"
+            android:textColor="@color/error"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/loginProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

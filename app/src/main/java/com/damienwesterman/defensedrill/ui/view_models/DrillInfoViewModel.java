@@ -34,10 +34,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.damienwesterman.defensedrill.data.CategoryEntity;
-import com.damienwesterman.defensedrill.data.Drill;
-import com.damienwesterman.defensedrill.data.DrillRepository;
-import com.damienwesterman.defensedrill.data.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
@@ -47,9 +47,14 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * View model for {@link Drill} objects geared towards displaying and modifying a single drill.
  */
+@HiltViewModel
 public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<Drill> currentDrill;
     private List<CategoryEntity> allCategories;
@@ -58,11 +63,12 @@ public class DrillInfoViewModel extends AndroidViewModel {
     private DrillGenerator drillGenerator;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public DrillInfoViewModel(Application application) {
+    @Inject
+    public DrillInfoViewModel(Application application, DrillRepository repo) {
         super(application);
 
         currentDrill = new MutableLiveData<>();
-        repo = DrillRepository.getInstance(application);
+        this.repo = repo;
     }
 
     /**

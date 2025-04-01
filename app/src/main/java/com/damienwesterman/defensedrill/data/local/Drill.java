@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data;
+package com.damienwesterman.defensedrill.data.local;
 
 import androidx.room.Embedded;
 import androidx.room.Ignore;
@@ -35,11 +35,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Drill class contains all the information about a single drill.
  */
+@ToString
+@EqualsAndHashCode
 public class Drill {
     public static final int HIGH_CONFIDENCE = 0;
     public static final int MEDIUM_CONFIDENCE = 2;
@@ -48,6 +54,8 @@ public class Drill {
     @Embedded
     private DrillEntity drillEntity;
 
+    @Setter
+    @Getter
     @Relation(
             parentColumn = "id",
             entityColumn = "id",
@@ -56,6 +64,8 @@ public class Drill {
     )
     private List<CategoryEntity> categories;
 
+    @Setter
+    @Getter
     @Relation(
             parentColumn = "id",
             entityColumn = "id",
@@ -77,11 +87,11 @@ public class Drill {
     /**
      * Parameterized constructor - ROOM DB ONLY
      *
-     * @param drillEntity   DrillEntity
+     * @param drillEntity       DrillEntity
      * @param categories        CategoryEntity list
      * @param subCategories     SubCategoryEntity list
      */
-    protected Drill(DrillEntity drillEntity, List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
+    Drill(DrillEntity drillEntity, List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
         this.drillEntity = drillEntity;
         this.categories = categories;
         this.subCategories = subCategories;
@@ -112,14 +122,14 @@ public class Drill {
     /**
      * Internal use only
      */
-    protected DrillEntity getDrillEntity() {
+    DrillEntity getDrillEntity() {
         return drillEntity;
     }
 
     /**
      * Room DB only
      */
-    protected void setDrillEntity(DrillEntity drillEntity) {
+    void setDrillEntity(DrillEntity drillEntity) {
         this.drillEntity = drillEntity;
     }
 
@@ -130,7 +140,7 @@ public class Drill {
     /**
      * Room DB only
      */
-    protected void setId(long id) {
+    void setId(long id) {
         this.drillEntity.setId(id);
     }
 
@@ -174,20 +184,12 @@ public class Drill {
         this.drillEntity.setNotes(notes);
     }
 
-    public long getServerDrillId() {
+    public Long getServerDrillId() {
         return this.drillEntity.getServerDrillId();
     }
 
-    public void setServerDrillId(long serverDrillId) {
+    public void setServerDrillId(Long serverDrillId) {
         this.drillEntity.setServerDrillId(serverDrillId);
-    }
-
-    public List<CategoryEntity> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<CategoryEntity> categories) {
-        this.categories = categories;
     }
 
     public void addCategory(CategoryEntity category) {
@@ -198,32 +200,11 @@ public class Drill {
         this.categories.remove(category);
     }
 
-    public List<SubCategoryEntity> getSubCategories() {
-        return subCategories;
-    }
-
-    public void setSubCategories(List<SubCategoryEntity> subCategories) {
-        this.subCategories = subCategories;
-    }
-
     public void addSubCategory(SubCategoryEntity subCategory) {
         this.subCategories.add(subCategory);
     }
 
     public void removeSubCategory(SubCategoryEntity subCategory) {
         this.subCategories.remove(subCategory);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Drill drill = (Drill) o;
-        return drillEntity.equals(drill.drillEntity) && categories.equals(drill.categories) && subCategories.equals(drill.subCategories);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(drillEntity, categories, subCategories);
     }
 }

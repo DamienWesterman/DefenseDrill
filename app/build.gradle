@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -9,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.damienwesterman.defensedrill"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -39,13 +40,28 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildTypes {
+        release {
+            buildConfigField "String", "SERVER_URL", "\"${System.getenv("DEFENSE_DRILL_SERVER_URL") ?: ""}\""
+        }
+        debug {
+            buildConfigField "String", "SERVER_URL", "\"${System.getenv("DEFENSE_DRILL_SERVER_URL") ?: ""}\""
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
+    implementation 'androidx.activity:activity:1.8.0'
     androidTestImplementation "androidx.test:runner:1.5.2"
     androidTestImplementation "androidx.test:rules:1.5.0"
 
@@ -66,4 +82,29 @@ dependencies {
 
     // Mockito
     testImplementation 'org.mockito:mockito-core:4.2.0'
+
+    // Lombok
+    implementation "org.projectlombok:lombok:1.18.36"
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.5.0'
+
+    // Android security
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
+    // RxJava
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
+
+    // Hilt/Dagger
+    implementation 'com.google.dagger:hilt-android:2.56'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.56'
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.56'
+    androidTestAnnotationProcessor 'com.google.dagger:hilt-compiler:2.56'
+    testImplementation 'com.google.dagger:hilt-android-testing:2.56'
+    testAnnotationProcessor 'com.google.dagger:hilt-compiler:2.56'
 }
