@@ -36,6 +36,9 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
+/**
+ * Dagger module for Dependency Injection for the local data layer.
+ */
 @Module
 @InstallIn(SingletonComponent.class)
 public class LocalDependenciesModule {

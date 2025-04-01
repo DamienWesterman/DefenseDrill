@@ -31,7 +31,7 @@ import android.app.Application;
 import dagger.hilt.android.HiltAndroidApp;
 
 /**
- * TODO: DOC COMMENTS
+ * Hilt Application Class for Dependency Injection
  */
 @HiltAndroidApp
 public class DefenseDrillApplication extends Application {

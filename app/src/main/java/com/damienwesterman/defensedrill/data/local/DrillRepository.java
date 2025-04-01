@@ -72,16 +72,6 @@ public class DrillRepository {
     }
 
     /**
-     * TODO: Doc comments
-     * @param names
-     * @return
-     */
-    @NonNull
-    public synchronized List<Drill> getAllDrills(List<String> names) {
-        return this.drillDao.findAllDrillsByName(names);
-    }
-
-    /**
      * Return a list of all Drills that belong to the specified category.
      *
      * @param categoryId   ID of the specific category of drills.
@@ -350,16 +340,6 @@ public class DrillRepository {
     }
 
     /**
-     * TODO: Doc comments
-     * @param names
-     * @return
-     */
-    @NonNull
-    public synchronized  List<CategoryEntity> getAllCategories(List<String> names) {
-        return this.categoryDao.findAllByName(names);
-    }
-
-    /**
      * Find a category based on the given id.
      *
      * @param id    Category ID.
@@ -468,16 +448,6 @@ public class DrillRepository {
     @NonNull
     public synchronized List<SubCategoryEntity> getAllSubCategories() {
         return this.subCategoryDao.getAll();
-    }
-
-    /**
-     * TODO: Doc comments
-     * @param names
-     * @return
-     */
-    @NonNull
-    public synchronized List<SubCategoryEntity> getAllSubCategories(List<String> names) {
-        return this.subCategoryDao.findAllByName(names);
     }
 
     /**

@@ -158,11 +158,11 @@ import java.util.Objects;
         this.notes = notes;
     }
 
-    public long getServerDrillId() {
+    public Long getServerDrillId() {
         return this.serverDrillId;
     }
 
-    public void setServerDrillId(long serverDrillId) {
+    public void setServerDrillId(Long serverDrillId) {
         this.serverDrillId = serverDrillId;
     }
 

@@ -218,7 +218,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (null == drill || null == categoryEntities) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
-        } else if (0 == categoryEntities.size()) {
+        } else if (categoryEntities.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
@@ -305,7 +305,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (null == drill || null == subCategoryEntities) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
-        } else if (0 == subCategoryEntities.size()) {
+        } else if (subCategoryEntities.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }

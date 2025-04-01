@@ -32,7 +32,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 
 /**
- * Common utilities for networking operations.
+ * Static use case to check if the phone has a network connection.
  */
 public class CheckPhoneInternetConnection {
     /**

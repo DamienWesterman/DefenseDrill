@@ -43,14 +43,6 @@ import java.util.Optional;
     @NonNull
     List<SubCategoryEntity> getAll();
 
-    @Transaction
-    @Query(
-            "SELECT * FROM " + SubCategoryEntity.TABLE_NAME +
-                    " WHERE name IN (:names) ORDER BY name"
-    )
-    @NonNull
-    List<SubCategoryEntity> findAllByName(@NonNull List<String> names);
-
     @Query(
             "SELECT DISTINCT sub.* FROM " + SubCategoryEntity.TABLE_NAME + " AS sub " +
             "JOIN " + DrillSubCategoryJoinEntity.TABLE_NAME + " AS drillSubJoin ON sub.id = drillSubJoin.sub_category_id " +

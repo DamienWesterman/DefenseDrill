@@ -48,6 +48,17 @@ import androidx.room.RoomDatabase;
 /* package-private */ abstract class DrillDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "drill_database";
 
+    /**
+     * Private constructor.
+     */
+    private DrillDatabase() { }
+
+    /**
+     * Build the DrillDatabase object.
+     *
+     * @param applicationContext Application Context.
+     * @return DrillDatabase Object.
+     */
     /* package-private */ static DrillDatabase instantiate(Context applicationContext) {
         return Room.databaseBuilder(applicationContext, DrillDatabase.class,
                 DATABASE_NAME).build();

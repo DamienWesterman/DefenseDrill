@@ -26,13 +26,12 @@
 
 package com.damienwesterman.defensedrill.data.remote.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * TODO: Doc comments
+ * DTO for login credentials.
  */
 @Getter
 @RequiredArgsConstructor

@@ -47,14 +47,6 @@ import java.util.Optional;
 
     @Transaction
     @Query(
-            "SELECT DISTINCT * FROM " + DrillEntity.TABLE_NAME +
-                    " WHERE name IN (:names) ORDER BY name"
-    )
-    @NonNull
-    List<Drill> findAllDrillsByName(@NonNull List<String> names);
-
-    @Transaction
-    @Query(
             "SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
             "JOIN " + DrillCategoryJoinEntity.TABLE_NAME + " AS drillcatJoin ON drill.id = drillcatJoin.drill_id " +
             "JOIN " + CategoryEntity.TABLE_NAME + " AS cat ON drillcatJoin.category_id = cat.id " +

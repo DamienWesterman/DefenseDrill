@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * TODO: Doc comments
+ * Repo for interacting with the security portion of the API server backend.
  */
 public class AuthRepo {
     private static final String TAG = AuthRepo.class.getSimpleName();
@@ -62,7 +62,12 @@ public class AuthRepo {
         this.authDao = authDao;
     }
 
-    // TODO: Doc comments
+    /**
+     * Attempt to log in with the provided credentials.
+     *
+     * @param login Login credentials.
+     * @param callback Callback.
+     */
     public void attemptLogin(@NonNull LoginDTO login,
                              @NonNull OperationCompleteCallback callback) {
         Call<String> serverCall = authDao.login(login);

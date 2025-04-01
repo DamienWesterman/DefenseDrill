@@ -43,7 +43,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-// TODO: Doc comments
+/**
+ * Dagger module for Dependency Injection for the remote data layer.
+ */
 @Module
 @InstallIn(SingletonComponent.class)
 public class RemoteDependenciesModule {
@@ -66,7 +68,6 @@ public class RemoteDependenciesModule {
         return new ApiRepo(sharedPrefs, createApiDao());
     }
 
-    // TODO: Doc comments
     private static String getServerUrl() {
         String serverUrl = Constants.SERVER_URL;
         if (!URLUtil.isValidUrl(serverUrl)) {

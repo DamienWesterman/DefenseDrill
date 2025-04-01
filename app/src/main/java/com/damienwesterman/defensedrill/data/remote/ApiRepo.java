@@ -38,15 +38,19 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 /**
- * TODO: Doc comments
+ * Repository class for interacting with the API server backend.
  */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ApiRepo {
     private final SharedPrefs sharedPrefs;
     private final ApiDao apiDao;
 
-    // TODO: Doc comments
-    // TODO: make sure caller checks JWT first or something and displays popup if empty
+    /**
+     * Get an observable for the API call to retrieve all Drills from the server.
+     *
+     * @return Observable List of DrillDTO objects
+     * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
+     */
     public Observable<List<DrillDTO>> getAllDrills()
             throws IllegalArgumentException {
         String jwt = sharedPrefs.getJwt();
@@ -58,8 +62,12 @@ public class ApiRepo {
         return apiDao.getAllDrills(jwtHeader);
     }
 
-    // TODO: Doc comments
-    // TODO: make sure caller checks JWT first or something and displays popup if empty
+    /**
+     * Get an observable for the API call to retrieve all Categories from the server.
+     *
+     * @return Observable List of CategoryDTO objects
+     * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
+     */
     public Observable<List<CategoryDTO>> getAllCategories()
             throws IllegalArgumentException {
         String jwt = sharedPrefs.getJwt();
@@ -71,8 +79,12 @@ public class ApiRepo {
         return apiDao.getAllCategories(jwtHeader);
     }
 
-    // TODO: Doc comments
-    // TODO: make sure caller checks JWT first or something and displays popup if empty
+    /**
+     * Get an observable for the API call to retrieve all SubCategories from the server.
+     *
+     * @return Observable List of SubCategoryDTO objects
+     * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
+     */
     public Observable<List<SubCategoryDTO>> getAllSubCategories()
             throws IllegalArgumentException {
         String jwt = sharedPrefs.getJwt();

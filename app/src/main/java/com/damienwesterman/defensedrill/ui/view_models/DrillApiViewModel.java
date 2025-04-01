@@ -37,7 +37,6 @@ import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * ViewModel for interacting with the DefenseDrill API Backend.
@@ -45,7 +44,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 @HiltViewModel
 public class DrillApiViewModel extends AndroidViewModel {
     private final DownloadDatabaseUseCase downloadDb;
-    private Disposable disposable;
 
     @Inject
     public DrillApiViewModel(@NonNull Application application, DownloadDatabaseUseCase downloadDb) {
@@ -54,28 +52,30 @@ public class DrillApiViewModel extends AndroidViewModel {
         this.downloadDb = downloadDb;
     }
 
+    /**
+     * Begin the operation to download and save all Drills, Categories, and SubCategories from the
+     * server.
+     *
+     * @param callback Callback
+     */
     public void downloadDb(OperationCompleteCallback callback) {
-        disposable = downloadDb.execute(new OperationCompleteCallback() {
+        downloadDb.download(new OperationCompleteCallback() {
             @Override
             public void onSuccess() {
                 callback.onSuccess();
-                disposable = null;
             }
 
             @Override
             public void onFailure(String error) {
                 callback.onFailure(error);
-                disposable = null;
             }
         });
     }
 
+    /**
+     * Stop the download before it completes.
+     */
     public void stopDownload() {
-        if (null != disposable) {
-            if (!disposable.isDisposed()) {
-                disposable.dispose();
-                disposable = null;
-            }
-        }
+        downloadDb.cancel();
     }
 }

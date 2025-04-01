@@ -75,9 +75,8 @@ public class CommonPopups {
     /**
      * Display a popup for the user to log in to the backend server.
      *
-     * @param callback Callback, only calls onSuccess() upon successful login, never calls onFailure()
+     * @param callback Callback
      */
-    // TODO: If this is only called from one place, remove from CommonPopups
     public void displayLoginPopup(@Nullable OperationCompleteCallback callback) {
         if (!CheckPhoneInternetConnection.isNetworkConnected(context)) {
             if (null != callback) {

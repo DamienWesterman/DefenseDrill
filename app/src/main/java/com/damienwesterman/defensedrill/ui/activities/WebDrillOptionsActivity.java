@@ -49,6 +49,12 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * Screen to allow user to select from network related actions such as logging in or out to the
+ * server, downloading, and updating drills from the server.
+ * <br><br>
+ * INTENTS: None expected.
+ */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
     private LinearLayout rootView;
@@ -78,6 +84,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.downloadFromDatabaseCard == cardId) {
+            // TODO: (Subsequent PR) Launch activity to allow user to select all, specific drills, or by category/sub-category
             handleDownloadDrills();
         } else if (R.id.checkForUpdatesCard == cardId) {
             // TODO: Launch this activity (subsequent PR)
@@ -122,7 +129,9 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    // TODO: Doc comments
+    /**
+     * Display the loading screen popup while downloading drills.
+     */
     private void loadAllDrillsPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -162,7 +171,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    // TODO: Doc comments
+
+    /**
+     * Perform some checks before setting up the download all drills operation.
+     */
     private void handleDownloadDrills() {
         if (!CheckPhoneInternetConnection.isNetworkConnected(this)) {
             UiUtils.displayDismissibleSnackbar(rootView, "No internet connection");

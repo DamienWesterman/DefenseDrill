@@ -59,7 +59,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.HttpException;
 
 /**
- * TODO DOC COMMENTS
+ * Use Case to Download all Drills, Categories, and SubCategories from the server and save them to
+ * local storage.
  */
 public class DownloadDatabaseUseCase {
     private static final String TAG = DownloadDatabaseUseCase.class.getSimpleName();
@@ -71,6 +72,7 @@ public class DownloadDatabaseUseCase {
     private Map<Long, CategoryEntity> categoryMap;
     /** Map of SubCategoryEntities by their ServerId */
     private Map<Long, SubCategoryEntity> subCategoryMap;
+    private Disposable disposable;
 
     @Inject
     public DownloadDatabaseUseCase(ApiRepo apiRepo, DrillRepository drillRepo,
@@ -80,18 +82,24 @@ public class DownloadDatabaseUseCase {
         this.sharedPrefs = sharedPrefs;
         this.categoryMap = Map.of();
         this.subCategoryMap = Map.of();
+        disposable = null;
     }
 
-    // TODO: Doc comments
-    public Disposable execute(OperationCompleteCallback callback) {
-        return loadCategoriesFromDatabase()
-            .flatMap(categories -> loadSubCategoriesFromDatabase())
-            .flatMap(subCategories -> loadDrillsFromDatabase())
+    /**
+     * Download and save all Drills, Categories, and SubCategories from the server.
+     *
+     * @param callback Callback
+     */
+    public void download(OperationCompleteCallback callback) {
+        disposable = loadCategoriesFromServer()
+            .flatMap(categories -> loadSubCategoriesFromServer())
+            .flatMap(subCategories -> loadDrillsFromServer())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 drills ->  {
                     sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
                     callback.onSuccess();
+                    disposable = null;
                 },
                 throwable -> {
                     String errorMessage;
@@ -102,13 +110,16 @@ public class DownloadDatabaseUseCase {
                         if (httpException.code() == HttpsURLConnection.HTTP_UNAUTHORIZED) {
                             errorMessage = "Unauthorized, please log in again";
 
-                        // TODO: Subsequent PR - Double check what the return type looks like in a 201, can be seen when we implement the update functionality
+                            // TODO: Subsequent PR - Double check what the return type looks like in a 201, can be seen when we implement the update functionality
                         } else {
                             // Should not get here
                             Log.e(TAG, "Received unexpected HttpException: "
                                     + httpException.getMessage());
                             errorMessage = "Server issue, please try again later";
                         }
+                    } else if (throwable instanceof IllegalArgumentException) {
+                        // Thrown by ApiRepo if the JWT from SharedPrefs is empty
+                        errorMessage = "Unauthorized, please log in again";
                     } else if (throwable instanceof SocketTimeoutException) {
                         // getLocalizedMessage(): failed to connect to your.server.org/1.1.1.1 (port 99999) from /2.2.2.2 (port 99999) after 10000ms
                         errorMessage = "Issue connecting to the server, try again later";
@@ -121,15 +132,32 @@ public class DownloadDatabaseUseCase {
                     }
 
                     callback.onFailure(errorMessage);
+                    disposable = null;
                 }
             );
+    }
+
+    /**
+     * Cancel and stop the download/save operation.
+     * <br><br>
+     * NOTE: This does not reverse any of the operation that has already been performed.
+     */
+    public void cancel() {
+        if (null != disposable && !disposable.isDisposed()) {
+            disposable.dispose();
+            disposable = null;
+        }
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    @Transaction
-    private Observable<List<DrillDTO>> loadDrillsFromDatabase() {
+    /**
+     * Return an observable that loads all drills from the server and returns them locally.
+     *
+     * @return Observable for a List of DrillDTO objects.
+     */
+    private Observable<List<DrillDTO>> loadDrillsFromServer() {
         return apiRepo.getAllDrills()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
@@ -186,8 +214,12 @@ public class DownloadDatabaseUseCase {
             );
     }
 
-    @Transaction
-    private Observable<List<CategoryDTO>> loadCategoriesFromDatabase() {
+    /**
+     * Return an observable that loads all categories from the server and returns them locally.
+     *
+     * @return Observable for a List of CategoryDTO objects.
+     */
+    private Observable<List<CategoryDTO>> loadCategoriesFromServer() {
         return apiRepo.getAllCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
@@ -251,8 +283,12 @@ public class DownloadDatabaseUseCase {
             );
     }
 
-    @Transaction
-    private Observable<List<SubCategoryDTO>> loadSubCategoriesFromDatabase() {
+    /**
+     * Return an observable that loads all sub-categories from the server and returns them locally.
+     *
+     * @return Observable for a List of SubCategoryDTO objects.
+     */
+    private Observable<List<SubCategoryDTO>> loadSubCategoriesFromServer() {
         return apiRepo.getAllSubCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
