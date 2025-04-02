@@ -83,6 +83,15 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
+    // TODO: Figure out the format of the screen (instructions, video, and related drills)
+    // TODO: Figure out the flow of the screens/popups (instructions to related drills and so forth, maybe have a stack of them somehow to navigate backwards?)
+    // TODO: Hide the instructions stuff by default, checking:
+        // - If the viewmodel already holds a list of instructions
+        // - If we the jwt is not blank
+        // - Maybe have a loading thing that is shown by default
+        // - Do different things for 201, 200, and then other errors
+    // TODO: Implement Filling instructions
+    // TODO: May want to get a drill in the database by its drill server ID, so make it unique and make a dao/repo method for it
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
