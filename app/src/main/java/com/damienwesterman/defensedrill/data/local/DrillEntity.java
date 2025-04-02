@@ -27,6 +27,7 @@
 package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -51,6 +52,7 @@ import java.util.Objects;
     private int confidence;
     private String notes;
     /** ID of this drill on the server, for retrieving instructions and videos */
+    @Nullable
     @ColumnInfo(name = "server_drill_id")
     private Long serverDrillId;
 

@@ -30,6 +30,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -96,6 +97,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         // - If we the jwt is not blank
         // - Maybe have a loading thing that is shown by default
         // - Do different things for 201, 200, and then other errors
+        // - If the drill even has a server ID
     // TODO: May want to get a drill in the database by its drill server ID, so make it unique and make a dao/repo method for it
     // TODO: If the JWT is present but returns 401, then prompt to sign in, and if they cancel then remove the JWT so that they are not shown? And have a popup that says "hey sign in in web options to view instructions etc"
     // TODO: If there are changes and the user hits back/home, do we want to prompt the user to save before exiting?
@@ -584,8 +586,17 @@ networkButtons.setVisibility(View.VISIBLE);
             fillDrillInfo(drill);
             setUiLoading(false);
 
-            // TODO: Eventually incorporate functionality to display the links for how to
-            //       descriptions and videos
+            viewModel.loadNetworkLinks();
+        }));
+
+        viewModel.getInstructions().observe(this, instructions -> runOnUiThread(() -> {
+            // TODO: Properly implement
+            instructions.forEach(instruction -> Log.i("DxTag", instruction.getDescription()));
+        }));
+
+        viewModel.getRelatedDrills().observe(this, relatedDrills -> runOnUiThread(() -> {
+            // TODO: Properly implement
+            relatedDrills.forEach(relatedDrill -> Log.i("DxTag", relatedDrill.getName()));
         }));
 
         viewModel.loadAllCategories();
@@ -611,6 +622,7 @@ networkButtons.setVisibility(View.VISIBLE);
             // Screen rotation or something, re-load existing drill from viewModel
             fillDrillInfo(drill);
             setUiLoading(false);
+            // TODO: also call fill instructions/related drills
         }
     }
 

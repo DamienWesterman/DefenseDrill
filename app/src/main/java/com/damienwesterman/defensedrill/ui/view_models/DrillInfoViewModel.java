@@ -38,6 +38,9 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.remote.ApiRepo;
+import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
@@ -50,6 +53,9 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * View model for {@link Drill} objects geared towards displaying and modifying a single drill.
@@ -57,18 +63,24 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<Drill> currentDrill;
+    private final MutableLiveData<List<InstructionsDTO>> instructions;
+    private final MutableLiveData<List<RelatedDrillDTO>> relatedDrills;
     private List<CategoryEntity> allCategories;
     private List<SubCategoryEntity> allSubCategories;
-    private final DrillRepository repo;
+    private final DrillRepository drillRepo;
+    private final ApiRepo apiRepo;
     private DrillGenerator drillGenerator;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Inject
-    public DrillInfoViewModel(Application application, DrillRepository repo) {
+    public DrillInfoViewModel(Application application, DrillRepository drillRepo, ApiRepo apiRepo) {
         super(application);
 
         currentDrill = new MutableLiveData<>();
-        this.repo = repo;
+        instructions = new MutableLiveData<>();
+        relatedDrills = new MutableLiveData<>();
+        this.drillRepo = drillRepo;
+        this.apiRepo = apiRepo;
     }
 
     /**
@@ -86,7 +98,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param drillId ID of the drill.
      */
     public void populateDrill(long drillId) {
-        executor.execute(() -> currentDrill.postValue(repo.getDrill(drillId).orElse(null)));
+        executor.execute(() -> currentDrill.postValue(drillRepo.getDrill(drillId).orElse(null)));
     }
 
     /**
@@ -100,13 +112,13 @@ public class DrillInfoViewModel extends AndroidViewModel {
             List<Drill> drills;
             if (Constants.USER_RANDOM_SELECTION == categoryId &&
                     Constants.USER_RANDOM_SELECTION == subCategoryId) {
-                drills = repo.getAllDrills();
+                drills = drillRepo.getAllDrills();
             } else if (Constants.USER_RANDOM_SELECTION == categoryId) {
-                drills = repo.getAllDrillsBySubCategoryId(subCategoryId);
+                drills = drillRepo.getAllDrillsBySubCategoryId(subCategoryId);
             } else if (Constants.USER_RANDOM_SELECTION == subCategoryId) {
-                drills = repo.getAllDrillsByCategoryId(categoryId);
+                drills = drillRepo.getAllDrillsByCategoryId(categoryId);
             } else {
-                drills = repo.getAllDrills(categoryId, subCategoryId);
+                drills = drillRepo.getAllDrills(categoryId, subCategoryId);
             }
             drillGenerator = new DrillGenerator(drills, new Random());
             currentDrill.postValue(drillGenerator.generateDrill());
@@ -149,7 +161,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
 
         executor.execute(() -> {
            try {
-               if (!repo.updateDrills(drill)) {
+               if (!drillRepo.updateDrills(drill)) {
                    callback.onFailure("Something went wrong");
                } else {
                    currentDrill.postValue(drill);
@@ -188,7 +200,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      */
     public void loadAllCategories() {
         if (null == allCategories) {
-            executor.execute(() -> allCategories = repo.getAllCategories());
+            executor.execute(() -> allCategories = drillRepo.getAllCategories());
         }
     }
 
@@ -198,7 +210,47 @@ public class DrillInfoViewModel extends AndroidViewModel {
      */
     public void loadAllSubCategories() {
         if (null == allSubCategories) {
-            executor.execute(() -> allSubCategories = repo.getAllSubCategories());
+            executor.execute(() -> allSubCategories = drillRepo.getAllSubCategories());
+        }
+    }
+
+    /**
+     * Get the LiveData object to observe for the list of Drill Instructions.
+     *
+     * @return LiveData object.
+     */
+    public LiveData<List<InstructionsDTO>> getInstructions() {
+        return instructions;
+    }
+
+    /**
+     * Get the LiveData object to observe for the list of related Drills.
+     *
+     * @return LiveData object.
+     */
+    public LiveData<List<RelatedDrillDTO>> getRelatedDrills() {
+        return relatedDrills;
+    }
+
+    /**
+     * Fetch and load instructions and related drills for the Drill. Drill has to have been
+     * initialized otherwise nothing will happen.
+     */
+    public void loadNetworkLinks() {
+        // TODO: Properly implement with user callbacks, specifically for network issue and unauthorized
+        if (null != currentDrill.getValue()) {
+            Disposable disposable = apiRepo.getDrill(currentDrill.getValue().getServerDrillId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    drill -> {
+                        instructions.postValue(drill.getInstructions());
+                        relatedDrills.postValue(drill.getRelatedDrills());
+                    },
+                    throwable -> {
+                        // TODO ignore for now
+                    }
+                );
         }
     }
 }

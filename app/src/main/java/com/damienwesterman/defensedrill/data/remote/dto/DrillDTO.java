@@ -61,7 +61,7 @@ public class DrillDTO {
     private List<SubCategoryDTO> subCategories;
     private List<InstructionsDTO> instructions;
     @SerializedName("related_drills")
-    private List<RelatedDrillDTO> relatedDRills;
+    private List<RelatedDrillDTO> relatedDrills;
 
     /**
      * Convert the DTO into the locally used Drill object.
