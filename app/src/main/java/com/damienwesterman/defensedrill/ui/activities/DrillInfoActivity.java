@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -83,15 +84,21 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
-    // TODO: Figure out the format of the screen (instructions, video, and related drills)
-    // TODO: Figure out the flow of the screens/popups (instructions to related drills and so forth, maybe have a stack of them somehow to navigate backwards?)
+    // TODO: Implement API methods to get instructions list, instructions details, video, and single drill (related drill)
+    // TODO: Create the following popups/activities
+        // - Select Instructions Popup
+        // - Instructions Activity (have the starting drill at the top?)
+        // - Select Related Drills popup
+        // - Related Drills activity (have the starting drill at the top?)
+    // TODO: Implement Filling instructions and related drills using API access
     // TODO: Hide the instructions stuff by default, checking:
         // - If the viewmodel already holds a list of instructions
         // - If we the jwt is not blank
         // - Maybe have a loading thing that is shown by default
         // - Do different things for 201, 200, and then other errors
-    // TODO: Implement Filling instructions
     // TODO: May want to get a drill in the database by its drill server ID, so make it unique and make a dao/repo method for it
+    // TODO: If the JWT is present but returns 401, then prompt to sign in, and if they cancel then remove the JWT so that they are not shown? And have a popup that says "hey sign in in web options to view instructions etc"
+    // TODO: If there are changes and the user hits back/home, do we want to prompt the user to save before exiting?
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
@@ -108,6 +115,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private View rootView;
     private ProgressBar drillProgressBar;
     private TextView drillName;
+    private View divider;
     private TextView lastDrilledLabel;
     private TextView lastDrilledDate;
     private TextView confidenceLabel;
@@ -120,6 +128,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private Button resetSkippedDrillsButton;
     private Button markAsPracticedButton;
     private Button saveDrillInfoButton;
+    private LinearLayout networkButtons;
 
     // =============================================================================================
     // Activity Methods
@@ -152,11 +161,21 @@ public class DrillInfoActivity extends AppCompatActivity {
         confidenceSpinner.setAdapter(adapter);
 
         setUpViewModel();
+// TODO: REMOVE
+networkButtons.setVisibility(View.VISIBLE);
     }
 
     // =============================================================================================
     // OnClickListener Methods
     // =============================================================================================
+    public void viewInstructions(View view) {
+        UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented"); // TODO FINISH ME
+    }
+
+    public void viewRelatedDrills(View view) {
+        UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented"); // TODO FINISH ME
+    }
+
     public void editCategories(View view) {
         editCategoriesPopup(viewModel.getAllCategories());
     }
@@ -430,7 +449,10 @@ public class DrillInfoActivity extends AppCompatActivity {
                     ));
                 }
             });
-            whatNextPopup();
+            if (ActivityState.GENERATED_DRILL == activityState
+                    || ActivityState.REGENERATED_DRILL == activityState) {
+                whatNextPopup();
+            }
         });
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
@@ -446,7 +468,10 @@ public class DrillInfoActivity extends AppCompatActivity {
                     // Do nothing
                 }
             });
-            whatNextPopup();
+            if (ActivityState.GENERATED_DRILL == activityState
+                    || ActivityState.REGENERATED_DRILL == activityState) {
+                whatNextPopup();
+            }
         });
 
         builder.create().show();
@@ -490,15 +515,7 @@ public class DrillInfoActivity extends AppCompatActivity {
            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
            startActivity(intent);
         });
-        builder.setNegativeButton("Back", (dialog, position) -> {
-            if (ActivityState.DISPLAYING_DRILL == activityState) {
-                finish();
-            }
-            // else if we are in drill generation, just allow it to close the popup
-        });
-        if (ActivityState.DISPLAYING_DRILL == activityState) {
-            builder.setNeutralButton("Close popup", (dialog, position) -> { });
-        }
+        builder.setNegativeButton("Back", null);
 
         builder.create().show();
     }
@@ -605,6 +622,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         rootView = findViewById(R.id.activityDrillInfo);
         drillProgressBar = findViewById(R.id.drillProgressBar);
         drillName = findViewById(R.id.drillName);
+        divider = findViewById(R.id.drillInfoDivider);
         lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
         lastDrilledDate = findViewById(R.id.lastDrilledDate);
         confidenceLabel = findViewById(R.id.confidenceLabel);
@@ -617,6 +635,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
         markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
         saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
+        networkButtons = findViewById(R.id.networkButtons);
     }
 
     /**
@@ -650,6 +669,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (loading) {
             drillProgressBar.setVisibility(View.VISIBLE);
             drillName.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
             lastDrilledLabel.setVisibility(View.GONE);
             lastDrilledDate.setVisibility(View.GONE);
             confidenceLabel.setVisibility(View.GONE);
@@ -665,6 +685,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         } else {
             drillProgressBar.setVisibility(View.GONE);
             drillName.setVisibility(View.VISIBLE);
+            divider.setVisibility(View.VISIBLE);
             lastDrilledLabel.setVisibility(View.VISIBLE);
             lastDrilledDate.setVisibility(View.VISIBLE);
             confidenceLabel.setVisibility(View.VISIBLE);
@@ -722,9 +743,13 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void fillDrillInfo(Drill drill) {
         drillName.setText(drill.getName());
         confidenceSpinner.setSelection(Constants.confidenceWeightToPosition(drill.getConfidence()));
-        Date drilledDate = new Date(drill.getLastDrilled());
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-        lastDrilledDate.setText(dateFormatter.format(drilledDate));
+        if (0 != drill.getLastDrilled()) {
+            Date drilledDate = new Date(drill.getLastDrilled());
+            DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+            lastDrilledDate.setText(dateFormatter.format(drilledDate));
+        } else {
+            lastDrilledDate.setText("-");
+        }
         notes.setText(drill.getNotes());
     }
 }

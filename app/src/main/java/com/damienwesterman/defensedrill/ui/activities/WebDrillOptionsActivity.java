@@ -145,7 +145,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
         builder.setView(dialogView);
         builder.setTitle("Downloading Drills");
-        builder.setIcon(R.drawable.cloud_icon);
+        builder.setIcon(R.drawable.import_icon);
         builder.setCancelable(false);
         builder.setNegativeButton("Cancel", (dialogInterface, i) -> viewModel.stopDownload());
 

@@ -1,177 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activityDrillInfo"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.activities.DrillInfoActivity">
 
-    <LinearLayout
-        android:id="@+id/activityDrillInfo"
-        xmlns:tools="http://schemas.android.com/tools"
+    <TextView
+        android:id="@+id/drillName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context=".ui.activities.DrillInfoActivity">
+        android:textAlignment="center"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/drillProgressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <ProgressBar
+        android:id="@+id/drillProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/drillName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/confidenceLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            android:text="@string/confidence_label"
-            android:visibility="gone"
-            android:textColor="@color/field_label" />
-
-        <Spinner
-            android:id="@+id/confidenceSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/lastDrilledLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            android:text="@string/last_drilled_label"
-            android:visibility="gone"
-            android:textColor="@color/field_label" />
-
-        <TextView
-            android:id="@+id/lastDrilledDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:visibility="gone" />
+    <LinearLayout
+        android:id="@+id/networkButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
-            android:id="@+id/editCategoriesButton"
-            android:onClick="editCategories"
+            android:id="@+id/instructionsButton"
+            android:onClick="viewInstructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/view_edit_categories"
-            android:visibility="gone"
-            android:drawableLeft="@drawable/edit_icon"
-            tools:ignore="ButtonStyle,RtlHardcoded" />
+            android:text="@string/instructions"
+            android:drawableLeft="@drawable/instructions_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1" />
 
         <Button
-            android:id="@+id/editSubCategoriesButton"
-            android:onClick="editSubCategories"
+            android:id="@+id/relatedDrillsButton"
+            android:onClick="viewRelatedDrills"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/view_edit_sub_categories"
-            android:visibility="gone"
-            android:drawableLeft="@drawable/edit_icon"
-            tools:ignore="ButtonStyle,RtlHardcoded" />
-
-        <TextView
-            android:id="@+id/notesLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            android:text="@string/notes_label"
-            android:visibility="gone"
-            android:textColor="@color/field_label" />
-
-        <EditText
-            android:id="@+id/notes"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:inputType="textMultiLine|textCapSentences"
-            android:textSize="24sp"
-            android:hint="@string/notes_hint"
-            android:autofillHints=""
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/regenerateButton"
-                android:onClick="regenerateDrill"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="12dp"
-                android:layout_weight="1"
-                android:text="@string/skip_drill"
-                android:drawableLeft="@drawable/change_circle_icon"
-                android:visibility="gone"
-                tools:ignore="ButtonStyle,RtlHardcoded" />
-
-            <Button
-                android:id="@+id/resetSkippedDrillsButton"
-                android:onClick="resetSkippedDrills"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_weight="1"
-                android:text="@string/reset_skipped_drills"
-                android:drawableLeft="@drawable/refresh_icon"
-                android:visibility="gone"
-                tools:ignore="ButtonStyle,RtlHardcoded" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/saveDrillInfoButton"
-                android:onClick="saveDrillInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="12dp"
-                android:layout_weight="1"
-                android:text="@string/save_changes"
-                android:drawableLeft="@drawable/save_icon"
-                android:visibility="gone"
-                tools:ignore="ButtonStyle,RtlHardcoded" />
-
-            <Button
-                android:id="@+id/markAsPracticedButton"
-                android:onClick="markAsPracticed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_weight="1"
-                android:text="@string/mark_as_practiced"
-                android:drawableLeft="@drawable/checkmark_icon"
-                android:visibility="gone"
-                tools:ignore="ButtonStyle,RtlHardcoded" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/homeButton"
-            android:onClick="goHome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/home"
-            android:drawableLeft="@drawable/home_icon"
-            tools:ignore="ButtonStyle,RtlHardcoded" />
+            android:text="@string/related_drills"
+            android:drawableLeft="@drawable/link_icon"
+            tools:ignore="ButtonStyle,RtlHardcoded"
+            android:layout_marginLeft="8dp"
+            android:layout_weight="1" />
     </LinearLayout>
-</ScrollView>
+
+    <View
+        android:id="@+id/drillInfoDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:background="?attr/dividerColor"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/confidenceLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="italic"
+                        android:text="@string/confidence_label"
+                        android:visibility="gone"
+                        android:textColor="@color/field_label" />
+
+                    <Spinner
+                        android:id="@+id/confidenceSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/lastDrilledLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textStyle="italic"
+                        android:text="@string/last_drilled_label"
+                        android:visibility="gone"
+                        android:textColor="@color/field_label" />
+
+                    <TextView
+                        android:id="@+id/lastDrilledDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/editCategoriesButton"
+                    android:onClick="editCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_edit_categories"
+                    android:visibility="gone"
+                    android:drawableLeft="@drawable/edit_icon"
+                    tools:ignore="ButtonStyle,RtlHardcoded"
+                    android:layout_marginRight="8dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/editSubCategoriesButton"
+                    android:onClick="editSubCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_edit_sub_categories"
+                    android:visibility="gone"
+                    android:drawableLeft="@drawable/edit_icon"
+                    tools:ignore="ButtonStyle,RtlHardcoded"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/notesLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:text="@string/notes_label"
+                android:visibility="gone"
+                android:textColor="@color/field_label" />
+
+            <EditText
+                android:id="@+id/notes"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:inputType="textMultiLine|textCapSentences"
+                android:textSize="24sp"
+                android:hint="@string/notes_hint"
+                android:autofillHints=""
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/regenerateButton"
+                    android:onClick="regenerateDrill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/skip_drill"
+                    android:drawableLeft="@drawable/change_circle_icon"
+                    android:visibility="gone"
+                    tools:ignore="ButtonStyle,RtlHardcoded" />
+
+                <Button
+                    android:id="@+id/resetSkippedDrillsButton"
+                    android:onClick="resetSkippedDrills"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/reset_skipped_drills"
+                    android:drawableLeft="@drawable/refresh_icon"
+                    android:visibility="gone"
+                    tools:ignore="ButtonStyle,RtlHardcoded" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/saveDrillInfoButton"
+                    android:onClick="saveDrillInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/save_changes"
+                    android:drawableLeft="@drawable/save_icon"
+                    android:visibility="gone"
+                    tools:ignore="ButtonStyle,RtlHardcoded" />
+
+                <Button
+                    android:id="@+id/markAsPracticedButton"
+                    android:onClick="markAsPracticed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/mark_as_practiced"
+                    android:drawableLeft="@drawable/checkmark_icon"
+                    android:visibility="gone"
+                    tools:ignore="ButtonStyle,RtlHardcoded" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/homeButton"
+                android:onClick="goHome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/home"
+                android:drawableLeft="@drawable/home_icon"
+                tools:ignore="ButtonStyle,RtlHardcoded" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
