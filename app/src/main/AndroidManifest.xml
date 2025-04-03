@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".DefenseDrillApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DefenseDrill"
-        android:name=".DefenseDrillApplication"
         tools:targetApi="31">
         <activity
             android:name=".ui.activities.WebDrillOptionsActivity"
@@ -63,6 +63,13 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity
+            android:name=".ui.activities.InstructionsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.DrillInfoActivity" />
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
         <activity
             android:name=".ui.activities.SubCategorySelectActivity"
             android:exported="false"

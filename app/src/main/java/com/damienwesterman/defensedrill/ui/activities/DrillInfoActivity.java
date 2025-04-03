@@ -85,11 +85,10 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
-    // TODO: Implement API methods to get instructions list, instructions details, video, and single drill (related drill)
     // TODO: Create the following popups/activities
-        // - Select Instructions Popup
+        // - Select Instructions Popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
         // - Instructions Activity (have the starting drill at the top?)
-        // - Select Related Drills popup
+        // - Select Related Drills popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
         // - Related Drills activity (have the starting drill at the top?)
     // TODO: Implement Filling instructions and related drills using API access
     // TODO: Hide the instructions stuff by default, checking:
@@ -100,7 +99,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         // - If the drill even has a server ID
     // TODO: May want to get a drill in the database by its drill server ID, so make it unique and make a dao/repo method for it
     // TODO: If the JWT is present but returns 401, then prompt to sign in, and if they cancel then remove the JWT so that they are not shown? And have a popup that says "hey sign in in web options to view instructions etc"
-    // TODO: If there are changes and the user hits back/home, do we want to prompt the user to save before exiting?
+    // TODO: UI STUFF
+        // - Save confidence level as user selects
+        // - Save Notes as user types, or rather do it periodically (observable??? Every 1 second?)
+        // - Categories/Sub-Categories button decision?
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
@@ -171,7 +173,19 @@ networkButtons.setVisibility(View.VISIBLE);
     // OnClickListener Methods
     // =============================================================================================
     public void viewInstructions(View view) {
-        UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented"); // TODO FINISH ME
+        Drill drill = viewModel.getDrill().getValue();
+        if (null == drill) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Instructions");
+            return;
+        }
+
+        Intent intent = new Intent(this, InstructionsActivity.class);
+        intent.putExtra(Constants.INTENT_DRILL_ID, drill.getId());
+        intent.putExtra(Constants.INTENT_DRILL_NAME, drill.getName());
+        // TODO: IMPLEMENT PROPERLY
+        intent.putExtra(Constants.INTENT_INSTRUCTIONS_DESCRIPTION, viewModel.getInstructions().getValue().get(0).getDescription());
+        intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, 0);
+        startActivity(intent);
     }
 
     public void viewRelatedDrills(View view) {

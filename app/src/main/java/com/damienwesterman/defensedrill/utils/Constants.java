@@ -52,6 +52,12 @@ public class Constants {
     public static final String INTENT_VIEW_CATEGORIES = INTENT_PREFIX + "view_categories";
     /** Value does not matter */
     public static final String INTENT_VIEW_SUB_CATEGORIES = INTENT_PREFIX + "view_sub_categories";
+    /** Should be accompanied by a String of the drill name */
+    public static final String INTENT_DRILL_NAME = INTENT_PREFIX + "drill_name";
+    /** Should be accompanied by a String of the instructions description */
+    public static final String INTENT_INSTRUCTIONS_DESCRIPTION = INTENT_PREFIX + "instructions_description";
+    /** Should be accompanied by an int of the index position of the instruction to be displayed */
+    public static final String INTENT_INSTRUCTION_INDEX = INTENT_PREFIX + "instruction_index";
 
     /**
      * No need to have instances of this class.
