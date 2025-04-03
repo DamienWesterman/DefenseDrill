@@ -33,6 +33,7 @@ import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class DrillDTO {
+public class DrillDTO implements Serializable {
     private Long id;
     private String name;
     private List<CategoryDTO> categories;

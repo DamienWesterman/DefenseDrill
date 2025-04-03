@@ -52,6 +52,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
@@ -173,17 +174,15 @@ networkButtons.setVisibility(View.VISIBLE);
     // OnClickListener Methods
     // =============================================================================================
     public void viewInstructions(View view) {
-        Drill drill = viewModel.getDrill().getValue();
-        if (null == drill) {
+        DrillDTO drillDTO = viewModel.getDrillDTO();
+        if (null == drillDTO) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Instructions");
             return;
         }
 
         Intent intent = new Intent(this, InstructionsActivity.class);
-        intent.putExtra(Constants.INTENT_DRILL_ID, drill.getId());
-        intent.putExtra(Constants.INTENT_DRILL_NAME, drill.getName());
+        intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
         // TODO: IMPLEMENT PROPERLY
-        intent.putExtra(Constants.INTENT_INSTRUCTIONS_DESCRIPTION, viewModel.getInstructions().getValue().get(0).getDescription());
         intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, 0);
         startActivity(intent);
     }

@@ -31,16 +31,11 @@
         android:layout_marginTop="8dp"
         android:background="?attr/dividerColor"/>
 
-    <ProgressBar
-        android:id="@+id/instructionsProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <ListView
         android:id="@+id/instructionsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:divider="@drawable/line_divider"
+        android:dividerHeight="5dp"/>
 
 </LinearLayout>

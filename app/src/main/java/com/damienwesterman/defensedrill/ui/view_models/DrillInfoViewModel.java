@@ -39,6 +39,7 @@ import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.data.remote.ApiRepo;
+import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
@@ -63,6 +64,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 @HiltViewModel
 public class DrillInfoViewModel extends AndroidViewModel {
     private final MutableLiveData<Drill> currentDrill;
+    private DrillDTO drillDTO;
     private final MutableLiveData<List<InstructionsDTO>> instructions;
     private final MutableLiveData<List<RelatedDrillDTO>> relatedDrills;
     private List<CategoryEntity> allCategories;
@@ -215,6 +217,17 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     /**
+     * Get the DrillDTO received from the backend.
+     * <br><br>
+     * {@link #loadNetworkLinks()} should have been called prior otherwise will return null.
+     * @return DrillDTO object.
+     */
+    @Nullable
+    public DrillDTO getDrillDTO() {
+        return this.drillDTO;
+    }
+
+    /**
      * Get the LiveData object to observe for the list of Drill Instructions.
      *
      * @return LiveData object.
@@ -244,6 +257,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     drill -> {
+                        this.drillDTO = drill;
                         instructions.postValue(drill.getInstructions());
                         relatedDrills.postValue(drill.getRelatedDrills());
                     },

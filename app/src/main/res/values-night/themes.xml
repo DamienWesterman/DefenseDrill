@@ -16,6 +16,7 @@
         <item name="android:buttonStyle">@style/CustomButton</item>
         <item name="android:editTextColor">@color/drill_yellow</item>
         <item name="dividerColor">@color/drill_yellow</item>
+        <item name="dividerColorVariant">@color/drill_green</item>
     </style>
 
     <style name="CustomTextView" parent="android:Widget.TextView">
