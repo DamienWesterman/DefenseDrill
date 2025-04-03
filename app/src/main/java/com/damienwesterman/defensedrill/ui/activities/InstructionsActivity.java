@@ -1,12 +1,17 @@
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
@@ -34,6 +39,14 @@ public class InstructionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_instructions);
+
+        // Modify Toolbar
+        Toolbar appToolbar = findViewById(R.id.appToolbar);
+        appToolbar.setTitle("Instructions Details");
+        setSupportActionBar(appToolbar);
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         TextView drillNameView = findViewById(R.id.drillName);
         TextView instructionsDescriptionView = findViewById(R.id.instructionsDescription);
@@ -87,5 +100,29 @@ public class InstructionsActivity extends AppCompatActivity {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (R.id.homeButton == item.getItemId()) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

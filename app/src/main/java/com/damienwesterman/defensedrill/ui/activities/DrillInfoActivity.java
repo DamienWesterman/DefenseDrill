@@ -31,6 +31,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,6 +48,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
@@ -86,6 +89,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
+    // TODO: REMOVE LAUNCHING HOME FROM ANYWHERE
     // TODO: Create the following popups/activities
         // - Select Instructions Popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
         // - Select Related Drills popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
@@ -155,6 +159,20 @@ public class DrillInfoActivity extends AppCompatActivity {
             finish();
         }
 
+        // Modify Toolbar
+        Toolbar appToolbar = findViewById(R.id.appToolbar);
+        String toolbarTitle;
+        if (ActivityState.GENERATED_DRILL == activityState) {
+            toolbarTitle = "Generate Drill";
+        } else {
+            toolbarTitle = "Drill Details";
+        }
+        appToolbar.setTitle(toolbarTitle);
+        setSupportActionBar(appToolbar);
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.confidence_levels,
@@ -166,6 +184,30 @@ public class DrillInfoActivity extends AppCompatActivity {
         setUpViewModel();
 // TODO: REMOVE
 networkButtons.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (R.id.homeButton == item.getItemId()) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     // =============================================================================================
