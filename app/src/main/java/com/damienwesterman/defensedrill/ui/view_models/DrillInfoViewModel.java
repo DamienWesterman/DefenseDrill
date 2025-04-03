@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.view_models;
 import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -47,9 +48,11 @@ import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -266,5 +269,27 @@ public class DrillInfoViewModel extends AndroidViewModel {
                     }
                 );
         }
+    }
+
+    /**
+     * Find the local Drill ID by a Drill's server ID.
+     *
+     * @param serverId Server ID of the drill to find
+     * @param callback Callback that consumes an optional containing the found Drill's ID, or -1 if
+     *                 not found.
+     */
+    public void findDrillIdByServerId(@NonNull Long serverId,
+                                    @NonNull Consumer<Long> callback) {
+        executor.execute(() -> {
+            Optional<Drill> optDrill = drillRepo.getDrillByServerId(serverId);
+            long localDrillId;
+            if (optDrill.isPresent()) {
+                localDrillId = optDrill.get().getId();
+            } else {
+                localDrillId = Drill.INVALID_SERVER_DRILL_ID;
+            }
+
+            callback.accept(localDrillId);
+        });
     }
 }

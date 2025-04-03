@@ -88,9 +88,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class DrillInfoActivity extends AppCompatActivity {
     // TODO: Create the following popups/activities
         // - Select Instructions Popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
-        // - Instructions Activity (have the starting drill at the top?)
         // - Select Related Drills popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
-        // - Related Drills activity (have the starting drill at the top?)
     // TODO: Implement Filling instructions and related drills using API access
     // TODO: Hide the instructions stuff by default, checking:
         // - If the viewmodel already holds a list of instructions
@@ -188,7 +186,24 @@ networkButtons.setVisibility(View.VISIBLE);
     }
 
     public void viewRelatedDrills(View view) {
-        UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented"); // TODO FINISH ME
+        DrillDTO drillDTO = viewModel.getDrillDTO();
+        if (null == drillDTO) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+            return;
+        }
+
+        // TODO: Properly implement
+        viewModel.findDrillIdByServerId(
+                drillDTO.getRelatedDrills().get(0).getId(),
+                localDrillId -> {
+                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
+                        UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+                    } else {
+                        Intent intent = new Intent(this, DrillInfoActivity.class);
+                        intent.putExtra(Constants.INTENT_DRILL_ID, localDrillId);
+                        startActivity(intent);
+                    }
+                });
     }
 
     public void editCategories(View view) {
