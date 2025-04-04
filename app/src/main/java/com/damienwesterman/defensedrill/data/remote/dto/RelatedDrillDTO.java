@@ -26,6 +26,8 @@
 package com.damienwesterman.defensedrill.data.remote.dto;
 
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,7 +44,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class RelatedDrillDTO {
+public class RelatedDrillDTO implements Serializable {
     private Long id;
     private String name;
 }

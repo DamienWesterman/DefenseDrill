@@ -30,6 +30,8 @@ import androidx.annotation.NonNull;
 
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,7 +48,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class SubCategoryDTO {
+public class SubCategoryDTO implements Serializable {
     private Long id;
     private String name;
     private String description;

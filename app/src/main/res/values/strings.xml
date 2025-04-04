@@ -27,8 +27,8 @@
     <string name="reset_skipped_drills">Reset Skipped Drills</string>
     <string name="loading">Loading…</string>
     <string name="save_changes">Save Changes</string>
-    <string name="view_edit_categories">View/Edit Categories</string>
-    <string name="view_edit_sub_categories">View/Edit Sub-Categories</string>
+    <string name="view_edit_categories">Categories</string>
+    <string name="view_edit_sub_categories">Sub-Categories</string>
     <string-array name="confidence_levels">
         <item>Low</item>
         <item>Medium</item>
@@ -83,6 +83,10 @@
     <string name="enter_server_url_title">Enter Server URL</string>
     <string name="enter_server_url_description">Specify the URL to your online DefenseDrill database.</string>
     <string name="please_wait">Please Wait…</string>
+    <string name="instructionsLabel">View Instructions:</string>
+    <string name="related_drills_label">View Related Drill:</string>
+    <string name="workout_options">Workout Options:</string>
+    <string name="view_modify">View/Modify:</string>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

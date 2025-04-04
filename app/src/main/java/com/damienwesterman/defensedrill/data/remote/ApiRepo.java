@@ -26,6 +26,8 @@
 
 package com.damienwesterman.defensedrill.data.remote;
 
+import androidx.annotation.NonNull;
+
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
@@ -94,5 +96,23 @@ public class ApiRepo {
         String jwtHeader = "jwt=" + jwt;
 
         return apiDao.getAllSubCategories(jwtHeader);
+    }
+
+    /**
+     * Get an observable for the API call to retrieve a Drill by its server ID.
+     *
+     * @param serverDrillId Drill's server ID
+     * @return Observable DrillDTO
+     * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
+     */
+    public Observable<DrillDTO> getDrill(@NonNull Long serverDrillId)
+            throws IllegalArgumentException {
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
+        String jwtHeader = "jwt=" + jwt;
+
+        return apiDao.getDrillById(jwtHeader, serverDrillId);
     }
 }

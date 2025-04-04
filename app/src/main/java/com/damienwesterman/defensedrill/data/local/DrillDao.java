@@ -119,6 +119,10 @@ import java.util.Optional;
     @NonNull
     Optional<Drill> findDrillByName(@NonNull String name);
 
+    @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE server_drill_id = :serverDrillId")
+    @NonNull
+    Optional<Drill> findDrillByServerId(@NonNull Long serverDrillId);
+
     @Query("SELECT * FROM " + DrillCategoryJoinEntity.TABLE_NAME)
     @NonNull
     List<DrillCategoryJoinEntity> getAllCategoryJoin();

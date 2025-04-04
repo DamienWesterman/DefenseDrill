@@ -1,6 +1,8 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.DefenseDrill" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/drill_green</item>
         <item name="colorPrimaryVariant">@color/drill_green_variant</item>
@@ -16,6 +18,7 @@
         <item name="android:buttonStyle">@style/CustomButton</item>
         <item name="android:editTextColor">@color/drill_green</item>
         <item name="dividerColor">@color/drill_green</item>
+        <item name="dividerColorVariant">@color/drill_yellow_variant</item>
     </style>
 
     <style name="CustomTextView" parent="android:Widget.TextView">

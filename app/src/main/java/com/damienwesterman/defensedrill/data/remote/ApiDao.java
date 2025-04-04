@@ -36,6 +36,7 @@ import io.reactivex.rxjava3.core.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Path;
 
 /**
  * Retrofit interface for retrieving info from the DefenseDrill API.
@@ -52,4 +53,9 @@ import retrofit2.http.Headers;
     @GET("api/sub_category")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
     Observable<List<SubCategoryDTO>> getAllSubCategories(@Header("Cookie") String jwtHeader);
+
+    @GET("api/drill/id/{id}")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<DrillDTO> getDrillById(@Header("Cookie") String jwtHeader,
+                                      @Path("id") Long drillServerId);
 }

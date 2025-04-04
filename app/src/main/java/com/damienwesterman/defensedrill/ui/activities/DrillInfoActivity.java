@@ -30,10 +30,14 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -44,24 +48,34 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
+import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -83,6 +97,9 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
+    // TODO: UI STUFF
+        // - Save confidence level as user selects
+        // - Save Notes as user types, or rather do it periodically (observable??? Every 1 second?)
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
@@ -95,18 +112,29 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     private DrillInfoViewModel viewModel;
     private ActivityState activityState;
+    @Inject
+    SharedPrefs sharedPrefs;
+    @Inject
+    CommonPopups loginPopup;
 
     private View rootView;
     private ProgressBar drillProgressBar;
     private TextView drillName;
+    private LinearLayout instructionsSelect;
+    private Spinner instructionsSpinner;
+    private LinearLayout relatedDrillsSelect;
+    private Spinner relatedDrillsSpinner;
+    private View divider;
     private TextView lastDrilledLabel;
     private TextView lastDrilledDate;
     private TextView confidenceLabel;
     private Spinner confidenceSpinner;
+    private TextView viewModifyLabel;
     private Button editCategoriesButton;
     private Button editSubCategoriesButton;
     private TextView notesLabel;
     private EditText notes;
+    private TextView workoutOptionsLabel;
     private Button regenerateButton;
     private Button resetSkippedDrillsButton;
     private Button markAsPracticedButton;
@@ -134,6 +162,20 @@ public class DrillInfoActivity extends AppCompatActivity {
             finish();
         }
 
+        // Modify Toolbar
+        Toolbar appToolbar = findViewById(R.id.appToolbar);
+        String toolbarTitle;
+        if (ActivityState.GENERATED_DRILL == activityState) {
+            toolbarTitle = "Generate Drill";
+        } else {
+            toolbarTitle = "Drill Details";
+        }
+        appToolbar.setTitle(toolbarTitle);
+        setSupportActionBar(appToolbar);
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.confidence_levels,
@@ -143,6 +185,30 @@ public class DrillInfoActivity extends AppCompatActivity {
         confidenceSpinner.setAdapter(adapter);
 
         setUpViewModel();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (R.id.homeButton == item.getItemId()) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     // =============================================================================================
@@ -194,12 +260,6 @@ public class DrillInfoActivity extends AppCompatActivity {
      */
     public void markAsPracticed(View view) {
         confidencePopup();
-    }
-
-    public void goHome(View view) {
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     // =============================================================================================
@@ -421,7 +481,10 @@ public class DrillInfoActivity extends AppCompatActivity {
                     ));
                 }
             });
-            whatNextPopup();
+            if (ActivityState.GENERATED_DRILL == activityState
+                    || ActivityState.REGENERATED_DRILL == activityState) {
+                whatNextPopup();
+            }
         });
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
@@ -437,7 +500,10 @@ public class DrillInfoActivity extends AppCompatActivity {
                     // Do nothing
                 }
             });
-            whatNextPopup();
+            if (ActivityState.GENERATED_DRILL == activityState
+                    || ActivityState.REGENERATED_DRILL == activityState) {
+                whatNextPopup();
+            }
         });
 
         builder.create().show();
@@ -456,40 +522,24 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.next_icon);
         builder.setCancelable(true);
 
-        if (ActivityState.GENERATED_DRILL == activityState
-                || ActivityState.REGENERATED_DRILL == activityState) {
-            builder.setItems(options, (dialog, position) -> {
-                switch (position) {
-                    case 0:
-                        // Next Drill
-                        setUiLoading(true);
-                        activityState = ActivityState.REGENERATED_DRILL;
-                        viewModel.regenerateDrill();
-                        break;
-                    case 1:
-                        // New Category
-                        Intent intent = new Intent(this, CategorySelectActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        break;
-                }
-            });
-        }
-
-        builder.setPositiveButton("Go Home", (dialog, position) -> {
-           Intent intent = new Intent(this, HomeActivity.class);
-           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-           startActivity(intent);
-        });
-        builder.setNegativeButton("Back", (dialog, position) -> {
-            if (ActivityState.DISPLAYING_DRILL == activityState) {
-                finish();
+        builder.setItems(options, (dialog, position) -> {
+            switch (position) {
+                case 0:
+                    // Next Drill
+                    setUiLoading(true);
+                    activityState = ActivityState.REGENERATED_DRILL;
+                    viewModel.regenerateDrill();
+                    break;
+                case 1:
+                    // New Category
+                    Intent intent = new Intent(this, CategorySelectActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    break;
             }
-            // else if we are in drill generation, just allow it to close the popup
         });
-        if (ActivityState.DISPLAYING_DRILL == activityState) {
-            builder.setNeutralButton("Close popup", (dialog, position) -> { });
-        }
+
+        builder.setNegativeButton("Back", null);
 
         builder.create().show();
     }
@@ -558,9 +608,40 @@ public class DrillInfoActivity extends AppCompatActivity {
             fillDrillInfo(drill);
             setUiLoading(false);
 
-            // TODO: Eventually incorporate functionality to display the links for how to
-            //       descriptions and videos
+            if (null !=drill.getServerDrillId() && !sharedPrefs.getJwt().isEmpty()) {
+                // Keep the spinner visible until instructions and related drills are loaded (or not)
+                drillProgressBar.setVisibility(View.VISIBLE);
+                instructionsSelect.setVisibility(View.GONE);
+                relatedDrillsSelect.setVisibility(View.GONE);
+                viewModel.loadNetworkLinks(
+                        () -> loginPopup.displayLoginPopup(new OperationCompleteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // User successfully logged back in, restart the activity
+                                onRestart();
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                UiUtils.displayDismissibleSnackbar(rootView,
+                                        "You are not signed in.");
+                                /*
+                                User has selected manually selected not to log in or cannot log
+                                in. Clear out the jwt so we do not keep doing a popup.
+                                 */
+                                sharedPrefs.setJwt("");
+                            }
+                        }),
+                        errorMessage -> UiUtils.displayDismissibleSnackbar(rootView, errorMessage)
+                );
+            }
         }));
+
+        viewModel.getInstructions().observe(this, instructions ->
+                runOnUiThread(() -> setUpInstructions(instructions)));
+
+        viewModel.getRelatedDrills().observe(this, relatedDrills ->
+                runOnUiThread(() -> setUpRelatedDrills(relatedDrills)));
 
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
@@ -596,14 +677,21 @@ public class DrillInfoActivity extends AppCompatActivity {
         rootView = findViewById(R.id.activityDrillInfo);
         drillProgressBar = findViewById(R.id.drillProgressBar);
         drillName = findViewById(R.id.drillName);
+        instructionsSelect = findViewById(R.id.instructionsSelect);
+        instructionsSpinner = findViewById(R.id.instructionsSpinner);
+        relatedDrillsSelect = findViewById(R.id.relatedDrillsSelect);
+        relatedDrillsSpinner = findViewById(R.id.relatedDrillsSpinner);
+        divider = findViewById(R.id.drillInfoDivider);
         lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
         lastDrilledDate = findViewById(R.id.lastDrilledDate);
         confidenceLabel = findViewById(R.id.confidenceLabel);
         confidenceSpinner = findViewById(R.id.confidenceSpinner);
+        viewModifyLabel = findViewById(R.id.viewModifyLabel);
         editCategoriesButton = findViewById(R.id.editCategoriesButton);
         editSubCategoriesButton = findViewById(R.id.editSubCategoriesButton);
         notesLabel = findViewById(R.id.notesLabel);
         notes = findViewById(R.id.notes);
+        workoutOptionsLabel = findViewById(R.id.workoutOptionsLabel);
         regenerateButton = findViewById(R.id.regenerateButton);
         resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
         markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
@@ -641,14 +729,17 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (loading) {
             drillProgressBar.setVisibility(View.VISIBLE);
             drillName.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
             lastDrilledLabel.setVisibility(View.GONE);
             lastDrilledDate.setVisibility(View.GONE);
             confidenceLabel.setVisibility(View.GONE);
             confidenceSpinner.setVisibility(View.GONE);
+            viewModifyLabel.setVisibility(View.GONE);
             editCategoriesButton.setVisibility(View.GONE);
             editSubCategoriesButton.setVisibility(View.GONE);
             notesLabel.setVisibility(View.GONE);
             notes.setVisibility(View.GONE);
+            workoutOptionsLabel.setVisibility(View.GONE);
             regenerateButton.setVisibility(View.GONE);
             resetSkippedDrillsButton.setVisibility(View.GONE);
             markAsPracticedButton.setVisibility(View.GONE);
@@ -656,14 +747,17 @@ public class DrillInfoActivity extends AppCompatActivity {
         } else {
             drillProgressBar.setVisibility(View.GONE);
             drillName.setVisibility(View.VISIBLE);
+            divider.setVisibility(View.VISIBLE);
             lastDrilledLabel.setVisibility(View.VISIBLE);
             lastDrilledDate.setVisibility(View.VISIBLE);
             confidenceLabel.setVisibility(View.VISIBLE);
             confidenceSpinner.setVisibility(View.VISIBLE);
+            viewModifyLabel.setVisibility(View.VISIBLE);
             editCategoriesButton.setVisibility(View.VISIBLE);
             editSubCategoriesButton.setVisibility(View.VISIBLE);
             notesLabel.setVisibility(View.VISIBLE);
             notes.setVisibility(View.VISIBLE);
+            workoutOptionsLabel.setVisibility(View.VISIBLE);
             if (ActivityState.GENERATED_DRILL == activityState
                     || ActivityState.REGENERATED_DRILL == activityState) {
                 // Do not set these to visible unless we are in an activity state that uses them
@@ -713,9 +807,146 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void fillDrillInfo(Drill drill) {
         drillName.setText(drill.getName());
         confidenceSpinner.setSelection(Constants.confidenceWeightToPosition(drill.getConfidence()));
-        Date drilledDate = new Date(drill.getLastDrilled());
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-        lastDrilledDate.setText(dateFormatter.format(drilledDate));
+        if (0 != drill.getLastDrilled()) {
+            Date drilledDate = new Date(drill.getLastDrilled());
+            DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+            lastDrilledDate.setText(dateFormatter.format(drilledDate));
+        } else {
+            lastDrilledDate.setText("-");
+        }
         notes.setText(drill.getNotes());
+    }
+
+    /**
+     * Launch the activity to view a specific set of instructions.
+     *
+     * @param instructionsIndex Index position of the instructions in the list returned by
+*    *                          {@link DrillInfoViewModel#getInstructions()}
+     */
+    public void viewInstructions(int instructionsIndex) {
+        DrillDTO drillDTO = viewModel.getDrillDTO();
+        if (null == drillDTO
+                || 0 > instructionsIndex
+                || drillDTO.getInstructions().size() <= instructionsIndex) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Instructions");
+            return;
+        }
+
+        Intent intent = new Intent(this, InstructionsActivity.class);
+        intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
+        intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, instructionsIndex);
+        startActivity(intent);
+    }
+
+    /**
+     * Launch the activity to view a specific related drill.
+     *
+     * @param relatedDrillIndex Index position of the related drill in the list returned by
+     *                          {@link DrillInfoViewModel#getRelatedDrills()}
+     */
+    public void viewRelatedDrills(int relatedDrillIndex) {
+        DrillDTO drillDTO = viewModel.getDrillDTO();
+        if (null == drillDTO
+                || 0 > relatedDrillIndex
+                || drillDTO.getRelatedDrills().size() <= relatedDrillIndex) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+            return;
+        }
+
+        viewModel.findDrillIdByServerId(
+                drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
+                localDrillId -> {
+                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
+                        UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+                    } else {
+                        Intent intent = new Intent(this, DrillInfoActivity.class);
+                        intent.putExtra(Constants.INTENT_DRILL_ID, localDrillId);
+                        startActivity(intent);
+                    }
+                });
+    }
+
+    /**
+     * Set up the UI for the instructions drop down menu.
+     *
+     * @param instructions List of InstructionDTO objects
+     */
+    private void setUpInstructions(List<InstructionsDTO> instructions) {
+        if (null != instructions && !instructions.isEmpty()) {
+            List<String> formattedInstructions = new ArrayList<>(instructions.size() + 1);
+            formattedInstructions.add("Select one...");
+            formattedInstructions.addAll(instructions.stream()
+                    .map(InstructionsDTO::getDescription)
+                    .collect(Collectors.toList()));
+
+            ArrayAdapter<String> arr = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    formattedInstructions);
+            arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            instructionsSpinner.setAdapter(arr);
+            instructionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                    // First index position is "Select One"
+                    if (0 < pos) {
+                        viewInstructions(pos - 1);
+                    }
+                    // Reset back to original position for activity re-load
+                    instructionsSpinner.setSelection(0);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    // Do nothing
+                }
+            });
+
+            instructionsSelect.setVisibility(View.VISIBLE);
+        }
+
+        drillProgressBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * Set up the UI for the related drills drop down menu.
+     *
+     * @param relatedDrills List of RelatedDrillDTO objects
+     */
+    private void setUpRelatedDrills(List<RelatedDrillDTO> relatedDrills) {
+        if (null != relatedDrills && !relatedDrills.isEmpty()) {
+            List<String> formattedRelatedDrills = new ArrayList<>(relatedDrills.size() + 1);
+            formattedRelatedDrills.add("Select one...");
+            formattedRelatedDrills.addAll(relatedDrills.stream()
+                    .map(RelatedDrillDTO::getName)
+                    .collect(Collectors.toList()));
+
+            ArrayAdapter<String> arr = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    formattedRelatedDrills);
+            arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            relatedDrillsSpinner.setAdapter(arr);
+            relatedDrillsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                    // First index position is "Select One"
+                    if (0 < pos) {
+                        viewRelatedDrills(pos - 1);
+                    }
+                    // Reset back to original position for activity re-load
+                    relatedDrillsSpinner.setSelection(0);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    // Do nothing
+                }
+            });
+
+            relatedDrillsSelect.setVisibility(View.VISIBLE);
+        }
+
+        drillProgressBar.setVisibility(View.GONE);
     }
 }

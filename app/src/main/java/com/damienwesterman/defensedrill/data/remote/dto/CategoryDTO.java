@@ -31,6 +31,8 @@ import androidx.annotation.NonNull;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,7 +49,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-public class CategoryDTO {
+public class CategoryDTO implements Serializable {
     /** Server ID */
     private Long id;
     private String name;

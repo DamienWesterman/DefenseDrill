@@ -52,6 +52,10 @@ public class Constants {
     public static final String INTENT_VIEW_CATEGORIES = INTENT_PREFIX + "view_categories";
     /** Value does not matter */
     public static final String INTENT_VIEW_SUB_CATEGORIES = INTENT_PREFIX + "view_sub_categories";
+    /** Value should be an object of type {@link com.damienwesterman.defensedrill.data.remote.dto.DrillDTO} */
+    public static final String INTENT_DRILL_DTO = INTENT_PREFIX + "drill_dto";
+    /** Should be accompanied by an int of the index position of the instruction to be displayed */
+    public static final String INTENT_INSTRUCTION_INDEX = INTENT_PREFIX + "instruction_index";
 
     /**
      * No need to have instances of this class.
