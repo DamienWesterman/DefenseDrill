@@ -89,7 +89,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
-    // TODO: REMOVE LAUNCHING HOME FROM ANYWHERE
     // TODO: Create the following popups/activities
         // - Select Instructions Popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
         // - Select Related Drills popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
@@ -234,8 +233,8 @@ networkButtons.setVisibility(View.VISIBLE);
             return;
         }
 
-        // TODO: Properly implement
         viewModel.findDrillIdByServerId(
+                // TODO: Properly implement
                 drillDTO.getRelatedDrills().get(0).getId(),
                 localDrillId -> {
                     if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
@@ -294,12 +293,6 @@ networkButtons.setVisibility(View.VISIBLE);
      */
     public void markAsPracticed(View view) {
         confidencePopup();
-    }
-
-    public void goHome(View view) {
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     // =============================================================================================
@@ -562,31 +555,23 @@ networkButtons.setVisibility(View.VISIBLE);
         builder.setIcon(R.drawable.next_icon);
         builder.setCancelable(true);
 
-        if (ActivityState.GENERATED_DRILL == activityState
-                || ActivityState.REGENERATED_DRILL == activityState) {
-            builder.setItems(options, (dialog, position) -> {
-                switch (position) {
-                    case 0:
-                        // Next Drill
-                        setUiLoading(true);
-                        activityState = ActivityState.REGENERATED_DRILL;
-                        viewModel.regenerateDrill();
-                        break;
-                    case 1:
-                        // New Category
-                        Intent intent = new Intent(this, CategorySelectActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        break;
-                }
-            });
-        }
-
-        builder.setPositiveButton("Go Home", (dialog, position) -> {
-           Intent intent = new Intent(this, HomeActivity.class);
-           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-           startActivity(intent);
+        builder.setItems(options, (dialog, position) -> {
+            switch (position) {
+                case 0:
+                    // Next Drill
+                    setUiLoading(true);
+                    activityState = ActivityState.REGENERATED_DRILL;
+                    viewModel.regenerateDrill();
+                    break;
+                case 1:
+                    // New Category
+                    Intent intent = new Intent(this, CategorySelectActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    break;
+            }
         });
+
         builder.setNegativeButton("Back", null);
 
         builder.create().show();

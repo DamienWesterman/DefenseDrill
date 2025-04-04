@@ -426,12 +426,7 @@ public class CreateDrillActivity extends AppCompatActivity {
             clearUserInputFields();
             setViewsEnabled(true);
         });
-        builder.setNegativeButton("Finish", (dialog, position) -> finish());
-        builder.setNeutralButton("Go Home", (dialog, position) -> {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        });
+        builder.setNeutralButton("Done", (dialog, position) -> finish());
         builder.create().show();
     }
 

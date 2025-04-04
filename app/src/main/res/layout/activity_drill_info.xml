@@ -246,15 +246,6 @@
                     android:visibility="gone"
                     tools:ignore="ButtonStyle,RtlHardcoded" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/homeButton"
-                android:onClick="goHome"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/home"
-                android:drawableLeft="@drawable/home_icon"
-                tools:ignore="ButtonStyle,RtlHardcoded" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
