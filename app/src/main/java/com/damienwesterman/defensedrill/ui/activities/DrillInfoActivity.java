@@ -98,7 +98,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
     // TODO: UI STUFF
-        // - Save confidence level as user selects
         // - Save Notes as user types, or rather do it periodically (observable??? Every 1 second?)
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
@@ -138,7 +137,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     private Button regenerateButton;
     private Button resetSkippedDrillsButton;
     private Button markAsPracticedButton;
-    private Button saveDrillInfoButton;
 
     // =============================================================================================
     // Activity Methods
@@ -183,6 +181,22 @@ public class DrillInfoActivity extends AppCompatActivity {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         confidenceSpinner.setAdapter(adapter);
+        confidenceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int confidence, long l) {
+                Drill drill = viewModel.getDrill().getValue();
+                // Only save if this changed
+                if (null != drill &&
+                        confidence != Constants.confidenceWeightToPosition(drill.getConfidence())) {
+                    saveDrillInfo();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         setUpViewModel();
     }
@@ -231,25 +245,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     public void resetSkippedDrills(View view) {
         viewModel.resetSkippedDrills();
         UiUtils.displayDismissibleSnackbar(rootView, "Skipped drills have been reset");
-    }
-
-    public void saveDrillInfo(View view) {
-        Drill drill = collectDrillInfo();
-        viewModel.saveDrill(drill, new OperationCompleteCallback() { // this method handles null check
-            @Override
-            public void onSuccess() {
-                runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
-                        rootView, "Successfully saved changes!"
-                ));
-            }
-
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
-                        rootView, error
-                ));
-            }
-        });
     }
 
     /**
@@ -315,7 +310,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                         // Not checked - remove if in list
                         drill.removeCategory(categoryEntities.get(i));
                     }
-                    viewModel.saveDrill(drill, new OperationCompleteCallback() {
+                    viewModel.saveDrill(drill, false, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
@@ -402,7 +397,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                         // Not checked - remove if in list
                         drill.removeSubCategory(subCategoryEntities.get(i));
                     }
-                    viewModel.saveDrill(drill, new OperationCompleteCallback() {
+                    viewModel.saveDrill(drill, false, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
@@ -466,7 +461,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             drill.setConfidence(Constants.confidencePositionToWeight(selectedOption[0]));
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
-            viewModel.saveDrill(drill, new OperationCompleteCallback() {
+            viewModel.saveDrill(drill, true, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
@@ -489,7 +484,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
             drill.setNewDrill(false);
-            viewModel.saveDrill(drill, new OperationCompleteCallback() {
+            viewModel.saveDrill(drill, true, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     // Do nothing
@@ -695,7 +690,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         regenerateButton = findViewById(R.id.regenerateButton);
         resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
         markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
-        saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
     }
 
     /**
@@ -743,7 +737,6 @@ public class DrillInfoActivity extends AppCompatActivity {
             regenerateButton.setVisibility(View.GONE);
             resetSkippedDrillsButton.setVisibility(View.GONE);
             markAsPracticedButton.setVisibility(View.GONE);
-            saveDrillInfoButton.setVisibility(View.GONE);
         } else {
             drillProgressBar.setVisibility(View.GONE);
             drillName.setVisibility(View.VISIBLE);
@@ -765,7 +758,6 @@ public class DrillInfoActivity extends AppCompatActivity {
                 resetSkippedDrillsButton.setVisibility(View.VISIBLE);
             }
             markAsPracticedButton.setVisibility(View.VISIBLE);
-            saveDrillInfoButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -797,6 +789,24 @@ public class DrillInfoActivity extends AppCompatActivity {
         drill.setNotes(notes.getText().toString());
 
         return drill;
+    }
+
+    /**
+     * Collect and save the current drill info on screen to the database.
+     */
+    public void saveDrillInfo() {
+        Drill drill = collectDrillInfo();
+        viewModel.saveDrill(drill, false, new OperationCompleteCallback() { // this method handles null check
+            @Override
+            public void onSuccess() {
+                UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
+            }
+
+            @Override
+            public void onFailure(String error) {
+                UiUtils.displayDismissibleSnackbar(rootView, error);
+            }
+        });
     }
 
     /**

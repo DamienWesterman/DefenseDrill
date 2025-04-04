@@ -261,35 +261,15 @@
                     tools:ignore="ButtonStyle,RtlHardcoded" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/markAsPracticedButton"
+                android:onClick="markAsPracticed"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/saveDrillInfoButton"
-                    android:onClick="saveDrillInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="1"
-                    android:text="@string/save_changes"
-                    android:drawableLeft="@drawable/save_icon"
-                    android:visibility="gone"
-                    tools:ignore="ButtonStyle,RtlHardcoded" />
-
-                <Button
-                    android:id="@+id/markAsPracticedButton"
-                    android:onClick="markAsPracticed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_weight="1"
-                    android:text="@string/mark_as_practiced"
-                    android:drawableLeft="@drawable/checkmark_icon"
-                    android:visibility="gone"
-                    tools:ignore="ButtonStyle,RtlHardcoded" />
-            </LinearLayout>
+                android:text="@string/mark_as_practiced"
+                android:drawableLeft="@drawable/checkmark_icon"
+                android:visibility="gone"
+                tools:ignore="ButtonStyle,RtlHardcoded" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

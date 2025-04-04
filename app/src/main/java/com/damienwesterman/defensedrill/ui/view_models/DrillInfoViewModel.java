@@ -161,10 +161,11 @@ public class DrillInfoViewModel extends AndroidViewModel {
     /**
      * Attempt to add a new drill to the database.
      *
-     * @param drill     Drill to attempt to add to the database.
-     * @param callback  Callback to call when the update is finished.
+     * @param drill         Drill to attempt to add to the database.
+     * @param reloadScreen  Should we post the results for force a screen re-load?
+     * @param callback      Callback to call when the update is finished.
      */
-    public void saveDrill(Drill drill, OperationCompleteCallback callback) {
+    public void saveDrill(Drill drill, boolean reloadScreen, OperationCompleteCallback callback) {
         if (null == drill) {
             callback.onFailure("Issue saving Drill");
             return;
@@ -175,7 +176,9 @@ public class DrillInfoViewModel extends AndroidViewModel {
                if (!drillRepo.updateDrills(drill)) {
                    callback.onFailure("Something went wrong");
                } else {
-                   currentDrill.postValue(drill);
+                   if (reloadScreen) {
+                       currentDrill.postValue(drill);
+                   }
                    callback.onSuccess();
                }
            } catch (SQLiteConstraintException e) {
