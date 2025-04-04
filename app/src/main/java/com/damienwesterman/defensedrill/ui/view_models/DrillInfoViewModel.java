@@ -253,7 +253,6 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * initialized otherwise nothing will happen.
      */
     public void loadNetworkLinks() {
-        // TODO: Properly implement with user callbacks, specifically for network issue and unauthorized
         if (null != currentDrill.getValue()) {
             Disposable disposable = apiRepo.getDrill(currentDrill.getValue().getServerDrillId())
                 .subscribeOn(Schedulers.io())

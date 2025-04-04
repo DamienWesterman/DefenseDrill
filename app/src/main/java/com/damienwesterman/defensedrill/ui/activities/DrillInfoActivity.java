@@ -58,6 +58,7 @@ import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
@@ -128,6 +129,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private LinearLayout instructionsSelect;
     private Spinner instructionsSpinner;
     private LinearLayout relatedDrillsSelect;
+    private Spinner relatedDrillsSpinner;
     private View divider;
     private TextView lastDrilledLabel;
     private TextView lastDrilledDate;
@@ -218,27 +220,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     // =============================================================================================
     // OnClickListener Methods
     // =============================================================================================
-    public void viewRelatedDrills(View view) {
-        DrillDTO drillDTO = viewModel.getDrillDTO();
-        if (null == drillDTO) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
-            return;
-        }
-
-        viewModel.findDrillIdByServerId(
-                // TODO: Properly implement
-                drillDTO.getRelatedDrills().get(0).getId(),
-                localDrillId -> {
-                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
-                        UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
-                    } else {
-                        Intent intent = new Intent(this, DrillInfoActivity.class);
-                        intent.putExtra(Constants.INTENT_DRILL_ID, localDrillId);
-                        startActivity(intent);
-                    }
-                });
-    }
-
     public void editCategories(View view) {
         editCategoriesPopup(viewModel.getAllCategories());
     }
@@ -640,49 +621,11 @@ public class DrillInfoActivity extends AppCompatActivity {
             viewModel.loadNetworkLinks();
         }));
 
-        viewModel.getInstructions().observe(this, instructions -> runOnUiThread(() -> {
-            // TODO: Refactor to its own method so we can also call it for regenerated drill
-            if (null != instructions && !instructions.isEmpty()) {
-                List<String> formattedInstructions = new ArrayList<>(instructions.size() + 1);
-                formattedInstructions.add("Select one...");
-                formattedInstructions.addAll(instructions.stream()
-                        .map(InstructionsDTO::getDescription)
-                        .collect(Collectors.toList()));
+        viewModel.getInstructions().observe(this, instructions ->
+                runOnUiThread(() -> setUpInstructions(instructions)));
 
-                ArrayAdapter<String> arr = new ArrayAdapter<>(
-                        this,
-                        android.R.layout.simple_spinner_item,
-                        formattedInstructions);
-                arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                // TODO: CHECK ABOUT OVERFLOW ON THIS - if the description is too long (Side Headlock Defense) it looks like it pushes related drills over, curious how this works when they are both implemented and can we make one into elipses, or is it fine with the dropdown menu?
-                instructionsSpinner.setAdapter(arr);
-                instructionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-                        // First index position is "Select One"
-                        if (0 < pos) {
-                            viewInstructions(pos - 1);
-                        }
-                        // Reset back to original position for activity re-load
-                        instructionsSpinner.setSelection(0);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-                        // Do nothing
-                    }
-                });
-
-                instructionsSelect.setVisibility(View.VISIBLE);
-            }
-
-            drillProgressBar.setVisibility(View.GONE);
-        }));
-
-        viewModel.getRelatedDrills().observe(this, relatedDrills -> runOnUiThread(() -> {
-            // TODO: Properly implement
-            relatedDrillsSelect.setVisibility(View.VISIBLE);
-        }));
+        viewModel.getRelatedDrills().observe(this, relatedDrills ->
+                runOnUiThread(() -> setUpRelatedDrills(relatedDrills)));
 
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
@@ -707,7 +650,6 @@ public class DrillInfoActivity extends AppCompatActivity {
             // Screen rotation or something, re-load existing drill from viewModel
             fillDrillInfo(drill);
             setUiLoading(false);
-            // TODO: also call fill instructions/related drills
         }
     }
 
@@ -722,6 +664,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         instructionsSelect = findViewById(R.id.instructionsSelect);
         instructionsSpinner = findViewById(R.id.instructionsSpinner);
         relatedDrillsSelect = findViewById(R.id.relatedDrillsSelect);
+        relatedDrillsSpinner = findViewById(R.id.relatedDrillsSpinner);
         divider = findViewById(R.id.drillInfoDivider);
         lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
         lastDrilledDate = findViewById(R.id.lastDrilledDate);
@@ -872,5 +815,106 @@ public class DrillInfoActivity extends AppCompatActivity {
         intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
         intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, instructionsIndex);
         startActivity(intent);
+    }
+
+    // TODO: DOC COMMENTS
+    public void viewRelatedDrills(int relatedDrillIndex) {
+        DrillDTO drillDTO = viewModel.getDrillDTO();
+        if (null == drillDTO
+                || 0 > relatedDrillIndex
+                || drillDTO.getRelatedDrills().size() <= relatedDrillIndex) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+            return;
+        }
+
+        viewModel.findDrillIdByServerId(
+                drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
+                localDrillId -> {
+                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
+                        UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+                    } else {
+                        Intent intent = new Intent(this, DrillInfoActivity.class);
+                        intent.putExtra(Constants.INTENT_DRILL_ID, localDrillId);
+                        startActivity(intent);
+                    }
+                });
+    }
+
+    // TODO: Doc comments
+    private void setUpInstructions(List<InstructionsDTO> instructions) {
+        if (null != instructions && !instructions.isEmpty()) {
+            List<String> formattedInstructions = new ArrayList<>(instructions.size() + 1);
+            formattedInstructions.add("Select one...");
+            formattedInstructions.addAll(instructions.stream()
+                    .map(InstructionsDTO::getDescription)
+                    .collect(Collectors.toList()));
+
+            ArrayAdapter<String> arr = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    formattedInstructions);
+            arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // TODO: CHECK ABOUT OVERFLOW ON THIS - if the description is too long (Side Headlock Defense) it looks like it pushes related drills over, curious how this works when they are both implemented and can we make one into elipses, or is it fine with the dropdown menu?
+            instructionsSpinner.setAdapter(arr);
+            instructionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                    // First index position is "Select One"
+                    if (0 < pos) {
+                        viewInstructions(pos - 1);
+                    }
+                    // Reset back to original position for activity re-load
+                    instructionsSpinner.setSelection(0);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    // Do nothing
+                }
+            });
+
+            instructionsSelect.setVisibility(View.VISIBLE);
+        }
+
+        drillProgressBar.setVisibility(View.GONE);
+    }
+
+    // TODO: Doc comments
+    private void setUpRelatedDrills(List<RelatedDrillDTO> relatedDrills) {
+        if (null != relatedDrills && !relatedDrills.isEmpty()) {
+            List<String> formattedRelatedDrills = new ArrayList<>(relatedDrills.size() + 1);
+            formattedRelatedDrills.add("Select one...");
+            formattedRelatedDrills.addAll(relatedDrills.stream()
+                    .map(RelatedDrillDTO::getName)
+                    .collect(Collectors.toList()));
+
+            ArrayAdapter<String> arr = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    formattedRelatedDrills);
+            arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // TODO: CHECK ABOUT OVERFLOW ON THIS - if the description is too long (Side Headlock Defense) it looks like it pushes related drills over, curious how this works when they are both implemented and can we make one into elipses, or is it fine with the dropdown menu?
+            relatedDrillsSpinner.setAdapter(arr);
+            relatedDrillsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                    // First index position is "Select One"
+                    if (0 < pos) {
+                        viewRelatedDrills(pos - 1);
+                    }
+                    // Reset back to original position for activity re-load
+                    relatedDrillsSpinner.setSelection(0);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    // Do nothing
+                }
+            });
+
+            relatedDrillsSelect.setVisibility(View.VISIBLE);
+        }
+
+        drillProgressBar.setVisibility(View.GONE);
     }
 }

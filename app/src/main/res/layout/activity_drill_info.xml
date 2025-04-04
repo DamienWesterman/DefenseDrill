@@ -73,7 +73,7 @@
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/relatedDRillsLabel"
+                android:id="@+id/relatedDrillsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/related_drills_label"
