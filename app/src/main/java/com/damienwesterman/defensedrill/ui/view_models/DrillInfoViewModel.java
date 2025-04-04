@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +48,7 @@ import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -55,17 +57,21 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * View model for {@link Drill} objects geared towards displaying and modifying a single drill.
  */
 @HiltViewModel
 public class DrillInfoViewModel extends AndroidViewModel {
+    private static final String TAG = DrillInfoViewModel.class.getSimpleName();
+
     private final MutableLiveData<Drill> currentDrill;
     private DrillDTO drillDTO;
     private final MutableLiveData<List<InstructionsDTO>> instructions;
@@ -222,7 +228,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
     /**
      * Get the DrillDTO received from the backend.
      * <br><br>
-     * {@link #loadNetworkLinks()} should have been called prior otherwise will return null.
+     * {@link #loadNetworkLinks(Runnable, Consumer)} should have been called prior otherwise will
+     * return null.
      * @return DrillDTO object.
      */
     @Nullable
@@ -251,9 +258,12 @@ public class DrillInfoViewModel extends AndroidViewModel {
     /**
      * Fetch and load instructions and related drills for the Drill. Drill has to have been
      * initialized otherwise nothing will happen.
+     *
+     * @param unauthorizedCallback Callback for when 401 is returned
+     * @param failureCallback Callback for when the network request fails
      */
-    public void loadNetworkLinks() {
-        if (null != currentDrill.getValue()) {
+    public void loadNetworkLinks(Runnable unauthorizedCallback, Consumer<String> failureCallback) {
+        if (null != currentDrill.getValue() && null != currentDrill.getValue().getServerDrillId()) {
             Disposable disposable = apiRepo.getDrill(currentDrill.getValue().getServerDrillId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -264,9 +274,55 @@ public class DrillInfoViewModel extends AndroidViewModel {
                         relatedDrills.postValue(drill.getRelatedDrills());
                     },
                     throwable -> {
-                        // TODO ignore for now
+                        handleLoadNetworkLinksFailure(throwable, unauthorizedCallback,
+                                failureCallback);
                     }
                 );
+        }
+    }
+
+    /**
+     * Handle failure to retrieve network links.
+     *
+     * @param throwable Throwable given by Retrofit/RxJava
+     * @param unauthorizedCallback Callback for when 401 is returned
+     * @param failureCallback Callback for when the network request fails
+     */
+    private void handleLoadNetworkLinksFailure(@NonNull Throwable throwable,
+                                               @NonNull Runnable unauthorizedCallback,
+                                               @NonNull Consumer<String> failureCallback) {
+        if (throwable instanceof HttpException) {
+            // getLocalizedMessage(): HTTP 401 Unauthorized
+            HttpException httpException = (HttpException) throwable;
+
+            switch (httpException.code()) {
+                case HttpsURLConnection.HTTP_UNAUTHORIZED:
+                    unauthorizedCallback.run();
+                    break;
+                case HttpsURLConnection.HTTP_NOT_FOUND:
+                    // A little weird, but not exactly an error we can do anything about
+                    this.drillDTO = null;
+                    instructions.postValue(null);
+                    relatedDrills.postValue(null);
+                    break;
+                default:
+                    // Should not get here
+                    Log.e(TAG, "Received unexpected HttpException: "
+                            + httpException.getMessage());
+                    failureCallback.accept("Server issue, please try again later");
+                    break;
+            }
+        } else if (throwable instanceof IllegalArgumentException) {
+            // Thrown by ApiRepo if the JWT from SharedPrefs is empty
+            // This is actually acceptable, means user has not signed in, no error message necessary
+            this.drillDTO = null;
+            instructions.postValue(null);
+            relatedDrills.postValue(null);
+        } else if (throwable instanceof SocketTimeoutException) {
+            // getLocalizedMessage(): failed to connect to your.server.org/1.1.1.1 (port 99999) from /2.2.2.2 (port 99999) after 10000ms
+            failureCallback.accept("Issue connecting to the server, try again later");
+        } else {
+            failureCallback.accept("An unexpected error has occurred");
         }
     }
 
@@ -278,7 +334,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      *                 not found.
      */
     public void findDrillIdByServerId(@NonNull Long serverId,
-                                    @NonNull Consumer<Long> callback) {
+                                      @NonNull Consumer<Long> callback) {
         executor.execute(() -> {
             Optional<Drill> optDrill = drillRepo.getDrillByServerId(serverId);
             long localDrillId;

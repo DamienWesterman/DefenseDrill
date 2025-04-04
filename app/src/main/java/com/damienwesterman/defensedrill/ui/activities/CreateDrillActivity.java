@@ -486,7 +486,7 @@ public class CreateDrillActivity extends AppCompatActivity {
         String notes;
 
         name = enteredName.getText().toString();
-        if (0 == name.length()) {
+        if (name.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "Name cannot be empty");
             return null;
         } else if (NAME_CHARACTER_LIMIT <= name.length()) {
@@ -507,7 +507,7 @@ public class CreateDrillActivity extends AppCompatActivity {
                 true,                       // new drill
                 Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()),
                 notes,
-                Drill.INVALID_SERVER_DRILL_ID,
+                null,
                 new ArrayList<>(viewModel.getCheckedCategoryEntities()),
                 new ArrayList<>(viewModel.getCheckedSubCategoryEntities())
         );

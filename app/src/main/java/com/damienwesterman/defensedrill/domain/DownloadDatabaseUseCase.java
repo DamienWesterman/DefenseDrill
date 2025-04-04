@@ -360,6 +360,7 @@ public class DownloadDatabaseUseCase {
             Log.e(TAG, "Sqlite issue: " + throwable.getLocalizedMessage());
             errorMessage = "Issue saving drills to your phone";
         } else {
+            Log.e(TAG, "Got an unexpected error: ", throwable);
             errorMessage = "An unexpected error has occurred";
         }
 

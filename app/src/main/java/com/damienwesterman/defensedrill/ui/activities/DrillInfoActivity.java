@@ -30,7 +30,6 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,10 +54,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
+import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
@@ -73,6 +74,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -94,22 +97,9 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
-    // TODO: Create the following popups/activities
-        // - Select Instructions Popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
-        // - Select Related Drills popup (OR SHOULD THIS BE A DROPDOWN/SPINNER SELECT???)
-    // TODO: Implement Filling instructions and related drills using API access
-    // TODO: Hide the instructions stuff by default, checking:
-        // - If the viewmodel already holds a list of instructions
-        // - If we the jwt is not blank
-        // - Maybe have a loading thing that is shown by default
-        // - Do different things for 201, 200, and then other errors
-        // - If the drill even has a server ID
-    // TODO: May want to get a drill in the database by its drill server ID, so make it unique and make a dao/repo method for it
-    // TODO: If the JWT is present but returns 401, then prompt to sign in, and if they cancel then remove the JWT so that they are not shown? And have a popup that says "hey sign in in web options to view instructions etc"
     // TODO: UI STUFF
         // - Save confidence level as user selects
         // - Save Notes as user types, or rather do it periodically (observable??? Every 1 second?)
-        // - Categories/Sub-Categories button decision?
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
@@ -122,6 +112,10 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     private DrillInfoViewModel viewModel;
     private ActivityState activityState;
+    @Inject
+    SharedPrefs sharedPrefs;
+    @Inject
+    CommonPopups loginPopup;
 
     private View rootView;
     private ProgressBar drillProgressBar;
@@ -614,11 +608,33 @@ public class DrillInfoActivity extends AppCompatActivity {
             fillDrillInfo(drill);
             setUiLoading(false);
 
-            // Keep the spinner visible until instructions and related drills are loaded (or not)
-            drillProgressBar.setVisibility(View.VISIBLE);
-            instructionsSelect.setVisibility(View.GONE);
-            relatedDrillsSelect.setVisibility(View.GONE);
-            viewModel.loadNetworkLinks();
+            if (null !=drill.getServerDrillId() && !sharedPrefs.getJwt().isEmpty()) {
+                // Keep the spinner visible until instructions and related drills are loaded (or not)
+                drillProgressBar.setVisibility(View.VISIBLE);
+                instructionsSelect.setVisibility(View.GONE);
+                relatedDrillsSelect.setVisibility(View.GONE);
+                viewModel.loadNetworkLinks(
+                        () -> loginPopup.displayLoginPopup(new OperationCompleteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // User successfully logged back in, restart the activity
+                                onRestart();
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                UiUtils.displayDismissibleSnackbar(rootView,
+                                        "You are not signed in.");
+                                /*
+                                User has selected manually selected not to log in or cannot log
+                                in. Clear out the jwt so we do not keep doing a popup.
+                                 */
+                                sharedPrefs.setJwt("");
+                            }
+                        }),
+                        errorMessage -> UiUtils.displayDismissibleSnackbar(rootView, errorMessage)
+                );
+            }
         }));
 
         viewModel.getInstructions().observe(this, instructions ->
@@ -801,7 +817,12 @@ public class DrillInfoActivity extends AppCompatActivity {
         notes.setText(drill.getNotes());
     }
 
-    // TODO: Doc comments
+    /**
+     * Launch the activity to view a specific set of instructions.
+     *
+     * @param instructionsIndex Index position of the instructions in the list returned by
+*    *                          {@link DrillInfoViewModel#getInstructions()}
+     */
     public void viewInstructions(int instructionsIndex) {
         DrillDTO drillDTO = viewModel.getDrillDTO();
         if (null == drillDTO
@@ -817,7 +838,12 @@ public class DrillInfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // TODO: DOC COMMENTS
+    /**
+     * Launch the activity to view a specific related drill.
+     *
+     * @param relatedDrillIndex Index position of the related drill in the list returned by
+     *                          {@link DrillInfoViewModel#getRelatedDrills()}
+     */
     public void viewRelatedDrills(int relatedDrillIndex) {
         DrillDTO drillDTO = viewModel.getDrillDTO();
         if (null == drillDTO
@@ -840,7 +866,11 @@ public class DrillInfoActivity extends AppCompatActivity {
                 });
     }
 
-    // TODO: Doc comments
+    /**
+     * Set up the UI for the instructions drop down menu.
+     *
+     * @param instructions List of InstructionDTO objects
+     */
     private void setUpInstructions(List<InstructionsDTO> instructions) {
         if (null != instructions && !instructions.isEmpty()) {
             List<String> formattedInstructions = new ArrayList<>(instructions.size() + 1);
@@ -854,7 +884,6 @@ public class DrillInfoActivity extends AppCompatActivity {
                     android.R.layout.simple_spinner_item,
                     formattedInstructions);
             arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            // TODO: CHECK ABOUT OVERFLOW ON THIS - if the description is too long (Side Headlock Defense) it looks like it pushes related drills over, curious how this works when they are both implemented and can we make one into elipses, or is it fine with the dropdown menu?
             instructionsSpinner.setAdapter(arr);
             instructionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -879,7 +908,11 @@ public class DrillInfoActivity extends AppCompatActivity {
         drillProgressBar.setVisibility(View.GONE);
     }
 
-    // TODO: Doc comments
+    /**
+     * Set up the UI for the related drills drop down menu.
+     *
+     * @param relatedDrills List of RelatedDrillDTO objects
+     */
     private void setUpRelatedDrills(List<RelatedDrillDTO> relatedDrills) {
         if (null != relatedDrills && !relatedDrills.isEmpty()) {
             List<String> formattedRelatedDrills = new ArrayList<>(relatedDrills.size() + 1);
@@ -893,7 +926,6 @@ public class DrillInfoActivity extends AppCompatActivity {
                     android.R.layout.simple_spinner_item,
                     formattedRelatedDrills);
             arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            // TODO: CHECK ABOUT OVERFLOW ON THIS - if the description is too long (Side Headlock Defense) it looks like it pushes related drills over, curious how this works when they are both implemented and can we make one into elipses, or is it fine with the dropdown menu?
             relatedDrillsSpinner.setAdapter(arr);
             relatedDrillsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override

@@ -41,9 +41,9 @@
 
         <LinearLayout
             android:id="@+id/instructionsSelect"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
             android:visibility="gone">
@@ -65,9 +65,9 @@
 
         <LinearLayout
             android:id="@+id/relatedDrillsSelect"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             android:layout_marginEnd="8dp"
             android:orientation="vertical"
             android:visibility="gone">
@@ -113,10 +113,10 @@
                 android:layout_marginTop="16dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:layout_weight="0.5">
                     <TextView
                         android:id="@+id/confidenceLabel"
                         android:layout_width="match_parent"
@@ -136,10 +136,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:layout_weight="0.5">
                     <TextView
                         android:id="@+id/lastDrilledLabel"
                         android:layout_width="match_parent"

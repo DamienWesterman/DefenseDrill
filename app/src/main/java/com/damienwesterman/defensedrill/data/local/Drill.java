@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.data.local;
 
+import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Ignore;
 import androidx.room.Junction;
@@ -111,7 +112,7 @@ public class Drill {
      */
     @Ignore
     public Drill(@NotNull String name, long lastDrilled, boolean newDrill, int confidence,
-                 String notes, long serverDrillId, List<CategoryEntity> categories,
+                 String notes, @Nullable Long serverDrillId, List<CategoryEntity> categories,
                  List<SubCategoryEntity> subCategories) {
         this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
                                             serverDrillId);

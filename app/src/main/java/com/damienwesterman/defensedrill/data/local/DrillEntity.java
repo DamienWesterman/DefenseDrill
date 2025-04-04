@@ -81,7 +81,7 @@ import java.util.Objects;
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
      */
     protected DrillEntity(long id, @NonNull String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, long serverDrillId) {
+                          String notes, @Nullable Long serverDrillId) {
         this.id = id;
         this.name = name;
         this.lastDrilled = lastDrilled;
@@ -103,7 +103,7 @@ import java.util.Objects;
      */
     @Ignore
     public DrillEntity(@NonNull String name, long lastDrilled, boolean newDrill, int confidence,
-                       String notes, long serverDrillId) {
+                       String notes, @Nullable Long serverDrillId) {
         this.name = name;
         this.lastDrilled = lastDrilled;
         this.newDrill = newDrill;
