@@ -188,7 +188,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                 // Only save if this changed
                 if (null != drill &&
                         confidence != Constants.confidenceWeightToPosition(drill.getConfidence())) {
-                    saveDrillInfo();
+                    saveDrillInfo(true);
                 }
             }
 
@@ -223,6 +223,12 @@ public class DrillInfoActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveDrillInfo(false);
     }
 
     // =============================================================================================
@@ -794,12 +800,14 @@ public class DrillInfoActivity extends AppCompatActivity {
     /**
      * Collect and save the current drill info on screen to the database.
      */
-    public void saveDrillInfo() {
+    public void saveDrillInfo(boolean displaySuccess) {
         Drill drill = collectDrillInfo();
         viewModel.saveDrill(drill, false, new OperationCompleteCallback() { // this method handles null check
             @Override
             public void onSuccess() {
-                UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
+                if (displaySuccess) {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
+                }
             }
 
             @Override
