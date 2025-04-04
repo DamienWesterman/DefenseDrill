@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,18 +57,21 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -121,20 +125,24 @@ public class DrillInfoActivity extends AppCompatActivity {
     private View rootView;
     private ProgressBar drillProgressBar;
     private TextView drillName;
+    private LinearLayout instructionsSelect;
+    private Spinner instructionsSpinner;
+    private LinearLayout relatedDrillsSelect;
     private View divider;
     private TextView lastDrilledLabel;
     private TextView lastDrilledDate;
     private TextView confidenceLabel;
     private Spinner confidenceSpinner;
+    private TextView viewModifyLabel;
     private Button editCategoriesButton;
     private Button editSubCategoriesButton;
     private TextView notesLabel;
     private EditText notes;
+    private TextView workoutOptionsLabel;
     private Button regenerateButton;
     private Button resetSkippedDrillsButton;
     private Button markAsPracticedButton;
     private Button saveDrillInfoButton;
-    private LinearLayout networkButtons;
 
     // =============================================================================================
     // Activity Methods
@@ -181,8 +189,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         confidenceSpinner.setAdapter(adapter);
 
         setUpViewModel();
-// TODO: REMOVE
-networkButtons.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -212,20 +218,6 @@ networkButtons.setVisibility(View.VISIBLE);
     // =============================================================================================
     // OnClickListener Methods
     // =============================================================================================
-    public void viewInstructions(View view) {
-        DrillDTO drillDTO = viewModel.getDrillDTO();
-        if (null == drillDTO) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Instructions");
-            return;
-        }
-
-        Intent intent = new Intent(this, InstructionsActivity.class);
-        intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
-        // TODO: IMPLEMENT PROPERLY
-        intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, 0);
-        startActivity(intent);
-    }
-
     public void viewRelatedDrills(View view) {
         DrillDTO drillDTO = viewModel.getDrillDTO();
         if (null == drillDTO) {
@@ -641,17 +633,55 @@ networkButtons.setVisibility(View.VISIBLE);
             fillDrillInfo(drill);
             setUiLoading(false);
 
+            // Keep the spinner visible until instructions and related drills are loaded (or not)
+            drillProgressBar.setVisibility(View.VISIBLE);
+            instructionsSelect.setVisibility(View.GONE);
+            relatedDrillsSelect.setVisibility(View.GONE);
             viewModel.loadNetworkLinks();
         }));
 
         viewModel.getInstructions().observe(this, instructions -> runOnUiThread(() -> {
-            // TODO: Properly implement
-            instructions.forEach(instruction -> Log.i("DxTag", instruction.getDescription()));
+            // TODO: Refactor to its own method so we can also call it for regenerated drill
+            if (null != instructions && !instructions.isEmpty()) {
+                List<String> formattedInstructions = new ArrayList<>(instructions.size() + 1);
+                formattedInstructions.add("Select one...");
+                formattedInstructions.addAll(instructions.stream()
+                        .map(InstructionsDTO::getDescription)
+                        .collect(Collectors.toList()));
+
+                ArrayAdapter<String> arr = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_spinner_item,
+                        formattedInstructions);
+                arr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // TODO: CHECK ABOUT OVERFLOW ON THIS - if the description is too long (Side Headlock Defense) it looks like it pushes related drills over, curious how this works when they are both implemented and can we make one into elipses, or is it fine with the dropdown menu?
+                instructionsSpinner.setAdapter(arr);
+                instructionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                        // First index position is "Select One"
+                        if (0 < pos) {
+                            viewInstructions(pos - 1);
+                        }
+                        // Reset back to original position for activity re-load
+                        instructionsSpinner.setSelection(0);
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                        // Do nothing
+                    }
+                });
+
+                instructionsSelect.setVisibility(View.VISIBLE);
+            }
+
+            drillProgressBar.setVisibility(View.GONE);
         }));
 
         viewModel.getRelatedDrills().observe(this, relatedDrills -> runOnUiThread(() -> {
             // TODO: Properly implement
-            relatedDrills.forEach(relatedDrill -> Log.i("DxTag", relatedDrill.getName()));
+            relatedDrillsSelect.setVisibility(View.VISIBLE);
         }));
 
         viewModel.loadAllCategories();
@@ -689,20 +719,24 @@ networkButtons.setVisibility(View.VISIBLE);
         rootView = findViewById(R.id.activityDrillInfo);
         drillProgressBar = findViewById(R.id.drillProgressBar);
         drillName = findViewById(R.id.drillName);
+        instructionsSelect = findViewById(R.id.instructionsSelect);
+        instructionsSpinner = findViewById(R.id.instructionsSpinner);
+        relatedDrillsSelect = findViewById(R.id.relatedDrillsSelect);
         divider = findViewById(R.id.drillInfoDivider);
         lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
         lastDrilledDate = findViewById(R.id.lastDrilledDate);
         confidenceLabel = findViewById(R.id.confidenceLabel);
         confidenceSpinner = findViewById(R.id.confidenceSpinner);
+        viewModifyLabel = findViewById(R.id.viewModifyLabel);
         editCategoriesButton = findViewById(R.id.editCategoriesButton);
         editSubCategoriesButton = findViewById(R.id.editSubCategoriesButton);
         notesLabel = findViewById(R.id.notesLabel);
         notes = findViewById(R.id.notes);
+        workoutOptionsLabel = findViewById(R.id.workoutOptionsLabel);
         regenerateButton = findViewById(R.id.regenerateButton);
         resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
         markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
         saveDrillInfoButton = findViewById(R.id.saveDrillInfoButton);
-        networkButtons = findViewById(R.id.networkButtons);
     }
 
     /**
@@ -741,10 +775,12 @@ networkButtons.setVisibility(View.VISIBLE);
             lastDrilledDate.setVisibility(View.GONE);
             confidenceLabel.setVisibility(View.GONE);
             confidenceSpinner.setVisibility(View.GONE);
+            viewModifyLabel.setVisibility(View.GONE);
             editCategoriesButton.setVisibility(View.GONE);
             editSubCategoriesButton.setVisibility(View.GONE);
             notesLabel.setVisibility(View.GONE);
             notes.setVisibility(View.GONE);
+            workoutOptionsLabel.setVisibility(View.GONE);
             regenerateButton.setVisibility(View.GONE);
             resetSkippedDrillsButton.setVisibility(View.GONE);
             markAsPracticedButton.setVisibility(View.GONE);
@@ -757,10 +793,12 @@ networkButtons.setVisibility(View.VISIBLE);
             lastDrilledDate.setVisibility(View.VISIBLE);
             confidenceLabel.setVisibility(View.VISIBLE);
             confidenceSpinner.setVisibility(View.VISIBLE);
+            viewModifyLabel.setVisibility(View.VISIBLE);
             editCategoriesButton.setVisibility(View.VISIBLE);
             editSubCategoriesButton.setVisibility(View.VISIBLE);
             notesLabel.setVisibility(View.VISIBLE);
             notes.setVisibility(View.VISIBLE);
+            workoutOptionsLabel.setVisibility(View.VISIBLE);
             if (ActivityState.GENERATED_DRILL == activityState
                     || ActivityState.REGENERATED_DRILL == activityState) {
                 // Do not set these to visible unless we are in an activity state that uses them
@@ -818,5 +856,21 @@ networkButtons.setVisibility(View.VISIBLE);
             lastDrilledDate.setText("-");
         }
         notes.setText(drill.getNotes());
+    }
+
+    // TODO: Doc comments
+    public void viewInstructions(int instructionsIndex) {
+        DrillDTO drillDTO = viewModel.getDrillDTO();
+        if (null == drillDTO
+                || 0 > instructionsIndex
+                || drillDTO.getInstructions().size() <= instructionsIndex) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Instructions");
+            return;
+        }
+
+        Intent intent = new Intent(this, InstructionsActivity.class);
+        intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
+        intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, instructionsIndex);
+        startActivity(intent);
     }
 }

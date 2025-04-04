@@ -34,34 +34,58 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:id="@+id/networkButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/instructionsButton"
-            android:onClick="viewInstructions"
+        <LinearLayout
+            android:id="@+id/instructionsSelect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/instructions"
-            android:drawableLeft="@drawable/instructions_icon"
-            tools:ignore="ButtonStyle,RtlHardcoded"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <Button
-            android:id="@+id/relatedDrillsButton"
-            android:onClick="viewRelatedDrills"
+            <TextView
+                android:id="@+id/instructionsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/instructionsLabel"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:textColor="@color/field_label" />
+            <Spinner
+                android:id="@+id/instructionsSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/relatedDrillsSelect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/related_drills"
-            android:drawableLeft="@drawable/link_icon"
-            tools:ignore="ButtonStyle,RtlHardcoded"
-            android:layout_marginLeft="8dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/relatedDRillsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/related_drills_label"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:textColor="@color/field_label" />
+            <Spinner
+                android:id="@+id/relatedDrillsSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <View
@@ -135,6 +159,16 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/viewModifyLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/view_modify"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:textColor="@color/field_label" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -186,6 +220,16 @@
                 android:hint="@string/notes_hint"
                 android:autofillHints=""
                 android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/workoutOptionsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/workout_options"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:textColor="@color/field_label" />
 
             <LinearLayout
                 android:layout_width="match_parent"
