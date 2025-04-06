@@ -503,7 +503,7 @@ public class CreateDrillActivity extends AppCompatActivity {
         }
         drill = new Drill(
                 name,
-                System.currentTimeMillis(), // Last drilled date
+                0, // Last drilled date
                 true,                       // new drill
                 Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()),
                 notes,

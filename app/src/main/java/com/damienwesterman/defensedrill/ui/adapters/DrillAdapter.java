@@ -76,9 +76,17 @@ public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         holder.getCard().setTitle(drills.get(position).getName());
-        Date drilledDate = new Date(drills.get(position).getLastDrilled());
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-        String lastDrilled = "Last Drilled: " + dateFormatter.format(drilledDate);
+
+        long lastDrilledLong = drills.get(position).getLastDrilled();
+        String lastDrilled;
+        if (0 != lastDrilledLong) {
+            Date drilledDate = new Date();
+            DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+            lastDrilled = "Last Drilled: " + dateFormatter.format(drilledDate);
+        } else {
+            lastDrilled = "Last Drilled: -";
+        }
+
         holder.getCard().setDescription(lastDrilled);
         holder.setOnClickListener(clickListener, drills.get(position).getId());
         holder.setLongClickListener(longClickListener, drills.get(position).getId());

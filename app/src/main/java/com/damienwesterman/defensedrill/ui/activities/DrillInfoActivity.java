@@ -97,8 +97,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
-    // TODO: UI STUFF
-        // - Save Notes as user types, or rather do it periodically (observable??? Every 1 second?)
     /** Enum saving the current state of the activity. */
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
