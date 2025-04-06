@@ -155,6 +155,11 @@ public class DrillRepository {
         return this.drillDao.findDrillByName(name);
     }
 
+    @NonNull
+    public synchronized Optional<Drill> getDrillByServerId(@NonNull Long serverDrillId) {
+        return this.drillDao.findDrillByServerId(serverDrillId);
+    }
+
     /**
      * Insert the given drill(s).
      *

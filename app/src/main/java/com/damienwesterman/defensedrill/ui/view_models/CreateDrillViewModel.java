@@ -48,6 +48,7 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import lombok.Getter;
 
 /**
  * View model for {@link Drill} objects geared towards creation of a new Drill.
@@ -57,7 +58,9 @@ public class CreateDrillViewModel extends AndroidViewModel {
     private final DrillRepository repo;
     private List<CategoryEntity> allCategories;
     private List<SubCategoryEntity> allSubCategories;
+    @Getter
     private final Set<CategoryEntity> checkedCategoryEntities = new HashSet<>();
+    @Getter
     private final Set<SubCategoryEntity> checkedSubCategoryEntities = new HashSet<>();
     private final Executor executor = Executors.newSingleThreadExecutor();
 
@@ -108,38 +111,6 @@ public class CreateDrillViewModel extends AndroidViewModel {
      */
     public @Nullable List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
-    }
-
-    /**
-     * Get the list of categories the user has checked.
-     * <br><br>
-     * Saved here to persist across destructive events (i.e. screen rotations). Can modify the list
-     * that is returned and it will be persisted, for example:
-     * <br><br>
-     * {@code createDrillViewModel.getCheckedCategoryEntities().add(category);}
-     * <br><br>
-     * The newly added category will exist in the list maintained by this view model.
-     *
-     * @return Persisted list of CategoryEntity objects.
-     */
-    public Set<CategoryEntity> getCheckedCategoryEntities() {
-        return this.checkedCategoryEntities;
-    }
-
-    /**
-     * Get the list of sub-categories the user has checked.
-     * <br><br>
-     * Saved here to persist across destructive events (i.e. screen rotations). Can modify the list
-     * that is returned and it will be persisted, for example:
-     * <br><br>
-     * {@code createDrillViewModel.getCheckedSubCategoryEntities().add(subCategory);}
-     * <br><br>
-     * The newly added sub-category will exist in the list maintained by this view model.
-     *
-     * @return Persisted list of SubCategoryEntity objects.
-     */
-    public Set<SubCategoryEntity> getCheckedSubCategoryEntities() {
-        return this.checkedSubCategoryEntities;
     }
 
     /**

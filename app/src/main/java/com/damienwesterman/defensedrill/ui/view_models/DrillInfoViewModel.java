@@ -28,7 +28,9 @@ package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -38,37 +40,58 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.data.remote.ApiRepo;
+import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
+import java.net.SocketTimeoutException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * View model for {@link Drill} objects geared towards displaying and modifying a single drill.
  */
 @HiltViewModel
 public class DrillInfoViewModel extends AndroidViewModel {
+    private static final String TAG = DrillInfoViewModel.class.getSimpleName();
+
     private final MutableLiveData<Drill> currentDrill;
+    private DrillDTO drillDTO;
+    private final MutableLiveData<List<InstructionsDTO>> instructions;
+    private final MutableLiveData<List<RelatedDrillDTO>> relatedDrills;
     private List<CategoryEntity> allCategories;
     private List<SubCategoryEntity> allSubCategories;
-    private final DrillRepository repo;
+    private final DrillRepository drillRepo;
+    private final ApiRepo apiRepo;
     private DrillGenerator drillGenerator;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Inject
-    public DrillInfoViewModel(Application application, DrillRepository repo) {
+    public DrillInfoViewModel(Application application, DrillRepository drillRepo, ApiRepo apiRepo) {
         super(application);
 
         currentDrill = new MutableLiveData<>();
-        this.repo = repo;
+        instructions = new MutableLiveData<>();
+        relatedDrills = new MutableLiveData<>();
+        this.drillRepo = drillRepo;
+        this.apiRepo = apiRepo;
     }
 
     /**
@@ -86,7 +109,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param drillId ID of the drill.
      */
     public void populateDrill(long drillId) {
-        executor.execute(() -> currentDrill.postValue(repo.getDrill(drillId).orElse(null)));
+        executor.execute(() -> currentDrill.postValue(drillRepo.getDrill(drillId).orElse(null)));
     }
 
     /**
@@ -100,13 +123,13 @@ public class DrillInfoViewModel extends AndroidViewModel {
             List<Drill> drills;
             if (Constants.USER_RANDOM_SELECTION == categoryId &&
                     Constants.USER_RANDOM_SELECTION == subCategoryId) {
-                drills = repo.getAllDrills();
+                drills = drillRepo.getAllDrills();
             } else if (Constants.USER_RANDOM_SELECTION == categoryId) {
-                drills = repo.getAllDrillsBySubCategoryId(subCategoryId);
+                drills = drillRepo.getAllDrillsBySubCategoryId(subCategoryId);
             } else if (Constants.USER_RANDOM_SELECTION == subCategoryId) {
-                drills = repo.getAllDrillsByCategoryId(categoryId);
+                drills = drillRepo.getAllDrillsByCategoryId(categoryId);
             } else {
-                drills = repo.getAllDrills(categoryId, subCategoryId);
+                drills = drillRepo.getAllDrills(categoryId, subCategoryId);
             }
             drillGenerator = new DrillGenerator(drills, new Random());
             currentDrill.postValue(drillGenerator.generateDrill());
@@ -138,10 +161,11 @@ public class DrillInfoViewModel extends AndroidViewModel {
     /**
      * Attempt to add a new drill to the database.
      *
-     * @param drill     Drill to attempt to add to the database.
-     * @param callback  Callback to call when the update is finished.
+     * @param drill         Drill to attempt to add to the database.
+     * @param reloadScreen  Should we post the results for force a screen re-load?
+     * @param callback      Callback to call when the update is finished.
      */
-    public void saveDrill(Drill drill, OperationCompleteCallback callback) {
+    public void saveDrill(Drill drill, boolean reloadScreen, OperationCompleteCallback callback) {
         if (null == drill) {
             callback.onFailure("Issue saving Drill");
             return;
@@ -149,10 +173,12 @@ public class DrillInfoViewModel extends AndroidViewModel {
 
         executor.execute(() -> {
            try {
-               if (!repo.updateDrills(drill)) {
+               if (!drillRepo.updateDrills(drill)) {
                    callback.onFailure("Something went wrong");
                } else {
-                   currentDrill.postValue(drill);
+                   if (reloadScreen) {
+                       currentDrill.postValue(drill);
+                   }
                    callback.onSuccess();
                }
            } catch (SQLiteConstraintException e) {
@@ -188,7 +214,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      */
     public void loadAllCategories() {
         if (null == allCategories) {
-            executor.execute(() -> allCategories = repo.getAllCategories());
+            executor.execute(() -> allCategories = drillRepo.getAllCategories());
         }
     }
 
@@ -198,7 +224,129 @@ public class DrillInfoViewModel extends AndroidViewModel {
      */
     public void loadAllSubCategories() {
         if (null == allSubCategories) {
-            executor.execute(() -> allSubCategories = repo.getAllSubCategories());
+            executor.execute(() -> allSubCategories = drillRepo.getAllSubCategories());
         }
+    }
+
+    /**
+     * Get the DrillDTO received from the backend.
+     * <br><br>
+     * {@link #loadNetworkLinks(Runnable, Consumer)} should have been called prior otherwise will
+     * return null.
+     * @return DrillDTO object.
+     */
+    @Nullable
+    public DrillDTO getDrillDTO() {
+        return this.drillDTO;
+    }
+
+    /**
+     * Get the LiveData object to observe for the list of Drill Instructions.
+     *
+     * @return LiveData object.
+     */
+    public LiveData<List<InstructionsDTO>> getInstructions() {
+        return instructions;
+    }
+
+    /**
+     * Get the LiveData object to observe for the list of related Drills.
+     *
+     * @return LiveData object.
+     */
+    public LiveData<List<RelatedDrillDTO>> getRelatedDrills() {
+        return relatedDrills;
+    }
+
+    /**
+     * Fetch and load instructions and related drills for the Drill. Drill has to have been
+     * initialized otherwise nothing will happen.
+     *
+     * @param unauthorizedCallback Callback for when 401 is returned
+     * @param failureCallback Callback for when the network request fails
+     */
+    public void loadNetworkLinks(Runnable unauthorizedCallback, Consumer<String> failureCallback) {
+        if (null != currentDrill.getValue() && null != currentDrill.getValue().getServerDrillId()) {
+            Disposable disposable = apiRepo.getDrill(currentDrill.getValue().getServerDrillId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    drill -> {
+                        this.drillDTO = drill;
+                        instructions.postValue(drill.getInstructions());
+                        relatedDrills.postValue(drill.getRelatedDrills());
+                    },
+                    throwable -> {
+                        handleLoadNetworkLinksFailure(throwable, unauthorizedCallback,
+                                failureCallback);
+                    }
+                );
+        }
+    }
+
+    /**
+     * Handle failure to retrieve network links.
+     *
+     * @param throwable Throwable given by Retrofit/RxJava
+     * @param unauthorizedCallback Callback for when 401 is returned
+     * @param failureCallback Callback for when the network request fails
+     */
+    private void handleLoadNetworkLinksFailure(@NonNull Throwable throwable,
+                                               @NonNull Runnable unauthorizedCallback,
+                                               @NonNull Consumer<String> failureCallback) {
+        if (throwable instanceof HttpException) {
+            // getLocalizedMessage(): HTTP 401 Unauthorized
+            HttpException httpException = (HttpException) throwable;
+
+            switch (httpException.code()) {
+                case HttpsURLConnection.HTTP_UNAUTHORIZED:
+                    unauthorizedCallback.run();
+                    break;
+                case HttpsURLConnection.HTTP_NOT_FOUND:
+                    // A little weird, but not exactly an error we can do anything about
+                    this.drillDTO = null;
+                    instructions.postValue(null);
+                    relatedDrills.postValue(null);
+                    break;
+                default:
+                    // Should not get here
+                    Log.e(TAG, "Received unexpected HttpException: "
+                            + httpException.getMessage());
+                    failureCallback.accept("Server issue, please try again later");
+                    break;
+            }
+        } else if (throwable instanceof IllegalArgumentException) {
+            // Thrown by ApiRepo if the JWT from SharedPrefs is empty
+            // This is actually acceptable, means user has not signed in, no error message necessary
+            this.drillDTO = null;
+            instructions.postValue(null);
+            relatedDrills.postValue(null);
+        } else if (throwable instanceof SocketTimeoutException) {
+            // getLocalizedMessage(): failed to connect to your.server.org/1.1.1.1 (port 99999) from /2.2.2.2 (port 99999) after 10000ms
+            failureCallback.accept("Issue connecting to the server, try again later");
+        } else {
+            failureCallback.accept("An unexpected error has occurred");
+        }
+    }
+
+    /**
+     * Find the local Drill ID by a Drill's server ID.
+     *
+     * @param serverId Server ID of the drill to find
+     * @param callback Callback that consumes the found Drill's ID, or -1 if not found.
+     */
+    public void findDrillIdByServerId(@NonNull Long serverId,
+                                      @NonNull Consumer<Long> callback) {
+        executor.execute(() -> {
+            Optional<Drill> optDrill = drillRepo.getDrillByServerId(serverId);
+            long localDrillId;
+            if (optDrill.isPresent()) {
+                localDrillId = optDrill.get().getId();
+            } else {
+                localDrillId = Drill.INVALID_SERVER_DRILL_ID;
+            }
+
+            callback.accept(localDrillId);
+        });
     }
 }

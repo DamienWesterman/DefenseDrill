@@ -26,15 +26,20 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
@@ -75,9 +80,41 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_drill_options);
 
+        // Modify Toolbar
+        Toolbar appToolbar = findViewById(R.id.appToolbar);
+        appToolbar.setTitle("Web Drill Options");
+        setSupportActionBar(appToolbar);
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         rootView = findViewById(R.id.activityWebDrillOptions);
 
         viewModel = new ViewModelProvider(this).get(DrillApiViewModel.class);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (R.id.homeButton == item.getItemId()) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     // =============================================================================================
@@ -145,7 +182,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
         builder.setView(dialogView);
         builder.setTitle("Downloading Drills");
-        builder.setIcon(R.drawable.cloud_icon);
+        builder.setIcon(R.drawable.import_icon);
         builder.setCancelable(false);
         builder.setNegativeButton("Cancel", (dialogInterface, i) -> viewModel.stopDownload());
 

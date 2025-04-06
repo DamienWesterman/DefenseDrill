@@ -10,6 +10,7 @@
     <color name="drill_green">#4EA217</color>
     <color name="drill_green_variant">#2D7100</color>
     <color name="drill_yellow">#F8E860</color>
+    <color name="drill_yellow_variant">#FFF59A</color>
     <color name="field_label">#9E9E9E</color>
     <color name="error">#FF0000</color>
 </resources>

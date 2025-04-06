@@ -73,6 +73,7 @@ public class DownloadDatabaseUseCase {
     /** Map of SubCategoryEntities by their ServerId */
     private Map<Long, SubCategoryEntity> subCategoryMap;
     private Disposable disposable;
+    private boolean databaseUpdated = false;
 
     @Inject
     public DownloadDatabaseUseCase(ApiRepo apiRepo, DrillRepository drillRepo,
@@ -91,13 +92,16 @@ public class DownloadDatabaseUseCase {
      * @param callback Callback
      */
     public void download(OperationCompleteCallback callback) {
+        databaseUpdated = false;
         disposable = loadCategoriesFromServer()
             .flatMap(categories -> loadSubCategoriesFromServer())
             .flatMap(subCategories -> loadDrillsFromServer())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 drills ->  {
-                    sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
+                    if (databaseUpdated) {
+                        sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
+                    }
                     callback.onSuccess();
                     disposable = null;
                 },
@@ -117,6 +121,7 @@ public class DownloadDatabaseUseCase {
         if (null != disposable && !disposable.isDisposed()) {
             disposable.dispose();
             disposable = null;
+            databaseUpdated = false;
         }
     }
 
@@ -176,10 +181,12 @@ public class DownloadDatabaseUseCase {
                         drillRepo.insertDrills(drills.stream()
                                 .map(drill -> drill.toDrill(categoryMap, subCategoryMap))
                                 .toArray(Drill[]::new));
+                        databaseUpdated = true;
                     }
                     if (!drillsToUpdate.isEmpty()) {
                         drillRepo.updateDrills(
                                 drillsToUpdate.toArray(new Drill[0]));
+                        databaseUpdated = true;
                     }
                 }
             );
@@ -238,10 +245,12 @@ public class DownloadDatabaseUseCase {
                         drillRepo.insertCategories(categories.stream()
                                 .map(CategoryDTO::toCategoryEntity)
                                 .toArray(CategoryEntity[]::new));
+                        databaseUpdated = true;
                     }
                     if (!categoriesToUpdate.isEmpty()) {
                         drillRepo.updateCategories(
                                 categoriesToUpdate.toArray(new CategoryEntity[0]));
+                        databaseUpdated = true;
                     }
 
                     if (!categories.isEmpty() || !categoriesToUpdate.isEmpty()) {
@@ -309,10 +318,12 @@ public class DownloadDatabaseUseCase {
                         drillRepo.insertSubCategories(subCategories.stream()
                                 .map(SubCategoryDTO::toSubCategoryEntity)
                                 .toArray(SubCategoryEntity[]::new));
+                        databaseUpdated = true;
                     }
                     if (!subCategoriesToUpdate.isEmpty()) {
                         drillRepo.updateSubCategories(
                                 subCategoriesToUpdate.toArray(new SubCategoryEntity[0]));
+                        databaseUpdated = true;
                     }
 
                     if (!subCategories.isEmpty() || !subCategoriesToUpdate.isEmpty()) {
@@ -360,6 +371,7 @@ public class DownloadDatabaseUseCase {
             Log.e(TAG, "Sqlite issue: " + throwable.getLocalizedMessage());
             errorMessage = "Issue saving drills to your phone";
         } else {
+            Log.e(TAG, "Got an unexpected error: ", throwable);
             errorMessage = "An unexpected error has occurred";
         }
 
