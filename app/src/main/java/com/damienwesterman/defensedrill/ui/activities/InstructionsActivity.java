@@ -70,7 +70,8 @@ public class InstructionsActivity extends AppCompatActivity {
 
             // Get instructions
             int instructionsIndex = getIntent().getIntExtra(Constants.INTENT_INSTRUCTION_INDEX, -1);
-            if (0 > instructionsIndex) {
+            if (0 > instructionsIndex
+                    || drill.getInstructions().size() <= instructionsIndex) {
                 // Did not receive the proper intents. Toast so it persists screens
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 finish();

@@ -333,8 +333,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * Find the local Drill ID by a Drill's server ID.
      *
      * @param serverId Server ID of the drill to find
-     * @param callback Callback that consumes an optional containing the found Drill's ID, or -1 if
-     *                 not found.
+     * @param callback Callback that consumes the found Drill's ID, or -1 if not found.
      */
     public void findDrillIdByServerId(@NonNull Long serverId,
                                       @NonNull Consumer<Long> callback) {
