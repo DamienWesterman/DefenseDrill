@@ -97,8 +97,10 @@
         android:background="?attr/dividerColor"/>
 
     <ScrollView
+        android:id="@+id/drillInfoDetails"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:visibility="gone" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -118,21 +120,18 @@
                     android:orientation="vertical"
                     android:layout_weight="0.5">
                     <TextView
-                        android:id="@+id/confidenceLabel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:textStyle="italic"
                         android:text="@string/confidence_label"
-                        android:visibility="gone"
                         android:textColor="@color/field_label" />
 
                     <Spinner
                         android:id="@+id/confidenceSpinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:visibility="gone" />
+                        android:minHeight="48dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -141,26 +140,22 @@
                     android:orientation="vertical"
                     android:layout_weight="0.5">
                     <TextView
-                        android:id="@+id/lastDrilledLabel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:textStyle="italic"
                         android:text="@string/last_drilled_label"
-                        android:visibility="gone"
                         android:textColor="@color/field_label" />
 
                     <TextView
                         android:id="@+id/lastDrilledDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="24sp"
-                        android:visibility="gone" />
+                        android:textSize="24sp" />
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
-                android:id="@+id/viewModifyLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -176,24 +171,20 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/editCategoriesButton"
                     android:onClick="editCategories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/view_edit_categories"
-                    android:visibility="gone"
                     android:drawableLeft="@drawable/edit_icon"
                     tools:ignore="ButtonStyle,RtlHardcoded"
                     android:layout_marginRight="8dp"
                     android:layout_weight="1" />
 
                 <Button
-                    android:id="@+id/editSubCategoriesButton"
                     android:onClick="editSubCategories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/view_edit_sub_categories"
-                    android:visibility="gone"
                     android:drawableLeft="@drawable/edit_icon"
                     tools:ignore="ButtonStyle,RtlHardcoded"
                     android:layout_marginLeft="8dp"
@@ -201,14 +192,12 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/notesLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:textSize="14sp"
                 android:textStyle="italic"
                 android:text="@string/notes_label"
-                android:visibility="gone"
                 android:textColor="@color/field_label" />
 
             <EditText
@@ -218,11 +207,9 @@
                 android:inputType="textMultiLine|textCapSentences"
                 android:textSize="24sp"
                 android:hint="@string/notes_hint"
-                android:autofillHints=""
-                android:visibility="gone" />
+                android:autofillHints="" />
 
             <TextView
-                android:id="@+id/workoutOptionsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -245,8 +232,8 @@
                     android:layout_weight="1"
                     android:text="@string/skip_drill"
                     android:drawableLeft="@drawable/change_circle_icon"
-                    android:visibility="gone"
-                    tools:ignore="ButtonStyle,RtlHardcoded" />
+                    tools:ignore="ButtonStyle,RtlHardcoded"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/resetSkippedDrillsButton"
@@ -257,18 +244,16 @@
                     android:layout_weight="1"
                     android:text="@string/reset_skipped_drills"
                     android:drawableLeft="@drawable/refresh_icon"
-                    android:visibility="gone"
-                    tools:ignore="ButtonStyle,RtlHardcoded" />
+                    tools:ignore="ButtonStyle,RtlHardcoded"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/markAsPracticedButton"
                 android:onClick="markAsPracticed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/mark_as_practiced"
                 android:drawableLeft="@drawable/checkmark_icon"
-                android:visibility="gone"
                 tools:ignore="ButtonStyle,RtlHardcoded" />
         </LinearLayout>
     </ScrollView>

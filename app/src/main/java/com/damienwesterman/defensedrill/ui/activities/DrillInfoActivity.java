@@ -40,6 +40,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -122,19 +123,12 @@ public class DrillInfoActivity extends AppCompatActivity {
     private LinearLayout relatedDrillsSelect;
     private Spinner relatedDrillsSpinner;
     private View divider;
-    private TextView lastDrilledLabel;
+    private ScrollView drillInfoDetails;
     private TextView lastDrilledDate;
-    private TextView confidenceLabel;
     private Spinner confidenceSpinner;
-    private TextView viewModifyLabel;
-    private Button editCategoriesButton;
-    private Button editSubCategoriesButton;
-    private TextView notesLabel;
     private EditText notes;
-    private TextView workoutOptionsLabel;
     private Button regenerateButton;
     private Button resetSkippedDrillsButton;
-    private Button markAsPracticedButton;
 
     // =============================================================================================
     // Activity Methods
@@ -681,19 +675,12 @@ public class DrillInfoActivity extends AppCompatActivity {
         relatedDrillsSelect = findViewById(R.id.relatedDrillsSelect);
         relatedDrillsSpinner = findViewById(R.id.relatedDrillsSpinner);
         divider = findViewById(R.id.drillInfoDivider);
-        lastDrilledLabel = findViewById(R.id.lastDrilledLabel);
+        drillInfoDetails = findViewById(R.id.drillInfoDetails);
         lastDrilledDate = findViewById(R.id.lastDrilledDate);
-        confidenceLabel = findViewById(R.id.confidenceLabel);
         confidenceSpinner = findViewById(R.id.confidenceSpinner);
-        viewModifyLabel = findViewById(R.id.viewModifyLabel);
-        editCategoriesButton = findViewById(R.id.editCategoriesButton);
-        editSubCategoriesButton = findViewById(R.id.editSubCategoriesButton);
-        notesLabel = findViewById(R.id.notesLabel);
         notes = findViewById(R.id.notes);
-        workoutOptionsLabel = findViewById(R.id.workoutOptionsLabel);
         regenerateButton = findViewById(R.id.regenerateButton);
         resetSkippedDrillsButton = findViewById(R.id.resetSkippedDrillsButton);
-        markAsPracticedButton = findViewById(R.id.markAsPracticedButton);
     }
 
     /**
@@ -728,40 +715,18 @@ public class DrillInfoActivity extends AppCompatActivity {
             drillProgressBar.setVisibility(View.VISIBLE);
             drillName.setVisibility(View.GONE);
             divider.setVisibility(View.GONE);
-            lastDrilledLabel.setVisibility(View.GONE);
-            lastDrilledDate.setVisibility(View.GONE);
-            confidenceLabel.setVisibility(View.GONE);
-            confidenceSpinner.setVisibility(View.GONE);
-            viewModifyLabel.setVisibility(View.GONE);
-            editCategoriesButton.setVisibility(View.GONE);
-            editSubCategoriesButton.setVisibility(View.GONE);
-            notesLabel.setVisibility(View.GONE);
-            notes.setVisibility(View.GONE);
-            workoutOptionsLabel.setVisibility(View.GONE);
-            regenerateButton.setVisibility(View.GONE);
-            resetSkippedDrillsButton.setVisibility(View.GONE);
-            markAsPracticedButton.setVisibility(View.GONE);
+            drillInfoDetails.setVisibility(View.GONE);
         } else {
             drillProgressBar.setVisibility(View.GONE);
             drillName.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
-            lastDrilledLabel.setVisibility(View.VISIBLE);
-            lastDrilledDate.setVisibility(View.VISIBLE);
-            confidenceLabel.setVisibility(View.VISIBLE);
-            confidenceSpinner.setVisibility(View.VISIBLE);
-            viewModifyLabel.setVisibility(View.VISIBLE);
-            editCategoriesButton.setVisibility(View.VISIBLE);
-            editSubCategoriesButton.setVisibility(View.VISIBLE);
-            notesLabel.setVisibility(View.VISIBLE);
-            notes.setVisibility(View.VISIBLE);
-            workoutOptionsLabel.setVisibility(View.VISIBLE);
+            drillInfoDetails.setVisibility(View.VISIBLE);
             if (ActivityState.GENERATED_DRILL == activityState
                     || ActivityState.REGENERATED_DRILL == activityState) {
                 // Do not set these to visible unless we are in an activity state that uses them
                 regenerateButton.setVisibility(View.VISIBLE);
                 resetSkippedDrillsButton.setVisibility(View.VISIBLE);
             }
-            markAsPracticedButton.setVisibility(View.VISIBLE);
         }
     }
 
