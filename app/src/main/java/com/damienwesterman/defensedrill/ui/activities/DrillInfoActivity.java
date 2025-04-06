@@ -619,7 +619,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                                 UiUtils.displayDismissibleSnackbar(rootView,
                                         "You are not signed in.");
                                 /*
-                                User has selected manually selected not to log in or cannot log
+                                User has manually selected not to log in or cannot log
                                 in. Clear out the jwt so we do not keep doing a popup.
                                  */
                                 sharedPrefs.setJwt("");
