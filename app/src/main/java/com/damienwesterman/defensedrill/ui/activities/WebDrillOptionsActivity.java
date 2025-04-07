@@ -62,6 +62,13 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
+    // TODO: Create the data layer for the API interaction
+    // TODO: Do we want another use case for doing this? Similar to the download use case
+    // TODO: Show the waiting popup again
+    // TODO: Make sure that we can properly save new drills as well as update existing drills
+    // TODO: Only update the updateTimestamp if we actually downloaded something
+    // TODO: Call the update functionality when we download drills too?
+    // TODO: When we open the app for the first time each time, start a long lasting background thread that checks for updates. If there are updates available, send a notification that there are updates available, that opens up the WebDrillOptionsActivity, maybe makes the update button pulse so user knows to press it
     private LinearLayout rootView;
     @Inject
     SharedPrefs sharedPrefs;
