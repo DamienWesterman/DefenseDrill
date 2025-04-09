@@ -62,7 +62,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
-    // TODO: When we open the app for the first time each time, start a long lasting background thread that checks for updates. If there are updates available, send a notification that there are updates available, that opens up the WebDrillOptionsActivity, maybe makes the update button pulse so user knows to press it
     private LinearLayout rootView;
     @Inject
     SharedPrefs sharedPrefs;

@@ -38,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.domain.CheckForDatabaseUpdatesUseCase;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
@@ -53,9 +54,14 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
+    private static boolean isUpdateCheckRun = false;
+
     private LinearLayout rootView;
+
     @Inject
     CheckPhoneInternetConnection internetConnection;
+    @Inject
+    CheckForDatabaseUpdatesUseCase databaseUpdateCheck;
 
     // =============================================================================================
     // Activity Methods
@@ -69,6 +75,11 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(appToolbar);
 
         rootView = findViewById(R.id.activityHome);
+
+        if (!isUpdateCheckRun) {
+            isUpdateCheckRun = true;
+            databaseUpdateCheck.checkForUpdate();
+        }
     }
 
     @Override
