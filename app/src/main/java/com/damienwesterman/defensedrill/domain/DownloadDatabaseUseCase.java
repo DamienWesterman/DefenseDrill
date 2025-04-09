@@ -57,6 +57,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.HttpException;
+import retrofit2.Response;
 
 /**
  * Use Case to Download all Drills, Categories, and SubCategories from the server and save them to
@@ -94,11 +95,11 @@ public class DownloadDatabaseUseCase {
     public void download(OperationCompleteCallback callback) {
         databaseUpdated = false;
         disposable = loadCategoriesFromServer()
-            .flatMap(categories -> loadSubCategoriesFromServer())
-            .flatMap(subCategories -> loadDrillsFromServer())
+            .flatMap(response -> loadSubCategoriesFromServer())
+            .flatMap(response -> loadDrillsFromServer())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                drills ->  {
+                response ->  {
                     if (databaseUpdated) {
                         sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
                     }
@@ -133,12 +134,29 @@ public class DownloadDatabaseUseCase {
      *
      * @return Observable for a List of DrillDTO objects.
      */
-    private Observable<List<DrillDTO>> loadDrillsFromServer() {
+    private Observable<Response<List<DrillDTO>>> loadDrillsFromServer() {
         return apiRepo.getAllDrills()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnNext(
-                drills -> {
+                response -> {
+                    switch (response.code()) {
+                        case HttpsURLConnection.HTTP_OK:
+                            // Continue like normal
+                            break;
+                        case HttpsURLConnection.HTTP_NO_CONTENT:
+                            // Not an error, but nothing more to do here
+                            return;
+                        default:
+                            // Failure
+                            throw new HttpException(response);
+                    }
+                    if (null == response.body()) {
+                        // Shouldn't really happen
+                        throw new NullPointerException("Drill response.body() was NULL");
+                    }
+                    List<DrillDTO> drills = response.body();
+
                     List<Drill> existingDrills = drillRepo.getAllDrills();
                     Map<String, Drill> existingNamesMap = existingDrills.stream()
                                     .collect(Collectors.toMap(Drill::getName, Function.identity()));
@@ -197,12 +215,29 @@ public class DownloadDatabaseUseCase {
      *
      * @return Observable for a List of CategoryDTO objects.
      */
-    private Observable<List<CategoryDTO>> loadCategoriesFromServer() {
+    private Observable<Response<List<CategoryDTO>>> loadCategoriesFromServer() {
         return apiRepo.getAllCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnNext(
-                categories -> {
+                response -> {
+                    switch (response.code()) {
+                        case HttpsURLConnection.HTTP_OK:
+                            // Continue like normal
+                            break;
+                        case HttpsURLConnection.HTTP_NO_CONTENT:
+                            // Not an error, but nothing more to do here
+                            return;
+                        default:
+                            // Failure
+                            throw new HttpException(response);
+                    }
+                    if (null == response.body()) {
+                        // Shouldn't really happen
+                        throw new NullPointerException("Category response.body() was NULL");
+                    }
+                    List<CategoryDTO> categories = response.body();
+
                     List<CategoryEntity> existingCategories = drillRepo.getAllCategories();
                     Map<String, CategoryEntity> existingNamesMap = existingCategories.stream()
                             .collect(Collectors.toMap(CategoryEntity::getName, Function.identity()));
@@ -268,12 +303,29 @@ public class DownloadDatabaseUseCase {
      *
      * @return Observable for a List of SubCategoryDTO objects.
      */
-    private Observable<List<SubCategoryDTO>> loadSubCategoriesFromServer() {
+    private Observable<Response<List<SubCategoryDTO>>> loadSubCategoriesFromServer() {
         return apiRepo.getAllSubCategories()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
             .doOnNext(
-                subCategories -> {
+                response -> {
+                    switch (response.code()) {
+                        case HttpsURLConnection.HTTP_OK:
+                            // Continue like normal
+                            break;
+                        case HttpsURLConnection.HTTP_NO_CONTENT:
+                            // Not an error, but nothing more to do here
+                            return;
+                        default:
+                            // Failure
+                            throw new HttpException(response);
+                    }
+                    if (null == response.body()) {
+                        // Shouldn't really happen
+                        throw new NullPointerException("SubCategory response.body() was NULL");
+                    }
+                    List<SubCategoryDTO> subCategories = response.body();
+
                     List<SubCategoryEntity> existingSubCategories = drillRepo.getAllSubCategories();
                     Map<String, SubCategoryEntity> existingNamesMap = existingSubCategories.stream()
                             .collect(Collectors.toMap(SubCategoryEntity::getName, Function.identity()));
@@ -346,7 +398,6 @@ public class DownloadDatabaseUseCase {
     private String extractErrorMessage(@NonNull Throwable throwable) {
         String errorMessage;
 
-        // TODO: Subsequent PR - Double check what the return type looks like in a 201, can be seen when we implement the update functionality
         if (throwable instanceof HttpException) {
             // getLocalizedMessage(): HTTP 401 Unauthorized
             HttpException httpException = (HttpException) throwable;

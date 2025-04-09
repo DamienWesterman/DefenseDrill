@@ -42,11 +42,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  * ViewModel for interacting with the DefenseDrill API Backend.
  */
 @HiltViewModel
-public class DrillApiViewModel extends AndroidViewModel {
+public class WebDrillApiViewModel extends AndroidViewModel {
     private final DownloadDatabaseUseCase downloadDb;
 
     @Inject
-    public DrillApiViewModel(@NonNull Application application, DownloadDatabaseUseCase downloadDb) {
+    public WebDrillApiViewModel(@NonNull Application application, DownloadDatabaseUseCase downloadDb) {
         super(application);
 
         this.downloadDb = downloadDb;
