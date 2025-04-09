@@ -73,7 +73,7 @@
     <string name="web_drill_options_title">Web Drill Options</string>
     <string name="web_drill_options_description">Interactive with the online Drill Database, download drills, set up the connection, and log in or out.</string>
     <string name="download_from_database_title">Download From Database</string>
-    <string name="download_from_database_description">Download Drills, Categories, and Sub-Categories form the DefenseDrill Online Database</string>
+    <string name="download_from_database_description">Download and Update Drills, Categories, and Sub-Categories form the DefenseDrill Online Database</string>
     <string name="check_for_updates_card_title">Check for Database Updates</string>
     <string name="check_for_updates_card_description">Check the online database for updates to your Drills or for new ones!</string>
     <string name="login_title">Login</string>

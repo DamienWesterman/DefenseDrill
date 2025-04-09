@@ -62,16 +62,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
-    // TODO: Create the data layer for the API interaction
-    // TODO: Do we want another use case for doing this? Similar to the download use case
-    // TODO: First check to make sure there is a last update timestamp, otherwise there's nothing to update and should just call get all drills
-    // TODO: Actually, do I just want to consolidate this into one button only??? If so, only do the download if there isn't an updated timestamps
-    // TODO: Show the waiting popup again
-    // TODO: Make sure that we can properly save new drills as well as update existing drills
-    // TODO: Only update the updateTimestamp if we actually downloaded something
-    // TODO: Call the update functionality when we download drills too?
     // TODO: When we open the app for the first time each time, start a long lasting background thread that checks for updates. If there are updates available, send a notification that there are updates available, that opens up the WebDrillOptionsActivity, maybe makes the update button pulse so user knows to press it
-    private final static long TEST_UPDATE_TIMESTAMP = 1742489169000L; // TODO: REMOVE ME
     private LinearLayout rootView;
     @Inject
     SharedPrefs sharedPrefs;
@@ -133,11 +124,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.downloadFromDatabaseCard == cardId) {
-            // TODO: (Subsequent PR) Launch activity to allow user to select all, specific drills, or by category/sub-category
             handleDownloadDrills();
-        } else if (R.id.checkForUpdatesCard == cardId) {
-            // TODO: Launch this activity (subsequent PR)
-            UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: checkForUpdatesCard");
         } else if (R.id.loginCard == cardId) {
             commonPopups.displayLoginPopup(new OperationCompleteCallback() {
                 @Override
