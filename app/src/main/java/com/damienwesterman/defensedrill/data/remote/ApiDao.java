@@ -33,10 +33,12 @@ import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Observable;
+import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Retrofit interface for retrieving info from the DefenseDrill API.
@@ -44,15 +46,33 @@ import retrofit2.http.Path;
 /* package-private */ interface ApiDao {
     @GET("api/drill")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
-    Observable<List<DrillDTO>> getAllDrills(@Header("Cookie") String jwtHeader);
+    Observable<Response<List<DrillDTO>>> getAllDrills(@Header("Cookie") String jwtHeader);
+
+    @GET("api/drill/update")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<Response<List<DrillDTO>>> getDrillsUpdatedAfterTimestamp(
+            @Header("Cookie") String jwtHeader,
+            @Query("updateTimestamp") long timestamp);
 
     @GET("api/category")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
-    Observable<List<CategoryDTO>> getAllCategories(@Header("Cookie") String jwtHeader);
+    Observable<Response<List<CategoryDTO>>> getAllCategories(@Header("Cookie") String jwtHeader);
+
+    @GET("api/category/update")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<Response<List<CategoryDTO>>> getCategoriesUpdatedAfterTimestamp(
+            @Header("Cookie") String jwtHeader,
+            @Query("updateTimestamp") long timestamp);
 
     @GET("api/sub_category")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
-    Observable<List<SubCategoryDTO>> getAllSubCategories(@Header("Cookie") String jwtHeader);
+    Observable<Response<List<SubCategoryDTO>>> getAllSubCategories(@Header("Cookie") String jwtHeader);
+
+    @GET("api/sub_category/update")
+    @Headers("Content-Type: application/json") // Need this so it knows it is an API request
+    Observable<Response<List<SubCategoryDTO>>> getSubCategoriesUpdatedAfterTimestamp(
+            @Header("Cookie") String jwtHeader,
+            @Query("updateTimestamp") long timestamp);
 
     @GET("api/drill/id/{id}")
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
