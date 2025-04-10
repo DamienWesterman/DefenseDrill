@@ -38,7 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.domain.CheckForDatabaseUpdatesUseCase;
+import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
@@ -60,8 +60,6 @@ public class HomeActivity extends AppCompatActivity {
 
     @Inject
     CheckPhoneInternetConnection internetConnection;
-    @Inject
-    CheckForDatabaseUpdatesUseCase databaseUpdateCheck;
 
     // =============================================================================================
     // Activity Methods
@@ -78,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
 
         if (!isUpdateCheckRun) {
             isUpdateCheckRun = true;
-            databaseUpdateCheck.checkForUpdate();
+            CheckServerUpdateService.startService(this);
         }
     }
 
