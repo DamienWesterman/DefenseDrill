@@ -33,6 +33,7 @@ import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import javax.inject.Inject;
 
 public class CheckForDatabaseUpdatesUseCase {
+    // TODO: Maybe make this into a service
     // TODO: Make sure to run this entirely on a background thread(s) so that it persists the home screen (CHECK)
     // TODO: Check to make sure that we have a timestamp, internet connection, and jwt before trying this
     // TODO: If jwt is expired, then don't do anything I think?
