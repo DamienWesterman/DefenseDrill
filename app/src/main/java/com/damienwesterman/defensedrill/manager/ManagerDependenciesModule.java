@@ -38,7 +38,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
 /**
- * TODO: Doc comments
+ * Dagger module for Dependency Injection for the manager classes.
  */
 @Module
 @InstallIn(SingletonComponent.class)
