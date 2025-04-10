@@ -35,27 +35,32 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
- * TODO Doc comments
+ * Background service to check the server for updates.
  */
 @AndroidEntryPoint
 public class CheckServerUpdateService extends Service {
-    // TODO: Make sure to run this entirely on a background thread(s) so that it persists the home screen (CHECK)
-    // TODO: Check to make sure that we have a timestamp, internet connection, and jwt before trying this
-    // TODO: If jwt is expired, then don't do anything I think?
-    // TODO: Check drills, categories, and sub-categories endpoints, if any of them hit then we don't need to continue, just return
     // TODO: If there are any updates available, then send a notification that directs them to the update screen, maybe then highlight the card somehow?
 
     @Inject
     SharedPrefs sharedPrefs;
     @Inject
     CheckPhoneInternetConnection internetConnection;
+    @Inject
+    ApiRepo apiRepo;
+
+    private Disposable disposable = null;
 
     // =============================================================================================
     // Service Creation Methods
@@ -78,20 +83,64 @@ public class CheckServerUpdateService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        new Thread(this::checkForUpdate).start();
+        checkForDatabaseUpdate();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (null != disposable
+                && !disposable.isDisposed()) {
+            disposable.dispose();
+            disposable = null;
+        }
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    public void checkForUpdate() {
-        while (true) {
-            Log.i("DxTag", "Checking for database update, timestamp: " + sharedPrefs.getLastDrillUpdateTime());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+    private void checkForDatabaseUpdate() {
+        long lastUpdate = sharedPrefs.getLastDrillUpdateTime();
+        if (internetConnection.isNetworkConnected()
+                && 0 < lastUpdate
+                && !sharedPrefs.getJwt().isEmpty()) {
+            disposable = apiRepo.getAllDrillsUpdatedAfterTimestamp(lastUpdate)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .flatMap(response -> {
+                    if (HttpsURLConnection.HTTP_OK == response.code()) {
+                        // There are updates! Alert the user and stop the chain
+                        sendDatabaseUpdateAvailableNotification();
+                        stopSelf();
+                        return Observable.empty();
+                    }
+
+                    return apiRepo.getAllCategoriesUpdatedAfterTimestamp(lastUpdate);
+                })
+                .flatMap(response -> {
+                    if (HttpsURLConnection.HTTP_OK == response.code()) {
+                        // There are updates! Alert the user and stop the chain
+                        sendDatabaseUpdateAvailableNotification();
+                        stopSelf();
+                        return Observable.empty();
+                    }
+
+                    return apiRepo.getAllSubCategoriesUpdatedAfterTimestamp(lastUpdate);
+                })
+                .subscribe(
+                    response -> {
+                        if (HttpsURLConnection.HTTP_OK == response.code()) {
+                            // There are updates! Alert the user and stop the chain
+                            sendDatabaseUpdateAvailableNotification();
+                            stopSelf();
+                        }
+                    }
+                );
         }
+    }
+
+    private void sendDatabaseUpdateAvailableNotification() {
+        Log.i("DxTag", "An Update is available!");
     }
 }
