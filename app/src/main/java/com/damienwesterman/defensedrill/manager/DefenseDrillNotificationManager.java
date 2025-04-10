@@ -26,8 +26,18 @@
 
 package com.damienwesterman.defensedrill.manager;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
+import android.os.Build;
+
+import androidx.core.app.NotificationCompat;
+
+import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.ui.activities.WebDrillOptionsActivity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,12 +46,72 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
+    private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
+    private static final String CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE =
+            "Database Update Available";
+    private static final int NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE = 1;
+
     private final Context context;
+    private final NotificationManager systemNotificationManager;
+
+    private boolean initSuccess = false;
 
     /**
      * TODO Doc comments
      */
     public void init() {
-        Log.i("DxTag", "INIT NOTIFICATION MANAGER");
+        // TODO: Check if the user has notifications enabled then ask them to enable it?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID_DATABASE_UPDATE_AVAILABLE,
+                    CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE,
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+
+            systemNotificationManager.createNotificationChannel(channel);
+            initSuccess = true;
+        }
+    }
+
+    /**
+     * TODO: Doc comments
+     */
+    public void notifyDatabaseUpdateAvailable() {
+        if (!initSuccess) {
+            return;
+        }
+
+        Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0, /* Request Code for sender. Irrelevant */
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+        );
+
+        Notification notification =
+            new NotificationCompat.Builder(context, CHANNEL_ID_DATABASE_UPDATE_AVAILABLE)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Database Update Available!")
+                .setContentText("Click here to download new drills.")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true) /* Remove notification after it is clicked */
+                .build();
+
+        systemNotificationManager.notify(NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE, notification);
+    }
+
+    /**
+     * TODO: Doc comments
+     */
+    public void removeDatabaseUpdateAvailableNotification() {
+        if (!initSuccess) {
+            return;
+        }
+
+        systemNotificationManager.cancel(NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE);
     }
 }

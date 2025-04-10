@@ -40,6 +40,7 @@ import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.net.SocketTimeoutException;
@@ -69,6 +70,7 @@ public class DownloadDatabaseUseCase {
     private final ApiRepo apiRepo;
     private final DrillRepository drillRepo;
     private final SharedPrefs sharedPrefs;
+    private final DefenseDrillNotificationManager notificationManager;
     /** Map of CategoryEntities by their ServerId */
     private Map<Long, CategoryEntity> categoryMap;
     /** Map of SubCategoryEntities by their ServerId */
@@ -78,10 +80,12 @@ public class DownloadDatabaseUseCase {
 
     @Inject
     public DownloadDatabaseUseCase(ApiRepo apiRepo, DrillRepository drillRepo,
-                                   SharedPrefs sharedPrefs) {
+                                   SharedPrefs sharedPrefs,
+                                   DefenseDrillNotificationManager notificationManager) {
         this.apiRepo = apiRepo;
         this.drillRepo = drillRepo;
         this.sharedPrefs = sharedPrefs;
+        this.notificationManager = notificationManager;
         this.categoryMap = Map.of();
         this.subCategoryMap = Map.of();
         disposable = null;
@@ -93,6 +97,7 @@ public class DownloadDatabaseUseCase {
      * @param callback Callback
      */
     public void download(OperationCompleteCallback callback) {
+        notificationManager.removeDatabaseUpdateAvailableNotification();
         databaseUpdated = false;
         categoryMap.clear();
         subCategoryMap.clear();

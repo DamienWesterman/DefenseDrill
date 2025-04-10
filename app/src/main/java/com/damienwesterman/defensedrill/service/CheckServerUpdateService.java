@@ -26,20 +26,17 @@
 
 package com.damienwesterman.defensedrill.service;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
-import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
@@ -54,14 +51,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 @AndroidEntryPoint
 public class CheckServerUpdateService extends Service {
-    // TODO: If there are any updates available, then send a notification that directs them to the update screen, maybe then highlight the card somehow?
-
     @Inject
     SharedPrefs sharedPrefs;
     @Inject
     CheckPhoneInternetConnection internetConnection;
     @Inject
     ApiRepo apiRepo;
+    @Inject
+    DefenseDrillNotificationManager notificationManager;
 
     private Disposable disposable = null;
 
@@ -114,7 +111,7 @@ public class CheckServerUpdateService extends Service {
                 .flatMap(response -> {
                     if (HttpsURLConnection.HTTP_OK == response.code()) {
                         // There are updates! Alert the user and stop the chain
-                        sendDatabaseUpdateAvailableNotification();
+                        notificationManager.notifyDatabaseUpdateAvailable();
                         stopSelf();
                         return Observable.empty();
                     }
@@ -124,7 +121,7 @@ public class CheckServerUpdateService extends Service {
                 .flatMap(response -> {
                     if (HttpsURLConnection.HTTP_OK == response.code()) {
                         // There are updates! Alert the user and stop the chain
-                        sendDatabaseUpdateAvailableNotification();
+                        notificationManager.notifyDatabaseUpdateAvailable();
                         stopSelf();
                         return Observable.empty();
                     }
@@ -135,20 +132,15 @@ public class CheckServerUpdateService extends Service {
                     response -> {
                         if (HttpsURLConnection.HTTP_OK == response.code()) {
                             // There are updates! Alert the user and stop the chain
-                            sendDatabaseUpdateAvailableNotification();
-                            stopSelf();
+                            notificationManager.notifyDatabaseUpdateAvailable();
                         }
+                        stopSelf();
+                    },
+                    throwable -> {
+                        // No need to do anything
+                        stopSelf();
                     }
                 );
         }
-    }
-
-    private void sendDatabaseUpdateAvailableNotification() {
-        Log.i("DxTag", "An Update is available!");
-//        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setContentTitle("Database Update Available!")
-//                .setContentText("Click here to download new drills.")
-//                .build();
     }
 }

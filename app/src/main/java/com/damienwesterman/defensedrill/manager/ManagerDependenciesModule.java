@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.manager;
 
+import android.app.NotificationManager;
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -45,6 +46,7 @@ public class ManagerDependenciesModule {
     @Provides
     @Singleton
     public DefenseDrillNotificationManager getNotificationManager(@ApplicationContext Context context) {
-        return new DefenseDrillNotificationManager(context);
+        return new DefenseDrillNotificationManager(
+                context, context.getSystemService(NotificationManager.class));
     }
 }
