@@ -38,7 +38,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
@@ -54,6 +53,10 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
+    // TODO: On first startup, go through help screen. THEN prompt the user for notifications:
+        // https://developer.android.com/develop/ui/views/notifications/notification-permission#best-practices
+        // https://developer.android.com/training/permissions/requesting#request-permission
+
     private LinearLayout rootView;
 
     @Inject

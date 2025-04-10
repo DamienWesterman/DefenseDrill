@@ -42,7 +42,7 @@ import com.damienwesterman.defensedrill.ui.activities.WebDrillOptionsActivity;
 import lombok.RequiredArgsConstructor;
 
 /**
- * TODO: Doc comments
+ * Manager for Defense Drill App Notifications.
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
@@ -57,10 +57,9 @@ public class DefenseDrillNotificationManager {
     private boolean initSuccess = false;
 
     /**
-     * TODO Doc comments
+     * Initialize the manager.
      */
     public void init() {
-        // TODO: Check if the user has notifications enabled then ask them to enable it?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel channel = new NotificationChannel(
@@ -75,10 +74,11 @@ public class DefenseDrillNotificationManager {
     }
 
     /**
-     * TODO: Doc comments
+     * Create a notification that a database update is available. If clicked, will bring the user to
+     * the {@link WebDrillOptionsActivity} activity.
      */
     public void notifyDatabaseUpdateAvailable() {
-        if (!initSuccess) {
+        if (!initSuccess || !systemNotificationManager.areNotificationsEnabled()) {
             return;
         }
 
@@ -105,10 +105,10 @@ public class DefenseDrillNotificationManager {
     }
 
     /**
-     * TODO: Doc comments
+     * Clear the notification for database update available.
      */
     public void removeDatabaseUpdateAvailableNotification() {
-        if (!initSuccess) {
+        if (!initSuccess || !systemNotificationManager.areNotificationsEnabled()) {
             return;
         }
 
