@@ -24,30 +24,24 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill;
+package com.damienwesterman.defensedrill.manager;
 
-import android.app.Application;
+import android.content.Context;
+import android.util.Log;
 
-import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
-import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
-
-import javax.inject.Inject;
-
-import dagger.hilt.android.HiltAndroidApp;
+import lombok.RequiredArgsConstructor;
 
 /**
- * Hilt Application Class for Dependency Injection
+ * TODO: Doc comments
  */
-@HiltAndroidApp
-public class DefenseDrillApplication extends Application {
-    @Inject
-    DefenseDrillNotificationManager notificationManager;
+@RequiredArgsConstructor
+public class DefenseDrillNotificationManager {
+    private final Context context;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        CheckServerUpdateService.startService(this);
-        notificationManager.init();
+    /**
+     * TODO Doc comments
+     */
+    public void init() {
+        Log.i("DxTag", "INIT NOTIFICATION MANAGER");
     }
 }

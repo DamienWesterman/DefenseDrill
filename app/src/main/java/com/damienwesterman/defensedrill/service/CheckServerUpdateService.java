@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +34,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
+import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
@@ -142,5 +145,10 @@ public class CheckServerUpdateService extends Service {
 
     private void sendDatabaseUpdateAvailableNotification() {
         Log.i("DxTag", "An Update is available!");
+//        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setContentTitle("Database Update Available!")
+//                .setContentText("Click here to download new drills.")
+//                .build();
     }
 }

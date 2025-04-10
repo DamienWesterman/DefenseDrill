@@ -54,8 +54,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
-    private static boolean isUpdateCheckRun = false;
-
     private LinearLayout rootView;
 
     @Inject
@@ -73,11 +71,6 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(appToolbar);
 
         rootView = findViewById(R.id.activityHome);
-
-        if (!isUpdateCheckRun) {
-            isUpdateCheckRun = true;
-            CheckServerUpdateService.startService(this);
-        }
     }
 
     @Override
