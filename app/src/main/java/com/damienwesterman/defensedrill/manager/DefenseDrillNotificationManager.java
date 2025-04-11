@@ -46,6 +46,15 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
+    // TODO: Create a notification for the attack simulation
+    // TODO: Make sure that it can click and bring to drill details screen
+    // TODO: Only have one notification at a time, so use update if there already is one
+    // TODO: Make a background service that does the drill generation periodically?
+    // TODO: Start this service on phone startup? Only if the user has notifications enabled and has selected to receive simulated attacks
+    // TODO: What if there is no self defense category?
+    // TODO: Create a screen to allow the user to modify these notifications/feature
+    // TODO: Allow the user to define how often, and at what hours to have the alerts (maybe have like a list that the user can add and delete time frames to!)
+    // TODO: Modify the background service to follow these custom times
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
     private static final String CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE =
             "Database Update Available";
