@@ -60,6 +60,7 @@ import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
@@ -114,6 +115,9 @@ public class DrillInfoActivity extends AppCompatActivity {
     SharedPrefs sharedPrefs;
     @Inject
     CommonPopups loginPopup;
+// TODO: FIXME: DELETEME: REMOVE THIS
+@Inject
+DefenseDrillNotificationManager notificationManager;
 
     private View rootView;
     private ProgressBar drillProgressBar;
