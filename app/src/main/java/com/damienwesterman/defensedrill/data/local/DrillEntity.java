@@ -34,9 +34,15 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = DrillEntity.TABLE_NAME)
+@AllArgsConstructor
+@Getter
+@Setter
 @EqualsAndHashCode
 /* package-private */ class DrillEntity {
     @Ignore
@@ -64,34 +70,11 @@ import lombok.EqualsAndHashCode;
     @Ignore
     public DrillEntity() {
         this.name = "";
-        this.lastDrilled = System.currentTimeMillis();
+        this.lastDrilled = 0;
         this.confidence = Drill.LOW_CONFIDENCE;
         this.notes = "";
         this.serverDrillId = null;
         this.isKnownDrill = false;
-    }
-
-    /**
-     * Fully parameterized constructor - for Room DB only.
-     *
-     * @param id            RoomDB generated id.
-     * @param name          Drill name.
-     * @param lastDrilled   Date (in milliseconds since epoch) the drill was last drilled.
-     * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
-     * @param notes         User notes on the drill.
-     * @param serverDrillId ID of this drill on the server, for retrieving drill information.
-     * @param isKnownDrill    Represents whether the user knows the drill and if it should be used
-     *                      during drill generation.
-     */
-    protected DrillEntity(long id, @NonNull String name, long lastDrilled, int confidence,
-                          String notes, @Nullable Long serverDrillId, boolean isKnownDrill) {
-        this.id = id;
-        this.name = name;
-        this.lastDrilled = lastDrilled;
-        this.confidence = confidence;
-        this.notes = notes;
-        this.serverDrillId = serverDrillId;
-        this.isKnownDrill = isKnownDrill;
     }
 
     /**
@@ -114,62 +97,6 @@ import lombok.EqualsAndHashCode;
         this.notes = notes;
         this.serverDrillId = serverDrillId;
         this.isKnownDrill = isKnownDrill;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @NonNull public String getName() {
-        return name;
-    }
-
-    public void setName(@NonNull String name) {
-        this.name = name;
-    }
-
-    public long getLastDrilled() {
-        return lastDrilled;
-    }
-
-    public void setLastDrilled(long lastDrilled) {
-        this.lastDrilled = lastDrilled;
-    }
-
-    public int getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(int confidence) {
-        this.confidence = confidence;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Long getServerDrillId() {
-        return this.serverDrillId;
-    }
-
-    public void setServerDrillId(Long serverDrillId) {
-        this.serverDrillId = serverDrillId;
-    }
-
-    public boolean isKnownDrill() {
-        return isKnownDrill;
-    }
-
-    public void setIsKnownDrill(boolean knownDrill) {
-        this.isKnownDrill = knownDrill;
     }
 
     public boolean isNewDrill() {

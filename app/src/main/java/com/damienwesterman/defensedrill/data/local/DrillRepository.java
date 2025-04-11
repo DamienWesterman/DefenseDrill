@@ -46,9 +46,6 @@ import java.util.stream.Collectors;
  * All methods are synchronized, and thus all calls are thread safe.
  */
 public class DrillRepository {
-    // TODO: Remove relateDrills
-    // TODO: Add knownDrill
-
     private final DrillDatabase db;
     private final DrillDao drillDao;
     private final CategoryDao categoryDao;

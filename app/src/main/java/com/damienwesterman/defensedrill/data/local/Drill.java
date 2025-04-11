@@ -191,7 +191,7 @@ public class Drill {
     }
 
     public void setIsKnownDrill(boolean isKnownDrill) {
-        this.drillEntity.setIsKnownDrill(isKnownDrill);
+        this.drillEntity.setKnownDrill(isKnownDrill);
     }
 
     public void addCategory(CategoryEntity category) {

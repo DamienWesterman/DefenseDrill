@@ -786,7 +786,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void fillDrillInfo(Drill drill) {
         drillName.setText(drill.getName());
         confidenceSpinner.setSelection(Constants.confidenceWeightToPosition(drill.getConfidence()));
-        if (0 != drill.getLastDrilled()) {
+        if (!drill.isNewDrill()) {
             Date drilledDate = new Date(drill.getLastDrilled());
             DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
             lastDrilledDate.setText(dateFormatter.format(drilledDate));
