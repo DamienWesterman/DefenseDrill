@@ -77,10 +77,10 @@ public class DrillDTO implements Serializable {
         Drill ret = new Drill(
                 name,
                 0,
-                true,
                 Drill.LOW_CONFIDENCE,
                 "",
                 id, // serverId
+                true,
                 new ArrayList<>(),
                 new ArrayList<>()
         );

@@ -119,6 +119,7 @@ import java.util.Optional;
     @NonNull
     Optional<Drill> findDrillByName(@NonNull String name);
 
+    @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE server_drill_id = :serverDrillId")
     @NonNull
     Optional<Drill> findDrillByServerId(@NonNull Long serverDrillId);

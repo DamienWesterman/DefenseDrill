@@ -172,10 +172,10 @@ public class CreateDrillActivity extends AppCompatActivity {
         if (null == drill) {
             // User error feedback is handled in generateDrillFromUserInput()
             setViewsEnabled(true);
-        } else if (0 == drill.getCategories().size()) {
+        } else if (drill.getCategories().isEmpty()) {
             // Will then check subCategories and call checkNamePopup()
             confirmNoCategoriesPopup(drill);
-        } else if (0 == drill.getSubCategories().size()) {
+        } else if (drill.getSubCategories().isEmpty()) {
             // Will then call checkNamePopup()
             confirmNoSubCategoriesPopup(drill);
         } else {
@@ -199,7 +199,7 @@ public class CreateDrillActivity extends AppCompatActivity {
         if (null == categories) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
-        } else if (0 == categories.size()) {
+        } else if (categories.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
@@ -271,7 +271,7 @@ public class CreateDrillActivity extends AppCompatActivity {
         if (null == subCategories) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
-        } else if (0 == subCategories.size()) {
+        } else if (subCategories.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }
@@ -345,7 +345,7 @@ public class CreateDrillActivity extends AppCompatActivity {
                 + "random is selected.");
         builder.setCancelable(false);
         builder.setPositiveButton("I'm Sure", (dialog, position) -> {
-            if (0 == drill.getSubCategories().size()) {
+            if (drill.getSubCategories().isEmpty()) {
                 confirmNoSubCategoriesPopup(drill);
             } else {
                 checkNamePopup(drill);
@@ -504,10 +504,10 @@ public class CreateDrillActivity extends AppCompatActivity {
         drill = new Drill(
                 name,
                 0, // Last drilled date
-                true,                       // new drill
                 Constants.confidencePositionToWeight(confidenceSpinner.getSelectedItemPosition()),
                 notes,
                 null,
+                true,
                 new ArrayList<>(viewModel.getCheckedCategoryEntities()),
                 new ArrayList<>(viewModel.getCheckedSubCategoryEntities())
         );

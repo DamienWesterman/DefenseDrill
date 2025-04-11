@@ -458,7 +458,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setPositiveButton("Save", (dialog, position) -> {
             drill.setConfidence(Constants.confidencePositionToWeight(selectedOption[0]));
             drill.setLastDrilled(System.currentTimeMillis());
-            drill.setNewDrill(false);
             viewModel.saveDrill(drill, true, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
@@ -481,7 +480,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         });
         builder.setNegativeButton("Skip", (dialog, position) -> {
             drill.setLastDrilled(System.currentTimeMillis());
-            drill.setNewDrill(false);
             viewModel.saveDrill(drill, true, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
