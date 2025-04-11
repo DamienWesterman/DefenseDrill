@@ -24,30 +24,29 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill;
+package com.damienwesterman.defensedrill.manager;
 
-import android.app.Application;
+import android.app.NotificationManager;
+import android.content.Context;
 
-import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
-import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
+import javax.inject.Singleton;
 
-import javax.inject.Inject;
-
-import dagger.hilt.android.HiltAndroidApp;
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
 
 /**
- * Hilt Application Class for Dependency Injection
+ * Dagger module for Dependency Injection for the manager classes.
  */
-@HiltAndroidApp
-public class DefenseDrillApplication extends Application {
-    @Inject
-    DefenseDrillNotificationManager notificationManager;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        CheckServerUpdateService.startService(this);
-        notificationManager.init();
+@Module
+@InstallIn(SingletonComponent.class)
+public class ManagerDependenciesModule {
+    @Provides
+    @Singleton
+    public DefenseDrillNotificationManager getNotificationManager(@ApplicationContext Context context) {
+        return new DefenseDrillNotificationManager(
+                context, context.getSystemService(NotificationManager.class));
     }
 }

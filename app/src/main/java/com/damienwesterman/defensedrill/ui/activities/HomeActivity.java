@@ -53,7 +53,12 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
+    // TODO: On first startup, go through help screen. THEN prompt the user for notifications:
+        // https://developer.android.com/develop/ui/views/notifications/notification-permission#best-practices
+        // https://developer.android.com/training/permissions/requesting#request-permission
+
     private LinearLayout rootView;
+
     @Inject
     CheckPhoneInternetConnection internetConnection;
 

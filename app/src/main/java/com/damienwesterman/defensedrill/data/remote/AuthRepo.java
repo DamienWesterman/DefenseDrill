@@ -103,6 +103,7 @@ public class AuthRepo {
             @Override
             public void onFailure(@NonNull Call<String> call,
                                   @NonNull Throwable throwable) {
+                Log.e(TAG, "Failed to log in", throwable);
                 callback.onFailure(applicationContext.getResources()
                                         .getString(R.string.server_connection_issue));
             }

@@ -38,6 +38,7 @@ import java.util.List;
 import io.reactivex.rxjava3.core.Observable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import retrofit2.Response;
 
 /**
  * Repository class for interacting with the API server backend.
@@ -53,7 +54,7 @@ public class ApiRepo {
      * @return Observable List of DrillDTO objects
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
-    public Observable<List<DrillDTO>> getAllDrills()
+    public Observable<Response<List<DrillDTO>>> getAllDrills()
             throws IllegalArgumentException {
         String jwt = sharedPrefs.getJwt();
         if (jwt.isEmpty()) {
@@ -65,12 +66,29 @@ public class ApiRepo {
     }
 
     /**
+     * Get an observable for the API call to retrieve all Drills from the server updated after the
+     * given timestamp.
+     *
+     * @param timestamp Timestamp of millis since epoch in UTC
+     * @return Observable List of DrillDTO objects
+     */
+    public Observable<Response<List<DrillDTO>>> getAllDrillsUpdatedAfterTimestamp(long timestamp) {
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
+        String jwtHeader = "jwt=" + jwt;
+
+        return apiDao.getDrillsUpdatedAfterTimestamp(jwtHeader, timestamp);
+    }
+
+    /**
      * Get an observable for the API call to retrieve all Categories from the server.
      *
      * @return Observable List of CategoryDTO objects
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
-    public Observable<List<CategoryDTO>> getAllCategories()
+    public Observable<Response<List<CategoryDTO>>> getAllCategories()
             throws IllegalArgumentException {
         String jwt = sharedPrefs.getJwt();
         if (jwt.isEmpty()) {
@@ -82,12 +100,29 @@ public class ApiRepo {
     }
 
     /**
+     * Get an observable for the API call to retrieve all Categories from the server updated after
+     * the given timestamp.
+     *
+     * @param timestamp Timestamp of millis since epoch in UTC
+     * @return Observable List of CategoryDTO objects
+     */
+    public Observable<Response<List<CategoryDTO>>> getAllCategoriesUpdatedAfterTimestamp(long timestamp) {
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
+        String jwtHeader = "jwt=" + jwt;
+
+        return apiDao.getCategoriesUpdatedAfterTimestamp(jwtHeader, timestamp);
+    }
+
+    /**
      * Get an observable for the API call to retrieve all SubCategories from the server.
      *
      * @return Observable List of SubCategoryDTO objects
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
-    public Observable<List<SubCategoryDTO>> getAllSubCategories()
+    public Observable<Response<List<SubCategoryDTO>>> getAllSubCategories()
             throws IllegalArgumentException {
         String jwt = sharedPrefs.getJwt();
         if (jwt.isEmpty()) {
@@ -96,6 +131,23 @@ public class ApiRepo {
         String jwtHeader = "jwt=" + jwt;
 
         return apiDao.getAllSubCategories(jwtHeader);
+    }
+
+    /**
+     * Get an observable for the API call to retrieve all SubCategories from the server updated
+     * after the given timestamp.
+     *
+     * @param timestamp Timestamp of millis since epoch in UTC
+     * @return Observable List of SubCategoryDTO objects
+     */
+    public Observable<Response<List<SubCategoryDTO>>> getAllSubCategoriesUpdatedAfterTimestamp(long timestamp) {
+        String jwt = sharedPrefs.getJwt();
+        if (jwt.isEmpty()) {
+            throw new IllegalArgumentException("No login credentials");
+        }
+        String jwtHeader = "jwt=" + jwt;
+
+        return apiDao.getSubCategoriesUpdatedAfterTimestamp(jwtHeader, timestamp);
     }
 
     /**

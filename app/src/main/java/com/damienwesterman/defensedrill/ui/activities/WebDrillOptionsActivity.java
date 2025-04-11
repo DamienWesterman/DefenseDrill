@@ -48,7 +48,7 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
-import com.damienwesterman.defensedrill.ui.view_models.DrillApiViewModel;
+import com.damienwesterman.defensedrill.ui.view_models.WebDrillApiViewModel;
 
 import javax.inject.Inject;
 
@@ -70,7 +70,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     @Inject
     CheckPhoneInternetConnection internetConnection;
 
-    private DrillApiViewModel viewModel;
+    private WebDrillApiViewModel viewModel;
 
     // =============================================================================================
     // Activity Methods
@@ -90,7 +90,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
         rootView = findViewById(R.id.activityWebDrillOptions);
 
-        viewModel = new ViewModelProvider(this).get(DrillApiViewModel.class);
+        viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
     }
 
     @Override
@@ -123,11 +123,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.downloadFromDatabaseCard == cardId) {
-            // TODO: (Subsequent PR) Launch activity to allow user to select all, specific drills, or by category/sub-category
             handleDownloadDrills();
-        } else if (R.id.checkForUpdatesCard == cardId) {
-            // TODO: Launch this activity (subsequent PR)
-            UiUtils.displayDismissibleSnackbar(rootView, "Unimplemented: checkForUpdatesCard");
         } else if (R.id.loginCard == cardId) {
             commonPopups.displayLoginPopup(new OperationCompleteCallback() {
                 @Override
