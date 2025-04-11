@@ -103,19 +103,20 @@ public class Drill {
      *
      * @param name          Drill name.
      * @param lastDrilled   Date (in milliseconds since epoch) the drill was last drilled.
-     * @param newDrill      True = new drill.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
      * @param notes         User notes on the drill.
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
-     * @param categories        List of categories the Drill belongs to
-     * @param subCategories     List of subCategories the Drill belongs to
+     * @param isKnownDrill  Represents whether the user knows the drill and if it should be used
+     *                      during drill generation.
+     * @param categories    List of categories the Drill belongs to
+     * @param subCategories List of subCategories the Drill belongs to
      */
     @Ignore
-    public Drill(@NotNull String name, long lastDrilled, boolean newDrill, int confidence,
-                 String notes, @Nullable Long serverDrillId, List<CategoryEntity> categories,
-                 List<SubCategoryEntity> subCategories) {
-        this.drillEntity = new DrillEntity(name, lastDrilled, newDrill, confidence, notes,
-                                            serverDrillId);
+    public Drill(@NotNull String name, long lastDrilled, int confidence,
+                 String notes, @Nullable Long serverDrillId, boolean isKnownDrill,
+                 List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
+        this.drillEntity = new DrillEntity(name, lastDrilled, confidence, notes,
+                                            serverDrillId, isKnownDrill);
         this.categories = categories;
         this.subCategories = subCategories;
     }
@@ -161,14 +162,6 @@ public class Drill {
         this.drillEntity.setLastDrilled(lastDrilled );
     }
 
-    public boolean isNewDrill() {
-        return this.drillEntity.isNewDrill();
-    }
-
-    public void setNewDrill(boolean newDrill) {
-        this.drillEntity.setNewDrill(newDrill);
-    }
-
     public int getConfidence() {
         return this.drillEntity.getConfidence();
     }
@@ -193,6 +186,14 @@ public class Drill {
         this.drillEntity.setServerDrillId(serverDrillId);
     }
 
+    public boolean isKnownDrill() {
+        return this.drillEntity.isKnownDrill();
+    }
+
+    public void setIsKnownDrill(boolean isKnownDrill) {
+        this.drillEntity.setKnownDrill(isKnownDrill);
+    }
+
     public void addCategory(CategoryEntity category) {
         this.categories.add(category);
     }
@@ -207,5 +208,9 @@ public class Drill {
 
     public void removeSubCategory(SubCategoryEntity subCategory) {
         this.subCategories.remove(subCategory);
+    }
+
+    public boolean isNewDrill() {
+        return this.drillEntity.isNewDrill();
     }
 }

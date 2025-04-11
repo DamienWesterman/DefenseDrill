@@ -32,26 +32,33 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Join table entity for the {@link DrillEntity} and {@link CategoryEntity} entities. This should only
  * be used by RoomDB internally.
  */
 @Entity(
-        tableName = DrillCategoryJoinEntity.TABLE_NAME,
-        primaryKeys = {"drill_id", "category_id"},
-        foreignKeys = {
-                @ForeignKey(entity = DrillEntity.class, parentColumns = "id",
-                        childColumns = "drill_id", onDelete = ForeignKey.CASCADE,
-                        onUpdate = ForeignKey.CASCADE),
-                @ForeignKey(entity = CategoryEntity.class, parentColumns = "id",
-                        childColumns = "category_id", onDelete = ForeignKey.CASCADE,
-                        onUpdate = ForeignKey.CASCADE)
-        },
-        indices = {
-                @Index(value = {"drill_id"}),
-                @Index(value = {"category_id"})
-        }
+    tableName = DrillCategoryJoinEntity.TABLE_NAME,
+    primaryKeys = {"drill_id", "category_id"},
+    foreignKeys = {
+            @ForeignKey(entity = DrillEntity.class, parentColumns = "id",
+                    childColumns = "drill_id", onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE),
+            @ForeignKey(entity = CategoryEntity.class, parentColumns = "id",
+                    childColumns = "category_id", onDelete = ForeignKey.CASCADE,
+                    onUpdate = ForeignKey.CASCADE)
+    },
+    indices = {
+            @Index(value = {"drill_id"}),
+            @Index(value = {"category_id"})
+    }
 )
+@AllArgsConstructor
+@Getter
+@Setter
 /* package-private */ class DrillCategoryJoinEntity {
     @Ignore
     public static final String TABLE_NAME = "drill_category_join";
@@ -60,25 +67,4 @@ import androidx.room.Index;
     private long drillId;
     @ColumnInfo(name = "category_id")
     private long categoryId;
-
-    public DrillCategoryJoinEntity(long drillId, long categoryId) {
-        this.drillId = drillId;
-        this.categoryId = categoryId;
-    }
-
-    public long getDrillId() {
-        return drillId;
-    }
-
-    public void setDrillId(long drillId) {
-        this.drillId = drillId;
-    }
-
-    public long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-    }
 }

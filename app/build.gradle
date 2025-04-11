@@ -73,6 +73,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    // Lombok
+    implementation "org.projectlombok:lombok:1.18.36"
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
     // Room
     implementation "androidx.room:room-runtime:2.6.1"
     annotationProcessor "androidx.room:room-compiler:2.6.1"
@@ -82,10 +86,6 @@ dependencies {
 
     // Mockito
     testImplementation 'org.mockito:mockito-core:4.2.0'
-
-    // Lombok
-    implementation "org.projectlombok:lombok:1.18.36"
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'

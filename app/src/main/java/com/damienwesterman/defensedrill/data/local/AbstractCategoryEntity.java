@@ -33,14 +33,18 @@ import org.jetbrains.annotations.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @SuperBuilder
 @EqualsAndHashCode
 @ToString
@@ -57,44 +61,5 @@ public abstract class AbstractCategoryEntity {
         this.id = id;
         this.name = name;
         this.description = description;
-    }
-
-    /*
-     * Manual Getters and Setters are necessary because the database subclasses are compiled before
-     * Lombok compiles the getters and setters, and results in errors.
-     */
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @NonNull
-    public String getName() {
-        return name;
-    }
-
-    public void setName(@NonNull String name) {
-        this.name = name;
-    }
-
-    @NonNull
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(@NonNull String description) {
-        this.description = description;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
     }
 }
