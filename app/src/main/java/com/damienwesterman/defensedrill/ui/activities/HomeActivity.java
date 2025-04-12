@@ -39,6 +39,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
+import com.damienwesterman.defensedrill.service.SimulatedAttackService;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
 import javax.inject.Inject;
@@ -85,6 +86,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
+            SimulatedAttackService.stopService(); // TODO: REMOVE
             Intent intent = new Intent(this, HomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -114,6 +116,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         } else if (R.id.feedbackCard == cardId) {
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
+            SimulatedAttackService.toggle(this); // TODO: Remove
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

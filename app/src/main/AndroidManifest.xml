@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".DefenseDrillApplication"
@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.activities.WebDrillOptionsActivity"
             android:exported="false"
@@ -68,9 +69,11 @@
             android:name=".ui.activities.InstructionsActivity"
             android:exported="false"
             android:parentActivityName=".ui.activities.DrillInfoActivity" />
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+
+        <meta-data
+            android:name="android.app.lib_name"
+            android:value="" />
+
         <activity
             android:name=".ui.activities.SubCategorySelectActivity"
             android:exported="false"
@@ -101,9 +104,16 @@
                 android:value="" />
         </activity>
 
-        <service android:name=".service.CheckServerUpdateService"
+        <service
+            android:name=".service.CheckServerUpdateService"
+            android:enabled="true"
             android:exported="false"
-            android:stopWithTask="true"/>
+            android:stopWithTask="true" />
+        <service
+            android:name=".service.SimulatedAttackService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false" />
     </application>
 
 </manifest>

@@ -49,14 +49,14 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
-    // TODO: Make a background service that does the drill generation periodically? Maybe make sure this is launched on phone boot
-    // TODO: Start this service on phone startup? Only if the user has notifications enabled and has selected to receive simulated attacks
     // TODO: What if there is no self defense category?
     // TODO: Create a screen to allow the user to modify these notifications/feature (time of day, day(s) of the week, how many times per hour/how many drills per x hours, turn each one on/off like an alarm)
     // TODO: Allow the user to define how often, and at what hours to have the alerts (maybe have like a list that the user can add and delete time frames to!)
     // TODO: Modify the background service to follow these custom times
     // TODO: If there are no times, then kill the background service
     // TODO: When the user modifies the background service custom times, re-start the background service
+    // TODO: Start this service on phone startup? Only if the user has notifications enabled and has selected to receive simulated attacks
+    // TODO: Change and make sure that the background service starts up on bootup (make a separate broadcast receiver)
     // TODO: Have some kind of popup if the drillinfoactivity receives an intent of self defense attack. Explain to come up with 3 solutions: technical solution, creative solution, and preventative solution (give an option to disable this popup)
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
     private static final String CHANNEL_ID_SIMULATED_ATTACKS = "simulated_attacks";
