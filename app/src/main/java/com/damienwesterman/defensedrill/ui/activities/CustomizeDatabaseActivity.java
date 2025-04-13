@@ -76,11 +76,11 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (R.id.viewCategoriesCard == cardId) {
             Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
-            intent.putExtra(Constants.INTENT_VIEW_CATEGORIES, "");
+            intent.putExtra(Constants.INTENT_EXTRA_VIEW_CATEGORIES, "");
             startActivity(intent);
         } else if (R.id.viewSubCategoriesCard == cardId) {
             Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
-            intent.putExtra(Constants.INTENT_VIEW_SUB_CATEGORIES, "");
+            intent.putExtra(Constants.INTENT_EXTRA_VIEW_SUB_CATEGORIES, "");
             startActivity(intent);
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");

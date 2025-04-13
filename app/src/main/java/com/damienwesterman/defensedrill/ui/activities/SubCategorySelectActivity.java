@@ -60,7 +60,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Proceeds {@link CategorySelectActivity}, then Launches {@link DrillInfoActivity} sending the
  * selected Category and SubCategory.
  * <br><br>
- * INTENTS: Expects to receive a {@link Constants#INTENT_CATEGORY_CHOICE} intent.
+ * INTENTS: Expects to receive a {@link Constants#INTENT_EXTRA_CATEGORY_CHOICE} intent.
  */
 @AndroidEntryPoint
 public class SubCategorySelectActivity extends AppCompatActivity {
@@ -88,7 +88,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
 
         subCategoryViewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
 
-        selectedCategoryId = getIntent().getLongExtra(Constants.INTENT_CATEGORY_CHOICE,
+        selectedCategoryId = getIntent().getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE,
                 Constants.USER_RANDOM_SELECTION);
 
 
@@ -139,8 +139,8 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     // =============================================================================================
     public void randomSubCategoryClick(View view) {
         Intent intent = new Intent(this, DrillInfoActivity.class);
-        intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, selectedCategoryId);
-        intent.putExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, selectedCategoryId);
+        intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
         startActivity(intent);
     }
 
@@ -171,8 +171,8 @@ public class SubCategorySelectActivity extends AppCompatActivity {
                     // Card click listener
                     id -> {
                 Intent intent = new Intent(this, DrillInfoActivity.class);
-                intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, selectedCategoryId);
-                intent.putExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, id);
+                intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, selectedCategoryId);
+                intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, id);
                 startActivity(intent);
             }, null));
         });

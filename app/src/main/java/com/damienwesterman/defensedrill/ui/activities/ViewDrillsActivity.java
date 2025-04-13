@@ -413,7 +413,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
                 // Click listener
                 id -> {
             Intent intent = new Intent(this, DrillInfoActivity.class);
-            intent.putExtra(Constants.INTENT_DRILL_ID, id);
+            intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, id);
             startActivity(intent);
         },
                 // Long click listener
