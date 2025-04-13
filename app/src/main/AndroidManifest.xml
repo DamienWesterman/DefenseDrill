@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".DefenseDrillApplication"
@@ -109,11 +110,27 @@
             android:enabled="true"
             android:exported="false"
             android:stopWithTask="true" />
-        <service
-            android:name=".service.SimulatedAttackService"
+
+        <receiver
+            android:name=".manager.BroadcastReceiverManager"
             android:enabled="true"
-            android:exported="false"
-            android:stopWithTask="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.start_simulated_attack_manager" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.restart_simulated_attack_manager" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.stop_simulated_attack_manager" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.simulate_attack" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

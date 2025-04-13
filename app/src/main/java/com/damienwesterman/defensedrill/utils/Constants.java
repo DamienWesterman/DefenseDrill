@@ -42,9 +42,15 @@ public class Constants {
     private static final int HIGH_CONFIDENCE_POSITION = 2;
 
     public static final String INTENT_PREFIX = "com.damienwesterman.defensedrill.";
-    /** Start the simulated attack notification service */
-    public static final String INTENT_START_SIMULATED_ATTACK_SERVICE
-            = INTENT_PREFIX + "start_simulated_attack_service";
+    /** Start the simulated attack notification manager */
+    public static final String INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER =
+            INTENT_PREFIX + "start_simulated_attack_manager";
+    public static final String INTENT_ACTION_RESTART_SIMULATED_ATTACK_MANAGER =
+            INTENT_PREFIX + "restart_simulated_attack_manager";
+    public static final String INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER =
+            INTENT_PREFIX + "stop_simulated_attack_manager";
+    public static final String INTENT_ACTION_SIMULATE_ATTACK =
+            INTENT_PREFIX + "simulate_attack";
 
     /** Should be accompanied by a long of the Category ID chosen */
     public static final String INTENT_EXTRA_CATEGORY_CHOICE = "category_choice";
