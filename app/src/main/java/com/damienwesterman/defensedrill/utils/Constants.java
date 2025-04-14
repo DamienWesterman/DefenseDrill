@@ -45,8 +45,6 @@ public class Constants {
     /** Start the simulated attack notification manager */
     public static final String INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER =
             INTENT_PREFIX + "start_simulated_attack_manager";
-    public static final String INTENT_ACTION_RESTART_SIMULATED_ATTACK_MANAGER =
-            INTENT_PREFIX + "restart_simulated_attack_manager";
     public static final String INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER =
             INTENT_PREFIX + "stop_simulated_attack_manager";
     public static final String INTENT_ACTION_SIMULATE_ATTACK =

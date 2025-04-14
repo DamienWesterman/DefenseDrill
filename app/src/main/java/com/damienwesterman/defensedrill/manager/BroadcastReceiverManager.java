@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.manager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.damienwesterman.defensedrill.utils.Constants;
 
@@ -55,19 +56,21 @@ public class BroadcastReceiverManager extends BroadcastReceiver {
             case Intent.ACTION_BOOT_COMPLETED:
                 // Fallthrough intentional
             case Constants.INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER:
-                new Thread(simulatedAttack::scheduleSimulatedAttack).start();
+                simulatedAttack.scheduleSimulatedAttack();
                 break;
-            case Constants.INTENT_ACTION_RESTART_SIMULATED_ATTACK_MANAGER:
-                new Thread(() -> {
-                    simulatedAttack.stopSimulatedAttacks();
-                    simulatedAttack.scheduleSimulatedAttack();
-                }).start();
+
             case Constants.INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER:
-                new Thread(simulatedAttack::stopSimulatedAttacks).start();
+                simulatedAttack.stopSimulatedAttacks();
                 break;
+
             case Constants.INTENT_ACTION_SIMULATE_ATTACK:
-                new Thread(simulatedAttack::simulateAttack).start();
+                BroadcastReceiver.PendingResult pendingResult = goAsync();
+                new Thread(() -> {
+                    simulatedAttack.simulateAttack();
+                    pendingResult.finish();
+                }).start();
                 break;
+
             default:
                 // Do nothing
                 break;

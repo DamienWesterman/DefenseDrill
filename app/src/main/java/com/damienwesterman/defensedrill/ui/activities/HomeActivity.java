@@ -40,6 +40,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
+import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 
 import javax.inject.Inject;
@@ -54,14 +55,20 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
+private static boolean attackManager = true; // TODO: REMOVE ME
     // TODO: On first startup, go through help screen. THEN prompt the user for notifications:
         // https://developer.android.com/develop/ui/views/notifications/notification-permission#best-practices
         // https://developer.android.com/training/permissions/requesting#request-permission
+    // TODO: THEN prompt the user for unrestricted background usage:
+        // https://stackoverflow.com/a/54852199
+    private static boolean isUpdateServiceStarted = false;
 
     private LinearLayout rootView;
 
     @Inject
     CheckPhoneInternetConnection internetConnection;
+    @Inject
+    SimulatedAttackManager simulatedAttackManager;
 
     // =============================================================================================
     // Activity Methods
@@ -75,6 +82,12 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(appToolbar);
 
         rootView = findViewById(R.id.activityHome);
+
+        // Have to do this here so service is not started when the app is launched in the background
+        if (!isUpdateServiceStarted) {
+            CheckServerUpdateService.startService(this);
+            isUpdateServiceStarted = true;
+        }
     }
 
     @Override
@@ -115,7 +128,13 @@ public class HomeActivity extends AppCompatActivity {
             }
         } else if (R.id.feedbackCard == cardId) {
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
-SimulatedAttackManager.start(this); // TODO: REMOVE ME
+// TODO: REMOVE ME
+if (attackManager) {
+SimulatedAttackManager.start(this);
+} else {
+SimulatedAttackManager.stop(this);
+}
+attackManager = !attackManager;
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

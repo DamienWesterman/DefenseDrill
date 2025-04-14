@@ -26,8 +26,12 @@
 
 package com.damienwesterman.defensedrill.manager;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
@@ -48,12 +52,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
  * TODO: Doc comments
  */
 public class SimulatedAttackManager {
-    // TODO: START HERE FIXME: make sure that we can call all of the methods below and make sure that they work and are actually called
-    // TODO: implement the following
-    // TODO: https://developer.android.com/reference/android/app/AlarmManager#setAndAllowWhileIdle(int,%20long,%20android.app.PendingIntent)
+    // TODO: Implement the actual algorithm for selecting the next alarm
     private static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
-    private final Context context;
+    private final AlarmManager alarmManager;
+    private final PendingIntent simulatedAttackPendingIntent;
     private final DrillRepository drillRepo;
     private final DefenseDrillNotificationManager notificationManager;
     private final SharedPrefs sharedPrefs;
@@ -63,7 +66,16 @@ public class SimulatedAttackManager {
                                   DrillRepository drillRepo,
                                   DefenseDrillNotificationManager notificationManager,
                                   SharedPrefs sharedPrefs) {
-        this.context = context;
+        this.alarmManager = context.getSystemService(AlarmManager.class);
+        Intent intent = new Intent(Constants.INTENT_ACTION_SIMULATE_ATTACK);
+        intent.setPackage(context.getPackageName());
+        intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
+        this.simulatedAttackPendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+        );
         this.drillRepo = drillRepo;
         this.notificationManager = notificationManager;
         this.sharedPrefs = sharedPrefs;
@@ -80,36 +92,49 @@ public class SimulatedAttackManager {
     public static void start(Context context) {
         Intent intent = new Intent(Constants.INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER);
         intent.setPackage(context.getPackageName());
+        intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
         context.sendBroadcast(intent);
-    }
-
-    /**
-     * TODO: Doc comments
-     * @param context
-     */
-    public static void restart(Context context) {
-        // TODO: Properly implement
     }
 
     // TODO: Doc comments
     public static void stop(Context context) {
-        // TODO: Properly implement
+        Intent intent = new Intent(Constants.INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER);
+        intent.setPackage(context.getPackageName());
+        intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
+        context.sendBroadcast(intent);
     }
 
     // =============================================================================================
     // Public Methods
     // =============================================================================================
     // TODO: Doc comments
-    public void scheduleSimulatedAttack() {
-        // TODO: Implement timer using setAndAllowWhileIdle
+    /* package-private */ void scheduleSimulatedAttack() {
+        stopSimulatedAttacks();
+        alarmManager.setAndAllowWhileIdle(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + 10000, // TODO: get the real time
+                simulatedAttackPendingIntent
+        );
     }
 
-    public void stopSimulatedAttacks() {
-        // TODO: Implement and cancel any existing alarms?
+    /**
+     * TODO: Doc comments
+     */
+    /* package-private */ void stopSimulatedAttacks() {
+        alarmManager.cancel(simulatedAttackPendingIntent);
     }
 
     // TODO: Doc comments
-    public void simulateAttack() {
+    /* package-private */ void simulateAttack() {
+        sendSimulateAttackNotification();
+        scheduleSimulatedAttack();
+    }
+
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    // TODO: Doc comments
+    private void sendSimulateAttackNotification() {
         Optional<CategoryEntity> optSelfDefenseCategory =
                 drillRepo.getCategory(CATEGORY_NAME_SELF_DEFENSE);
         if (!optSelfDefenseCategory.isPresent()) {
@@ -119,9 +144,8 @@ public class SimulatedAttackManager {
 
         List<Drill> drills = drillRepo.getAllDrillsByCategoryId(optSelfDefenseCategory.get().getId());
         DrillGenerator drillGenerator = new DrillGenerator(drills, new Random());
+        // TODO: What to do if there are none of this category??
         Optional<Drill> optDrill = Optional.ofNullable(drillGenerator.generateDrill());
         optDrill.ifPresent(notificationManager::notifySimulatedAttack);
-
-        scheduleSimulatedAttack();
     }
 }

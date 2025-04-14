@@ -47,7 +47,6 @@ public class DefenseDrillApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        CheckServerUpdateService.startService(this);
         notificationManager.init();
     }
 }

@@ -122,9 +122,6 @@
                 <action android:name="com.damienwesterman.defensedrill.start_simulated_attack_manager" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.damienwesterman.defensedrill.restart_simulated_attack_manager" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="com.damienwesterman.defensedrill.stop_simulated_attack_manager" />
             </intent-filter>
             <intent-filter>
