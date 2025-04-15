@@ -62,4 +62,5 @@ import androidx.room.RoomDatabase;
     public abstract DrillDao getDrillDao();
     public abstract CategoryDao getCategoryDao();
     public abstract SubCategoryDao getSubCategoryDao();
+    public abstract WeeklyHourPolicyDao getWeeklyHourPolicyDao();
 }

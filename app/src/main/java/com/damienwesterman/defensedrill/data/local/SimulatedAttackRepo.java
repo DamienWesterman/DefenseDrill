@@ -27,19 +27,31 @@
 package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
 
 import java.util.List;
 
-@Dao
-/* package-private */ interface WeeklyHourPolicyDao {
-    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME + " ORDER BY weekly_hour")
-    @NonNull
-    List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies();
+import lombok.RequiredArgsConstructor;
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertWeeklyHourPolicy(WeeklyHourPolicyEntity... policies);
+/**
+ * TODO: DOC COMMENTS
+ */
+@RequiredArgsConstructor
+public class SimulatedAttackRepo {
+    private final WeeklyHourPolicyDao weeklyHourPolicyDao;
+
+    @NonNull
+    public synchronized List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies() {
+        return this.weeklyHourPolicyDao.getAllWeeklyHourPolicies();
+    }
+
+    /**
+     * TODO: Doc comments
+     * @param policies
+     * @return
+     */
+    // TODO: Do this for all insert operations (including nonnull annotation)
+    public synchronized boolean insertPolicies(@NonNull WeeklyHourPolicyEntity... policies) {
+        int numInserts = this.weeklyHourPolicyDao.insertWeeklyHourPolicy(policies).length;
+        return policies.length == numInserts;
+    }
 }

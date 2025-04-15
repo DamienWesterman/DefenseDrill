@@ -42,6 +42,8 @@ import dagger.hilt.components.SingletonComponent;
 @Module
 @InstallIn(SingletonComponent.class)
 public class LocalDependenciesModule {
+    private static DrillDatabase instance = null;
+
     @Provides
     @Singleton
     public static SharedPrefs getSharedPrefs(@ApplicationContext Context applicationContext) {
@@ -51,6 +53,19 @@ public class LocalDependenciesModule {
     @Provides
     @Singleton
     public static DrillRepository getDrillRepository(@ApplicationContext Context applicationContext) {
-        return new DrillRepository(DrillDatabase.instantiate(applicationContext));
+        return new DrillRepository(getDatabase(applicationContext));
+    }
+
+    @Provides
+    @Singleton
+    public static SimulatedAttackRepo getSimulatedAttackRepo(@ApplicationContext Context applicationContext) {
+        return new SimulatedAttackRepo(getDatabase(applicationContext).getWeeklyHourPolicyDao());
+    }
+
+    private static DrillDatabase getDatabase(Context context) {
+        if (null == instance) {
+            instance = DrillDatabase.instantiate(context);
+        }
+        return instance;
     }
 }
