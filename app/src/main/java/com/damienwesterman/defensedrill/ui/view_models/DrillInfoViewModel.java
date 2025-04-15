@@ -339,11 +339,11 @@ public class DrillInfoViewModel extends AndroidViewModel {
                                       @NonNull Consumer<Long> callback) {
         executor.execute(() -> {
             Optional<Drill> optDrill = drillRepo.getDrillByServerId(serverId);
-            long localDrillId;
+            Long localDrillId;
             if (optDrill.isPresent()) {
                 localDrillId = optDrill.get().getId();
             } else {
-                localDrillId = Drill.INVALID_SERVER_DRILL_ID;
+                localDrillId = null;
             }
 
             callback.accept(localDrillId);

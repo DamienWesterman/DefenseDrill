@@ -30,6 +30,25 @@ import com.damienwesterman.defensedrill.BuildConfig;
 import com.damienwesterman.defensedrill.data.local.Drill;
 
 public class Constants {
+    /**
+     * No need to have instances of this class.
+     */
+    private Constants() { }
+
+    // TODO: doc comments
+    // TODO: Assign values, maybe in minutes? Also min/max?
+    public enum SimulatedAttackFrequency {
+        ONCE_PER_15_MINUTES,
+        ONCE_PER_30_MINUTES,
+        ONCE_PER_1_HOUR,
+        ONCE_PER_90_MINUTES,
+        ONCE_PER_2_HOURS,
+        ONCE_PER_3_HOURS,
+        ONCE_PER_5_HOURS,
+        ONCE_PER_6_HOURS,
+        ONCE_PER_12_HOURS,
+    }
+
     public static final long USER_RANDOM_SELECTION = -1;
 
     public static final String SERVER_URL = BuildConfig.SERVER_URL;
@@ -64,11 +83,6 @@ public class Constants {
     public static final String INTENT_EXTRA_DRILL_DTO = "drill_dto";
     /** Should be accompanied by an int of the index position of the instruction to be displayed */
     public static final String INTENT_EXTRA_INSTRUCTION_INDEX = "instruction_index";
-
-    /**
-     * No need to have instances of this class.
-     */
-    private Constants() { }
 
     /**
      * Converts a confidence weight into its respective position in the confidence_levels string

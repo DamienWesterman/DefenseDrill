@@ -835,7 +835,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         viewModel.findDrillIdByServerId(
                 drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
                 localDrillId -> {
-                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
+                    if (null == localDrillId) {
                         UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
                     } else {
                         Intent intent = new Intent(this, DrillInfoActivity.class);

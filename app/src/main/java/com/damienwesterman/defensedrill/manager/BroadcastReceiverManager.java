@@ -52,6 +52,7 @@ public class BroadcastReceiverManager extends BroadcastReceiver {
             return;
         }
 
+Log.i("DxTag", "Received intent: " + action); // TODO: REMOVE
         switch(action) {
             case Intent.ACTION_BOOT_COMPLETED:
                 // Fallthrough intentional
