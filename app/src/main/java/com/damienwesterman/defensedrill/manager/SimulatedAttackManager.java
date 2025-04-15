@@ -39,6 +39,7 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
@@ -74,7 +75,6 @@ public class SimulatedAttackManager {
             - Each position simply has a value (maybe an enum) that says the frequency on it, and if it is activated (for UI purposes), and what alarm index number it belongs to
                 - Then this can have two methods of retrieval, regular (range 0 - 167) and also grouped by alarm index
                 - The ViewModel for the UI can have the entire list saved and if a user adds/modifies a time slot that already belongs to another group, report that it is conflicting and cannot be saved
-            -
      */
     private static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
@@ -82,12 +82,14 @@ public class SimulatedAttackManager {
     private final PendingIntent simulatedAttackPendingIntent;
     private final DrillRepository drillRepo;
     private final DefenseDrillNotificationManager notificationManager;
+    private final SimulatedAttackRepo repo;
     private final SharedPrefs sharedPrefs;
 
     @Inject
     public SimulatedAttackManager(@ApplicationContext Context context,
                                   DrillRepository drillRepo,
                                   DefenseDrillNotificationManager notificationManager,
+                                  SimulatedAttackRepo repo,
                                   SharedPrefs sharedPrefs) {
         this.alarmManager = context.getSystemService(AlarmManager.class);
         Intent intent = new Intent(Constants.INTENT_ACTION_SIMULATE_ATTACK);
@@ -101,6 +103,7 @@ public class SimulatedAttackManager {
         );
         this.drillRepo = drillRepo;
         this.notificationManager = notificationManager;
+        this.repo = repo;
         this.sharedPrefs = sharedPrefs;
     }
 

@@ -119,6 +119,8 @@ private static boolean attackManager = true; // TODO: REMOVE ME
         } else if (R.id.customizeDatabaseCard == cardId) {
             Intent intent = new Intent(this, CustomizeDatabaseActivity.class);
             startActivity(intent);
+        } else if (R.id.simulatedAttackSettings == cardId) {
+            SimulatedAttackSettingsActivity.startActivity(this);
         } else if (R.id.webDrillOptionsCard == cardId) {
             if (!internetConnection.isNetworkConnected()) {
                 UiUtils.displayDismissibleSnackbar(rootView, "No internet connection.");
