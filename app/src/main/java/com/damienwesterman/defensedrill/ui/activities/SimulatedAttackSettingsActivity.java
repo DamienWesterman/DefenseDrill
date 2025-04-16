@@ -31,10 +31,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
@@ -57,9 +60,11 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     @Inject
     SimulatedAttackManager simulatedAttackManager;
     @Inject
-    SharedPrefs sharedPrefs;
+    SharedPrefs sharedPrefs; // TODO: Move this to the view model as well (?)
 
     private LinearLayout rootView;
+    SwitchCompat enabledSwitch;
+    ProgressBar progressBar;
 
     // =============================================================================================
     // Service Creation Methods
@@ -84,6 +89,21 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
 
         rootView = findViewById(R.id.activitySimulatedAttackSettings);
+        enabledSwitch = findViewById(R.id.enabledSwitch);
+        progressBar = findViewById(R.id.progressBar);
+
+        boolean simulatedAttacksEnabled = sharedPrefs.areSimulatedAttacksEnabled();
+        enabledSwitch.setChecked(simulatedAttacksEnabled);
+        enabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            sharedPrefs.setSimulatedAttacksEnabled(isChecked);
+            // TODO If switching from not checked to checked and the database is empty, then it means it's the first time so fill the database from 0 - 167 or whatever with blank ones
+        });
+
+        // TODO: Load all from view model and set to adapter for the recyclerview, and pass in the following
+        if (!simulatedAttacksEnabled) {
+            // TODO Tell the adapter view to gray out/disable each card
+        }
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override

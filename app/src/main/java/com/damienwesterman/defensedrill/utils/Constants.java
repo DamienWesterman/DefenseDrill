@@ -38,6 +38,7 @@ public class Constants {
     // TODO: doc comments
     // TODO: Assign values, maybe in minutes? Also min/max?
     public enum SimulatedAttackFrequency {
+        NO_ATTACKS,
         ONCE_PER_15_MINUTES,
         ONCE_PER_30_MINUTES,
         ONCE_PER_1_HOUR,
