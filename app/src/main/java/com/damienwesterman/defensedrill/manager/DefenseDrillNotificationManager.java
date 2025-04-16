@@ -59,7 +59,7 @@ public class DefenseDrillNotificationManager {
     // TODO: When the user modifies the background service custom times, re-start the background service
     // TODO: Start this service on phone startup? Only if the user has notifications enabled and has selected to receive simulated attacks
     // TODO: Change and make sure that the background service starts up on boot up (make a separate broadcast receiver)
-    // TODO: Have some kind of popup if the DrillInfoActivity receives an intent of self defense attack. Explain to come up with 3 solutions: technical solution, creative solution, and preventative solution (give an option to disable this popup)
+    // TODO: Have some kind of popup if the DrillInfoActivity receives an intent of self defense attack. Explain to come up with 3 solutions: technical solution, creative solution, and preventative solution (give an option to disable this popup) (also if a simulated attack, show a help button or something somewhere?)
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
     private static final String CHANNEL_ID_SIMULATED_ATTACKS = "simulated_attacks";
     private static final String CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE =

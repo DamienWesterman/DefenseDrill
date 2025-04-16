@@ -24,27 +24,31 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.data.local;
+package com.damienwesterman.defensedrill.ui.view_models;
+
+import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
+import androidx.lifecycle.AndroidViewModel;
 
-import java.util.List;
-import java.util.Map;
+import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 
-@Dao
-/* package-private */ interface WeeklyHourPolicyDao {
-    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME + " ORDER BY weekly_hour")
-    @NonNull
-    List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies();
+import javax.inject.Inject;
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertWeeklyHourPolicy(WeeklyHourPolicyEntity... policies);
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
-    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME + " ORDER BY policy_name, weekly_hour")
-    @NonNull
-    List<WeeklyHourPolicyEntity> getAllPoliciesOrderedByPolicyName();
+/**
+ * TODO: Doc comments
+ */
+@HiltViewModel
+public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
+    private final SimulatedAttackRepo repo;
+
+    @Inject
+    public SimulatedAttackSettingsViewModel(@NonNull Application application,
+                                            SimulatedAttackRepo repo) {
+        super(application);
+
+        this.repo = repo;
+    }
 }

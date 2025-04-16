@@ -32,7 +32,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
@@ -43,11 +42,8 @@ import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
-import java.text.DateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Random;
 
@@ -61,10 +57,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 public class SimulatedAttackManager {
     // TODO: Implement the actual algorithm for selecting the next alarm
     /*
-        Requirements:
-            - User can select 1 alerts per x minutes/hours (x options: 15 min, 30 min, 1 hr, 1.5hr, 2 hr, 3 hr, 5 hr, 6 hr, 12 hr)
-            - Make sure that the time frame selected is at least x min/hr (can't have a 2 hr time frame from 1pm-2pm)
-            - Each time frame is like +/- a certain amount of time (maybe like, 20%), so the option to the user would look like "1 alert per 30 minutes (+/- 6 minutes)
         Algorithm/Data structure ideas:
             - During a time frame, if it is the first alarm in the time frame, it can be triggered at ANY time
                 - So we don't have to wait like 15 min if it's the first one in a 1pm-2pm time slot

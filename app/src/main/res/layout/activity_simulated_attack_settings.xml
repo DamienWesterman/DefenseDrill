@@ -30,7 +30,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="5dp"
+        android:layout_marginVertical="5dp"
         android:orientation="horizontal" >
 
         <TextView
@@ -44,7 +44,7 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/enabledSwitch"
-            android:layout_width="wrap_content"
+            android:layout_width="48dp"
             android:layout_height="match_parent"
             android:gravity="center"/>
 
@@ -56,6 +56,18 @@
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="?attr/dividerColor"/>
+
+    <Button
+        android:id="@+id/addPolicyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:onClick="addPolicy"
+        android:layout_marginVertical="8dp"
+        android:text="@string/add_notification"
+        android:drawableLeft="@drawable/add_circle_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded"
+        android:enabled="false"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

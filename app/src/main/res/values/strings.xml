@@ -86,6 +86,59 @@
     <string name="simulated_attack_settings_description">Change settings related to simulated attack notifications. Turn them on or off and adjust the schedule or frequency of notifications.</string>
     <string name="simulated_attacks_description">Simulated Attacks are notifications to simulate being attacked with a random Self Defense Drill. The notification times are customizable. This helps you to put these exercises in every day situations, making them more realistic.</string>
     <string name="enabled">Enabled:</string>
+    <string name="add_notification">Add Notification</string>
+    <string name="policy_name">Alarm Name:</string>
+    <string name="policy_name_hint">Enter a Name for the Alarm…</string>
+    <string name="default_policy_name">New Alarm</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="alarm_days">Alarm Days:</string>
+    <string name="time_window">Time Window:</string>
+    <string name="frequency">Frequency:</string>
+    <string name="hyphen">-</string>
+    <string-array name="daily_hours">
+        <item>12:00 AM</item>
+        <item>1:00 AM</item>
+        <item>2:00 AM</item>
+        <item>3:00 AM</item>
+        <item>4:00 AM</item>
+        <item>5:00 AM</item>
+        <item>6:00 AM</item>
+        <item>7:00 AM</item>
+        <item>8:00 AM</item>
+        <item>9:00 AM</item>
+        <item>10:00 AM</item>
+        <item>11:00 AM</item>
+        <item>12:00 PM</item>
+        <item>1:00 PM</item>
+        <item>2:00 PM</item>
+        <item>3:00 PM</item>
+        <item>4:00 PM</item>
+        <item>5:00 PM</item>
+        <item>6:00 PM</item>
+        <item>7:00 PM</item>
+        <item>8:00 PM</item>
+        <item>9:00 PM</item>
+        <item>10:00 PM</item>
+        <item>11:00 PM</item>
+        <item>12:00 AM</item>
+    </string-array>
+    <string-array name="frequency_options">
+        <item>Every 15 minutes (+/- 3 minutes)</item>
+        <item>Every 30 minutes (+/- 6 minutes)</item>
+        <item>Every 1 hour (+/- 12 minutes)</item>
+        <item>Every 90 minutes (+/- 18 minutes)</item>
+        <item>Every 2 hour (+/- 24 minutes)</item>
+        <item>Every 3 hours (+/- 36 minutes)</item>
+        <item>Every 5 hours (+/- 1 hour)</item>
+        <item>Every 6 hours (+/- 72 minutes)</item>
+        <item>Every 12 hours (+/- 2.5 hours)</item>
+    </string-array>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
         <item>Name (Z-A)</item>

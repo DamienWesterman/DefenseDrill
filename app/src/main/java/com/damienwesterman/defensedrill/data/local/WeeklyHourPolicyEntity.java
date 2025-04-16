@@ -59,5 +59,12 @@ public class WeeklyHourPolicyEntity {
 
     private boolean active;
 
+    /**
+     * A policy name can be common among related WeeklyHourPolicyEntities, but should not be shared
+     * among unrelated policies.
+     */
+    @ColumnInfo(name = "policy_name")
+    private String policyName;
+
     // TODO: public methods to get/set using day of the week or something?
 }

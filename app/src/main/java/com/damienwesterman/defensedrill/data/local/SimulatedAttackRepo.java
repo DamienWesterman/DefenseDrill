@@ -29,6 +29,8 @@ package com.damienwesterman.defensedrill.data.local;
 import androidx.annotation.NonNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,6 +44,12 @@ public class SimulatedAttackRepo {
     @NonNull
     public synchronized List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies() {
         return this.weeklyHourPolicyDao.getAllWeeklyHourPolicies();
+    }
+
+    @NonNull
+    Map<String, List<WeeklyHourPolicyEntity>> getAllPoliciesGroupedByName() {
+        return this.weeklyHourPolicyDao.getAllPoliciesOrderedByPolicyName().stream()
+                .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
     }
 
     /**
