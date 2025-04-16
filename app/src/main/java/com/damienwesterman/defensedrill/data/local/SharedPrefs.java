@@ -47,6 +47,7 @@ public class SharedPrefs {
             = "defense_drill_encrypted_shared_preferences";
     private static final String KEY_JWT = "jwt";
     private static final String KEY_LAST_DRILL_UPDATE_TIME = "last_drill_update_time";
+    private static final String KEY_SIMULATED_ATTACKS_ENABLED = "simulated_attacks_enabled";
 
     private final SharedPreferences sharedPrefs;
     private final SharedPreferences encryptedSharedPrefs;
@@ -105,6 +106,16 @@ public class SharedPrefs {
 
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putLong(KEY_LAST_DRILL_UPDATE_TIME, lastDrillUpdateTime);
+        return editor.commit();
+    }
+
+    public boolean areSimulatedAttacksEnabled() {
+        return sharedPrefs.getBoolean(KEY_SIMULATED_ATTACKS_ENABLED, false);
+    }
+
+    public boolean setSimulatedAttacksEnabled(boolean enabled) {
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean(KEY_SIMULATED_ATTACKS_ENABLED, enabled);
         return editor.commit();
     }
 }

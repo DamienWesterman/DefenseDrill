@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 /*
- * Copyright 2025 Damien Westerman
+ * Copyright 2024 Damien Westerman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,29 +24,31 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill;
+package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
 
-import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
-import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+
+import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.HiltAndroidApp;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
- * Hilt Application Class for Dependency Injection
+ * TODO: Doc comments
  */
-@HiltAndroidApp
-public class DefenseDrillApplication extends Application {
+@HiltViewModel
+public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
+    private final SimulatedAttackRepo repo;
+
     @Inject
-    DefenseDrillNotificationManager notificationManager;
+    public SimulatedAttackSettingsViewModel(@NonNull Application application,
+                                            SimulatedAttackRepo repo) {
+        super(application);
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        notificationManager.init();
+        this.repo = repo;
     }
 }

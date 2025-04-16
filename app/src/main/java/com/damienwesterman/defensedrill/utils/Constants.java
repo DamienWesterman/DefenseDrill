@@ -30,6 +30,26 @@ import com.damienwesterman.defensedrill.BuildConfig;
 import com.damienwesterman.defensedrill.data.local.Drill;
 
 public class Constants {
+    /**
+     * No need to have instances of this class.
+     */
+    private Constants() { }
+
+    // TODO: doc comments
+    // TODO: Assign values, maybe in minutes? Also min/max?
+    public enum SimulatedAttackFrequency {
+        NO_ATTACKS,
+        ONCE_PER_15_MINUTES,
+        ONCE_PER_30_MINUTES,
+        ONCE_PER_1_HOUR,
+        ONCE_PER_90_MINUTES,
+        ONCE_PER_2_HOURS,
+        ONCE_PER_3_HOURS,
+        ONCE_PER_5_HOURS,
+        ONCE_PER_6_HOURS,
+        ONCE_PER_12_HOURS,
+    }
+
     public static final long USER_RANDOM_SELECTION = -1;
 
     public static final String SERVER_URL = BuildConfig.SERVER_URL;
@@ -42,25 +62,28 @@ public class Constants {
     private static final int HIGH_CONFIDENCE_POSITION = 2;
 
     public static final String INTENT_PREFIX = "com.damienwesterman.defensedrill.";
-    /** Should be accompanied by a long of the Category ID chosen */
-    public static final String INTENT_CATEGORY_CHOICE = INTENT_PREFIX + "category_choice";
-    /** Should be accompanied by a long of the SubCategory ID chosen */
-    public static final String INTENT_SUB_CATEGORY_CHOICE = INTENT_PREFIX + "sub_category_choice";
-    /** Should be accompanied by a long of the Drill ID */
-    public static final String INTENT_DRILL_ID = INTENT_PREFIX + "drill_id";
-    /** Value does not matter */
-    public static final String INTENT_VIEW_CATEGORIES = INTENT_PREFIX + "view_categories";
-    /** Value does not matter */
-    public static final String INTENT_VIEW_SUB_CATEGORIES = INTENT_PREFIX + "view_sub_categories";
-    /** Value should be an object of type {@link com.damienwesterman.defensedrill.data.remote.dto.DrillDTO} */
-    public static final String INTENT_DRILL_DTO = INTENT_PREFIX + "drill_dto";
-    /** Should be accompanied by an int of the index position of the instruction to be displayed */
-    public static final String INTENT_INSTRUCTION_INDEX = INTENT_PREFIX + "instruction_index";
+    /** Start the simulated attack notification manager */
+    public static final String INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER =
+            INTENT_PREFIX + "start_simulated_attack_manager";
+    public static final String INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER =
+            INTENT_PREFIX + "stop_simulated_attack_manager";
+    public static final String INTENT_ACTION_SIMULATE_ATTACK =
+            INTENT_PREFIX + "simulate_attack";
 
-    /**
-     * No need to have instances of this class.
-     */
-    private Constants() { }
+    /** Should be accompanied by a long of the Category ID chosen */
+    public static final String INTENT_EXTRA_CATEGORY_CHOICE = "category_choice";
+    /** Should be accompanied by a long of the SubCategory ID chosen */
+    public static final String INTENT_EXTRA_SUB_CATEGORY_CHOICE = "sub_category_choice";
+    /** Should be accompanied by a long of the Drill ID */
+    public static final String INTENT_EXTRA_DRILL_ID = "drill_id";
+    /** Value does not matter */
+    public static final String INTENT_EXTRA_VIEW_CATEGORIES = "view_categories";
+    /** Value does not matter */
+    public static final String INTENT_EXTRA_VIEW_SUB_CATEGORIES = "view_sub_categories";
+    /** Value should be an object of type {@link com.damienwesterman.defensedrill.data.remote.dto.DrillDTO} */
+    public static final String INTENT_EXTRA_DRILL_DTO = "drill_dto";
+    /** Should be accompanied by an int of the index position of the instruction to be displayed */
+    public static final String INTENT_EXTRA_INSTRUCTION_INDEX = "instruction_index";
 
     /**
      * Converts a confidence weight into its respective position in the confidence_levels string
