@@ -29,17 +29,21 @@ package com.damienwesterman.defensedrill.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -49,8 +53,17 @@ import androidx.lifecycle.ViewModelProvider;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
+import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.view_models.SimulatedAttackSettingsViewModel;
+import com.damienwesterman.defensedrill.utils.Constants;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -197,31 +210,91 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.notification_w_sound_icon);
         builder.setTitle("Add Notification");
         builder.setCancelable(true);
-        builder.setPositiveButton("Save", null);
+        builder.setPositiveButton("Save", (dialogInterface, i) -> {
+            List<WeeklyHourPolicyEntity> policies = extractPolicies(dialogView, null, error -> Log.e("DxTag", error));
+            policies.forEach(policy -> {
+                Log.i("DxTag", policy.toString());
+                int dayOfWeek = policy.getWeeklyHour() / 24;
+                int hourOfDay = policy.getWeeklyHour() % 24;
+                Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
+            });
+        });
         builder.setNegativeButton("Cancel", null);
         builder.setNeutralButton("Reset", null);
 
         // TODO: setOnShowListener for save (report error conditions) and reset (do not close)
         builder.create().show();
-
-        // TODO: Verify That the time frames do not overlap with existing ones
-        // TODO: Verify the times are linear (cannot do 5PM - 2 AM) and is more than 1 hour (can't be 5PM - 5PM)
-        // TODO: Verify all dropdowns are selected (cannot be default)
-        // TODO: Verify at least one day is checked
-        // TODO: Verify the notification name is not already in use (Default to New Notification) - cap name to like 32 characters
     }
 
     // TODO: Doc comments
     public void modifyPolicyPopup() {
-        // TODO: FINISH implement popup
-        // TODO: Verify That the time frames do not overlap with existing ones
-        // TODO: Verify the times are linear (cannot do 5PM - 2 AM) and is more than 1 hour (can't be 5PM - 5PM)
-        // TODO: Verify all dropdowns are selected (cannot be default)
-        // TODO: Verify at least one day is checked
-        // TODO: Verify the notification name is not already in use BY ANOTHER NOTIFICATION - cap name to like 32 characters
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+    // TODO: Doc comments (View should be of layout_policy_details_popup), explain why list
+    // TODO: Does input validation. CurrPolicy is nullable for if you are modifying a policy
+    @NonNull
+    private List<WeeklyHourPolicyEntity> extractPolicies(@NonNull View view,
+                                                         @Nullable Integer policyIndexBeingModified,
+                                                         @NonNull Consumer<String> errorConsumer) {
+        final List<WeeklyHourPolicyEntity> ret = new ArrayList<>(7);
+
+        int[] checkBoxIds = {
+                R.id.sundayCheckBox, R.id.mondayCheckBox, R.id.tuesdayCheckBox,
+                R.id.wednesdayCheckBox, R.id.thursdayCheckBox, R.id.fridayCheckBox,
+                R.id.saturdayCheckBox
+        };
+
+        EditText policyNameEditText = view.findViewById(R.id.policyName);
+        List<CheckBox> checkBoxes = Arrays.stream(checkBoxIds)
+                .mapToObj(id -> (CheckBox) view.findViewById(id))
+                .collect(Collectors.toList());
+        Spinner beginningHourSpinner = view.findViewById(R.id.beginningHourSpinner);
+        Spinner endingHourSpinner = view.findViewById(R.id.endingHourSpinner);
+        Spinner frequencySpinner = view.findViewById(R.id.frequencySpinner);
+
+        if (null == policyNameEditText
+                || checkBoxes.stream().anyMatch(Objects::isNull)
+                || null == beginningHourSpinner
+                || null == endingHourSpinner
+                || null == frequencySpinner) {
+            errorConsumer.accept("There was an issue saving the new alarm.");
+            return ret;
+        }
+
+        // TODO: Verify the notification name is not already in use (Default to New Notification), also make sure if editing them it is not in use by another  - cap name to like 32 characters
+        String policyName = policyNameEditText.getText().toString();
+
+        final int frequency = frequencySpinner.getSelectedItemPosition();
+
+        // TODO: Verify That the time frames do not overlap with existing ones
+        // TODO: Verify time frame is at least as big as frequency
+        // TODO: Verify we do not start at the SECOND midnight option
+        // TODO: Verify the times are linear (cannot do 5PM - 2 AM) and is more than 1 hour (can't be 5PM - 5PM)
+        int[] timesOfDay = { beginningHourSpinner.getSelectedItemPosition() };
+
+        for (int i = 0; i < checkBoxes.size(); i++) {
+            if (checkBoxes.get(i).isChecked()) {
+                int finalI = i;
+                Arrays.stream(timesOfDay).forEach(timeOfDay -> {
+                    WeeklyHourPolicyEntity newPolicy = WeeklyHourPolicyEntity.builder()
+                            .weeklyHour( (finalI * 24) + timeOfDay )
+                            // + 1 because of the first option being NO_ATTACKS
+                            .frequency(Constants.SimulatedAttackFrequency.values()[frequency + 1])
+                            .active(true)
+                            .policyName(policyName)
+                            .build();
+                    ret.add(newPolicy);
+                });
+            }
+        }
+
+        if (ret.isEmpty()) {
+            errorConsumer.accept("Must select at least one day of the week.");
+        }
+
+        return ret;
+    }
 }

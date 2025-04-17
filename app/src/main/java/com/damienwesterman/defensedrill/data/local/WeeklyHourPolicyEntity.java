@@ -34,9 +34,11 @@ import androidx.room.PrimaryKey;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * TODO: doc comments (entity represents a single weekly hour's simulated attack policy)
@@ -46,6 +48,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
+@ToString
 public class WeeklyHourPolicyEntity {
     @Ignore
     public static final String TABLE_NAME = "weekly_hour_policy";
