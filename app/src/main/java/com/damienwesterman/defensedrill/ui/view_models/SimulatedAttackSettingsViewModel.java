@@ -30,8 +30,14 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
+import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,6 +49,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
     private final SimulatedAttackRepo repo;
+    private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
 
     @Inject
     public SimulatedAttackSettingsViewModel(@NonNull Application application,
@@ -50,5 +57,30 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
         super(application);
 
         this.repo = repo;
+        this.policies = new MutableLiveData<>();
+    }
+
+    public LiveData<List<WeeklyHourPolicyEntity>> getPolicies() {
+        return this.policies;
+    }
+
+    public void loadPolicies() {
+        if (!policies.isInitialized()) {
+            new Thread(() -> policies.postValue(repo.getAllWeeklyHourPolicies())).start();
+        }
+    }
+
+    public void savePolicies(@NonNull List<WeeklyHourPolicyEntity> policies,
+                             @NonNull OperationCompleteCallback callback) {
+        if (!policies.isEmpty()) {
+            new Thread(() -> {
+                if (repo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
+                    callback.onSuccess();
+                    // TODO: Re load policies? take care of this in the UI so we can show the progress spinner
+                } else {
+                    callback.onFailure("An error has occurred trying to save new alarm");
+                }
+            }).start();
+        }
     }
 }

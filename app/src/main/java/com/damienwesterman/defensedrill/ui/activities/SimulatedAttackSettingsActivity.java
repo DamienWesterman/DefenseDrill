@@ -27,6 +27,7 @@
 package com.damienwesterman.defensedrill.ui.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,7 +54,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
-import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.view_models.SimulatedAttackSettingsViewModel;
@@ -132,13 +133,10 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             addPolicyButton.setEnabled(isChecked); // TODO: refactor this out alongside the recyclerview
         });
 
-        // TODO: Load all from view model and set to adapter for the recyclerview, and pass in the following
-        if (simulatedAttacksEnabled) {
-            addPolicyButton.setEnabled(true);
-        } else {
-            // TODO Tell the adapter view to gray out/disable each card (by this I mean switch all adapter views to be turned off, graying them out but still leaving them editable, but disabling the radio button)
-        }
-        progressBar.setVisibility(View.GONE);
+        addPolicyButton.setEnabled(simulatedAttacksEnabled);
+        // TODO: recyclerView.setVisible(simulatedAttacks ? Visible : Gone);
+
+        setUpViewModel();
     }
 
     @Override
@@ -169,7 +167,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void addPolicy(View view) {
-        addPolicyPopup();
+        addPolicyPopup(null);
     }
 
     // =============================================================================================
@@ -177,17 +175,31 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // =============================================================================================
     /**
      * TODO doc comments
+     *
+     * @param policyBeingModified If modifying an existing policy, the name of that policy,
+     *                            otherwise leave null if creating a new policy(ies)
      */
-    public void addPolicyPopup() {
+    public void addPolicyPopup(@Nullable String policyBeingModified) {
         // TODO: FINISH implement popup
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_policy_details_popup, null);
 
-        // TODO: Get ALL of the things
+
+        int[] checkBoxIds = {
+                R.id.sundayCheckBox, R.id.mondayCheckBox, R.id.tuesdayCheckBox,
+                R.id.wednesdayCheckBox, R.id.thursdayCheckBox, R.id.fridayCheckBox,
+                R.id.saturdayCheckBox
+        };
+        EditText policyNameEditText = dialogView.findViewById(R.id.policyName);
+        List<CheckBox> checkBoxes = Arrays.stream(checkBoxIds)
+                .mapToObj(id -> (CheckBox) dialogView.findViewById(id))
+                .collect(Collectors.toList());
         Spinner beginningHourSpinner = dialogView.findViewById(R.id.beginningHourSpinner);
         Spinner endingHourSpinner = dialogView.findViewById(R.id.endingHourSpinner);
         Spinner frequencySpinner = dialogView.findViewById(R.id.frequencySpinner);
+        ProgressBar savingPolicyProgressBar = dialogView.findViewById(R.id.savingPolicyProgressBar);
+        TextView errorMessage = dialogView.findViewById(R.id.errorMessage);
 
         ArrayAdapter<CharSequence> hoursAdapter = ArrayAdapter.createFromResource(
                 this,
@@ -210,34 +222,67 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.notification_w_sound_icon);
         builder.setTitle("Add Notification");
         builder.setCancelable(true);
-        builder.setPositiveButton("Save", (dialogInterface, i) -> {
-            List<WeeklyHourPolicyEntity> policies = extractPolicies(dialogView, null, error -> Log.e("DxTag", error));
-            policies.forEach(policy -> {
-                Log.i("DxTag", policy.toString());
-                int dayOfWeek = policy.getWeeklyHour() / 24;
-                int hourOfDay = policy.getWeeklyHour() % 24;
-                Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
-            });
-        });
+        builder.setPositiveButton("Save", null);
         builder.setNegativeButton("Cancel", null);
         builder.setNeutralButton("Reset", null);
 
-        // TODO: setOnShowListener for save (report error conditions) and reset (do not close)
-        builder.create().show();
-    }
+        AlertDialog alert = builder.create();
+        alert.setOnShowListener(dialogInterface -> {
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                // "Save"
+                // TODO: Disable all input fields, remove error message, and display progress bar
 
-    // TODO: Doc comments
-    public void modifyPolicyPopup() {
+                List<WeeklyHourPolicyEntity> policies = extractPolicies(dialogView, policyBeingModified, error -> {
+                    errorMessage.setText(error);
+                    errorMessage.setVisibility(View.VISIBLE);
+                    // TODO: Set everything else visible and remove progress bar
+                });
+                if (!policies.isEmpty()) {
+                    // TODO: Finish
+                    policies.forEach(policy -> {
+                        Log.i("DxTag", policy.toString());
+                        int dayOfWeek = policy.getWeeklyHour() / 24;
+                        int hourOfDay = policy.getWeeklyHour() % 24;
+                        Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
+                    });
+
+                    // TODO: show a snackbar saying the save was successful if so
+                    alert.dismiss(); // TODO: move this into an operation complete callback in save
+                }
+            });
+
+            alert.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
+                // "Reset"
+                errorMessage.setVisibility(View.GONE);
+                policyNameEditText.setText(R.string.default_policy_name);
+                checkBoxes.forEach(checkBox -> checkBox.setChecked(false));
+                beginningHourSpinner.setSelection(0);
+                endingHourSpinner.setSelection(0);
+                frequencySpinner.setSelection(0);
+                // Do not dismiss
+            });
+        });
+
+        alert.show();
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+    private void setUpViewModel() {
+        viewModel.getPolicies().observe(this, weeklyHourPolicyEntities -> {
+            // TODO: fill the recycler view with adapters or whatever and set the information
+            progressBar.setVisibility(View.GONE);
+        });
+
+        viewModel.loadPolicies();
+    }
+
     // TODO: Doc comments (View should be of layout_policy_details_popup), explain why list
     // TODO: Does input validation. CurrPolicy is nullable for if you are modifying a policy
     @NonNull
     private List<WeeklyHourPolicyEntity> extractPolicies(@NonNull View view,
-                                                         @Nullable Integer policyIndexBeingModified,
+                                                         @Nullable String policyBeingModified,
                                                          @NonNull Consumer<String> errorConsumer) {
         final List<WeeklyHourPolicyEntity> ret = new ArrayList<>(7);
 
@@ -246,7 +291,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                 R.id.wednesdayCheckBox, R.id.thursdayCheckBox, R.id.fridayCheckBox,
                 R.id.saturdayCheckBox
         };
-
         EditText policyNameEditText = view.findViewById(R.id.policyName);
         List<CheckBox> checkBoxes = Arrays.stream(checkBoxIds)
                 .mapToObj(id -> (CheckBox) view.findViewById(id))
@@ -264,20 +308,20 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             return ret;
         }
 
-        // TODO: Verify the notification name is not already in use (Default to New Notification), also make sure if editing them it is not in use by another  - cap name to like 32 characters
+        // TODO: Verify the notification name is not already in use (Default to New Notification), also make sure if editing them it is not in use by another  - cap name to like 32 characters (unless policyName .isEqual() policyBeingModified)
         String policyName = policyNameEditText.getText().toString();
 
         final int frequency = frequencySpinner.getSelectedItemPosition();
 
-        // TODO: Verify That the time frames do not overlap with existing ones
+        // TODO: Verify That the time frames do not overlap with existing ones (unless they are of the same existing OLD policyName)
         // TODO: Verify time frame is at least as big as frequency
         // TODO: Verify we do not start at the SECOND midnight option
-        // TODO: Verify the times are linear (cannot do 5PM - 2 AM) and is more than 1 hour (can't be 5PM - 5PM)
+        // TODO: Verify the times are linear (cannot do 5PM - 2 AM, "Overnight alarms not currently supported, must create two separate alarms") and is more than 1 hour (can't be 5PM - 5PM, lump the error message in with the frequency requirement))
         int[] timesOfDay = { beginningHourSpinner.getSelectedItemPosition() };
 
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isChecked()) {
-                int finalI = i;
+                final int finalI = i;
                 Arrays.stream(timesOfDay).forEach(timeOfDay -> {
                     WeeklyHourPolicyEntity newPolicy = WeeklyHourPolicyEntity.builder()
                             .weeklyHour( (finalI * 24) + timeOfDay )
