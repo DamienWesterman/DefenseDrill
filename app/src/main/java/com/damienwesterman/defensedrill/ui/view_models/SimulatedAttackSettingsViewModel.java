@@ -27,6 +27,8 @@
 package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -48,6 +50,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
+    private static final String TAG = SimulatedAttackSettingsViewModel.class.getSimpleName();
+
     private final SimulatedAttackRepo repo;
     private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
 
@@ -74,13 +78,32 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                              @NonNull OperationCompleteCallback callback) {
         if (!policies.isEmpty()) {
             new Thread(() -> {
-                if (repo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
-                    callback.onSuccess();
-                    // TODO: Re load policies? take care of this in the UI so we can show the progress spinner
-                } else {
+                try {
+                    if (repo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
+                        callback.onSuccess(); // TODO: in the UI's callback here they should hide the recyclerView until it is loaded again
+
+                        // Re-load policies to update UI
+                        this.policies.postValue(repo.getAllWeeklyHourPolicies());
+                    } else {
+                        // This shouldn't really happen
+                        callback.onFailure("An error has occurred trying to save new alarm");
+                        Log.e(TAG, "repo.insertPolicies() failed");
+                    }
+                } catch (SQLiteConstraintException e) {
+                    // Not sure how this would happen either
                     callback.onFailure("An error has occurred trying to save new alarm");
+                    Log.e(TAG, "SQLite exception during repo.insertPolicies()", e);
                 }
             }).start();
         }
+    }
+
+    public void removePolicies(@NonNull List<WeeklyHourPolicyEntity> policies) {
+        new Thread(() -> {
+            repo.deletePolicies(policies.toArray(new WeeklyHourPolicyEntity[0]));
+
+            // Re-load policies to update UI
+            this.policies.postValue(repo.getAllWeeklyHourPolicies());
+        }).start();
     }
 }

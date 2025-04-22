@@ -62,4 +62,8 @@ public class SimulatedAttackRepo {
         int numInserts = this.weeklyHourPolicyDao.insertWeeklyHourPolicy(policies).length;
         return policies.length == numInserts;
     }
+
+    public synchronized void deletePolicies(@NonNull WeeklyHourPolicyEntity... policies) {
+        this.weeklyHourPolicyDao.deletePolicies(policies);
+    }
 }

@@ -56,6 +56,8 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
+import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.SimulatedAttackSettingsViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
 
@@ -230,24 +232,58 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         alert.setOnShowListener(dialogInterface -> {
             alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
                 // "Save"
-                // TODO: Disable all input fields, remove error message, and display progress bar
+                policyNameEditText.setEnabled(false);
+                checkBoxes.forEach(checkBox -> checkBox.setEnabled(false));
+                beginningHourSpinner.setEnabled(false);
+                endingHourSpinner.setEnabled(false);
+                frequencySpinner.setEnabled(false);
+                savingPolicyProgressBar.setVisibility(View.VISIBLE);
+                errorMessage.setVisibility(View.GONE);
 
                 List<WeeklyHourPolicyEntity> policies = extractPolicies(dialogView, policyBeingModified, error -> {
                     errorMessage.setText(error);
                     errorMessage.setVisibility(View.VISIBLE);
-                    // TODO: Set everything else visible and remove progress bar
+
+                    policyNameEditText.setEnabled(true);
+                    checkBoxes.forEach(checkBox -> checkBox.setEnabled(true));
+                    beginningHourSpinner.setEnabled(true);
+                    endingHourSpinner.setEnabled(true);
+                    frequencySpinner.setEnabled(true);
+                    savingPolicyProgressBar.setVisibility(View.GONE);
+                    // Do not dismiss
                 });
                 if (!policies.isEmpty()) {
-                    // TODO: Finish
-                    policies.forEach(policy -> {
-                        Log.i("DxTag", policy.toString());
-                        int dayOfWeek = policy.getWeeklyHour() / 24;
-                        int hourOfDay = policy.getWeeklyHour() % 24;
-                        Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
-                    });
+// TODO: REMOVE
+policies.forEach(policy -> {
+    Log.i("DxTag", policy.toString());
+    int dayOfWeek = policy.getWeeklyHour() / 24;
+    int hourOfDay = policy.getWeeklyHour() % 24;
+    Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
+});
 
-                    // TODO: show a snackbar saying the save was successful if so
-                    alert.dismiss(); // TODO: move this into an operation complete callback in save
+                    viewModel.savePolicies(policies, new OperationCompleteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // TODO: Hide the recyclerView
+                            alert.dismiss();
+                            UiUtils.displayDismissibleSnackbar(rootView,
+                                    "Policy saved successfully!");
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            errorMessage.setText(error);
+                            errorMessage.setVisibility(View.VISIBLE);
+
+                            policyNameEditText.setEnabled(true);
+                            checkBoxes.forEach(checkBox -> checkBox.setEnabled(true));
+                            beginningHourSpinner.setEnabled(true);
+                            endingHourSpinner.setEnabled(true);
+                            frequencySpinner.setEnabled(true);
+                            savingPolicyProgressBar.setVisibility(View.GONE);
+                            // Do not dismiss
+                        }
+                    });
                 }
             });
 
@@ -269,28 +305,43 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+private boolean clearedDB = false; // TODO REMOVE
+
     private void setUpViewModel() {
-        viewModel.getPolicies().observe(this, weeklyHourPolicyEntities -> {
-            // TODO: fill the recycler view with adapters or whatever and set the information
+        viewModel.getPolicies().observe(this, policies -> {
+            // TODO: fill the recycler view with adapters or whatever and set the information IF sharePrefs is enabled or whatever, or maybe just check radioButton
             progressBar.setVisibility(View.GONE);
+// TODO: REMOVE ME
+if (!clearedDB) {
+clearedDB = true;
+viewModel.removePolicies(policies);
+Log.i("DxTag", "Initial load, clearing DB");
+} else {// TODO: REMOVE
+Log.i("DxTag", "-----------POLICIES LOADED FROM DB-----------");
+policies.forEach(policy -> {
+    Log.i("DxTag", policy.toString());
+    int dayOfWeek = policy.getWeeklyHour() / 24;
+    int hourOfDay = policy.getWeeklyHour() % 24;
+    Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
+}); }
         });
 
         viewModel.loadPolicies();
     }
 
-    // TODO: Doc comments (View should be of layout_policy_details_popup), explain why list
+    // TODO: Doc comments (View should be of layout_policy_details_popup), explain why list return
     // TODO: Does input validation. CurrPolicy is nullable for if you are modifying a policy
     @NonNull
     private List<WeeklyHourPolicyEntity> extractPolicies(@NonNull View view,
                                                          @Nullable String policyBeingModified,
                                                          @NonNull Consumer<String> errorConsumer) {
-        final List<WeeklyHourPolicyEntity> ret = new ArrayList<>(7);
-
-        int[] checkBoxIds = {
+        final int[] checkBoxIds = {
                 R.id.sundayCheckBox, R.id.mondayCheckBox, R.id.tuesdayCheckBox,
                 R.id.wednesdayCheckBox, R.id.thursdayCheckBox, R.id.fridayCheckBox,
                 R.id.saturdayCheckBox
         };
+        final List<WeeklyHourPolicyEntity> ret = new ArrayList<>(checkBoxIds.length);
+
         EditText policyNameEditText = view.findViewById(R.id.policyName);
         List<CheckBox> checkBoxes = Arrays.stream(checkBoxIds)
                 .mapToObj(id -> (CheckBox) view.findViewById(id))
@@ -308,16 +359,45 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             return ret;
         }
 
-        // TODO: Verify the notification name is not already in use (Default to New Notification), also make sure if editing them it is not in use by another  - cap name to like 32 characters (unless policyName .isEqual() policyBeingModified)
         String policyName = policyNameEditText.getText().toString();
+        if (viewModel.getPolicies().isInitialized()
+                && null != viewModel.getPolicies().getValue()) {
+            if (viewModel.getPolicies().getValue().stream().anyMatch(policy -> {
+                boolean nameAlreadyInUse = policyName.equals(policy.getPolicyName());
 
-        final int frequency = frequencySpinner.getSelectedItemPosition();
+                if (null != policyBeingModified) {
+                    if (nameAlreadyInUse && policyName.equals(policyBeingModified)) {
+                        // The name is already in use because we are modifying it
+                        // TODO: Verify this works with modifying a policy
+                        nameAlreadyInUse = false;
+                    }
+                }
+
+                return nameAlreadyInUse;
+            })) {
+                errorConsumer.accept("Alarm Name already exists.");
+                return ret;
+            }
+        }
+
+        int frequencyPosition = frequencySpinner.getSelectedItemPosition();
+        final Constants.SimulatedAttackFrequency frequency =
+                Constants.SimulatedAttackFrequency.values()[frequencyPosition + 1];
+        int alertHours = endingHourSpinner.getSelectedItemPosition()
+                - beginningHourSpinner.getSelectedItemPosition();
+        if (alertHours < frequency.getMinHoursNeeded()) {
+            if (0 > alertHours) {
+                // User has selected an overnight time window, which is not currently supported
+                errorConsumer.accept("Overnight alarms not currently supported, must create two separate alarms.");
+            } else {
+                errorConsumer.accept("Time window must be at least " + frequency.getMinHoursNeeded()
+                        + " hour(s) for selected frequency.");
+            }
+            return ret;
+        }
 
         // TODO: Verify That the time frames do not overlap with existing ones (unless they are of the same existing OLD policyName)
-        // TODO: Verify time frame is at least as big as frequency
-        // TODO: Verify we do not start at the SECOND midnight option
-        // TODO: Verify the times are linear (cannot do 5PM - 2 AM, "Overnight alarms not currently supported, must create two separate alarms") and is more than 1 hour (can't be 5PM - 5PM, lump the error message in with the frequency requirement))
-        int[] timesOfDay = { beginningHourSpinner.getSelectedItemPosition() };
+        int[] timesOfDay = { beginningHourSpinner.getSelectedItemPosition() }; // TODO: properly implement
 
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isChecked()) {
@@ -326,7 +406,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     WeeklyHourPolicyEntity newPolicy = WeeklyHourPolicyEntity.builder()
                             .weeklyHour( (finalI * 24) + timeOfDay )
                             // + 1 because of the first option being NO_ATTACKS
-                            .frequency(Constants.SimulatedAttackFrequency.values()[frequency + 1])
+                            .frequency(frequency)
                             .active(true)
                             .policyName(policyName)
                             .build();

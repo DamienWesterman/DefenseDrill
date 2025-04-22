@@ -29,6 +29,9 @@ package com.damienwesterman.defensedrill.utils;
 import com.damienwesterman.defensedrill.BuildConfig;
 import com.damienwesterman.defensedrill.data.local.Drill;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 public class Constants {
     /**
      * No need to have instances of this class.
@@ -37,17 +40,22 @@ public class Constants {
 
     // TODO: doc comments
     // TODO: Assign values, maybe in minutes? Also min/max?
+    @Getter
+    @RequiredArgsConstructor
     public enum SimulatedAttackFrequency {
-        NO_ATTACKS,
-        ONCE_PER_15_MINUTES,
-        ONCE_PER_30_MINUTES,
-        ONCE_PER_1_HOUR,
-        ONCE_PER_90_MINUTES,
-        ONCE_PER_2_HOURS,
-        ONCE_PER_3_HOURS,
-        ONCE_PER_5_HOURS,
-        ONCE_PER_6_HOURS,
-        ONCE_PER_12_HOURS,
+        NO_ATTACKS(-1),
+        ONCE_PER_15_MINUTES(1),
+        ONCE_PER_30_MINUTES(1),
+        ONCE_PER_1_HOUR(1),
+        ONCE_PER_90_MINUTES(2),
+        ONCE_PER_2_HOURS(2),
+        ONCE_PER_3_HOURS(3),
+        ONCE_PER_4_HOURS(4),
+        ONCE_PER_6_HOURS(6),
+        ONCE_PER_12_HOURS(12);
+
+        // TODO: Doc comments
+        private final int minHoursNeeded;
     }
 
     public static final long USER_RANDOM_SELECTION = -1;

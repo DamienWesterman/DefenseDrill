@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -42,9 +43,12 @@ import java.util.Map;
     List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertWeeklyHourPolicy(WeeklyHourPolicyEntity... policies);
+    long[] insertWeeklyHourPolicy(@NonNull WeeklyHourPolicyEntity... policies);
 
     @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME + " ORDER BY policy_name, weekly_hour")
     @NonNull
     List<WeeklyHourPolicyEntity> getAllPoliciesOrderedByPolicyName();
+
+    @Delete
+    void deletePolicies(@NonNull WeeklyHourPolicyEntity... policies);
 }

@@ -135,7 +135,7 @@
         <item>Every 90 minutes (+/- 18 minutes)</item>
         <item>Every 2 hour (+/- 24 minutes)</item>
         <item>Every 3 hours (+/- 36 minutes)</item>
-        <item>Every 5 hours (+/- 1 hour)</item>
+        <item>Every 4 hours (+/- 48 minutes)</item>
         <item>Every 6 hours (+/- 72 minutes)</item>
         <item>Every 12 hours (+/- 2.5 hours)</item>
     </string-array>
