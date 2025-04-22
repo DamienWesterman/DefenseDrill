@@ -39,11 +39,14 @@ import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import lombok.Getter;
 
 /**
  * TODO: Doc comments
@@ -54,8 +57,10 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     private final SimulatedAttackRepo repo;
     private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
-    // TODO: Also make sure to have a mutable live data of a map of list of policies grouped by policy name for when needed (excluding blank)
+    // TODO: Also make sure to have a map of list of policies grouped by policy name for when needed (excluding blank)
     // TODO: Maybe use ^^ for checking when groups etc exist already, could be easier
+    @Getter
+    private final Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
 
     @Inject
     public SimulatedAttackSettingsViewModel(@NonNull Application application,
@@ -64,6 +69,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
         this.repo = repo;
         this.policies = new MutableLiveData<>();
+        this.policiesByName = new HashMap<>();
     }
 
     public LiveData<List<WeeklyHourPolicyEntity>> getPolicies() {
@@ -72,6 +78,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     public void loadPolicies() {
         if (!policies.isInitialized()) {
+            // TODO: also save into the map
             new Thread(() -> policies.postValue(repo.getAllWeeklyHourPolicies())).start();
         }
     }
@@ -108,6 +115,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                 callback.onSuccess();
 
                 // Re-load policies to update UI
+                // TODO: Also save into the map
                 policies.postValue(repo.getAllWeeklyHourPolicies());
             } else {
                 // This shouldn't really happen

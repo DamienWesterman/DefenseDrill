@@ -264,6 +264,7 @@ policies.forEach(policy -> {
 
                     // TODO: Check that this works properly with updating policies
                     // TODO: If this is a modify operation, then it needs to change, because if any hours of the week were REMOVED, it needs to be removed from the database too
+                    // TODO: Can use getPoliciesByNames() and check the list that way, rather than going through the bigger list
                     viewModel.savePolicies(policies, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
