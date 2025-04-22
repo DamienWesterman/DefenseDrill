@@ -44,11 +44,4 @@ import java.util.Map;
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insertWeeklyHourPolicy(@NonNull WeeklyHourPolicyEntity... policies);
-
-    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME + " ORDER BY policy_name, weekly_hour")
-    @NonNull
-    List<WeeklyHourPolicyEntity> getAllPoliciesOrderedByPolicyName();
-
-    @Delete
-    void deletePolicies(@NonNull WeeklyHourPolicyEntity... policies);
 }

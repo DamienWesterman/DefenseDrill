@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
@@ -261,13 +262,15 @@ policies.forEach(policy -> {
     Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
 });
 
+                    // TODO: Check that this works properly with updating policies
+                    // TODO: If this is a modify operation, then it needs to change, because if any hours of the week were REMOVED, it needs to be removed from the database too
                     viewModel.savePolicies(policies, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
                             // TODO: Hide the recyclerView
                             alert.dismiss();
                             UiUtils.displayDismissibleSnackbar(rootView,
-                                    "Policy saved successfully!");
+                                    "Alarm saved successfully!");
                         }
 
                         @Override
@@ -314,7 +317,17 @@ private boolean clearedDB = false; // TODO REMOVE
 // TODO: REMOVE ME
 if (!clearedDB) {
 clearedDB = true;
-viewModel.removePolicies(policies);
+viewModel.removePolicies(IntStream.range(0, (7 * 24)).boxed().collect(Collectors.toList()), new OperationCompleteCallback() {
+    @Override
+    public void onSuccess() {
+
+    }
+
+    @Override
+    public void onFailure(String error) {
+
+    }
+});
 Log.i("DxTag", "Initial load, clearing DB");
 } else {// TODO: REMOVE
 Log.i("DxTag", "-----------POLICIES LOADED FROM DB-----------");
@@ -356,13 +369,24 @@ policies.forEach(policy -> {
                 || null == endingHourSpinner
                 || null == frequencySpinner) {
             errorConsumer.accept("There was an issue saving the new alarm.");
-            return ret;
+            return List.of();
         }
 
         String policyName = policyNameEditText.getText().toString();
-        if (viewModel.getPolicies().isInitialized()
-                && null != viewModel.getPolicies().getValue()) {
-            if (viewModel.getPolicies().getValue().stream().anyMatch(policy -> {
+        if (policyName.isEmpty()) {
+            errorConsumer.accept("Alarm Name cannot be left blank.");
+            return List.of();
+        }
+        if (32 < policyName.length()) {
+            // 32 is just arbitrary, there are no database constraints
+            errorConsumer.accept("Alarm Name exceed 32 characters.");
+            return List.of();
+        }
+
+        // Check if policy name already exists
+        List<WeeklyHourPolicyEntity> existingPolicies = viewModel.getPolicies().getValue();
+        if (null != existingPolicies) {
+            if (existingPolicies.stream().anyMatch(policy -> {
                 boolean nameAlreadyInUse = policyName.equals(policy.getPolicyName());
 
                 if (null != policyBeingModified) {
@@ -376,12 +400,13 @@ policies.forEach(policy -> {
                 return nameAlreadyInUse;
             })) {
                 errorConsumer.accept("Alarm Name already exists.");
-                return ret;
+                return List.of();
             }
         }
 
         int frequencyPosition = frequencySpinner.getSelectedItemPosition();
-        final Constants.SimulatedAttackFrequency frequency =
+        // + 1 because of the first option being NO_ATTACKS
+        Constants.SimulatedAttackFrequency frequency =
                 Constants.SimulatedAttackFrequency.values()[frequencyPosition + 1];
         int alertHours = endingHourSpinner.getSelectedItemPosition()
                 - beginningHourSpinner.getSelectedItemPosition();
@@ -393,30 +418,53 @@ policies.forEach(policy -> {
                 errorConsumer.accept("Time window must be at least " + frequency.getMinHoursNeeded()
                         + " hour(s) for selected frequency.");
             }
-            return ret;
+            return List.of();
         }
 
-        // TODO: Verify That the time frames do not overlap with existing ones (unless they are of the same existing OLD policyName)
-        int[] timesOfDay = { beginningHourSpinner.getSelectedItemPosition() }; // TODO: properly implement
+        List<Integer> dailyHoursSelected = IntStream.range(
+                    beginningHourSpinner.getSelectedItemPosition(),
+                    endingHourSpinner.getSelectedItemPosition())
+                .boxed().collect(Collectors.toList());
 
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isChecked()) {
-                final int finalI = i;
-                Arrays.stream(timesOfDay).forEach(timeOfDay -> {
+                for (Integer hourOfDay : dailyHoursSelected) {
+                    int hourOfWeek = (i * 24) + hourOfDay;
+                    // TODO: Check that this works properly with updating policies
+                    if (null != existingPolicies) {
+                        boolean weeklyHourPolicyAlreadyExists = false;
+
+                        WeeklyHourPolicyEntity weeklyHourPolicy = existingPolicies.get(hourOfWeek);
+                        if (weeklyHourPolicy.isActive()) {
+                            weeklyHourPolicyAlreadyExists = true;
+
+                            if (null != policyBeingModified
+                                    && policyBeingModified.equals(weeklyHourPolicy.getPolicyName())) {
+                                // Yes this time overlaps because we are actively modifying it
+                                weeklyHourPolicyAlreadyExists = false;
+                            }
+                        }
+
+                        if (weeklyHourPolicyAlreadyExists) {
+                            errorConsumer.accept("Time frame overlaps with another alarm.");
+                            return List.of();
+                        }
+                    }
+
                     WeeklyHourPolicyEntity newPolicy = WeeklyHourPolicyEntity.builder()
-                            .weeklyHour( (finalI * 24) + timeOfDay )
-                            // + 1 because of the first option being NO_ATTACKS
+                            .weeklyHour(hourOfWeek)
                             .frequency(frequency)
                             .active(true)
                             .policyName(policyName)
                             .build();
                     ret.add(newPolicy);
-                });
+                }
             }
         }
 
         if (ret.isEmpty()) {
             errorConsumer.accept("Must select at least one day of the week.");
+            return List.of();
         }
 
         return ret;

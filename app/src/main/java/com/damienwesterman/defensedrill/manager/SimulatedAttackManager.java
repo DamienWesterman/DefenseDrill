@@ -68,6 +68,7 @@ public class SimulatedAttackManager {
                 - Then this can have two methods of retrieval, regular (range 0 - 167) and also grouped by alarm index
                 - The ViewModel for the UI can have the entire list saved and if a user adds/modifies a time slot that already belongs to another group, report that it is conflicting and cannot be saved
      */
+    // TODO: Make sure to document somewhere that there should always be exactly 168 entries in the database because that's how many hours are in the week. A "deleted" policy should be empty and have all defaults an inactive
     private static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
     private final AlarmManager alarmManager;

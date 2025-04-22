@@ -28,6 +28,9 @@ package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
 
+import com.damienwesterman.defensedrill.utils.Constants;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,12 +49,6 @@ public class SimulatedAttackRepo {
         return this.weeklyHourPolicyDao.getAllWeeklyHourPolicies();
     }
 
-    @NonNull
-    Map<String, List<WeeklyHourPolicyEntity>> getAllPoliciesGroupedByName() {
-        return this.weeklyHourPolicyDao.getAllPoliciesOrderedByPolicyName().stream()
-                .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
-    }
-
     /**
      * TODO: Doc comments
      * @param policies
@@ -63,7 +60,18 @@ public class SimulatedAttackRepo {
         return policies.length == numInserts;
     }
 
-    public synchronized void deletePolicies(@NonNull WeeklyHourPolicyEntity... policies) {
-        this.weeklyHourPolicyDao.deletePolicies(policies);
+    public synchronized boolean deletePolicies(@NonNull Integer... weeklyHours) {
+        WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[weeklyHours.length];
+        int i = 0;
+        for (int weeklyHour : weeklyHours) {
+            policies[i++] = WeeklyHourPolicyEntity.builder()
+                    .weeklyHour(weeklyHour)
+                    .frequency(Constants.SimulatedAttackFrequency.NO_ATTACKS)
+                    .active(false)
+                    .policyName("")
+                    .build();
+        }
+
+        return insertPolicies(policies);
     }
 }

@@ -54,6 +54,8 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     private final SimulatedAttackRepo repo;
     private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
+    // TODO: Also make sure to have a mutable live data of a map of list of policies grouped by policy name for when needed (excluding blank)
+    // TODO: Maybe use ^^ for checking when groups etc exist already, could be easier
 
     @Inject
     public SimulatedAttackSettingsViewModel(@NonNull Application application,
@@ -98,12 +100,25 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
         }
     }
 
-    public void removePolicies(@NonNull List<WeeklyHourPolicyEntity> policies) {
+    public void removePolicies(@NonNull List<Integer> weeklyHours,
+                               @NonNull OperationCompleteCallback callback) {
         new Thread(() -> {
-            repo.deletePolicies(policies.toArray(new WeeklyHourPolicyEntity[0]));
+            try {
+            if (repo.deletePolicies(weeklyHours.toArray(new Integer[0]))) {
+                callback.onSuccess();
 
-            // Re-load policies to update UI
-            this.policies.postValue(repo.getAllWeeklyHourPolicies());
+                // Re-load policies to update UI
+                policies.postValue(repo.getAllWeeklyHourPolicies());
+            } else {
+                // This shouldn't really happen
+                callback.onFailure("An error has occurred trying to save new alarm");
+                Log.e(TAG, "repo.insertPolicies() failed");
+            }
+            } catch (SQLiteConstraintException e) {
+                // Not sure how this would happen either
+                callback.onFailure("An error has occurred trying to save new alarm");
+                Log.e(TAG, "SQLite exception during repo.insertPolicies()", e);
+            }
         }).start();
     }
 }
