@@ -42,6 +42,7 @@ import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -57,10 +58,9 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     private final SimulatedAttackRepo repo;
     private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
-    // TODO: Also make sure to have a map of list of policies grouped by policy name for when needed (excluding blank)
     // TODO: Maybe use ^^ for checking when groups etc exist already, could be easier
     @Getter
-    private final Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
+    private Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
 
     @Inject
     public SimulatedAttackSettingsViewModel(@NonNull Application application,
@@ -78,8 +78,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     public void loadPolicies() {
         if (!policies.isInitialized()) {
-            // TODO: also save into the map
-            new Thread(() -> policies.postValue(repo.getAllWeeklyHourPolicies())).start();
+            new Thread(this::loadAllPoliciesFromDb).start();
         }
     }
 
@@ -92,7 +91,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                         callback.onSuccess(); // TODO: in the UI's callback here they should hide the recyclerView until it is loaded again
 
                         // Re-load policies to update UI
-                        this.policies.postValue(repo.getAllWeeklyHourPolicies());
+                        loadAllPoliciesFromDb();
                     } else {
                         // This shouldn't really happen
                         callback.onFailure("An error has occurred trying to save new alarm");
@@ -115,8 +114,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                 callback.onSuccess();
 
                 // Re-load policies to update UI
-                // TODO: Also save into the map
-                policies.postValue(repo.getAllWeeklyHourPolicies());
+                loadAllPoliciesFromDb();
             } else {
                 // This shouldn't really happen
                 callback.onFailure("An error has occurred trying to save new alarm");
@@ -128,5 +126,16 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                 Log.e(TAG, "SQLite exception during repo.insertPolicies()", e);
             }
         }).start();
+    }
+
+    /**
+     * TODO: Doc comments (posts the results)
+     */
+    private void loadAllPoliciesFromDb() {
+        List<WeeklyHourPolicyEntity> policyEntities = repo.getAllWeeklyHourPolicies();
+        this.policiesByName = policyEntities.stream()
+                .filter(policy -> !policy.getPolicyName().isEmpty())
+                .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
+        policies.postValue(policyEntities);
     }
 }

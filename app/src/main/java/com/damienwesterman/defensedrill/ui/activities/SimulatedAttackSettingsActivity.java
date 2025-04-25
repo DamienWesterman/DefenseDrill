@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -338,6 +339,9 @@ policies.forEach(policy -> {
     int hourOfDay = policy.getWeeklyHour() % 24;
     Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
 }); }
+// TODO: REMOVE
+Log.i("DxTag", "-----------POLICIES BY POLICY NAME-----------");
+Log.i("DxTag", viewModel.getPoliciesByName().toString());
         });
 
         viewModel.loadPolicies();
@@ -349,12 +353,12 @@ policies.forEach(policy -> {
     private List<WeeklyHourPolicyEntity> extractPolicies(@NonNull View view,
                                                          @Nullable String policyBeingModified,
                                                          @NonNull Consumer<String> errorConsumer) {
-        final int[] checkBoxIds = {
+        int[] checkBoxIds = {
                 R.id.sundayCheckBox, R.id.mondayCheckBox, R.id.tuesdayCheckBox,
                 R.id.wednesdayCheckBox, R.id.thursdayCheckBox, R.id.fridayCheckBox,
                 R.id.saturdayCheckBox
         };
-        final List<WeeklyHourPolicyEntity> ret = new ArrayList<>(checkBoxIds.length);
+        List<WeeklyHourPolicyEntity> ret = new ArrayList<>(checkBoxIds.length);
 
         EditText policyNameEditText = view.findViewById(R.id.policyName);
         List<CheckBox> checkBoxes = Arrays.stream(checkBoxIds)
@@ -373,6 +377,7 @@ policies.forEach(policy -> {
             return List.of();
         }
 
+        // Check Policy Name Criteria
         String policyName = policyNameEditText.getText().toString();
         if (policyName.isEmpty()) {
             errorConsumer.accept("Alarm Name cannot be left blank.");
@@ -385,26 +390,23 @@ policies.forEach(policy -> {
         }
 
         // Check if policy name already exists
-        List<WeeklyHourPolicyEntity> existingPolicies = viewModel.getPolicies().getValue();
-        if (null != existingPolicies) {
-            if (existingPolicies.stream().anyMatch(policy -> {
-                boolean nameAlreadyInUse = policyName.equals(policy.getPolicyName());
+        Set<String> existingPolicyNames = viewModel.getPoliciesByName().keySet();
+        boolean nameAlreadyInUse = existingPolicyNames.contains(policyName);
 
-                if (null != policyBeingModified) {
-                    if (nameAlreadyInUse && policyName.equals(policyBeingModified)) {
-                        // The name is already in use because we are modifying it
-                        // TODO: Verify this works with modifying a policy
-                        nameAlreadyInUse = false;
-                    }
-                }
-
-                return nameAlreadyInUse;
-            })) {
-                errorConsumer.accept("Alarm Name already exists.");
-                return List.of();
+        if (null != policyBeingModified) {
+            if (nameAlreadyInUse && policyName.equals(policyBeingModified)) {
+                // The name is already in use because we are modifying it
+                // TODO: Verify this works with modifying a policy
+                nameAlreadyInUse = false;
             }
         }
 
+        if (nameAlreadyInUse) {
+            errorConsumer.accept("Alarm Name already exists.");
+            return List.of();
+        }
+
+        // Check Notification Frequency Criteria
         int frequencyPosition = frequencySpinner.getSelectedItemPosition();
         // + 1 because of the first option being NO_ATTACKS
         Constants.SimulatedAttackFrequency frequency =
@@ -422,11 +424,12 @@ policies.forEach(policy -> {
             return List.of();
         }
 
+        // Check Weekly Hour Criteria
+        List<WeeklyHourPolicyEntity> existingPolicies = viewModel.getPolicies().getValue();
         List<Integer> dailyHoursSelected = IntStream.range(
                     beginningHourSpinner.getSelectedItemPosition(),
                     endingHourSpinner.getSelectedItemPosition())
                 .boxed().collect(Collectors.toList());
-
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isChecked()) {
                 for (Integer hourOfDay : dailyHoursSelected) {
@@ -452,6 +455,7 @@ policies.forEach(policy -> {
                         }
                     }
 
+                    // All checks have passed, add it to the list of new policies
                     WeeklyHourPolicyEntity newPolicy = WeeklyHourPolicyEntity.builder()
                             .weeklyHour(hourOfWeek)
                             .frequency(frequency)

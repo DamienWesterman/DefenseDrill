@@ -60,6 +60,11 @@ public class SimulatedAttackRepo {
         return policies.length == numInserts;
     }
 
+    /**
+     * TODO: Doc comments (also inline comments about "deleting")
+     * @param weeklyHours
+     * @return
+     */
     public synchronized boolean deletePolicies(@NonNull Integer... weeklyHours) {
         WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[weeklyHours.length];
         int i = 0;
