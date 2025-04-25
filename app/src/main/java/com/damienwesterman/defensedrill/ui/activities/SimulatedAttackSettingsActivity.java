@@ -79,6 +79,12 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
+    // TODO: Start by making the views (viewholder and adapter) for the recycler view
+    // TODO: Fill the recycler view
+    // TODO: Find a way to make sure the radio switch works and turns the policy to inactive
+    // TODO: Add a way (and user instructions) to delete policies
+    // TODO: Add a handler for modifying a policy
+    // TODO: Double check that modifying TODOs work properly
     // TODO: If every single slot is filled, don't show the add more button
     /*
         TODO:
@@ -184,7 +190,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
      *                            otherwise leave null if creating a new policy(ies)
      */
     public void addPolicyPopup(@Nullable String policyBeingModified) {
-        // TODO: FINISH implement popup
+        // TODO: FINISH implement popup for modify
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_policy_details_popup, null);
@@ -439,7 +445,7 @@ Log.i("DxTag", viewModel.getPoliciesByName().toString());
                         boolean weeklyHourPolicyAlreadyExists = false;
 
                         WeeklyHourPolicyEntity weeklyHourPolicy = existingPolicies.get(hourOfWeek);
-                        if (weeklyHourPolicy.isActive()) {
+                        if (!weeklyHourPolicy.getPolicyName().isBlank()) {
                             weeklyHourPolicyAlreadyExists = true;
 
                             if (null != policyBeingModified

@@ -58,7 +58,6 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     private final SimulatedAttackRepo repo;
     private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
-    // TODO: Maybe use ^^ for checking when groups etc exist already, could be easier
     @Getter
     private Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
 
