@@ -57,7 +57,7 @@ Log.i("DxTag", "Received intent: " + action); // TODO: REMOVE
             case Intent.ACTION_BOOT_COMPLETED:
                 // Fallthrough intentional
             case Constants.INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER:
-                simulatedAttack.scheduleSimulatedAttack();
+//                simulatedAttack.scheduleSimulatedAttack(); // TODO: ADD BACK IN
                 break;
 
             case Constants.INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER:
