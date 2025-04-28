@@ -285,7 +285,10 @@ public class DownloadDatabaseUseCase {
                         saveCategoriesToDatabase(response.body(), true);
                         break;
                     case HttpsURLConnection.HTTP_NO_CONTENT:
-                        // Not an error, but nothing more to do here
+                        // Not an error, but nothing more to do here, just save existing categories
+                        categoryMap = drillRepo.getAllCategories().stream()
+                                .filter(category -> null != category.getServerId())
+                                .collect(Collectors.toMap(CategoryEntity::getServerId, Function.identity()));
                         break;
                     default:
                         // Failure
@@ -311,7 +314,10 @@ public class DownloadDatabaseUseCase {
                             saveSubCategoriesToDatabase(response.body(), true);
                             break;
                         case HttpsURLConnection.HTTP_NO_CONTENT:
-                            // Not an error, but nothing more to do here
+                            // Not an error, but nothing more to do here, just save existing subCategories
+                            subCategoryMap = drillRepo.getAllSubCategories().stream()
+                                    .filter(subCategory -> null != subCategory.getServerId())
+                                    .collect(Collectors.toMap(SubCategoryEntity::getServerId, Function.identity()));
                             break;
                         default:
                             // Failure
