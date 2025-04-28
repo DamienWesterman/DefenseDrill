@@ -26,29 +26,60 @@
 
 package com.damienwesterman.defensedrill.ui.adapters;
 
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.view_holders.PolicyViewHolder;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+
+import lombok.RequiredArgsConstructor;
+
 // TODO: Doc comments
+@RequiredArgsConstructor
 public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
+    @NonNull
+    private final Map<String, WeeklyHourPolicyEntity> policiesByName;
+    @NonNull
+    private final Consumer<String> onClickListener;
+    @Nonnull
+    private final Consumer<String> onLongClickListener;
+    @NonNull
+    private final BiConsumer<String, Boolean> onCheckedListener;
+
     // TODO: Implement
     @NonNull
     @Override
     public PolicyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.layout_policy_details_item, parent, false
+        );
+        return new PolicyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PolicyViewHolder holder, int position) {
-
+        // TODO: Properly implement
+        holder.setCardDetails(List.of());
+        holder.setOnClickListener(onClickListener, "HELLO");
+        holder.setOnLongClickListener(onLongClickListener, "HELLO");
+        holder.setCheckedListener(onCheckedListener, "HELLO");
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        // TODO: properly implement
+        return 5;
     }
 }

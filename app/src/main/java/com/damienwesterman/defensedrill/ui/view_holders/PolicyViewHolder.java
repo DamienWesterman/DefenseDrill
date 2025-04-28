@@ -31,13 +31,58 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
+import com.damienwesterman.defensedrill.ui.utils.PolicyDetailsCard;
+
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+import lombok.Getter;
+
 // TODO: Doc comments
+@Getter
 public class PolicyViewHolder extends RecyclerView.ViewHolder {
-    // TODO: Actually, do I need to do this? I think I can just do policy_item because I did the card to be generic
-    // TODO: Create layout_policy_card.xml (or something)
-    // TODO: Create layout_policy_item.xml
     // TODO: Implement
-    public PolicyViewHolder(@NonNull View itemView) {
-        super(itemView);
+    // TODO: day of week conversion: int dayOfWeek = policy.getWeeklyHour() / 24;
+    private final PolicyDetailsCard card;
+
+    public PolicyViewHolder(@NonNull View view) {
+        super(view);
+
+        card = view.findViewById(R.id.cardViewHolder);
+    }
+
+    // TODO: Doc comments
+    public void setCardDetails(@NonNull List<WeeklyHourPolicyEntity> policies) {
+        // TODO: Properly implement
+        card.setChecked(true);
+        card.setPolicyName("TEST POLICY NAME");
+        card.setActiveDaysOfWeek(Set.of(1, 3, 5));
+        card.setTimeWindow("12:00 AM - 1:00 AM");
+        card.setFrequency("Every 15 minutes");
+    }
+
+    // TODO: Doc comments, consumer variables
+    public void setOnClickListener(@NonNull Consumer<String> listener, String policyName) {
+        card.setOnClickListener(v -> listener.accept(policyName));
+    }
+
+    // TODO: Doc comments, consumer variables
+    public void setOnLongClickListener(@NonNull Consumer<String> listener, String policyName) {
+        card.setOnLongClickListener(v -> {
+            listener.accept(policyName);
+            return true;
+        });
+    }
+
+    // TODO: Doc comments, consumer variables
+    public void setCheckedListener(BiConsumer<String, Boolean> listener, String policyName) {
+        card.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            listener.accept(policyName, isChecked);
+            card.setEnabled(isChecked);
+        });
     }
 }

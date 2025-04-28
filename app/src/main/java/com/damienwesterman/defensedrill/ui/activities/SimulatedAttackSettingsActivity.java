@@ -51,11 +51,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
+import com.damienwesterman.defensedrill.ui.adapters.PolicyAdapter;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.SimulatedAttackSettingsViewModel;
@@ -64,6 +67,7 @@ import com.damienwesterman.defensedrill.utils.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -79,7 +83,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
-    // TODO: Start by making the views (viewholder and adapter) for the recycler view
     // TODO: Fill the recycler view
     // TODO: Find a way to make sure the radio switch works and turns the policy to inactive
     // TODO: Add a way (and user instructions) to delete policies
@@ -100,9 +103,11 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     private SimulatedAttackSettingsViewModel viewModel;
 
     private LinearLayout rootView;
-    SwitchCompat enabledSwitch;
-    ProgressBar progressBar;
-    Button addPolicyButton;
+    private SwitchCompat enabledSwitch;
+    private ProgressBar progressBar;
+    private Button addPolicyButton;
+    private TextView modifyInstructions;
+    private RecyclerView existingPoliciesRecyclerView;
 
     // =============================================================================================
     // Service Creation Methods
@@ -133,6 +138,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         enabledSwitch = findViewById(R.id.enabledSwitch);
         progressBar = findViewById(R.id.progressBar);
         addPolicyButton = findViewById(R.id.addPolicyButton);
+        modifyInstructions = findViewById(R.id.modifyInstructions);
+        existingPoliciesRecyclerView = findViewById(R.id.existingPoliciesRecyclerView);
 
         boolean simulatedAttacksEnabled = sharedPrefs.areSimulatedAttacksEnabled();
         enabledSwitch.setChecked(simulatedAttacksEnabled);
@@ -141,10 +148,20 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             // TODO If switching from not checked to checked and the database is empty, then it means it's the first time so fill the database from 0 - 167 or whatever with blank ones
             // TODO: when switching, also enable/disable below the div (by this I mean switch all adapter views to be turned off, graying them out but still leaving them editable, but disabling the radio button)
             addPolicyButton.setEnabled(isChecked); // TODO: refactor this out alongside the recyclerview
+            existingPoliciesRecyclerView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            modifyInstructions.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
 
         addPolicyButton.setEnabled(simulatedAttacksEnabled);
         // TODO: recyclerView.setVisible(simulatedAttacks ? Visible : Gone);
+
+        // TODO: Set up properly in setUpViewModel probably
+        existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(Map.of(),
+                // TODO: Set up properly
+                policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON CLICK: " + policyName),
+                policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON LONG CLICK: " + policyName),
+                (policyName, isChecked) -> UiUtils.displayDismissibleSnackbar(rootView, "ON CHECK CHANGED: " + policyName + " | CHECKED: " + isChecked)));
 
         setUpViewModel();
     }

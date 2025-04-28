@@ -101,6 +101,14 @@
     <string name="time_window">Time Window:</string>
     <string name="frequency">Frequency:</string>
     <string name="hyphen">-</string>
+    <string name="initial_sunday">S</string>
+    <string name="initial_monday">M</string>
+    <string name="initial_tuesday">T</string>
+    <string name="initial_wednesday">W</string>
+    <string name="initial_thursday">T</string>
+    <string name="initial_friday">F</string>
+    <string name="initial_saturday">S</string>
+    <string name="click_to_modify_hold_to_delete">(click to modify, hold to delete)</string>
     <string-array name="daily_hours">
         <item>12:00 AM</item>
         <item>1:00 AM</item>
