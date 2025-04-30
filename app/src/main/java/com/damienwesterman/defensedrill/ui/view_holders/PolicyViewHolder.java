@@ -26,7 +26,6 @@
 
 package com.damienwesterman.defensedrill.ui.view_holders;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -38,17 +37,18 @@ import com.damienwesterman.defensedrill.ui.utils.PolicyDetailsCard;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-// TODO: Doc comments
+/**
+ * Custom ViewHolder for use in a RecyclerView. Uses the {@link PolicyDetailsCard} as its view for
+ * each element. Allows setting of onClickListener, onLongClickListener, and onCheckedListener.
+ */
 @Getter
 public class PolicyViewHolder extends RecyclerView.ViewHolder {
-    // TODO: Implement
     private final PolicyDetailsCard card;
 
     public PolicyViewHolder(@NonNull View view) {
@@ -57,7 +57,12 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
         card = view.findViewById(R.id.cardViewHolder);
     }
 
-    // TODO: Doc comments
+    /**
+     * Fill the details of the card with information from the list of policies. The policies should
+     * all be part of the same policy, denoted by the same policy name.
+     *
+     * @param policies List of WeeklyHourPolicyEntity objects that belong to the same policy name.
+     */
     public void setCardDetails(@NonNull List<WeeklyHourPolicyEntity> policies) {
         if (policies.isEmpty()) {
             throw new RuntimeException("setCardDetails() policies are empty!");
@@ -98,12 +103,24 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
                 .collect(Collectors.toSet()));
     }
 
-    // TODO: Doc comments, consumer variables
+    /**
+     * Set the onClickListener for the card.
+     *
+     * @param listener Consumer that acts as the onClickListener. Accepts the policyName of the
+     *                 policy that was clicked.
+     * @param policyName Name of the policy being clicked.
+     */
     public void setOnClickListener(@NonNull Consumer<String> listener, String policyName) {
         card.setOnClickListener(v -> listener.accept(policyName));
     }
 
-    // TODO: Doc comments, consumer variables
+    /**
+     * Set the onLongClickListener for the card.
+     *
+     * @param listener Consumer that acts as the onLongClickListener. Accepts the policyName of the
+     *                 policy that was clicked.
+     * @param policyName Name of the policy being clicked.
+     */
     public void setOnLongClickListener(@NonNull Consumer<String> listener, String policyName) {
         card.setOnLongClickListener(v -> {
             listener.accept(policyName);
@@ -111,7 +128,13 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    // TODO: Doc comments, consumer variables
+    /**
+     * Set the onCheckedListener for when the radio button in the card denoting activeness changes.
+     *
+     * @param listener BiConsumer that acts as the onCheckedChangeListener. Accepts the policyName
+     *                 of the policy that was clicked as well as a boolean if it is checked.
+     * @param policyName Name of the policy being clicked.
+     */
     public void setCheckedListener(BiConsumer<String, Boolean> listener, String policyName) {
         card.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             listener.accept(policyName, isChecked);

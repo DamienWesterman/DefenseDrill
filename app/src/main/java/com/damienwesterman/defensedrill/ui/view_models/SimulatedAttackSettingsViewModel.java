@@ -50,7 +50,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import lombok.Getter;
 
 /**
- * TODO: Doc comments
+ * View model for {@link WeeklyHourPolicyEntity} objects, allowing for modification in the database.
  */
 @HiltViewModel
 public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
@@ -81,16 +81,25 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
         }
     }
 
+    public void populateDefaultPolicies() {
+        new Thread(() -> {
+            repo.populateDefaultPolicies();
+            loadAllPoliciesFromDb();
+        }).start();
+    }
+
     public void savePolicies(@NonNull List<WeeklyHourPolicyEntity> policies,
+                             boolean reloadUi,
                              @NonNull OperationCompleteCallback callback) {
         if (!policies.isEmpty()) {
             new Thread(() -> {
                 try {
                     if (repo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
-                        callback.onSuccess(); // TODO: in the UI's callback here they should hide the recyclerView until it is loaded again
+                        callback.onSuccess();
 
-                        // Re-load policies to update UI
-                        loadAllPoliciesFromDb();
+                        if (reloadUi) {
+                            loadAllPoliciesFromDb();
+                        }
                     } else {
                         // This shouldn't really happen
                         callback.onFailure("An error has occurred trying to save alarm");
@@ -128,7 +137,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
     }
 
     /**
-     * TODO: Doc comments (posts the results)
+     * Loads all policies from the database and posts the results so the UI callback is called.
      */
     private void loadAllPoliciesFromDb() {
         List<WeeklyHourPolicyEntity> policyEntities = repo.getAllWeeklyHourPolicies();

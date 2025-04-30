@@ -46,7 +46,12 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
-// TODO: Doc comments
+/**
+ * RecyclerView Adapter class for use with {@link WeeklyHourPolicyEntity} objects.
+ * <br><br>
+ * Each item represents a policy, which is really a list of WeeklyPolicyEntity objects that share a
+ * policy name and act together to span multiple days/hours.
+ */
 public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
     private final Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
     /** This will be used as the list of items, as the policies are grouped by policy name */

@@ -35,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -83,19 +84,9 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
-    // TODO: Fill the recycler view
-    // TODO: Find a way to make sure the radio switch works and turns the policy to inactive
-    // TODO: Add a way (and user instructions) to delete policies
     // TODO: Add a handler for modifying a policy
     // TODO: Double check that modifying TODOs work properly
     // TODO: If every single slot is filled, don't show the add more button
-    /*
-        TODO:
-        Requirements:
-            - User can select 1 alerts per x minutes/hours (x options: 15 min, 30 min, 1 hr, 1.5hr, 2 hr, 3 hr, 5 hr, 6 hr, 12 hr)
-            - Make sure that the time frame selected is at least x min/hr (can't have a 2 hr time frame from 1pm-2pm)
-            - Each time frame is like +/- a certain amount of time (maybe like, 20%), so the option to the user would look like "1 alert per 30 minutes (+/- 6 minutes)
-     */
     @Inject
     SimulatedAttackManager simulatedAttackManager;
     @Inject
@@ -103,7 +94,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     private SimulatedAttackSettingsViewModel viewModel;
 
     private LinearLayout rootView;
-    private SwitchCompat enabledSwitch;
     private ProgressBar progressBar;
     private Button addPolicyButton;
     private TextView modifyInstructions;
@@ -133,9 +123,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(SimulatedAttackSettingsViewModel.class);
 
-        // TODO: Bring this into a helper method and get EVERYTHING with an ID
         rootView = findViewById(R.id.activitySimulatedAttackSettings);
-        enabledSwitch = findViewById(R.id.enabledSwitch);
+        SwitchCompat enabledSwitch = findViewById(R.id.enabledSwitch);
         progressBar = findViewById(R.id.progressBar);
         addPolicyButton = findViewById(R.id.addPolicyButton);
         modifyInstructions = findViewById(R.id.modifyInstructions);
@@ -145,16 +134,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         enabledSwitch.setChecked(simulatedAttacksEnabled);
         enabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
-            // TODO If switching from not checked to checked and the database is empty, then it means it's the first time so fill the database from 0 - 167 or whatever with blank ones
-            // TODO: when switching, also enable/disable below the div (by this I mean switch all adapter views to be turned off, graying them out but still leaving them editable, but disabling the radio button)
-            addPolicyButton.setEnabled(isChecked); // TODO: refactor this out alongside the recyclerview
-            existingPoliciesRecyclerView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            modifyInstructions.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            showPolicies(isChecked);
         });
-
-        addPolicyButton.setEnabled(simulatedAttacksEnabled);
-        existingPoliciesRecyclerView.setVisibility(simulatedAttacksEnabled ?
-                View.VISIBLE : View.GONE);
 
         setUpViewModel();
     }
@@ -187,19 +168,51 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void addPolicy(View view) {
-        addPolicyPopup(null);
+        policyDetailsPopup(null);
     }
 
     // =============================================================================================
     // Popup / AlertDialog Methods
     // =============================================================================================
+    public void deletePolicyPopup(@NonNull String policyName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure you want to delete:");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setCancelable(true);
+        builder.setMessage(policyName);
+        builder.setNegativeButton("Cancel", null);
+        builder.setPositiveButton("Delete", (dialog, position) -> {
+            setLoading(true);
+            List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
+            if (null != policies) {
+                viewModel.removePolicies(
+                        policies.stream()
+                                .map(WeeklyHourPolicyEntity::getWeeklyHour)
+                                .collect(Collectors.toList()),
+                        new OperationCompleteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                UiUtils.displayDismissibleSnackbar(rootView,
+                                        policyName + " has been deleted!");
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                UiUtils.displayDismissibleSnackbar(rootView, error);
+                            }
+                        });
+            }
+        });
+        builder.create().show();
+    }
+
     /**
      * TODO doc comments
      *
      * @param policyBeingModified If modifying an existing policy, the name of that policy,
      *                            otherwise leave null if creating a new policy(ies)
      */
-    public void addPolicyPopup(@Nullable String policyBeingModified) {
+    public void policyDetailsPopup(@Nullable String policyBeingModified) {
         // TODO: FINISH implement popup for modify
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -271,21 +284,13 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     // Do not dismiss
                 });
                 if (!policies.isEmpty()) {
-// TODO: REMOVE
-policies.forEach(policy -> {
-    Log.i("DxTag", policy.toString());
-    int dayOfWeek = policy.getWeeklyHour() / 24;
-    int hourOfDay = policy.getWeeklyHour() % 24;
-    Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
-});
-
                     // TODO: Check that this works properly with updating policies
                     // TODO: If this is a modify operation, then it needs to change, because if any hours of the week were REMOVED, it needs to be removed from the database too
                     // TODO: Can use getPoliciesByNames() and check the list that way, rather than going through the bigger list
-                    viewModel.savePolicies(policies, new OperationCompleteCallback() {
+                    viewModel.savePolicies(policies, true, new OperationCompleteCallback() {
                         @Override
                         public void onSuccess() {
-                            // TODO: Hide the recyclerView
+                            runOnUiThread(() -> setLoading(true));
                             alert.dismiss();
                             UiUtils.displayDismissibleSnackbar(rootView,
                                     "Alarm saved successfully!");
@@ -327,10 +332,44 @@ policies.forEach(policy -> {
     // Private Helper Methods
     // =============================================================================================
     // TODO: Doc comments
+    private void setLoading(boolean isLoading) {
+        if (!sharedPrefs.areSimulatedAttacksEnabled()) {
+            showPolicies(false);
+        } else if (isLoading) {
+            progressBar.setVisibility(View.VISIBLE);
+            existingPoliciesRecyclerView.setVisibility(View.GONE);
+            addPolicyButton.setEnabled(false);
+            modifyInstructions.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            existingPoliciesRecyclerView.setVisibility(View.VISIBLE);
+            addPolicyButton.setEnabled(true);
+            modifyInstructions.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showPolicies(boolean arePoliciesEnabled) {
+        if (arePoliciesEnabled) {
+            existingPoliciesRecyclerView.setVisibility(View.VISIBLE);
+            addPolicyButton.setEnabled(true);
+            modifyInstructions.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            existingPoliciesRecyclerView.setVisibility(View.GONE);
+            addPolicyButton.setEnabled(false);
+            modifyInstructions.setVisibility(View.GONE);
+        }
+    }
+
+    // TODO: Doc comments
     private void setUpViewModel() {
         viewModel.getPolicies().observe(this, policies -> {
-            progressBar.setVisibility(View.GONE); // TODO: check this or something and only GONE once the recycler view is done
-            setUpRecyclerView();
+            if (policies.isEmpty()) {
+                // Set up the database with defaults
+                viewModel.populateDefaultPolicies();
+            } else {
+                setUpRecyclerView();
+            }
         });
 
         viewModel.loadPolicies();
@@ -338,39 +377,29 @@ policies.forEach(policy -> {
 
     public void setUpRecyclerView() {
         // TODO: Finish implementing with global events listener or whatever
+        setLoading(true);
+        existingPoliciesRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Once all the items are rendered: remove this listener, hide progress bar, show view
+                existingPoliciesRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                setLoading(false);
+            }
+        });
+
         existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Map<String, List<WeeklyHourPolicyEntity>> policiesByName = viewModel.getPoliciesByName();
         existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(policiesByName,
                 // TODO: Set up properly
                 policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON CLICK: " + policyName),
-                policyName -> {
-                    // Long Click Listener -> Delete Policy
-                    // TODO: Move this into a popup with a confirmation!!
-                    List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
-                    if (null != policies) {
-                        viewModel.removePolicies(policies.stream()
-                                .map(WeeklyHourPolicyEntity::getWeeklyHour)
-                                .collect(Collectors.toList()),
-                            new OperationCompleteCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    UiUtils.displayDismissibleSnackbar(rootView,
-                                            policyName + " has been deleted!");
-                                }
-
-                                @Override
-                                public void onFailure(String error) {
-                                    UiUtils.displayDismissibleSnackbar(rootView, error);
-                                }
-                            });
-                    }
-                },
+                // Long Click Listener -> Delete Policy
+                this::deletePolicyPopup,
                 (policyName, isChecked) -> {
                     // Radio button clicked, change activeness
                     List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
                     if (null != policies) {
                         policies.forEach(policy -> policy.setActive(isChecked));
-                        viewModel.savePolicies(policies, new OperationCompleteCallback() {
+                        viewModel.savePolicies(policies, false, new OperationCompleteCallback() {
                             @Override
                             public void onSuccess() {
                                 // Do nothing

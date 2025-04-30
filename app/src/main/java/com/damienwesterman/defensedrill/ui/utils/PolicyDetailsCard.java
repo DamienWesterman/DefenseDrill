@@ -46,7 +46,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * TODO: Doc comments
+ * Custom implementation of {@link CardView} to display all information relevant to a Simulated
+ * Attack alarm policy.
  */
 public class PolicyDetailsCard extends CardView {
     private CardView policyDetailsCard;
@@ -100,7 +101,13 @@ public class PolicyDetailsCard extends CardView {
         this.policyName.setText(policyName);
     }
 
-    // TODO: Doc comments (0 - 6 day of week)
+    /**
+     * Set which days of the week are active. Any day not provided in the parameter will be
+     * displayed as inactive.
+     *
+     * @param daysOfWeekActiveness Set containing Integers of which days of the week are active.
+     *                             Each entry should be 0 - 6, where 0 is Sunday and 6 is Saturday.
+     */
     public void setActiveDaysOfWeek(@Nullable Set<Integer> daysOfWeekActiveness) {
         // Set all to the default gray first
         this.daysOfWeekActive.forEach(dayOfWeek ->

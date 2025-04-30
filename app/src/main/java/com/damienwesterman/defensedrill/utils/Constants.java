@@ -38,8 +38,9 @@ public class Constants {
      */
     private Constants() { }
 
-    // TODO: doc comments
-    // TODO: Assign values, maybe in minutes? Also min/max?
+    /**
+     * Enum for the frequency of the simulated attack notifications.
+     */
     @Getter
     @RequiredArgsConstructor
     public enum SimulatedAttackFrequency {
@@ -54,7 +55,9 @@ public class Constants {
         ONCE_PER_6_HOURS(6),
         ONCE_PER_12_HOURS(12);
 
-        // TODO: Doc comments
+        /**
+         * Minimum number of hours needed for the selected frequency.
+         */
         private final int minHoursNeeded;
     }
 

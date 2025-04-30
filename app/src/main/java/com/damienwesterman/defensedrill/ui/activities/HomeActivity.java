@@ -55,7 +55,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
-private static boolean attackManager = true; // TODO: REMOVE ME
     // TODO: On first startup, go through help screen. THEN prompt the user for notifications:
         // https://developer.android.com/develop/ui/views/notifications/notification-permission#best-practices
         // https://developer.android.com/training/permissions/requesting#request-permission
@@ -130,13 +129,6 @@ private static boolean attackManager = true; // TODO: REMOVE ME
             }
         } else if (R.id.feedbackCard == cardId) {
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
-// TODO: REMOVE ME
-if (attackManager) {
-SimulatedAttackManager.start(this);
-} else {
-SimulatedAttackManager.stop(this);
-}
-attackManager = !attackManager;
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

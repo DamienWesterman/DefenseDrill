@@ -41,7 +41,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * TODO: doc comments (entity represents a single weekly hour's simulated attack policy)
+ * Database entity that represents the policy for a single hour of the week's simulated attack
+ * notification policy.
  */
 @Entity(tableName = WeeklyHourPolicyEntity.TABLE_NAME)
 @AllArgsConstructor
@@ -69,6 +70,4 @@ public class WeeklyHourPolicyEntity {
      */
     @ColumnInfo(name = "policy_name")
     private String policyName;
-
-    // TODO: public methods to get/set using day of the week or something?
 }

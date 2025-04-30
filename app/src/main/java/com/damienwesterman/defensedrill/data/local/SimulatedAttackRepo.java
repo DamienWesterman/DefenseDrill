@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
 /**
- * TODO: DOC COMMENTS
+ * Repository class to interact with the {@link WeeklyHourPolicyEntity} database.
  */
 @RequiredArgsConstructor
 public class SimulatedAttackRepo {
@@ -50,9 +50,10 @@ public class SimulatedAttackRepo {
     }
 
     /**
-     * TODO: Doc comments
-     * @param policies
-     * @return
+     * Create or update policies by their weekly hour.
+     *
+     * @param policies WeeklyHourPolicyEntity objects to create or update.
+     * @return boolean if all inserts were successful.
      */
     // TODO: Do this for all insert operations (including nonnull annotation)
     public synchronized boolean insertPolicies(@NonNull WeeklyHourPolicyEntity... policies) {
@@ -61,9 +62,11 @@ public class SimulatedAttackRepo {
     }
 
     /**
-     * TODO: Doc comments (also inline comments about "deleting")
-     * @param weeklyHours
-     * @return
+     * Delete policies by their weekly hour. "Deleting" a policy just resets everything for that
+     * weekly hour to defaults.
+     *
+     * @param weeklyHours WeeklyHourPolicyEntity objects to delete.
+     * @return boolean if all deletes were successful.
      */
     public synchronized boolean deletePolicies(@NonNull Integer... weeklyHours) {
         WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[weeklyHours.length];
@@ -78,5 +81,20 @@ public class SimulatedAttackRepo {
         }
 
         return insertPolicies(policies);
+    }
+
+    public synchronized void populateDefaultPolicies() {
+        final int numPoliciesUpperBound = 24 * 7;
+        WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[numPoliciesUpperBound];
+        for (int i = 0; i < numPoliciesUpperBound; i++) {
+            policies[i] = WeeklyHourPolicyEntity.builder()
+                    .weeklyHour(i)
+                    .frequency(Constants.SimulatedAttackFrequency.NO_ATTACKS)
+                    .active(false)
+                    .policyName("")
+                    .build();
+        }
+
+        insertPolicies(policies);
     }
 }
