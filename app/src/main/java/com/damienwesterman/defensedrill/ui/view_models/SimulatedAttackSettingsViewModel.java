@@ -93,12 +93,12 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                         loadAllPoliciesFromDb();
                     } else {
                         // This shouldn't really happen
-                        callback.onFailure("An error has occurred trying to save new alarm");
+                        callback.onFailure("An error has occurred trying to save alarm");
                         Log.e(TAG, "repo.insertPolicies() failed");
                     }
                 } catch (SQLiteConstraintException e) {
                     // Not sure how this would happen either
-                    callback.onFailure("An error has occurred trying to save new alarm");
+                    callback.onFailure("An error has occurred trying to save alarm");
                     Log.e(TAG, "SQLite exception during repo.insertPolicies()", e);
                 }
             }).start();

@@ -153,15 +153,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         });
 
         addPolicyButton.setEnabled(simulatedAttacksEnabled);
-        // TODO: recyclerView.setVisible(simulatedAttacks ? Visible : Gone);
-
-        // TODO: Set up properly in setUpViewModel probably
-        existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(Map.of(),
-                // TODO: Set up properly
-                policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON CLICK: " + policyName),
-                policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON LONG CLICK: " + policyName),
-                (policyName, isChecked) -> UiUtils.displayDismissibleSnackbar(rootView, "ON CHECK CHANGED: " + policyName + " | CHECKED: " + isChecked)));
+        existingPoliciesRecyclerView.setVisibility(simulatedAttacksEnabled ?
+                View.VISIBLE : View.GONE);
 
         setUpViewModel();
     }
@@ -333,41 +326,64 @@ policies.forEach(policy -> {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-private boolean clearedDB = false; // TODO REMOVE
-
+    // TODO: Doc comments
     private void setUpViewModel() {
         viewModel.getPolicies().observe(this, policies -> {
-            // TODO: fill the recycler view with adapters or whatever and set the information IF sharePrefs is enabled or whatever, or maybe just check radioButton
-            progressBar.setVisibility(View.GONE);
-// TODO: REMOVE ME
-if (!clearedDB) {
-clearedDB = true;
-viewModel.removePolicies(IntStream.range(0, (7 * 24)).boxed().collect(Collectors.toList()), new OperationCompleteCallback() {
-    @Override
-    public void onSuccess() {
-
-    }
-
-    @Override
-    public void onFailure(String error) {
-
-    }
-});
-Log.i("DxTag", "Initial load, clearing DB");
-} else {// TODO: REMOVE
-Log.i("DxTag", "-----------POLICIES LOADED FROM DB-----------");
-policies.forEach(policy -> {
-    Log.i("DxTag", policy.toString());
-    int dayOfWeek = policy.getWeeklyHour() / 24;
-    int hourOfDay = policy.getWeeklyHour() % 24;
-    Log.i("DxTag", "Day: " + dayOfWeek + " | Hour: " + hourOfDay);
-}); }
-// TODO: REMOVE
-Log.i("DxTag", "-----------POLICIES BY POLICY NAME-----------");
-Log.i("DxTag", viewModel.getPoliciesByName().toString());
+            progressBar.setVisibility(View.GONE); // TODO: check this or something and only GONE once the recycler view is done
+            setUpRecyclerView();
         });
 
         viewModel.loadPolicies();
+    }
+
+    public void setUpRecyclerView() {
+        // TODO: Finish implementing with global events listener or whatever
+        existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        Map<String, List<WeeklyHourPolicyEntity>> policiesByName = viewModel.getPoliciesByName();
+        existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(policiesByName,
+                // TODO: Set up properly
+                policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON CLICK: " + policyName),
+                policyName -> {
+                    // Long Click Listener -> Delete Policy
+                    // TODO: Move this into a popup with a confirmation!!
+                    List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
+                    if (null != policies) {
+                        viewModel.removePolicies(policies.stream()
+                                .map(WeeklyHourPolicyEntity::getWeeklyHour)
+                                .collect(Collectors.toList()),
+                            new OperationCompleteCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    UiUtils.displayDismissibleSnackbar(rootView,
+                                            policyName + " has been deleted!");
+                                }
+
+                                @Override
+                                public void onFailure(String error) {
+                                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                                }
+                            });
+                    }
+                },
+                (policyName, isChecked) -> {
+                    // Radio button clicked, change activeness
+                    List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
+                    if (null != policies) {
+                        policies.forEach(policy -> policy.setActive(isChecked));
+                        viewModel.savePolicies(policies, new OperationCompleteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // Do nothing
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                UiUtils.displayDismissibleSnackbar(rootView, error);
+                            }
+                        });
+                    }
+                }
+        ));
     }
 
     // TODO: Doc comments (View should be of layout_policy_details_popup), explain why list return

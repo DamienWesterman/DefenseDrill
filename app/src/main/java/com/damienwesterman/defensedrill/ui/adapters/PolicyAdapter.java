@@ -37,28 +37,35 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.view_holders.PolicyViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
-import lombok.RequiredArgsConstructor;
-
 // TODO: Doc comments
-@RequiredArgsConstructor
 public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
-    @NonNull
-    private final Map<String, WeeklyHourPolicyEntity> policiesByName;
-    @NonNull
+    private final Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
+    /** This will be used as the list of items, as the policies are grouped by policy name */
+    private final List<String> policyNames;
     private final Consumer<String> onClickListener;
-    @Nonnull
     private final Consumer<String> onLongClickListener;
-    @NonNull
     private final BiConsumer<String, Boolean> onCheckedListener;
 
-    // TODO: Implement
+    public PolicyAdapter(@NonNull Map<String, List<WeeklyHourPolicyEntity>> policiesByName,
+                         @NonNull Consumer<String> onClickListener,
+                         @Nonnull Consumer<String> onLongClickListener,
+                         @NonNull BiConsumer<String, Boolean> onCheckedListener) {
+        this.policiesByName = policiesByName;
+        this.policyNames = new ArrayList<>(policiesByName.keySet());
+        this.onClickListener = onClickListener;
+        this.onLongClickListener = onLongClickListener;
+        this.onCheckedListener = onCheckedListener;
+    }
+
     @NonNull
     @Override
     public PolicyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,16 +77,17 @@ public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull PolicyViewHolder holder, int position) {
-        // TODO: Properly implement
-        holder.setCardDetails(List.of());
-        holder.setOnClickListener(onClickListener, "HELLO");
-        holder.setOnLongClickListener(onLongClickListener, "HELLO");
-        holder.setCheckedListener(onCheckedListener, "HELLO");
+        List<WeeklyHourPolicyEntity> weeklyPolicies = Optional.ofNullable(
+                    policiesByName.get(policyNames.get(position)))
+                .orElse(List.of());
+        holder.setCardDetails(weeklyPolicies);
+        holder.setOnClickListener(onClickListener, policyNames.get(position));
+        holder.setOnLongClickListener(onLongClickListener, policyNames.get(position));
+        holder.setCheckedListener(onCheckedListener, policyNames.get(position));
     }
 
     @Override
     public int getItemCount() {
-        // TODO: properly implement
-        return 5;
+        return policyNames.size();
     }
 }

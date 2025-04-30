@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.view_holders;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -35,10 +36,12 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.utils.PolicyDetailsCard;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
@@ -46,7 +49,6 @@ import lombok.Getter;
 @Getter
 public class PolicyViewHolder extends RecyclerView.ViewHolder {
     // TODO: Implement
-    // TODO: day of week conversion: int dayOfWeek = policy.getWeeklyHour() / 24;
     private final PolicyDetailsCard card;
 
     public PolicyViewHolder(@NonNull View view) {
@@ -57,12 +59,43 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
 
     // TODO: Doc comments
     public void setCardDetails(@NonNull List<WeeklyHourPolicyEntity> policies) {
-        // TODO: Properly implement
-        card.setChecked(true);
-        card.setPolicyName("TEST POLICY NAME");
-        card.setActiveDaysOfWeek(Set.of(1, 3, 5));
-        card.setTimeWindow("12:00 AM - 1:00 AM");
-        card.setFrequency("Every 15 minutes");
+        if (policies.isEmpty()) {
+            throw new RuntimeException("setCardDetails() policies are empty!");
+        }
+
+        // Any of the policies should have the same common information, so just use the first one
+        WeeklyHourPolicyEntity modelPolicy = policies.get(0);
+        card.setChecked(modelPolicy.isActive());
+        card.setPolicyName(modelPolicy.getPolicyName());
+        card.setFrequency(itemView.getResources()
+                // - 1 because of the default NO_ATTACKS frequency
+                .getStringArray(R.array.frequency_options)[modelPolicy.getFrequency().ordinal() - 1]);
+
+        // Set Time Window
+        policies.sort(Comparator.comparingInt(WeeklyHourPolicyEntity::getWeeklyHour));
+        int startingHour = policies.get(0).getWeeklyHour() % 24;
+        /*
+         Now we iterate through the sorted list of policies until we find the first one that is not
+         contiguous.
+         */
+        int endingHour = startingHour;
+        for (WeeklyHourPolicyEntity policy : policies) {
+            if ((policy.getWeeklyHour() % 24) > (endingHour + 1)) {
+                // We have found the non-contiguous policy, so the previous ending hour is correct
+                break;
+            }
+            endingHour = policy.getWeeklyHour() % 24;
+        }
+        // Make sure that we include the last full hour
+        endingHour += 1;
+        String timeWindow = itemView.getResources().getStringArray(R.array.daily_hours)[startingHour] +
+                " - " +
+                itemView.getResources().getStringArray(R.array.daily_hours)[endingHour];
+        card.setTimeWindow(timeWindow);
+
+        card.setActiveDaysOfWeek(policies.stream()
+                .map(policy -> policy.getWeeklyHour() / 24)
+                .collect(Collectors.toSet()));
     }
 
     // TODO: Doc comments, consumer variables

@@ -99,7 +99,7 @@
     <string name="saturday">Saturday</string>
     <string name="alarm_days">Alarm Days:</string>
     <string name="time_window">Time Window:</string>
-    <string name="frequency">Frequency:</string>
+    <string name="frequency">Frequency (+/- 20% for proper randomness):</string>
     <string name="hyphen">-</string>
     <string name="initial_sunday">S</string>
     <string name="initial_monday">M</string>
@@ -137,15 +137,15 @@
         <item>12:00 AM</item>
     </string-array>
     <string-array name="frequency_options">
-        <item>Every 15 minutes (+/- 3 minutes)</item>
-        <item>Every 30 minutes (+/- 6 minutes)</item>
-        <item>Every 1 hour (+/- 12 minutes)</item>
-        <item>Every 90 minutes (+/- 18 minutes)</item>
-        <item>Every 2 hour (+/- 24 minutes)</item>
-        <item>Every 3 hours (+/- 36 minutes)</item>
-        <item>Every 4 hours (+/- 48 minutes)</item>
-        <item>Every 6 hours (+/- 72 minutes)</item>
-        <item>Every 12 hours (+/- 2.5 hours)</item>
+        <item>Every 15 minutes</item>
+        <item>Every 30 minutes</item>
+        <item>Every 1 hour</item>
+        <item>Every 90 minutes</item>
+        <item>Every 2 hour</item>
+        <item>Every 3 hours</item>
+        <item>Every 4 hours</item>
+        <item>Every 6 hours</item>
+        <item>Every 12 hours</item>
     </string-array>
     <string-array name="drills_sort_options">
         <item>Name (A-Z)</item>
