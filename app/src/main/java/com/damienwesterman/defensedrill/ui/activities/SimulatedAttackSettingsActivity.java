@@ -67,6 +67,7 @@ import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -84,6 +85,8 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
+    private static final String TAG = SimulatedAttackSettingsActivity.class.getSimpleName();
+
     // TODO: Add a handler for modifying a policy
     // TODO: Double check that modifying TODOs work properly
     // TODO: If every single slot is filled, don't show the add more button
@@ -218,7 +221,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_policy_details_popup, null);
 
-
         int[] checkBoxIds = {
                 R.id.sundayCheckBox, R.id.mondayCheckBox, R.id.tuesdayCheckBox,
                 R.id.wednesdayCheckBox, R.id.thursdayCheckBox, R.id.fridayCheckBox,
@@ -251,9 +253,49 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         frequencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         frequencySpinner.setAdapter(frequencyAdapter);
 
+        if (null != policyBeingModified) {
+            // Set fields to existing values
+            policyNameEditText.setText(policyBeingModified);
+
+            List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyBeingModified);
+            if (null == policies || policies.isEmpty()) {
+                Log.e(TAG, "Policies were null or were empty");
+                UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                return;
+            }
+            policies.forEach(policy -> {
+                int dayOfWeek = policy.getWeeklyHour() / 24;
+                checkBoxes.get(dayOfWeek).setChecked(true);
+            });
+
+            // - 1 because of the default NO_ATTACKS frequency
+            frequencySpinner.setSelection(policies.get(0).getFrequency().ordinal() - 1);
+
+            // Set Time Window
+            policies.sort(Comparator.comparingInt(WeeklyHourPolicyEntity::getWeeklyHour));
+            int startingHour = policies.get(0).getWeeklyHour() % 24;
+            /*
+             Now we iterate through the sorted list of policies until we find the first one that is not
+             contiguous.
+             */
+            int endingHour = startingHour;
+            for (WeeklyHourPolicyEntity policy : policies) {
+                if ((policy.getWeeklyHour() % 24) > (endingHour + 1)) {
+                    // We have found the non-contiguous policy, so the previous ending hour is correct
+                    break;
+                }
+                endingHour = policy.getWeeklyHour() % 24;
+            }
+            // Make sure that we include the last full hour
+            endingHour += 1;
+
+            beginningHourSpinner.setSelection(startingHour);
+            endingHourSpinner.setSelection(endingHour);
+        }
+
         builder.setView(dialogView);
         builder.setIcon(R.drawable.notification_w_sound_icon);
-        builder.setTitle("Add Notification");
+        builder.setTitle("Notification Details");
         builder.setCancelable(true);
         builder.setPositiveButton("Save", null);
         builder.setNegativeButton("Cancel", null);
@@ -284,32 +326,34 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     // Do not dismiss
                 });
                 if (!policies.isEmpty()) {
-                    // TODO: Check that this works properly with updating policies
-                    // TODO: If this is a modify operation, then it needs to change, because if any hours of the week were REMOVED, it needs to be removed from the database too
-                    // TODO: Can use getPoliciesByNames() and check the list that way, rather than going through the bigger list
-                    viewModel.savePolicies(policies, true, new OperationCompleteCallback() {
-                        @Override
-                        public void onSuccess() {
-                            runOnUiThread(() -> setLoading(true));
-                            alert.dismiss();
-                            UiUtils.displayDismissibleSnackbar(rootView,
-                                    "Alarm saved successfully!");
-                        }
+                    viewModel.savePolicies(
+                        policies,
+                        null != policyBeingModified,
+                        true,
+                        new OperationCompleteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                runOnUiThread(() -> setLoading(true));
+                                alert.dismiss();
+                                UiUtils.displayDismissibleSnackbar(rootView,
+                                        "Alarm saved successfully!");
+                            }
 
-                        @Override
-                        public void onFailure(String error) {
-                            errorMessage.setText(error);
-                            errorMessage.setVisibility(View.VISIBLE);
+                            @Override
+                            public void onFailure(String error) {
+                                errorMessage.setText(error);
+                                errorMessage.setVisibility(View.VISIBLE);
 
-                            policyNameEditText.setEnabled(true);
-                            checkBoxes.forEach(checkBox -> checkBox.setEnabled(true));
-                            beginningHourSpinner.setEnabled(true);
-                            endingHourSpinner.setEnabled(true);
-                            frequencySpinner.setEnabled(true);
-                            savingPolicyProgressBar.setVisibility(View.GONE);
-                            // Do not dismiss
+                                policyNameEditText.setEnabled(true);
+                                checkBoxes.forEach(checkBox -> checkBox.setEnabled(true));
+                                beginningHourSpinner.setEnabled(true);
+                                endingHourSpinner.setEnabled(true);
+                                frequencySpinner.setEnabled(true);
+                                savingPolicyProgressBar.setVisibility(View.GONE);
+                                // Do not dismiss
+                            }
                         }
-                    });
+                    );
                 }
             });
 
@@ -364,6 +408,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // TODO: Doc comments
     private void setUpViewModel() {
         viewModel.getPolicies().observe(this, policies -> {
+            // TODO: Why after adding additional weekly hours to an existing policy do we setLoading(true) then never call false?
             if (policies.isEmpty()) {
                 // Set up the database with defaults
                 viewModel.populateDefaultPolicies();
@@ -376,7 +421,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     }
 
     public void setUpRecyclerView() {
-        // TODO: Finish implementing with global events listener or whatever
         setLoading(true);
         existingPoliciesRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -390,8 +434,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Map<String, List<WeeklyHourPolicyEntity>> policiesByName = viewModel.getPoliciesByName();
         existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(policiesByName,
-                // TODO: Set up properly
-                policyName -> UiUtils.displayDismissibleSnackbar(rootView, "ON CLICK: " + policyName),
+                // On Click Listener -> Modify Policy
+                this::policyDetailsPopup,
                 // Long Click Listener -> Delete Policy
                 this::deletePolicyPopup,
                 (policyName, isChecked) -> {
@@ -399,17 +443,22 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
                     if (null != policies) {
                         policies.forEach(policy -> policy.setActive(isChecked));
-                        viewModel.savePolicies(policies, false, new OperationCompleteCallback() {
-                            @Override
-                            public void onSuccess() {
-                                // Do nothing
-                            }
+                        viewModel.savePolicies(
+                            policies,
+                            false,
+                            false,
+                            new OperationCompleteCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    // Do nothing
+                                }
 
-                            @Override
-                            public void onFailure(String error) {
-                                UiUtils.displayDismissibleSnackbar(rootView, error);
+                                @Override
+                                public void onFailure(String error) {
+                                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                                }
                             }
-                        });
+                        );
                     }
                 }
         ));
@@ -464,7 +513,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         if (null != policyBeingModified) {
             if (nameAlreadyInUse && policyName.equals(policyBeingModified)) {
                 // The name is already in use because we are modifying it
-                // TODO: Verify this works with modifying a policy
                 nameAlreadyInUse = false;
             }
         }
@@ -502,7 +550,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             if (checkBoxes.get(i).isChecked()) {
                 for (Integer hourOfDay : dailyHoursSelected) {
                     int hourOfWeek = (i * 24) + hourOfDay;
-                    // TODO: Check that this works properly with updating policies
                     if (null != existingPolicies) {
                         boolean weeklyHourPolicyAlreadyExists = false;
 

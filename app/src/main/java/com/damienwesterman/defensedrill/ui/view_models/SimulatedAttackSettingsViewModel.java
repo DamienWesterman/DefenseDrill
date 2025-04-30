@@ -40,8 +40,10 @@ import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -89,11 +91,35 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
     }
 
     public void savePolicies(@NonNull List<WeeklyHourPolicyEntity> policies,
+                             boolean updateOperation,
                              boolean reloadUi,
                              @NonNull OperationCompleteCallback callback) {
+        // TODO: Check that this works properly with updating policies
+        // TODO: If this is a modify operation, then it needs to change, because if any hours of the week were REMOVED, it needs to be removed from the database too
+        // TODO: Can use getPoliciesByNames() and check the list that way, rather than going through the bigger list
         if (!policies.isEmpty()) {
             new Thread(() -> {
                 try {
+                    if (updateOperation) {
+                        // Check to see if any weekly policies have been removed
+                        List<WeeklyHourPolicyEntity> existingPolicies = policiesByName
+                            .get(policies.get(0).getPolicyName());
+                        if (null == existingPolicies) {
+                            callback.onFailure("Something went wrong");
+                            return;
+                        }
+                        Set<Integer> newPoliciesWeeklyHourSet =policies.stream()
+                            .map(WeeklyHourPolicyEntity::getWeeklyHour)
+                            .collect(Collectors.toSet());
+                        existingPolicies.removeIf(policy ->
+                                newPoliciesWeeklyHourSet.contains(policy.getWeeklyHour()));
+
+                        if (!existingPolicies.isEmpty()) {
+                            // This mean that some of the previous alarms have been removed
+                            // TODO: FIXME START HERE
+                        }
+                    }
+
                     if (repo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
                         callback.onSuccess();
 
