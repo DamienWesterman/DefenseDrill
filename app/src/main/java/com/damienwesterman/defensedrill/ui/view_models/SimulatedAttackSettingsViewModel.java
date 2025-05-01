@@ -40,7 +40,6 @@ import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,9 +93,6 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                              boolean updateOperation,
                              boolean reloadUi,
                              @NonNull OperationCompleteCallback callback) {
-        // TODO: Check that this works properly with updating policies
-        // TODO: If this is a modify operation, then it needs to change, because if any hours of the week were REMOVED, it needs to be removed from the database too
-        // TODO: Can use getPoliciesByNames() and check the list that way, rather than going through the bigger list
         if (!policies.isEmpty()) {
             new Thread(() -> {
                 try {
@@ -108,7 +104,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                             callback.onFailure("Something went wrong");
                             return;
                         }
-                        Set<Integer> newPoliciesWeeklyHourSet =policies.stream()
+                        Set<Integer> newPoliciesWeeklyHourSet = policies.stream()
                             .map(WeeklyHourPolicyEntity::getWeeklyHour)
                             .collect(Collectors.toSet());
                         existingPolicies.removeIf(policy ->
@@ -116,7 +112,14 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
                         if (!existingPolicies.isEmpty()) {
                             // This mean that some of the previous alarms have been removed
-                            // TODO: FIXME START HERE
+                            boolean success = repo.deletePolicies(existingPolicies.stream()
+                                    .map(WeeklyHourPolicyEntity::getWeeklyHour)
+                                    .toArray(Integer[]::new));
+
+                            if (!success) {
+                                callback.onFailure("An error has occurred trying to save alarm.");
+                                return;
+                            }
                         }
                     }
 

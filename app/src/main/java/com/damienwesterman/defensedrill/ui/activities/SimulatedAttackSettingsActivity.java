@@ -87,9 +87,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     private static final String TAG = SimulatedAttackSettingsActivity.class.getSimpleName();
 
-    // TODO: Add a handler for modifying a policy
-    // TODO: Double check that modifying TODOs work properly
-    // TODO: If every single slot is filled, don't show the add more button
     @Inject
     SimulatedAttackManager simulatedAttackManager;
     @Inject
@@ -138,6 +135,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         enabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
             showPolicies(isChecked);
+            // TODO: If turning to checked then start the alarm manager
         });
 
         setUpViewModel();
@@ -216,7 +214,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
      *                            otherwise leave null if creating a new policy(ies)
      */
     public void policyDetailsPopup(@Nullable String policyBeingModified) {
-        // TODO: FINISH implement popup for modify
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_policy_details_popup, null);
@@ -376,7 +373,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // Private Helper Methods
     // =============================================================================================
     // TODO: Doc comments
-    private void setLoading(boolean isLoading) {
+    private synchronized void setLoading(boolean isLoading) {
         if (!sharedPrefs.areSimulatedAttacksEnabled()) {
             showPolicies(false);
         } else if (isLoading) {
@@ -392,7 +389,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void showPolicies(boolean arePoliciesEnabled) {
+    // TODO: Doc comments
+    private synchronized void showPolicies(boolean arePoliciesEnabled) {
         if (arePoliciesEnabled) {
             existingPoliciesRecyclerView.setVisibility(View.VISIBLE);
             addPolicyButton.setEnabled(true);
@@ -408,7 +406,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // TODO: Doc comments
     private void setUpViewModel() {
         viewModel.getPolicies().observe(this, policies -> {
-            // TODO: Why after adding additional weekly hours to an existing policy do we setLoading(true) then never call false?
             if (policies.isEmpty()) {
                 // Set up the database with defaults
                 viewModel.populateDefaultPolicies();
