@@ -113,6 +113,14 @@ public class SimulatedAttackManager {
         intent.setPackage(context.getPackageName());
         intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
         context.sendBroadcast(intent);
+
+        // Ultimately calls scheduleSimulatedAttack()
+    }
+
+    // TODO: doc comments
+    public static void restart(Context context) {
+        // The start process already cancels previous alarms
+        start(context);
     }
 
     // TODO: Doc comments
@@ -121,10 +129,12 @@ public class SimulatedAttackManager {
         intent.setPackage(context.getPackageName());
         intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
         context.sendBroadcast(intent);
+
+        // Ultimately calls stopSimulatedAttacks()
     }
 
     // =============================================================================================
-    // Public Methods
+    // "Public" Methods
     // =============================================================================================
     // TODO: Doc comments
     /* package-private */ void scheduleSimulatedAttack() {
@@ -133,6 +143,7 @@ public class SimulatedAttackManager {
 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((getNextAlarmMillis() - System.currentTimeMillis()) / 1000));
 }
+        // TODO: Only if the user has notifications enabled and has selected to receive simulated attacks
         alarmManager.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 getNextAlarmMillis(),
@@ -175,6 +186,7 @@ Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((getNextAla
     // TODO: Doc comments (in UTC)
     private long getNextAlarmMillis() {
         // TODO: FIXME finish
+        // TODO: If there are no times, then kill the background service
 
         // 1. Get Current Time
         // 2. Convert to weeklyHour

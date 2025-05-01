@@ -81,7 +81,10 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * TODO: doc comments
+ * Screen that lets the user turn on or off simulated attack notifications. Also allows them to
+ * modify the times and frequencies of these notification.
+ * <br><br>
+ * INTENTS: None expected.
  */
 @AndroidEntryPoint
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
@@ -92,6 +95,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     @Inject
     SharedPrefs sharedPrefs;
     private SimulatedAttackSettingsViewModel viewModel;
+
+    private Context context;
 
     private LinearLayout rootView;
     private ProgressBar progressBar;
@@ -121,6 +126,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        this.context = this;
         viewModel = new ViewModelProvider(this).get(SimulatedAttackSettingsViewModel.class);
 
         rootView = findViewById(R.id.activitySimulatedAttackSettings);
@@ -135,7 +141,22 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         enabledSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
             showPolicies(isChecked);
-            // TODO: If turning to checked then start the alarm manager
+
+            viewModel.checkForSelfDefenseCategory(
+                categoryExists -> {
+                    if (categoryExists) {
+                        if (isChecked) {
+                            SimulatedAttackManager.start(this);
+                        } else {
+                            SimulatedAttackManager.stop(this);
+                        }
+                    } else {
+                        // There is no Self Defense Category
+                        if (isChecked) {
+                            // TODO: Display error popup, have option to create the category (still need to create drills) or option to open the download drills page
+                        }
+                    }
+                });
         });
 
         setUpViewModel();
@@ -195,6 +216,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             public void onSuccess() {
                                 UiUtils.displayDismissibleSnackbar(rootView,
                                         policyName + " has been deleted!");
+                                SimulatedAttackManager.restart(context);
                             }
 
                             @Override
@@ -208,7 +230,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * TODO doc comments
+     * Popup to create or modify a policy.
      *
      * @param policyBeingModified If modifying an existing policy, the name of that policy,
      *                            otherwise leave null if creating a new policy(ies)
@@ -334,6 +356,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                                 alert.dismiss();
                                 UiUtils.displayDismissibleSnackbar(rootView,
                                         "Alarm saved successfully!");
+                                SimulatedAttackManager.restart(context);
                             }
 
                             @Override
@@ -372,7 +395,12 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    // TODO: Doc comments
+
+    /**
+     * Set the UI to a loading state.
+     *
+     * @param isLoading boolean if the UI should be loading or loaded.
+     */
     private synchronized void setLoading(boolean isLoading) {
         if (!sharedPrefs.areSimulatedAttacksEnabled()) {
             showPolicies(false);
@@ -389,7 +417,11 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: Doc comments
+    /**
+     * Set the UI to display a list of existing policies or not.
+     *
+     * @param arePoliciesEnabled boolean if the policies should be shown in the UI.
+     */
     private synchronized void showPolicies(boolean arePoliciesEnabled) {
         if (arePoliciesEnabled) {
             existingPoliciesRecyclerView.setVisibility(View.VISIBLE);
@@ -403,7 +435,9 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: Doc comments
+    /**
+     * Set up the view model for this activity.
+     */
     private void setUpViewModel() {
         viewModel.getPolicies().observe(this, policies -> {
             if (policies.isEmpty()) {
@@ -417,6 +451,9 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         viewModel.loadPolicies();
     }
 
+    /**
+     * Fill the recycler view with the drills and set up the adapters and their callbacks.
+     */
     public void setUpRecyclerView() {
         setLoading(true);
         existingPoliciesRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -461,8 +498,14 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         ));
     }
 
-    // TODO: Doc comments (View should be of layout_policy_details_popup), explain why list return
-    // TODO: Does input validation. CurrPolicy is nullable for if you are modifying a policy
+    /**
+     * Extract a list of policies from a popup. Performs input validation.
+     *
+     * @param view View object for layout_policy_details_popup.xml
+     * @param policyBeingModified Policy name being modified, or null if creating a new one.
+     * @param errorConsumer Callback for error conditions.
+     * @return List of correlated WeeklyHourPolicyEntity objects for a single policy name.
+     */
     @NonNull
     private List<WeeklyHourPolicyEntity> extractPolicies(@NonNull View view,
                                                          @Nullable String policyBeingModified,

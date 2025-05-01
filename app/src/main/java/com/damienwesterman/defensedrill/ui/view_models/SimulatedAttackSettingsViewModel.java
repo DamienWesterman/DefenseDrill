@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -174,5 +175,10 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                 .filter(policy -> !policy.getPolicyName().isEmpty())
                 .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
         policies.postValue(policyEntities);
+    }
+
+    // TODO: Doc comments
+    public void checkForSelfDefenseCategory(Consumer<Boolean> callback) {
+        // TODO: Implement
     }
 }
