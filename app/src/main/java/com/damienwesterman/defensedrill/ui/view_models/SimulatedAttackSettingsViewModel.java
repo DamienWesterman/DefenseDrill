@@ -35,13 +35,18 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -58,17 +63,20 @@ import lombok.Getter;
 public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
     private static final String TAG = SimulatedAttackSettingsViewModel.class.getSimpleName();
 
-    private final SimulatedAttackRepo repo;
+    private final SimulatedAttackRepo simulatedAttackRepo;
+    private final DrillRepository drillRepo;
     private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
     @Getter
     private Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
 
     @Inject
     public SimulatedAttackSettingsViewModel(@NonNull Application application,
-                                            SimulatedAttackRepo repo) {
+                                            @NonNull DrillRepository drillRepo,
+                                            @NonNull SimulatedAttackRepo simulatedAttackRepo) {
         super(application);
 
-        this.repo = repo;
+        this.simulatedAttackRepo = simulatedAttackRepo;
+        this.drillRepo = drillRepo;
         this.policies = new MutableLiveData<>();
         this.policiesByName = new HashMap<>();
     }
@@ -85,7 +93,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     public void populateDefaultPolicies() {
         new Thread(() -> {
-            repo.populateDefaultPolicies();
+            simulatedAttackRepo.populateDefaultPolicies();
             loadAllPoliciesFromDb();
         }).start();
     }
@@ -113,7 +121,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
                         if (!existingPolicies.isEmpty()) {
                             // This mean that some of the previous alarms have been removed
-                            boolean success = repo.deletePolicies(existingPolicies.stream()
+                            boolean success = simulatedAttackRepo.deletePolicies(existingPolicies.stream()
                                     .map(WeeklyHourPolicyEntity::getWeeklyHour)
                                     .toArray(Integer[]::new));
 
@@ -124,7 +132,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                         }
                     }
 
-                    if (repo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
+                    if (simulatedAttackRepo.insertPolicies(policies.toArray(new WeeklyHourPolicyEntity[0]))) {
                         callback.onSuccess();
 
                         if (reloadUi) {
@@ -148,7 +156,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                                @NonNull OperationCompleteCallback callback) {
         new Thread(() -> {
             try {
-            if (repo.deletePolicies(weeklyHours.toArray(new Integer[0]))) {
+            if (simulatedAttackRepo.deletePolicies(weeklyHours.toArray(new Integer[0]))) {
                 callback.onSuccess();
 
                 // Re-load policies to update UI
@@ -170,15 +178,59 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
      * Loads all policies from the database and posts the results so the UI callback is called.
      */
     private void loadAllPoliciesFromDb() {
-        List<WeeklyHourPolicyEntity> policyEntities = repo.getAllWeeklyHourPolicies();
+        List<WeeklyHourPolicyEntity> policyEntities = simulatedAttackRepo.getAllWeeklyHourPolicies();
         this.policiesByName = policyEntities.stream()
                 .filter(policy -> !policy.getPolicyName().isEmpty())
                 .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
         policies.postValue(policyEntities);
     }
 
-    // TODO: Doc comments
-    public void checkForSelfDefenseCategory(Consumer<Boolean> callback) {
-        // TODO: Implement
+    /**
+     * Check the database to see if any self defense drills exist, denoted by a Category named with
+     * {@link Constants#CATEGORY_NAME_SELF_DEFENSE}. Report back using the callback.
+     *
+     * @param callback Callback that accepts a boolean of whether or not there are self defense
+     *                 Drills in the database.
+     */
+    public void checkForSelfDefenseDrills(Consumer<Boolean> callback) {
+        new Thread(() -> {
+            Optional<CategoryEntity> optSelfDefenseCategory =
+                    drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE);
+            if (!optSelfDefenseCategory.isPresent()) {
+                // No category
+                callback.accept(false);
+                return;
+            }
+
+            List<Drill> selfDefenseDrills =
+                    drillRepo.getAllDrillsByCategoryId(optSelfDefenseCategory.get().getId());
+
+            callback.accept(!selfDefenseDrills.isEmpty());
+        }).start();
+    }
+
+    /**
+     * Create a default Self Defense Category
+     *
+     * @param callback OperationCompleteCallback
+     */
+    public void createDefaultSelfDefenseCategory(OperationCompleteCallback callback) {
+        new Thread(() -> {
+            if (drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE).isPresent()) {
+                // Category already exists
+                callback.onSuccess();
+                return;
+            }
+
+            boolean success = drillRepo.insertCategories(CategoryEntity.builder()
+                    .name(Constants.CATEGORY_NAME_SELF_DEFENSE)
+                    .description("Drills used for Self Defense")
+                    .build());
+            if (success) {
+                callback.onSuccess();
+            } else {
+                callback.onFailure("Failed to create Self Defense Category");
+            }
+        }).start();
     }
 }

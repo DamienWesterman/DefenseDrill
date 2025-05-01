@@ -69,7 +69,6 @@ public class SimulatedAttackManager {
                 - The ViewModel for the UI can have the entire list saved and if a user adds/modifies a time slot that already belongs to another group, report that it is conflicting and cannot be saved
      */
     // TODO: Make sure to document somewhere that there should always be exactly 168 entries in the database because that's how many hours are in the week. A "deleted" policy should be empty and have all defaults an inactive
-    private static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
     private final AlarmManager alarmManager;
     private final PendingIntent simulatedAttackPendingIntent;
@@ -170,7 +169,7 @@ Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((getNextAla
     // TODO: Doc comments
     private void sendSimulateAttackNotification() {
         Optional<CategoryEntity> optSelfDefenseCategory =
-                drillRepo.getCategory(CATEGORY_NAME_SELF_DEFENSE);
+                drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE);
         if (!optSelfDefenseCategory.isPresent()) {
             // TODO: What do we want to do here, send an intent to someone, set a flag, set shared prefs and have someone report it? Or just leave it be? Check it when the user activates the notification system for simulated attacks?
             return;

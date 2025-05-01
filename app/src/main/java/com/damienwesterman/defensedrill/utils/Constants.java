@@ -62,6 +62,8 @@ public class Constants {
     }
 
     public static final long USER_RANDOM_SELECTION = -1;
+    /** Expected name for a self defense CategoryEntity. Should match with the server */
+    public static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
     public static final String SERVER_URL = BuildConfig.SERVER_URL;
 

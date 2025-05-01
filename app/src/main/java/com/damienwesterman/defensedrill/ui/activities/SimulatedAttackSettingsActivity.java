@@ -64,6 +64,7 @@ import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.SimulatedAttackSettingsViewModel;
 import com.damienwesterman.defensedrill.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,7 +143,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
             showPolicies(isChecked);
 
-            viewModel.checkForSelfDefenseCategory(
+            viewModel.checkForSelfDefenseDrills(
                 categoryExists -> {
                     if (categoryExists) {
                         if (isChecked) {
@@ -153,7 +154,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     } else {
                         // There is no Self Defense Category
                         if (isChecked) {
-                            // TODO: Display error popup, have option to create the category (still need to create drills) or option to open the download drills page
+                            runOnUiThread(this::noSelfDefenseDrillsPopup);
                         }
                     }
                 });
@@ -390,6 +391,50 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         });
 
         alert.show();
+    }
+
+    public void noSelfDefenseDrillsPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        CharSequence[] options = {"Download Drills from Database", "Create \"Self Defense\" Category"};
+        builder.setTitle("No Self Defense Category!");
+        builder.setIcon(R.drawable.warning_icon);
+        builder.setCancelable(true);
+
+        builder.setItems(options, ((dialogInterface, position) -> {
+            switch (position) {
+                case 0:
+                    // Download Drills from Database
+                    Intent webDrillsIntent = new Intent(this, WebDrillOptionsActivity.class);
+                    startActivity(webDrillsIntent);
+                    break;
+                case 1:
+                    // Create Self Defense Category
+                    viewModel.createDefaultSelfDefenseCategory(new OperationCompleteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Snackbar snackbar = Snackbar.make(rootView,
+                                    "Category Created!", Snackbar.LENGTH_LONG);
+                            snackbar.setAction("Create Drills", (callingView) -> {
+                                Intent createDrillsIntent =
+                                        new Intent(context, CreateDrillActivity.class);
+                                startActivity(createDrillsIntent);
+                                snackbar.dismiss();
+                            });
+                            snackbar.show();
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
+                        }
+                    });
+                    break;
+            }
+        }));
+
+        builder.setNegativeButton("Back", null);
+
+        builder.create().show();
     }
 
     // =============================================================================================

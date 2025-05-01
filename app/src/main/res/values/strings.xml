@@ -84,7 +84,7 @@
     <string name="view_modify">View/Modify:</string>
     <string name="simulated_attack_settings_title">Simulated Attack Settings</string>
     <string name="simulated_attack_settings_description">Change settings related to simulated attack notifications. Turn them on or off and adjust the schedule or frequency of notifications.</string>
-    <string name="simulated_attacks_description">Simulated Attacks are notifications to simulate being attacked with a random Self Defense Drill. The notification times are customizable. This helps you to put these exercises in every day situations, making them more realistic.</string>
+    <string name="simulated_attacks_description">Simulated Attacks are notifications to simulate being attacked with a random Self Defense Drill. The notification times are customizable. This helps you to put these exercises in every day situations, making them more realistic. Chooses Drills from the \"Self Defense\" category.</string>
     <string name="enabled">Enabled:</string>
     <string name="add_notification">Add Notification</string>
     <string name="policy_name">Alarm Name:</string>
