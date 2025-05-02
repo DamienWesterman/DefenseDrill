@@ -44,4 +44,9 @@ import java.util.Map;
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insertWeeklyHourPolicy(@NonNull WeeklyHourPolicyEntity... policies);
+
+    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME
+            + " WHERE active = 1")
+    @NonNull
+    List<WeeklyHourPolicyEntity> getActivePolicies();
 }

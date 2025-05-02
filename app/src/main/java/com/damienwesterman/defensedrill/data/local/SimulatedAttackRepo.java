@@ -30,10 +30,7 @@ import androidx.annotation.NonNull;
 
 import com.damienwesterman.defensedrill.utils.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +44,11 @@ public class SimulatedAttackRepo {
     @NonNull
     public synchronized List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies() {
         return this.weeklyHourPolicyDao.getAllWeeklyHourPolicies();
+    }
+
+    @NonNull
+    public synchronized List<WeeklyHourPolicyEntity> getActivePolicies() {
+        return this.weeklyHourPolicyDao.getActivePolicies();
     }
 
     /**

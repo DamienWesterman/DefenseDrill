@@ -39,10 +39,13 @@ import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
+import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -55,6 +58,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
  * TODO: Doc comments
  */
 public class SimulatedAttackManager {
+    private static final String TAG = SimulatedAttackManager.class.getSimpleName();
+    private static final long INVALID_ALARM_TIME = -1L;
     // TODO: Implement the actual algorithm for selecting the next alarm
     /*
         Algorithm/Data structure ideas:
@@ -74,14 +79,14 @@ public class SimulatedAttackManager {
     private final PendingIntent simulatedAttackPendingIntent;
     private final DrillRepository drillRepo;
     private final DefenseDrillNotificationManager notificationManager;
-    private final SimulatedAttackRepo repo;
+    private final SimulatedAttackRepo simulatedAttackRepo;
     private final SharedPrefs sharedPrefs;
 
     @Inject
     public SimulatedAttackManager(@ApplicationContext Context context,
                                   DrillRepository drillRepo,
                                   DefenseDrillNotificationManager notificationManager,
-                                  SimulatedAttackRepo repo,
+                                  SimulatedAttackRepo simulatedAttackRepo,
                                   SharedPrefs sharedPrefs) {
         this.alarmManager = context.getSystemService(AlarmManager.class);
         Intent intent = new Intent(Constants.INTENT_ACTION_SIMULATE_ATTACK);
@@ -95,7 +100,7 @@ public class SimulatedAttackManager {
         );
         this.drillRepo = drillRepo;
         this.notificationManager = notificationManager;
-        this.repo = repo;
+        this.simulatedAttackRepo = simulatedAttackRepo;
         this.sharedPrefs = sharedPrefs;
     }
 
@@ -140,12 +145,13 @@ public class SimulatedAttackManager {
         stopSimulatedAttacks();
 // TODO: Remove test code
 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((getNextAlarmMillis() - System.currentTimeMillis()) / 1000));
+    simulatedCurrTime = getNextAlarmMillis();
+Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedCurrTime - System.currentTimeMillis()) / 1000));
 }
-        // TODO: Only if the user has notifications enabled and has selected to receive simulated attacks
+        // TODO: Only if the user has notifications enabled and has selected to receive simulated attacks AND getNextAlarmMillis() != INVALID_ALARM_TIME
         alarmManager.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                getNextAlarmMillis(),
+                System.currentTimeMillis() + 3000, // getNextAlarmMillis(), TODO: PUT BACK IN
                 simulatedAttackPendingIntent
         );
     }
@@ -159,7 +165,7 @@ Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((getNextAla
 
     // TODO: Doc comments
     /* package-private */ void simulateAttack() {
-        sendSimulateAttackNotification();
+//        sendSimulateAttackNotification(); TODO: PUT BACK IN
         scheduleSimulatedAttack();
     }
 
@@ -182,21 +188,101 @@ Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((getNextAla
         optDrill.ifPresent(notificationManager::notifySimulatedAttack);
     }
 
+// TODO: REMOVE TEST CODE
+private static long simulatedCurrTime = System.currentTimeMillis();
     // TODO: Doc comments (in UTC)
     private long getNextAlarmMillis() {
         // TODO: FIXME finish
         // TODO: If there are no times, then kill the background service
+        long ret = INVALID_ALARM_TIME;
 
-        // 1. Get Current Time
-        // 2. Convert to weeklyHour
-        // 3. Generate next alarm time randomly using the weeklyHour's policy
-            // If the current weeklyHour does not have a policy, randomly pick one from the next weeklyHour that has a policy and return immediately
-        // If this happens, you can choose randomly from the start of that policy time's window
+        long currTime = simulatedCurrTime; // TODO: System.currentTimeMillis();
+        int currWeeklyHour = getWeeklyHourFromMillis(currTime);
+
+        // This should already be sorted in ascending order by weekly hour
+        List<WeeklyHourPolicyEntity> policies = simulatedAttackRepo.getActivePolicies();
+        if (policies.isEmpty()) {
+            Log.w(TAG, "DxTag no active policies");
+            return INVALID_ALARM_TIME;
+        }
+
+        // Generate next alarm time randomly using the weeklyHour's policy
+        int nextPolicyIndex = -1;
+        for (int i = 0; i < policies.size(); i++) {
+            WeeklyHourPolicyEntity policy = policies.get(i);
+            if (currWeeklyHour == policy.getWeeklyHour()) {
+                nextPolicyIndex = i;
+                break;
+            } else if (currWeeklyHour < policy.getWeeklyHour()) {
+                /*
+                Current hour does not have a policy, so we can just choose a time from this next
+                window without having to do further checks.
+                 */
+                return generateAlarmFromBeginningOfTimeWindow(policy);
+            }
+        }
+
+        if (-1 == nextPolicyIndex) {
+            /*
+            Means we reached the end of the week, wrap around and start again, pick from the first
+            time window.
+             */
+            simulatedCurrTime = ret;
+            return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
+        }
+        long nextAlarmTime = // TODO: FIXME: START HERE
+
         // 4. Convert next alarm time to weeklyHour
         // 5. Check the intermediate policies if it spans more than one and see if they differ from the current
         // 6. If they do, then abandon this next alarm time and generate using the first policy that differs
             // If this happens, you can choose randomly from the start of that policy time's window
 
-        return System.currentTimeMillis() + 5000;
+ simulatedCurrTime = ret;
+        return ret;
+    }
+
+    // TODO: DOC COMMENTS
+    private long generateAlarmFromBeginningOfTimeWindow(WeeklyHourPolicyEntity policy) {
+        // TODO: implement how to get the next occurrence of a time window??
+        return -1;
+    }
+
+    // TODO: Doc comments
+    private long generateAlarmUsingFrequency(long startingMillis, Constants.SimulatedAttackFrequency frequency) {
+        // TODO: implement
+        return -1;
+    }
+
+    // TODO: Doc comments (UTC epoch)
+    private int getWeeklyHourFromMillis(long millisFromEpoch) {
+        LocalDateTime localDateTime = Instant.ofEpochMilli(millisFromEpoch)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+        int dayOfWeek = -1;
+        switch (localDateTime.getDayOfWeek()) {
+            case SUNDAY:
+                dayOfWeek = 0;
+                break;
+            case MONDAY:
+                dayOfWeek = 1;
+                break;
+            case TUESDAY:
+                dayOfWeek = 2;
+                break;
+            case WEDNESDAY:
+                dayOfWeek = 3;
+                break;
+            case THURSDAY:
+                dayOfWeek = 4;
+                break;
+            case FRIDAY:
+                dayOfWeek = 5;
+                break;
+            case SATURDAY:
+                dayOfWeek = 6;
+                break;
+        }
+
+        return (dayOfWeek * 24) + localDateTime.getHour();
     }
 }

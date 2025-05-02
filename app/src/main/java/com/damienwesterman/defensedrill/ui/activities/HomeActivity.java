@@ -110,6 +110,7 @@ public class HomeActivity extends AppCompatActivity {
     // =============================================================================================
     // OnClickListener Methods
     // =============================================================================================
+private static boolean simulateAttacks = false; // TODO: REMOVE
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
@@ -128,6 +129,14 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         } else if (R.id.feedbackCard == cardId) {
+// TODO: REMOVE
+if (simulateAttacks) {
+    SimulatedAttackManager.stop(this);
+    simulateAttacks = false;
+} else {
+    SimulatedAttackManager.start(this);
+    simulateAttacks = true;
+}
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
