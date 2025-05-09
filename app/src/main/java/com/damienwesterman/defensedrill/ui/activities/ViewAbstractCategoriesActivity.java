@@ -71,8 +71,8 @@ import dagger.hilt.android.AndroidEntryPoint;
  * AbstractCategory's entries, edit them (by click), delete them (by long click), or create a new
  * one (by popup).
  * <br><br>
- * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_VIEW_CATEGORIES} or
- * {@link Constants#INTENT_VIEW_SUB_CATEGORIES} to determine what screen to show.
+ * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_EXTRA_VIEW_CATEGORIES} or
+ * {@link Constants#INTENT_EXTRA_VIEW_SUB_CATEGORIES} to determine what screen to show.
  */
 @AndroidEntryPoint
 public class ViewAbstractCategoriesActivity extends AppCompatActivity {
@@ -112,10 +112,10 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-        if (intent.hasExtra(Constants.INTENT_VIEW_CATEGORIES)) {
+        if (intent.hasExtra(Constants.INTENT_EXTRA_VIEW_CATEGORIES)) {
             viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
             activityMode = ActivityMode.MODE_CATEGORIES;
-        } else if (intent.hasExtra(Constants.INTENT_VIEW_SUB_CATEGORIES)) {
+        } else if (intent.hasExtra(Constants.INTENT_EXTRA_VIEW_SUB_CATEGORIES)) {
             viewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
             activityMode = ActivityMode.MODE_SUB_CATEGORIES;
         } else {

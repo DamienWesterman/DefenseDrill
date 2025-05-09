@@ -32,12 +32,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.ui.activities.DrillInfoActivity;
 import com.damienwesterman.defensedrill.ui.activities.WebDrillOptionsActivity;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,10 +49,16 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
+    // TODO: Modify the background service to follow these custom times
+    // TODO: Have some kind of popup if the DrillInfoActivity receives an intent of self defense attack. Explain to come up with 3 solutions: technical solution, real world solution, and preventative solution (give an option to disable this popup) (also if a simulated attack, show a help button or something somewhere to show this popup?)
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
+    private static final String CHANNEL_ID_SIMULATED_ATTACKS = "simulated_attacks";
     private static final String CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE =
             "Database Update Available";
+    private static final String CHANNEL_DESCRIPTION_SIMULATED_ATTACKS =
+            "Simulated Attacks";
     private static final int NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE = 1;
+    private static final int NOTIFICATION_ID_SIMULATED_ATTACKS = 2;
 
     private final Context context;
     private final NotificationManager systemNotificationManager;
@@ -60,17 +69,17 @@ public class DefenseDrillNotificationManager {
      * Initialize the manager.
      */
     public void init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID_DATABASE_UPDATE_AVAILABLE,
-                    CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE,
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-
-            systemNotificationManager.createNotificationChannel(channel);
-            initSuccess = true;
-        }
+        systemNotificationManager.createNotificationChannel(new NotificationChannel(
+                CHANNEL_ID_DATABASE_UPDATE_AVAILABLE,
+                CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE,
+                NotificationManager.IMPORTANCE_HIGH
+        ));
+        systemNotificationManager.createNotificationChannel(new NotificationChannel(
+                CHANNEL_ID_SIMULATED_ATTACKS,
+                CHANNEL_DESCRIPTION_SIMULATED_ATTACKS,
+                NotificationManager.IMPORTANCE_HIGH
+        ));
+        initSuccess = true;
     }
 
     /**
@@ -113,5 +122,43 @@ public class DefenseDrillNotificationManager {
         }
 
         systemNotificationManager.cancel(NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE);
+    }
+
+    /**
+     * Create a notification for a simulated self defense attack. If clicked, will bring the user to
+     * that Drill's {@link DrillInfoActivity} activity.
+     *
+     * @param drill Simulated Drill attack
+     */
+    public void notifySimulatedAttack(@NonNull Drill drill) {
+        if (!initSuccess || !systemNotificationManager.areNotificationsEnabled()) {
+            return;
+        }
+
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drill.getId());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(drill.getName()); // This is to avoid conflict with existing pendingIntents
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0, /* Request Code for sender. Irrelevant */
+                intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT
+        );
+
+        String contentText =
+                "You have to defend yourself from the following attack:\n" + drill.getName();
+        Notification notification =
+            new NotificationCompat.Builder(context, CHANNEL_ID_SIMULATED_ATTACKS)
+                .setSmallIcon(R.drawable.danger_alert_icon)
+                .setContentTitle("Simulated Attack!")
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true) /* Remove notification after it is clicked */
+                .build();
+
+        systemNotificationManager.notify(NOTIFICATION_ID_SIMULATED_ATTACKS, notification);
     }
 }

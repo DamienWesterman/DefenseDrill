@@ -54,6 +54,7 @@ import lombok.Setter;
     private String name;
     @ColumnInfo(name = "last_drilled")
     private long lastDrilled;
+    /** Should correspond to values such as {@link Drill#LOW_CONFIDENCE} */
     private int confidence;
     private String notes;
     /** ID of this drill on the server, for retrieving instructions and videos */

@@ -91,9 +91,9 @@ import dagger.hilt.android.AndroidEntryPoint;
  * <br><br>
  * INTENTS: Expects to receive ONE of the following -
  * <ul>
- *    <li> A {@link Constants#INTENT_CATEGORY_CHOICE} AND {@link Constants#INTENT_SUB_CATEGORY_CHOICE}
+ *    <li> A {@link Constants#INTENT_EXTRA_CATEGORY_CHOICE} AND {@link Constants#INTENT_EXTRA_SUB_CATEGORY_CHOICE}
  *         intent. These are then used to generate a drill.</li>
- *    <li> A {@link Constants#INTENT_DRILL_ID} intent.</li>
+ *    <li> A {@link Constants#INTENT_EXTRA_DRILL_ID} intent.</li>
  * </ul>
  */
 @AndroidEntryPoint
@@ -141,10 +141,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveViews();
         setUiLoading(true);
 
-        if (getIntent().hasExtra(Constants.INTENT_DRILL_ID)) {
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.DISPLAYING_DRILL;
-        } else if (getIntent().hasExtra(Constants.INTENT_CATEGORY_CHOICE)
-                    && getIntent().hasExtra(Constants.INTENT_SUB_CATEGORY_CHOICE)) {
+        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE)
+                    && getIntent().hasExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE)) {
             activityState = ActivityState.GENERATED_DRILL;
         } else {
             // Did not receive the proper intents. Toast so it persists screens
@@ -642,11 +642,11 @@ public class DrillInfoActivity extends AppCompatActivity {
             // First time loading activity
             Intent intent = getIntent();
             if (ActivityState.DISPLAYING_DRILL == activityState) {
-                long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
+                long drillId = intent.getLongExtra(Constants.INTENT_EXTRA_DRILL_ID, -1);
                 viewModel.populateDrill(drillId);
             } else if (ActivityState.GENERATED_DRILL == activityState) {
-                long categoryId = intent.getLongExtra(Constants.INTENT_CATEGORY_CHOICE, -1);
-                long subCategoryId = intent.getLongExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, -1);
+                long categoryId = intent.getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, -1);
+                long subCategoryId = intent.getLongExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, -1);
                 viewModel.populateDrill(categoryId, subCategoryId);
             } else {
                 // Not in a correct state. Toast so it persists screens
@@ -812,8 +812,8 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(this, InstructionsActivity.class);
-        intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
-        intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, instructionsIndex);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_DTO, drillDTO);
+        intent.putExtra(Constants.INTENT_EXTRA_INSTRUCTION_INDEX, instructionsIndex);
         startActivity(intent);
     }
 
@@ -835,11 +835,11 @@ public class DrillInfoActivity extends AppCompatActivity {
         viewModel.findDrillIdByServerId(
                 drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
                 localDrillId -> {
-                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
+                    if (null == localDrillId) {
                         UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
                     } else {
                         Intent intent = new Intent(this, DrillInfoActivity.class);
-                        intent.putExtra(Constants.INTENT_DRILL_ID, localDrillId);
+                        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, localDrillId);
                         startActivity(intent);
                     }
                 });

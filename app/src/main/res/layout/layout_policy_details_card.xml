@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/policyDetailsCard"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/field_label">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/detailsContainer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="0.8">
+
+            <!-- Text to be set by the caller -->
+            <TextView
+                android:id="@+id/policyName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:textSize="22sp"
+                android:textColor="@color/drill_yellow" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/sundayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_sunday"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:paddingEnd="4dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/mondayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_monday"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:paddingEnd="4dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/tuesdayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_tuesday"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:paddingEnd="4dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/wednesdayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_wednesday"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:paddingEnd="4dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/thursdayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_thursday"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:paddingEnd="4dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/fridayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_friday"
+                    android:textSize="15sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:paddingEnd="4dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/saturdayActive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/initial_saturday"
+                    android:textSize="15sp"
+                    android:textColor="@color/drill_yellow" />
+            </LinearLayout>
+
+            <!-- Text to be set by the caller -->
+            <TextView
+                android:id="@+id/timeWindow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:textSize="15sp"
+                android:textColor="@color/drill_yellow" />
+
+            <!-- Text to be set by the caller -->
+            <TextView
+                android:id="@+id/frequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:textSize="15sp"
+                android:textColor="@color/drill_yellow" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/enabledSwitch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="0.2"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

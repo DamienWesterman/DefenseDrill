@@ -28,6 +28,8 @@ package com.damienwesterman.defensedrill.ui.utils;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.snackbar.Snackbar;
 
 /**
@@ -46,11 +48,7 @@ public class UiUtils {
      * @param rootView  View object to display the snackbar in.
      * @param message   String message to display to the user.
      */
-    public static void displayDismissibleSnackbar(View rootView, String message) {
-        if (null == rootView || null == message) {
-            return;
-        }
-
+    public static void displayDismissibleSnackbar(@NonNull View rootView, @NonNull String message) {
         Snackbar snackbar = Snackbar.make(rootView,
                 message, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction("OK", (callingView) -> snackbar.dismiss());

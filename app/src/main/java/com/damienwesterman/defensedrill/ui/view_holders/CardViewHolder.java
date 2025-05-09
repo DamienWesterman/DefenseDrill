@@ -36,10 +36,13 @@ import com.damienwesterman.defensedrill.ui.utils.CardClickListener;
 import com.damienwesterman.defensedrill.ui.utils.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.utils.TitleDescCard;
 
+import lombok.Getter;
+
 /**
  * Custom ViewHolder for use in a RecyclerView. Uses the {@link TitleDescCard} as its view for
  * each element. Allows setting of onClickListener and onLongClickListener.
  */
+@Getter
 public class CardViewHolder extends RecyclerView.ViewHolder {
     private final TitleDescCard card;
 
@@ -48,10 +51,6 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
 
         card = view.findViewById(R.id.cardViewHolder);
 
-    }
-
-    public TitleDescCard getCard() {
-        return card;
     }
 
     public void setOnClickListener(CardClickListener clickListener, long id) {

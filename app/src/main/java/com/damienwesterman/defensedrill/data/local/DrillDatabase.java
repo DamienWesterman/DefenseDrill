@@ -42,7 +42,8 @@ import androidx.room.RoomDatabase;
         CategoryEntity.class,
         SubCategoryEntity.class,
         DrillCategoryJoinEntity.class,
-        DrillSubCategoryJoinEntity.class
+        DrillSubCategoryJoinEntity.class,
+        WeeklyHourPolicyEntity.class
 }, version = 1, exportSchema = false)
 /* package-private */ abstract class DrillDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "drill_database";
@@ -61,4 +62,5 @@ import androidx.room.RoomDatabase;
     public abstract DrillDao getDrillDao();
     public abstract CategoryDao getCategoryDao();
     public abstract SubCategoryDao getSubCategoryDao();
+    public abstract WeeklyHourPolicyDao getWeeklyHourPolicyDao();
 }
