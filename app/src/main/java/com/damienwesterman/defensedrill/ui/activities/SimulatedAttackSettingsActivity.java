@@ -614,12 +614,12 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                 Constants.SimulatedAttackFrequency.values()[frequencyPosition + 1];
         int alertHours = endingHourSpinner.getSelectedItemPosition()
                 - beginningHourSpinner.getSelectedItemPosition();
-        if (alertHours < frequency.getMinHoursNeeded()) {
+        if (alertHours < frequency.getMinimumHoursNeeded()) {
             if (0 > alertHours) {
                 // User has selected an overnight time window, which is not currently supported
                 errorConsumer.accept("Overnight alarms not currently supported, must create two separate alarms.");
             } else {
-                errorConsumer.accept("Time window must be at least " + frequency.getMinHoursNeeded()
+                errorConsumer.accept("Time window must be at least " + frequency.getMinimumHoursNeeded()
                         + " hour(s) for selected frequency.");
             }
             return List.of();

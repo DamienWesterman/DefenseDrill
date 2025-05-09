@@ -29,6 +29,8 @@ package com.damienwesterman.defensedrill.utils;
 import com.damienwesterman.defensedrill.BuildConfig;
 import com.damienwesterman.defensedrill.data.local.Drill;
 
+import java.util.concurrent.TimeUnit;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -44,21 +46,69 @@ public class Constants {
     @Getter
     @RequiredArgsConstructor
     public enum SimulatedAttackFrequency {
-        NO_ATTACKS(-1),
-        ONCE_PER_15_MINUTES(1),
-        ONCE_PER_30_MINUTES(1),
-        ONCE_PER_1_HOUR(1),
-        ONCE_PER_90_MINUTES(2),
-        ONCE_PER_2_HOURS(2),
-        ONCE_PER_3_HOURS(3),
-        ONCE_PER_4_HOURS(4),
-        ONCE_PER_6_HOURS(6),
-        ONCE_PER_12_HOURS(12);
+        NO_ATTACKS(-1, -1, -1),
+        ONCE_PER_15_MINUTES(1,
+                calculateLowerBoundFromMinutes(15),
+                calculateUpperBoundFromMinutes(15)),
+        ONCE_PER_30_MINUTES(1,
+                calculateLowerBoundFromMinutes(30),
+                calculateUpperBoundFromMinutes(30)),
+        ONCE_PER_1_HOUR(1,
+                calculateLowerBoundFromHours(1),
+                calculateUpperBoundFromHours(1)),
+        ONCE_PER_90_MINUTES(2,
+                calculateLowerBoundFromMinutes(90),
+                calculateUpperBoundFromMinutes(90)),
+        ONCE_PER_2_HOURS(2,
+                calculateLowerBoundFromHours(2),
+                calculateUpperBoundFromHours(2)),
+        ONCE_PER_3_HOURS(3,
+                calculateLowerBoundFromHours(3),
+                calculateUpperBoundFromHours(3)),
+        ONCE_PER_4_HOURS(4,
+                calculateLowerBoundFromHours(4),
+                calculateUpperBoundFromHours(4)),
+        ONCE_PER_6_HOURS(6,
+                calculateLowerBoundFromHours(6),
+                calculateUpperBoundFromHours(6)),
+        ONCE_PER_12_HOURS(12,
+                calculateLowerBoundFromHours(12),
+                calculateUpperBoundFromHours(12));
 
         /**
          * Minimum number of hours needed for the selected frequency.
          */
-        private final int minHoursNeeded;
+        private final int minimumHoursNeeded;
+
+        /**
+         * Minimum number of milliseconds delay for the next alarm.
+         */
+        private final long nextAlarmMillisLowerBound;
+
+        /**
+         * Maximum number of milliseconds delay for the next alarm.
+         */
+        private final long nextAlarmMillisUpperBound;
+
+        private static long calculateLowerBoundFromMinutes(int minutes) {
+            // Let it truncate
+            return (long) (TimeUnit.MINUTES.toMillis(minutes) * 0.8);
+        }
+
+        private static long calculateLowerBoundFromHours(int hours) {
+            // Let it truncate
+            return (long) (TimeUnit.HOURS.toMillis(hours) * 0.8);
+        }
+
+        private static long calculateUpperBoundFromMinutes(int minutes) {
+            // Let it truncate
+            return (long) (TimeUnit.MINUTES.toMillis(minutes) * 1.2);
+        }
+
+        private static long calculateUpperBoundFromHours(int hours) {
+            // Let it truncate
+            return (long) (TimeUnit.HOURS.toMillis(hours) * 1.2);
+        }
     }
 
     public static final long USER_RANDOM_SELECTION = -1;

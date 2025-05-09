@@ -32,7 +32,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -70,19 +69,17 @@ public class DefenseDrillNotificationManager {
      * Initialize the manager.
      */
     public void init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            systemNotificationManager.createNotificationChannel(new NotificationChannel(
-                    CHANNEL_ID_DATABASE_UPDATE_AVAILABLE,
-                    CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE,
-                    NotificationManager.IMPORTANCE_HIGH
-            ));
-            systemNotificationManager.createNotificationChannel(new NotificationChannel(
-                    CHANNEL_ID_SIMULATED_ATTACKS,
-                    CHANNEL_DESCRIPTION_SIMULATED_ATTACKS,
-                    NotificationManager.IMPORTANCE_HIGH
-            ));
-            initSuccess = true;
-        }
+        systemNotificationManager.createNotificationChannel(new NotificationChannel(
+                CHANNEL_ID_DATABASE_UPDATE_AVAILABLE,
+                CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE,
+                NotificationManager.IMPORTANCE_HIGH
+        ));
+        systemNotificationManager.createNotificationChannel(new NotificationChannel(
+                CHANNEL_ID_SIMULATED_ATTACKS,
+                CHANNEL_DESCRIPTION_SIMULATED_ATTACKS,
+                NotificationManager.IMPORTANCE_HIGH
+        ));
+        initSuccess = true;
     }
 
     /**

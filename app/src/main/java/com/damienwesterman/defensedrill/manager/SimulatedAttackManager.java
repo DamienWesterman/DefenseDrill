@@ -31,7 +31,6 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
@@ -43,12 +42,16 @@ import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.utils.Constants;
 import com.damienwesterman.defensedrill.utils.DrillGenerator;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
@@ -144,11 +147,11 @@ public class SimulatedAttackManager {
     /* package-private */ void scheduleSimulatedAttack() {
         stopSimulatedAttacks();
 // TODO: Remove test code
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-    simulatedCurrTime = getNextAlarmMillis();
-Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedCurrTime - System.currentTimeMillis()) / 1000));
-}
-        // TODO: Only if the user has notifications enabled and has selected to receive simulated attacks AND getNextAlarmMillis() != INVALID_ALARM_TIME
+        simulatedCurrTime = getNextAlarmMillis();
+        // TODO: FIXME: START HERE: Test the alarm generation by creating policies and inspecting the following log and make sure that we are falling within the policies hours and frequencies
+// TODO: If there are no times, then kill the background service
+        Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedCurrTime - System.currentTimeMillis()) / 1000));
+// TODO: Only if the user has notifications enabled and has selected to receive simulated attacks AND getNextAlarmMillis() != INVALID_ALARM_TIME
         alarmManager.setAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 3000, // getNextAlarmMillis(), TODO: PUT BACK IN
@@ -192,21 +195,28 @@ Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedC
 private static long simulatedCurrTime = System.currentTimeMillis();
     // TODO: Doc comments (in UTC)
     private long getNextAlarmMillis() {
-        // TODO: FIXME finish
-        // TODO: If there are no times, then kill the background service
-        long ret = INVALID_ALARM_TIME;
-
         long currTime = simulatedCurrTime; // TODO: System.currentTimeMillis();
         int currWeeklyHour = getWeeklyHourFromMillis(currTime);
 
         // This should already be sorted in ascending order by weekly hour
         List<WeeklyHourPolicyEntity> policies = simulatedAttackRepo.getActivePolicies();
         if (policies.isEmpty()) {
-            Log.w(TAG, "DxTag no active policies");
+            Log.w(TAG, "No active policies");
             return INVALID_ALARM_TIME;
         }
 
-        // Generate next alarm time randomly using the weeklyHour's policy
+        /*
+        Generate next alarm time randomly using the weeklyHour's policy
+         */
+
+        if (currWeeklyHour > policies.get(policies.size() - 1).getWeeklyHour()) {
+            /*
+            Means we reached the end of the week, wrap around and start again, pick from the first
+            time window.
+             */
+            return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
+        }
+
         int nextPolicyIndex = -1;
         for (int i = 0; i < policies.size(); i++) {
             WeeklyHourPolicyEntity policy = policies.get(i);
@@ -216,41 +226,72 @@ private static long simulatedCurrTime = System.currentTimeMillis();
             } else if (currWeeklyHour < policy.getWeeklyHour()) {
                 /*
                 Current hour does not have a policy, so we can just choose a time from this next
-                window without having to do further checks.
+                window without having to do further checks. This should not really happen as an hour
+                without a policy should never be chosen, but just in case.
                  */
                 return generateAlarmFromBeginningOfTimeWindow(policy);
             }
         }
 
-        if (-1 == nextPolicyIndex) {
-            /*
-            Means we reached the end of the week, wrap around and start again, pick from the first
-            time window.
-             */
-            simulatedCurrTime = ret;
-            return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
+        Constants.SimulatedAttackFrequency nextAlarmFrequency =
+                policies.get(nextPolicyIndex).getFrequency();
+        long nextAlarmTimeMillis =
+                generateAlarmUsingFrequency(currTime, nextAlarmFrequency);
+        int nextAlarmWeeklyHour = getWeeklyHourFromMillis(nextAlarmTimeMillis);
+
+        /*
+        Check subsequent policies if it spans multiple hours to make sure we do not violate any
+        intermittent policies' frequencies
+         */
+        if (nextAlarmWeeklyHour != currWeeklyHour) {
+            if (nextAlarmWeeklyHour > policies.get(policies.size() - 1).getWeeklyHour()) {
+                /*
+                Means we reached the end of the week, wrap around and start again, pick from the
+                first time window.
+                 */
+                return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
+            }
+
+            for (int i = nextPolicyIndex + 1; i < policies.size(); i++) {
+                WeeklyHourPolicyEntity policy = policies.get(i);
+                if (nextAlarmWeeklyHour < policy.getWeeklyHour()) {
+                    // We are good and did not break any intermittent policies
+                    break;
+                }
+
+                if (nextAlarmFrequency != policy.getFrequency()) {
+                    // We have violated an intermittent policy, so just select from this next policy
+                    return generateAlarmFromBeginningOfTimeWindow(policy);
+                }
+            }
         }
-        long nextAlarmTime = // TODO: FIXME: START HERE
 
-        // 4. Convert next alarm time to weeklyHour
-        // 5. Check the intermediate policies if it spans more than one and see if they differ from the current
-        // 6. If they do, then abandon this next alarm time and generate using the first policy that differs
-            // If this happens, you can choose randomly from the start of that policy time's window
-
- simulatedCurrTime = ret;
-        return ret;
+        return nextAlarmTimeMillis;
     }
 
     // TODO: DOC COMMENTS
     private long generateAlarmFromBeginningOfTimeWindow(WeeklyHourPolicyEntity policy) {
-        // TODO: implement how to get the next occurrence of a time window??
-        return -1;
+        long startingMillis = getNextOccurrenceWeeklyHourInMillis(policy.getWeeklyHour());
+
+        /*
+        Since we are starting from the beginning of an hour, we can select a time frame from the
+        beginning of the hour until the frequency's upper bound.
+         */
+        long additionalMillis = ThreadLocalRandom.current().nextLong(
+                policy.getFrequency().getNextAlarmMillisUpperBound()
+        );
+
+        return startingMillis + additionalMillis;
     }
 
     // TODO: Doc comments
     private long generateAlarmUsingFrequency(long startingMillis, Constants.SimulatedAttackFrequency frequency) {
-        // TODO: implement
-        return -1;
+        long additionalMillis = ThreadLocalRandom.current().nextLong(
+                frequency.getNextAlarmMillisLowerBound(),
+                frequency.getNextAlarmMillisUpperBound()
+        );
+
+        return startingMillis + additionalMillis;
     }
 
     // TODO: Doc comments (UTC epoch)
@@ -258,7 +299,7 @@ private static long simulatedCurrTime = System.currentTimeMillis();
         LocalDateTime localDateTime = Instant.ofEpochMilli(millisFromEpoch)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
-        int dayOfWeek = -1;
+        int dayOfWeek;
         switch (localDateTime.getDayOfWeek()) {
             case SUNDAY:
                 dayOfWeek = 0;
@@ -281,8 +322,60 @@ private static long simulatedCurrTime = System.currentTimeMillis();
             case SATURDAY:
                 dayOfWeek = 6;
                 break;
+            default:
+                // Definitely should not happen
+                Log.e(TAG, "Invalid day of week: " + localDateTime.getDayOfWeek());
+                throw new RuntimeException("Invalid Day of week: " + localDateTime.getDayOfWeek());
         }
 
         return (dayOfWeek * 24) + localDateTime.getHour();
+    }
+
+    // TODO: Doc comments UTC epoch
+    private long getNextOccurrenceWeeklyHourInMillis(int weeklyHour) {
+        DayOfWeek targetDay;
+        switch (weeklyHour / 24) {
+            case 0:
+                targetDay = DayOfWeek.SUNDAY;
+                break;
+            case 1:
+                targetDay = DayOfWeek.MONDAY;
+                break;
+            case 2:
+                targetDay = DayOfWeek.TUESDAY;
+                break;
+            case 3:
+                targetDay = DayOfWeek.WEDNESDAY;
+                break;
+            case 4:
+                targetDay = DayOfWeek.THURSDAY;
+                break;
+            case 5:
+                targetDay = DayOfWeek.FRIDAY;
+                break;
+            case 6:
+                targetDay = DayOfWeek.SATURDAY;
+                break;
+            default:
+                // Definitely should not happen
+                Log.e(TAG, "Invalid weeklyHour: " + weeklyHour);
+                throw new RuntimeException("Invalid weeklyHour: " + weeklyHour);
+        }
+
+        int targetHour = weeklyHour % 24;
+
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime next = now
+                .withHour(targetHour)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0)
+                .with(TemporalAdjusters.nextOrSame(targetDay));
+
+        if (!next.isAfter(now)) {
+            next = next.with(TemporalAdjusters.next(targetDay));
+        }
+
+        return next.toInstant().toEpochMilli();
     }
 }
