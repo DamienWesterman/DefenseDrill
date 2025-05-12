@@ -63,19 +63,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 public class SimulatedAttackManager {
     private static final String TAG = SimulatedAttackManager.class.getSimpleName();
     private static final long INVALID_ALARM_TIME = -1L;
-    // TODO: Implement the actual algorithm for selecting the next alarm
-    /*
-        Algorithm/Data structure ideas:
-            - During a time frame, if it is the first alarm in the time frame, it can be triggered at ANY time
-                - So we don't have to wait like 15 min if it's the first one in a 1pm-2pm time slot
-                - So it can be triggered anywhere from 1pm-1:18pm
-            - I'm thinking get the next trigger in this time frame, THEN if it is out of this time frame move on to deciding the next (which will be fit the logic above)
-            - So that seems pretty simple, get a random int using the current time zones frequency, if it is out then go to the next (which should be guaranteed to have a proper time)
-            - So the time zones can be saved in a simple list, ranging from 0 - 167 for each hour of the week (sun - sat, 0 = sun at midnight, 1 = sun at 1 AM, etc.)
-            - Each position simply has a value (maybe an enum) that says the frequency on it, and if it is activated (for UI purposes), and what alarm index number it belongs to
-                - Then this can have two methods of retrieval, regular (range 0 - 167) and also grouped by alarm index
-                - The ViewModel for the UI can have the entire list saved and if a user adds/modifies a time slot that already belongs to another group, report that it is conflicting and cannot be saved
-     */
     // TODO: Make sure to document somewhere that there should always be exactly 168 entries in the database because that's how many hours are in the week. A "deleted" policy should be empty and have all defaults an inactive
 
     private final AlarmManager alarmManager;
@@ -146,24 +133,21 @@ public class SimulatedAttackManager {
     // TODO: Doc comments
     /* package-private */ void scheduleSimulatedAttack() {
         stopSimulatedAttacks();
-for (int i = 0; i < 100; i++) {
-// TODO: Remove test code
+
         long nextAlarmMillis = getNextAlarmMillis();
         if (INVALID_ALARM_TIME == nextAlarmMillis) {
-            // TODO: whatever here
+            // Something went wrong, don't send schedule another notification
             return;
         }
 
-        simulatedCurrTime = nextAlarmMillis;
-        // TODO: FIXME: START HERE: Test the alarm generation by creating policies and inspecting the following log and make sure that we are falling within the policies hours and frequencies
-// TODO: If there are no times, then kill the background service
-        Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedCurrTime - System.currentTimeMillis()) / 1000));}
-// TODO: Only if the user has notifications enabled and has selected to receive simulated attacks AND getNextAlarmMillis() != INVALID_ALARM_TIME
-//        alarmManager.setAndAllowWhileIdle(
-//                AlarmManager.RTC_WAKEUP,
-//                System.currentTimeMillis() + 1000, // getNextAlarmMillis(), TODO: PUT BACK IN
-//                simulatedAttackPendingIntent
-//        );
+        if (sharedPrefs.areSimulatedAttacksEnabled()
+                && notificationManager.areNotificationsEnabled()) {
+            alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextAlarmMillis,
+                    simulatedAttackPendingIntent
+            );
+        }
     }
 
     /**
@@ -175,34 +159,38 @@ for (int i = 0; i < 100; i++) {
 
     // TODO: Doc comments
     /* package-private */ void simulateAttack() {
-//        sendSimulateAttackNotification(); TODO: PUT BACK IN
-        scheduleSimulatedAttack();
+        if (sendSimulateAttackNotification()) {
+            // Only schedule the next notification if we successfully generated this notification
+            scheduleSimulatedAttack();
+        }
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
     // TODO: Doc comments
-    private void sendSimulateAttackNotification() {
+    private boolean sendSimulateAttackNotification() {
         Optional<CategoryEntity> optSelfDefenseCategory =
                 drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE);
         if (!optSelfDefenseCategory.isPresent()) {
-            // TODO: What do we want to do here, send an intent to someone, set a flag, set shared prefs and have someone report it? Or just leave it be? Check it when the user activates the notification system for simulated attacks?
-            return;
+            return false;
         }
 
         List<Drill> drills = drillRepo.getAllDrillsByCategoryId(optSelfDefenseCategory.get().getId());
+        if (drills.isEmpty()) {
+            return false;
+        }
+
         DrillGenerator drillGenerator = new DrillGenerator(drills, new Random());
-        // TODO: What to do if there are none of this category??
         Optional<Drill> optDrill = Optional.ofNullable(drillGenerator.generateDrill());
         optDrill.ifPresent(notificationManager::notifySimulatedAttack);
+
+        return optDrill.isPresent();
     }
 
-// TODO: REMOVE TEST CODE
-private static long simulatedCurrTime = System.currentTimeMillis();
     // TODO: Doc comments (in UTC)
     private long getNextAlarmMillis() {
-        long currTime = simulatedCurrTime; // TODO: System.currentTimeMillis();
+        long currTime = System.currentTimeMillis();
         int currWeeklyHour = getWeeklyHourFromMillis(currTime);
 
         // This should already be sorted in ascending order by weekly hour
@@ -379,8 +367,7 @@ private static long simulatedCurrTime = System.currentTimeMillis();
 
         int targetHour = weeklyHour % 24;
 
-//        ZonedDateTime now = ZonedDateTime.now(); TODO: add back in
-        ZonedDateTime now = ZonedDateTime.ofInstant(Instant.ofEpochMilli(simulatedCurrTime), ZoneId.systemDefault()); // TODO: Remove test codes
+        ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime next = now
                 .withHour(targetHour)
                 .withMinute(0)

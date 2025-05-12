@@ -49,7 +49,6 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
-    // TODO: Modify the background service to follow these custom times
     // TODO: Have some kind of popup if the DrillInfoActivity receives an intent of self defense attack. Explain to come up with 3 solutions: technical solution, real world solution, and preventative solution (give an option to disable this popup) (also if a simulated attack, show a help button or something somewhere to show this popup?)
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
     private static final String CHANNEL_ID_SIMULATED_ATTACKS = "simulated_attacks";
@@ -160,5 +159,9 @@ public class DefenseDrillNotificationManager {
                 .build();
 
         systemNotificationManager.notify(NOTIFICATION_ID_SIMULATED_ATTACKS, notification);
+    }
+
+    public boolean areNotificationsEnabled() {
+        return systemNotificationManager.areNotificationsEnabled();
     }
 }

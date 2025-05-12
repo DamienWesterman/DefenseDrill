@@ -52,7 +52,6 @@ public class BroadcastReceiverManager extends BroadcastReceiver {
             return;
         }
 
-//Log.i("DxTag", "Received intent: " + action); // TODO: REMOVE
         BroadcastReceiver.PendingResult pendingResult = goAsync();
         switch(action) {
             case Intent.ACTION_BOOT_COMPLETED:
