@@ -146,17 +146,24 @@ public class SimulatedAttackManager {
     // TODO: Doc comments
     /* package-private */ void scheduleSimulatedAttack() {
         stopSimulatedAttacks();
+for (int i = 0; i < 100; i++) {
 // TODO: Remove test code
-        simulatedCurrTime = getNextAlarmMillis();
+        long nextAlarmMillis = getNextAlarmMillis();
+        if (INVALID_ALARM_TIME == nextAlarmMillis) {
+            // TODO: whatever here
+            return;
+        }
+
+        simulatedCurrTime = nextAlarmMillis;
         // TODO: FIXME: START HERE: Test the alarm generation by creating policies and inspecting the following log and make sure that we are falling within the policies hours and frequencies
 // TODO: If there are no times, then kill the background service
-        Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedCurrTime - System.currentTimeMillis()) / 1000));
+        Log.i("DxTag", "Next trigger at: " + LocalDateTime.now().plusSeconds((simulatedCurrTime - System.currentTimeMillis()) / 1000));}
 // TODO: Only if the user has notifications enabled and has selected to receive simulated attacks AND getNextAlarmMillis() != INVALID_ALARM_TIME
-        alarmManager.setAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + 3000, // getNextAlarmMillis(), TODO: PUT BACK IN
-                simulatedAttackPendingIntent
-        );
+//        alarmManager.setAndAllowWhileIdle(
+//                AlarmManager.RTC_WAKEUP,
+//                System.currentTimeMillis() + 1000, // getNextAlarmMillis(), TODO: PUT BACK IN
+//                simulatedAttackPendingIntent
+//        );
     }
 
     /**
@@ -252,16 +259,24 @@ private static long simulatedCurrTime = System.currentTimeMillis();
                 return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
             }
 
-            for (int i = nextPolicyIndex + 1; i < policies.size(); i++) {
+            for (int i = nextPolicyIndex; i < policies.size(); i++) {
                 WeeklyHourPolicyEntity policy = policies.get(i);
                 if (nextAlarmWeeklyHour < policy.getWeeklyHour()) {
-                    // We are good and did not break any intermittent policies
-                    break;
+                    /*
+                     We went past all other policies before this time frame, meaning there is no
+                     policy for this hour, so we need to pick from this subsequent policy
+                     */
+                    return generateAlarmFromBeginningOfTimeWindow(policies.get(i));
                 }
 
                 if (nextAlarmFrequency != policy.getFrequency()) {
                     // We have violated an intermittent policy, so just select from this next policy
                     return generateAlarmFromBeginningOfTimeWindow(policy);
+                }
+
+                if (nextAlarmWeeklyHour == policy.getWeeklyHour()) {
+                    // We are good and did not break any intermittent policies
+                    break;
                 }
             }
         }
@@ -364,7 +379,8 @@ private static long simulatedCurrTime = System.currentTimeMillis();
 
         int targetHour = weeklyHour % 24;
 
-        ZonedDateTime now = ZonedDateTime.now();
+//        ZonedDateTime now = ZonedDateTime.now(); TODO: add back in
+        ZonedDateTime now = ZonedDateTime.ofInstant(Instant.ofEpochMilli(simulatedCurrTime), ZoneId.systemDefault()); // TODO: Remove test codes
         ZonedDateTime next = now
                 .withHour(targetHour)
                 .withMinute(0)

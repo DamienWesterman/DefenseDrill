@@ -73,6 +73,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -145,17 +147,20 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
 
             viewModel.checkForSelfDefenseDrills(
                 categoryExists -> {
-                    if (categoryExists) {
-                        if (isChecked) {
+                    boolean policiesExist = !viewModel.getPoliciesByName().isEmpty();
+
+                    if (isChecked) {
+                        if (categoryExists && policiesExist) {
+                            // We have self defense drills and policies, start the manager
                             SimulatedAttackManager.start(this);
-                        } else {
-                            SimulatedAttackManager.stop(this);
-                        }
-                    } else {
-                        // There is no Self Defense Category
-                        if (isChecked) {
+                        } else if (categoryExists) {
+                            // We have self defense drills but no policies, do nothing
+                        } else if (policiesExist) {
+                            // We have policies but no self defense drills, show popup
                             runOnUiThread(this::noSelfDefenseDrillsPopup);
                         }
+                    } else {
+                        SimulatedAttackManager.stop(this);
                     }
                 });
         });
@@ -209,22 +214,28 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
             if (null != policies) {
                 viewModel.removePolicies(
-                        policies.stream()
-                                .map(WeeklyHourPolicyEntity::getWeeklyHour)
-                                .collect(Collectors.toList()),
-                        new OperationCompleteCallback() {
-                            @Override
-                            public void onSuccess() {
-                                UiUtils.displayDismissibleSnackbar(rootView,
-                                        policyName + " has been deleted!");
+                    policies.stream()
+                            .map(WeeklyHourPolicyEntity::getWeeklyHour)
+                            .collect(Collectors.toList()),
+                    new OperationCompleteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            UiUtils.displayDismissibleSnackbar(rootView,
+                                    policyName + " has been deleted!");
+
+                            if (viewModel.getPoliciesByName().isEmpty()) {
+                                // We deleted the last one
+                                SimulatedAttackManager.stop(context);
+                            } else {
                                 SimulatedAttackManager.restart(context);
                             }
+                        }
 
-                            @Override
-                            public void onFailure(String error) {
-                                UiUtils.displayDismissibleSnackbar(rootView, error);
-                            }
-                        });
+                        @Override
+                        public void onFailure(String error) {
+                            UiUtils.displayDismissibleSnackbar(rootView, error);
+                        }
+                    });
             }
         });
         builder.create().show();
@@ -353,7 +364,21 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                         new OperationCompleteCallback() {
                             @Override
                             public void onSuccess() {
-                                runOnUiThread(() -> setLoading(true));
+                                CountDownLatch latch = new CountDownLatch(1);
+                                runOnUiThread(() -> {
+                                    setLoading(true);
+                                    latch.countDown();
+                                });
+                                try {
+                                    boolean finished = latch.await(250, TimeUnit.MILLISECONDS);
+                                    if (!finished) {
+                                        // We timed out, continue but log it
+                                        Log.e(TAG, "Timed out waiting for UI update");
+                                    }
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+
                                 alert.dismiss();
                                 UiUtils.displayDismissibleSnackbar(rootView,
                                         "Alarm saved successfully!");
@@ -513,33 +538,33 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         Map<String, List<WeeklyHourPolicyEntity>> policiesByName = viewModel.getPoliciesByName();
         existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(policiesByName,
-                // On Click Listener -> Modify Policy
-                this::policyDetailsPopup,
-                // Long Click Listener -> Delete Policy
-                this::deletePolicyPopup,
-                (policyName, isChecked) -> {
-                    // Radio button clicked, change activeness
-                    List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
-                    if (null != policies) {
-                        policies.forEach(policy -> policy.setActive(isChecked));
-                        viewModel.savePolicies(
-                            policies,
-                            false,
-                            false,
-                            new OperationCompleteCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    // Do nothing
-                                }
-
-                                @Override
-                                public void onFailure(String error) {
-                                    UiUtils.displayDismissibleSnackbar(rootView, error);
-                                }
+            // On Click Listener -> Modify Policy
+            this::policyDetailsPopup,
+            // Long Click Listener -> Delete Policy
+            this::deletePolicyPopup,
+            (policyName, isChecked) -> {
+                // Radio button clicked, change activeness
+                List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
+                if (null != policies) {
+                    policies.forEach(policy -> policy.setActive(isChecked));
+                    viewModel.savePolicies(
+                        policies,
+                        false,
+                        false,
+                        new OperationCompleteCallback() {
+                            @Override
+                            public void onSuccess() {
+                                // Do nothing
                             }
-                        );
-                    }
+
+                            @Override
+                            public void onFailure(String error) {
+                                UiUtils.displayDismissibleSnackbar(rootView, error);
+                            }
+                        }
+                    );
                 }
+            }
         ));
     }
 

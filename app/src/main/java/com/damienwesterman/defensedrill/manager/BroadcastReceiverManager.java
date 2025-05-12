@@ -52,20 +52,24 @@ public class BroadcastReceiverManager extends BroadcastReceiver {
             return;
         }
 
-Log.i("DxTag", "Received intent: " + action); // TODO: REMOVE
+//Log.i("DxTag", "Received intent: " + action); // TODO: REMOVE
+        BroadcastReceiver.PendingResult pendingResult = goAsync();
         switch(action) {
             case Intent.ACTION_BOOT_COMPLETED:
                 // Fallthrough intentional
             case Constants.INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER:
-                simulatedAttack.scheduleSimulatedAttack();
+                new Thread(() -> {
+                    simulatedAttack.scheduleSimulatedAttack();
+                    pendingResult.finish();
+                }).start();
                 break;
 
             case Constants.INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER:
                 simulatedAttack.stopSimulatedAttacks();
+                pendingResult.finish();
                 break;
 
             case Constants.INTENT_ACTION_SIMULATE_ATTACK:
-                BroadcastReceiver.PendingResult pendingResult = goAsync();
                 new Thread(() -> {
                     simulatedAttack.simulateAttack();
                     pendingResult.finish();
