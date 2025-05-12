@@ -58,14 +58,14 @@ import javax.inject.Inject;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 
 /**
- * TODO: Doc comments
+ * Manager for scheduling and sending Simulated Attack notifications to the user.
  */
 public class SimulatedAttackManager {
     private static final String TAG = SimulatedAttackManager.class.getSimpleName();
     private static final long INVALID_ALARM_TIME = -1L;
-    // TODO: Make sure to document somewhere that there should always be exactly 168 entries in the database because that's how many hours are in the week. A "deleted" policy should be empty and have all defaults an inactive
 
     private final AlarmManager alarmManager;
+    /** Pending intent for our notification. This way we can cancel it specifically if need be. */
     private final PendingIntent simulatedAttackPendingIntent;
     private final DrillRepository drillRepo;
     private final DefenseDrillNotificationManager notificationManager;
@@ -99,8 +99,9 @@ public class SimulatedAttackManager {
     // =============================================================================================
 
     /**
-     * TODO: Doc comments (can launch for first time or after settings have changed)
-     * @param context
+     * Signal to start the SimulatedAttackManager.
+     *
+     * @param context   Context.
      */
     public static void start(Context context) {
         Intent intent = new Intent(Constants.INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER);
@@ -111,13 +112,21 @@ public class SimulatedAttackManager {
         // Ultimately calls scheduleSimulatedAttack()
     }
 
-    // TODO: doc comments
+    /**
+     * Signal to restart the SimulatedAttackManager.
+     *
+     * @param context   Context.
+     */
     public static void restart(Context context) {
         // The start process already cancels previous alarms
         start(context);
     }
 
-    // TODO: Doc comments
+    /**
+     * Stop the SimulatedAttackManager.
+     *
+     * @param context   Context.
+     */
     public static void stop(Context context) {
         Intent intent = new Intent(Constants.INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER);
         intent.setPackage(context.getPackageName());
@@ -130,7 +139,11 @@ public class SimulatedAttackManager {
     // =============================================================================================
     // "Public" Methods
     // =============================================================================================
-    // TODO: Doc comments
+
+    /**
+     * Randomly select the next time for a simulated attack notification, abiding by the user's
+     * custom notification policies.
+     */
     /* package-private */ void scheduleSimulatedAttack() {
         stopSimulatedAttacks();
 
@@ -151,13 +164,15 @@ public class SimulatedAttackManager {
     }
 
     /**
-     * TODO: Doc comments
+     * Stop any scheduled simulated attacks.
      */
     /* package-private */ void stopSimulatedAttacks() {
         alarmManager.cancel(simulatedAttackPendingIntent);
     }
 
-    // TODO: Doc comments
+    /**
+     * Simulate an attack by selecting a random drill, then scheduling the next simulated attack.
+     */
     /* package-private */ void simulateAttack() {
         if (sendSimulateAttackNotification()) {
             // Only schedule the next notification if we successfully generated this notification
@@ -168,7 +183,12 @@ public class SimulatedAttackManager {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    // TODO: Doc comments
+
+    /**
+     * Randomly select a Drill from a "Self Defense" category and push a notification to the user.
+     *
+     * @return  true if we successfully sent a notification, otherwise false.
+     */
     private boolean sendSimulateAttackNotification() {
         Optional<CategoryEntity> optSelfDefenseCategory =
                 drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE);
@@ -188,7 +208,12 @@ public class SimulatedAttackManager {
         return optDrill.isPresent();
     }
 
-    // TODO: Doc comments (in UTC)
+    /**
+     * Generate the next alarm time in epoch millis based on the user's custom notification
+     * policies.
+     *
+     * @return Milliseconds after epoch of the next alarm, or {@link #INVALID_ALARM_TIME} on error.
+     */
     private long getNextAlarmMillis() {
         long currTime = System.currentTimeMillis();
         int currWeeklyHour = getWeeklyHourFromMillis(currTime);
@@ -272,7 +297,12 @@ public class SimulatedAttackManager {
         return nextAlarmTimeMillis;
     }
 
-    // TODO: DOC COMMENTS
+    /**
+     * Generate the next alarm time in epoch millis using the given policy.
+     *
+     * @param policy    Policy to use to generate the next alarm time.
+     * @return          Milliseconds after epoch of the next alarm.
+     */
     private long generateAlarmFromBeginningOfTimeWindow(WeeklyHourPolicyEntity policy) {
         long startingMillis = getNextOccurrenceWeeklyHourInMillis(policy.getWeeklyHour());
 
@@ -287,7 +317,13 @@ public class SimulatedAttackManager {
         return startingMillis + additionalMillis;
     }
 
-    // TODO: Doc comments
+    /**
+     * Generate the next alarm time in epoch millis using a starting time and a frequency.
+     *
+     * @param startingMillis    Milliseconds after epoch of the starting time.
+     * @param frequency         Frequency of the alarm to be generated.
+     * @return                  Milliseconds after epoch of the next alarm.
+     */
     private long generateAlarmUsingFrequency(long startingMillis, Constants.SimulatedAttackFrequency frequency) {
         long additionalMillis = ThreadLocalRandom.current().nextLong(
                 frequency.getNextAlarmMillisLowerBound(),
@@ -297,7 +333,12 @@ public class SimulatedAttackManager {
         return startingMillis + additionalMillis;
     }
 
-    // TODO: Doc comments (UTC epoch)
+    /**
+     * Convert milliseconds after epoch into a weeklyHour values (0 = Sunday at midnight).
+     *
+     * @param millisFromEpoch   Milliseconds after epoch.
+     * @return                  Weekly Hour (0 = Sunday at midnight).
+     */
     private int getWeeklyHourFromMillis(long millisFromEpoch) {
         LocalDateTime localDateTime = Instant.ofEpochMilli(millisFromEpoch)
                 .atZone(ZoneId.systemDefault())
@@ -334,7 +375,13 @@ public class SimulatedAttackManager {
         return (dayOfWeek * 24) + localDateTime.getHour();
     }
 
-    // TODO: Doc comments UTC epoch
+    /**
+     * Get the next local time occurrence of a weeklyHour (0 = Sunday at midnight) in milliseconds
+     * after epoch.
+     *
+     * @param weeklyHour    Weekly Hour (0 = Sunday at midnight).
+     * @return              The next occurrence of the weeklyHour in milliseconds after epoch.
+     */
     private long getNextOccurrenceWeeklyHourInMillis(int weeklyHour) {
         DayOfWeek targetDay;
         switch (weeklyHour / 24) {

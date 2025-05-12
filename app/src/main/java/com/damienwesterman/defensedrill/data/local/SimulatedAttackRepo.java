@@ -36,6 +36,10 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Repository class to interact with the {@link WeeklyHourPolicyEntity} database.
+ * <br><br>
+ * If the database is not empty, there should ALWAYS be 168 policies (0 - 167); one for each hour of
+ * the week starting with 0 = Sunday at midnight. A "deleted" policy is really just a blank policy,
+ * denoted by no policyName and having active set to false.
  */
 @RequiredArgsConstructor
 public class SimulatedAttackRepo {
