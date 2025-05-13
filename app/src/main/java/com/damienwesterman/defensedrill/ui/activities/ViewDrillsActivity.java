@@ -418,8 +418,9 @@ DefenseDrillNotificationManager notif;
         recyclerView.setAdapter(new DrillAdapter(drills,
             // Click listener
 // TODO: FIXME: REMOVE ME TEST CODE
-//            id -> DrillInfoActivity.startActivity(this, id), TODO: Put back in
+//            id -> DrillInfoActivity.startActivity(this, id), //TODO: Put back in
 id -> {
+    DrillInfoActivity.startActivity(this, id);
     notif.notifySimulatedAttack(viewModel.findDrillById(id));
 },
             // Long click listener

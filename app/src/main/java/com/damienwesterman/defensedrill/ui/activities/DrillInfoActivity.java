@@ -194,10 +194,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveViews();
         setUiLoading(true);
 
-        if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
-            activityState = ActivityState.DISPLAYING_DRILL;
-        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)) {
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)) {
             activityState = ActivityState.SIMULATED_ATTACK_DRILL;
+        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
+            activityState = ActivityState.DISPLAYING_DRILL;
         } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE)
                     && getIntent().hasExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE)) {
             activityState = ActivityState.GENERATED_DRILL;
@@ -246,11 +246,23 @@ public class DrillInfoActivity extends AppCompatActivity {
         });
 
         setUpViewModel();
+
+        if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
+                && sharedPrefs.isSimulatedAttackPopupDefault()) {
+            simulatedAttackInstructionsPopup();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        if (ActivityState.SIMULATED_ATTACK_DRILL == activityState) {
+            menu.add(Menu.NONE, R.id.simulatedAttackInstructionsButton, Menu.NONE, "Attack Instructions")
+                    .setIcon(R.drawable.question_mark_icon)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -262,7 +274,11 @@ public class DrillInfoActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return true;
+        } else if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
+                && R.id.simulatedAttackInstructionsButton == item.getItemId()) {
+            simulatedAttackInstructionsPopup();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -636,6 +652,15 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         builder.create().show();
+    }
+
+    // TODO: Doc comments
+    private void simulatedAttackInstructionsPopup() {
+        // TODO: START HERE
+        UiUtils.displayDismissibleSnackbar(rootView, "INSTRUCTIONS");
+        // TODO: make sure to check shared prefs for if user has said not to show again
+        // TODO: change the neutral button depending on above value
+        // TODO: if selecting the above button, make sure the change shared prefs as well as display a toast if disabling to show where it goes
     }
 
     // =============================================================================================
