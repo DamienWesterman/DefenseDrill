@@ -654,13 +654,32 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    // TODO: Doc comments
+    /**
+     * Display a popup with helpful instructions for dealing with a simulated attack. Allows the
+     * user to set the default behavior if this popup is shown for every simulated attack.
+     */
     private void simulatedAttackInstructionsPopup() {
-        // TODO: START HERE
-        UiUtils.displayDismissibleSnackbar(rootView, "INSTRUCTIONS");
-        // TODO: make sure to check shared prefs for if user has said not to show again
-        // TODO: change the neutral button depending on above value
-        // TODO: if selecting the above button, make sure the change shared prefs as well as display a toast if disabling to show where it goes
+        boolean showPopupDefault = sharedPrefs.isSimulatedAttackPopupDefault();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Instructions");
+        builder.setIcon(R.drawable.danger_alert_icon);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.simulated_attack_instructions);
+        builder.setNeutralButton(showPopupDefault ? "Don't Show Every Time" : "Show Every Time",
+            ((dialogInterface, i) -> {
+                if (showPopupDefault) {
+                    // Don't show every time
+                    sharedPrefs.setSimulatedAttackPopupDefault(false);
+                    UiUtils.displayDismissibleSnackbar(rootView, "To see Instructions, click the Question Mark at the top right.");
+                } else {
+                    // Show every time
+                    sharedPrefs.setSimulatedAttackPopupDefault(true);
+                    UiUtils.displayDismissibleSnackbar(rootView, "Instructions will show every time!");
+                }
+            }));
+        builder.setPositiveButton("OK", null);
+        builder.create().show();
     }
 
     // =============================================================================================
