@@ -99,7 +99,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         /** We started at {@link ActivityState#GENERATED_DRILL}, but user skipped at least one Drill */
         REGENERATED_DRILL,
         /** This drill was not generated and we are only displaying its information */
-        DISPLAYING_DRILL
+        DISPLAYING_DRILL,
+        /** Same as {@link ActivityState#DISPLAYING_DRILL} but started from a simulated attack */
+        SIMULATED_ATTACK_DRILL
     }
 
     private DrillInfoViewModel viewModel;
@@ -194,6 +196,8 @@ public class DrillInfoActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.DISPLAYING_DRILL;
+        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)) {
+            activityState = ActivityState.SIMULATED_ATTACK_DRILL;
         } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE)
                     && getIntent().hasExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE)) {
             activityState = ActivityState.GENERATED_DRILL;
@@ -624,6 +628,8 @@ public class DrillInfoActivity extends AppCompatActivity {
                 break;
             case DISPLAYING_DRILL:
                 // Fallthrough intentional
+            case SIMULATED_ATTACK_DRILL:
+                // Fallthrough intentional
             default:
                 builder.setNegativeButton("Back", (dialog, position) -> finish());
                 break;
@@ -692,17 +698,27 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (null == drill) {
             // First time loading activity
             Intent intent = getIntent();
-            if (ActivityState.DISPLAYING_DRILL == activityState) {
-                long drillId = intent.getLongExtra(Constants.INTENT_EXTRA_DRILL_ID, -1);
-                viewModel.populateDrill(drillId);
-            } else if (ActivityState.GENERATED_DRILL == activityState) {
-                long categoryId = intent.getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, -1);
-                long subCategoryId = intent.getLongExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, -1);
-                viewModel.populateDrill(categoryId, subCategoryId);
-            } else {
-                // Not in a correct state. Toast so it persists screens
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
-                finish();
+            switch (activityState) {
+                case SIMULATED_ATTACK_DRILL:
+                    // Fallthrough intentional
+                case DISPLAYING_DRILL:
+                    long drillId = intent.getLongExtra(Constants.INTENT_EXTRA_DRILL_ID, -1);
+                    viewModel.populateDrill(drillId);
+                    break;
+                case GENERATED_DRILL:
+                    long categoryId =intent
+                            .getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, -1);
+                    long subCategoryId = intent
+                            .getLongExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, -1);
+                    viewModel.populateDrill(categoryId, subCategoryId);
+                    break;
+                case REGENERATED_DRILL:
+                    // Fallthrough intentional
+                default:
+                    // Not in a correct state. Toast so it persists screens
+                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    finish();
+                    break;
             }
         } else {
             // Screen rotation or something, re-load existing drill from viewModel
@@ -747,6 +763,9 @@ public class DrillInfoActivity extends AppCompatActivity {
                 alertMessage = getString(R.string.no_drills_left);
                 break;
             case DISPLAYING_DRILL:
+                // Fallthrough intentional
+            case SIMULATED_ATTACK_DRILL:
+                // Fallthrough intentional
             default:
                 alertMessage = getString(R.string.no_drill_found_by_id);
                 break;
