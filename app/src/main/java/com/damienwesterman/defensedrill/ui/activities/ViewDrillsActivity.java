@@ -49,16 +49,18 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.ui.adapters.DrillAdapter;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillListViewModel;
-import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -74,6 +76,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
     private DrillListViewModel.SortOrder sortOrder;
+
+// TODO: FIXME: REMOVE ME TEST CODE
+@Inject
+DefenseDrillNotificationManager notif;
 
     private View rootView;
     private ProgressBar progressBar;
@@ -410,14 +416,14 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new DrillAdapter(drills,
-                // Click listener
-                id -> {
-            Intent intent = new Intent(this, DrillInfoActivity.class);
-            intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, id);
-            startActivity(intent);
-        },
-                // Long click listener
-                id -> deleteDrillPopup(viewModel.findDrillById(id))));
+            // Click listener
+// TODO: FIXME: REMOVE ME TEST CODE
+//            id -> DrillInfoActivity.startActivity(this, id), TODO: Put back in
+id -> {
+    notif.notifySimulatedAttack(viewModel.findDrillById(id));
+},
+            // Long click listener
+            id -> deleteDrillPopup(viewModel.findDrillById(id))));
     }
 
     /**

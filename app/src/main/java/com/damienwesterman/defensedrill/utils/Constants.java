@@ -140,6 +140,8 @@ public class Constants {
     /** Should be accompanied by a long of the Drill ID */
     public static final String INTENT_EXTRA_DRILL_ID = "drill_id";
     /** Value does not matter */
+    public static final String INTENT_EXTRA_SIMULATED_ATTACK = "simulated_attack";
+    /** Value does not matter */
     public static final String INTENT_EXTRA_VIEW_CATEGORIES = "view_categories";
     /** Value does not matter */
     public static final String INTENT_EXTRA_VIEW_SUB_CATEGORIES = "view_sub_categories";

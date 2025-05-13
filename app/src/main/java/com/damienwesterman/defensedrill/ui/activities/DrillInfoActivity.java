@@ -27,6 +27,7 @@
 package com.damienwesterman.defensedrill.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -88,13 +89,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  * provided with a categoryId and subCategoryId so that we can generate a drill. It can also be
  * launched from {@link ViewDrillsActivity} by providing a single drillId. Depending on which route
  * is taken to launch, different functionality will exist.
- * <br><br>
- * INTENTS: Expects to receive ONE of the following -
- * <ul>
- *    <li> A {@link Constants#INTENT_EXTRA_CATEGORY_CHOICE} AND {@link Constants#INTENT_EXTRA_SUB_CATEGORY_CHOICE}
- *         intent. These are then used to generate a drill.</li>
- *    <li> A {@link Constants#INTENT_EXTRA_DRILL_ID} intent.</li>
- * </ul>
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
@@ -129,6 +123,63 @@ public class DrillInfoActivity extends AppCompatActivity {
     private EditText notes;
     private Button regenerateButton;
     private Button resetSkippedDrillsButton;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+
+    /**
+     * Start DrillInfoActivity using a selected category and subcategory.
+     *
+     * @param context       Context.
+     * @param categoryId    Category ID.
+     * @param subCategoryId SubCategory ID.
+     */
+    public static void startActivity(Context context, long categoryId, long subCategoryId) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, categoryId);
+        intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, subCategoryId);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Starting DrillInfoActivity for a specific Drill.
+     *
+     * @param context   Context.
+     * @param drillId   Drill ID.
+     */
+    public static void startActivity(Context context, long drillId) {
+        context.startActivity(createIntentToStartActivity(context, drillId));
+    }
+
+    /**
+     * Create an intent to start the DrillInfoActivity for a specific Drill.
+     *
+     * @param context   Context.
+     * @param drillId   Drill ID.
+     * @return          Intent that can then start the DrillInfoActivity.
+     */
+    public static Intent createIntentToStartActivity(Context context, long drillId) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
+        return intent;
+    }
+
+    /**
+     * Create an intent to start the DrillInfoActivity for a specific Drill. Also indicates this is
+     * from a simulated attack notification, meaning it will show a popup for instructions and offer
+     * a help icon to show the popup again.
+     *
+     * @param context   Context.
+     * @param drillId   Drill ID.
+     * @return          Intent that can then start the DrillInfoActivity.
+     */
+    public static Intent createIntentToStartActivityFromSimulatedAttack(Context context, long drillId) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
+        intent.putExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK, "");
+        return intent;
+    }
 
     // =============================================================================================
     // Activity Methods

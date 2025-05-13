@@ -108,7 +108,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     private RecyclerView existingPoliciesRecyclerView;
 
     // =============================================================================================
-    // Service Creation Methods
+    // Activity Creation Methods
     // =============================================================================================
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, SimulatedAttackSettingsActivity.class);

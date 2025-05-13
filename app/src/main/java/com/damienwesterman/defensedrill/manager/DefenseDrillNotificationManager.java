@@ -40,7 +40,6 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.ui.activities.DrillInfoActivity;
 import com.damienwesterman.defensedrill.ui.activities.WebDrillOptionsActivity;
-import com.damienwesterman.defensedrill.utils.Constants;
 
 import lombok.RequiredArgsConstructor;
 
@@ -134,8 +133,8 @@ public class DefenseDrillNotificationManager {
             return;
         }
 
-        Intent intent = new Intent(context, DrillInfoActivity.class);
-        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drill.getId());
+        Intent intent =DrillInfoActivity
+                .createIntentToStartActivityFromSimulatedAttack(context, drill.getId());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(drill.getName()); // This is to avoid conflict with existing pendingIntents
         PendingIntent pendingIntent = PendingIntent.getActivity(

@@ -138,10 +138,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void randomSubCategoryClick(View view) {
-        Intent intent = new Intent(this, DrillInfoActivity.class);
-        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, selectedCategoryId);
-        intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
-        startActivity(intent);
+        DrillInfoActivity.startActivity(this, selectedCategoryId, Constants.USER_RANDOM_SELECTION);
     }
 
     // =============================================================================================
@@ -169,12 +166,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(new AbstractCategoryAdapter(subCategories,
                     // Card click listener
-                    id -> {
-                Intent intent = new Intent(this, DrillInfoActivity.class);
-                intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, selectedCategoryId);
-                intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, id);
-                startActivity(intent);
-            }, null));
+                id -> DrillInfoActivity.startActivity(this, selectedCategoryId, id), null));
         });
     }
 
