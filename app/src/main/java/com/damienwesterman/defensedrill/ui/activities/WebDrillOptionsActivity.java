@@ -62,6 +62,10 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
+    // TODO: after download, if there are new drills, make a popup (before saving)?
+        // TODO: this popup should show a scrollable list of all drills with a checkmark next to it
+        // TODO: Can't close the popup
+        // TODO: On save, mark (and save) those drills as known or unknown
     private LinearLayout rootView;
     @Inject
     SharedPrefs sharedPrefs;
