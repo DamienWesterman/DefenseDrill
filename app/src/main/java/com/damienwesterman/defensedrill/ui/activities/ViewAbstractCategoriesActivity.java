@@ -85,7 +85,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
 
     private View rootView;
     private TextView title;
-    private TextView instructions;
     private Button createButton;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
@@ -126,7 +125,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
 
         rootView = findViewById(R.id.activityViewAbstractCategories);
         title = findViewById(R.id.allAbstractCategoriesText);
-        instructions = findViewById(R.id.allAbstractCategoriesInstruction);
         createButton = findViewById(R.id.createAbstractCategoryButton);
         progressBar = findViewById(R.id.allAbstractCategoriesProgressBar);
         recyclerView = findViewById(R.id.allAbstractCategoriesRecyclerView);
@@ -387,11 +385,9 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     private void setScreenTextByMode() {
         if (ActivityMode.MODE_CATEGORIES == activityMode) {
             title.setText(R.string.categories);
-            instructions.setText(R.string.all_categories_instructions);
             createButton.setText(R.string.create_new_category);
         } else {
             title.setText(R.string.sub_categories);
-            instructions.setText(R.string.all_sub_categories_instructions);
             createButton.setText(R.string.create_new_sub_category);
         }
     }
