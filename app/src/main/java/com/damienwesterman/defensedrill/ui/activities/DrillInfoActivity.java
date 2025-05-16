@@ -151,20 +151,9 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param drillId   Drill ID.
      */
     public static void startActivity(Context context, long drillId) {
-        context.startActivity(createIntentToStartActivity(context, drillId));
-    }
-
-    /**
-     * Create an intent to start the DrillInfoActivity for a specific Drill.
-     *
-     * @param context   Context.
-     * @param drillId   Drill ID.
-     * @return          Intent that can then start the DrillInfoActivity.
-     */
-    public static Intent createIntentToStartActivity(Context context, long drillId) {
         Intent intent = new Intent(context, DrillInfoActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
-        return intent;
+        context.startActivity(intent);
     }
 
     /**
@@ -194,7 +183,8 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveViews();
         setUiLoading(true);
 
-        if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)) {
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)
+                && getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.SIMULATED_ATTACK_DRILL;
         } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.DISPLAYING_DRILL;
@@ -259,7 +249,7 @@ public class DrillInfoActivity extends AppCompatActivity {
 
         if (ActivityState.SIMULATED_ATTACK_DRILL == activityState) {
             menu.add(Menu.NONE, R.id.simulatedAttackInstructionsButton, Menu.NONE, "Attack Instructions")
-                    .setIcon(R.drawable.question_mark_icon)
+                    .setIcon(R.drawable.danger_alert_icon)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
 
@@ -511,10 +501,10 @@ public class DrillInfoActivity extends AppCompatActivity {
      * {@link #whatNextPopup()}.
      */
     private void confidencePopup() {
-        Drill drill = collectDrillInfo();
+        Drill drill = collectDrillInfo(true);
 
         if (null == drill) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Issue marking as practiced");
+            // User feedback offered in collectDrillInfo()
             return;
         }
 
@@ -671,7 +661,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                 if (showPopupDefault) {
                     // Don't show every time
                     sharedPrefs.setSimulatedAttackPopupDefault(false);
-                    UiUtils.displayDismissibleSnackbar(rootView, "To see Instructions, click the Question Mark at the top right.");
+                    UiUtils.displayDismissibleSnackbar(rootView, "To see Instructions, click the Alert Button at the top right.");
                 } else {
                     // Show every time
                     sharedPrefs.setSimulatedAttackPopupDefault(true);
@@ -846,12 +836,15 @@ public class DrillInfoActivity extends AppCompatActivity {
      * Create a drill object based on the the current user input on the screen. Handles and displays
      * errors.
      *
-     * @return Drill object or null on error.
+     * @param displayError  Should we display error message to the user.
+     * @return              Drill object or null on error.
      */
-    private @Nullable Drill collectDrillInfo() {
+    private @Nullable Drill collectDrillInfo(boolean displayError) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill) {
-            UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
+            if (displayError) {
+                UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
+            }
             return null;
         }
 
@@ -863,8 +856,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         // database layer
         final int NOTES_CHARACTER_LIMIT = 2048;
         if (NOTES_CHARACTER_LIMIT <= notesString.length()) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Notes must be less than "
-                    + NOTES_CHARACTER_LIMIT + " characters");
+            if (displayError) {
+                UiUtils.displayDismissibleSnackbar(rootView, "Notes must be less than "
+                        + NOTES_CHARACTER_LIMIT + " characters");
+            }
             return null;
         }
         drill.setNotes(notes.getText().toString());
@@ -874,20 +869,24 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     /**
      * Collect and save the current drill info on screen to the database.
+     *
+     * @param displayFeedback   Should we display success/error messages to the user.
      */
-    public void saveDrillInfo(boolean displaySuccess) {
-        Drill drill = collectDrillInfo();
+    public void saveDrillInfo(boolean displayFeedback) {
+        Drill drill = collectDrillInfo(displayFeedback);
         viewModel.saveDrill(drill, false, new OperationCompleteCallback() { // this method handles null check
             @Override
             public void onSuccess() {
-                if (displaySuccess) {
+                if (displayFeedback) {
                     UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
                 }
             }
 
             @Override
             public void onFailure(String error) {
-                UiUtils.displayDismissibleSnackbar(rootView, error);
+                if (displayFeedback) {
+                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                }
             }
         });
     }
@@ -947,16 +946,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         viewModel.findDrillIdByServerId(
-                drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
-                localDrillId -> {
-                    if (null == localDrillId) {
-                        UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
-                    } else {
-                        Intent intent = new Intent(this, DrillInfoActivity.class);
-                        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, localDrillId);
-                        startActivity(intent);
-                    }
-                });
+            drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
+            localDrillId -> {
+                if (null == localDrillId) {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+                } else {
+                    DrillInfoActivity.startActivity(this, localDrillId);
+                }
+            });
     }
 
     /**

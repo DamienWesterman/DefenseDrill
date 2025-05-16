@@ -48,7 +48,6 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class DefenseDrillNotificationManager {
-    // TODO: Have some kind of popup if the DrillInfoActivity receives an intent of self defense attack. Explain to come up with 3 solutions: technical solution, real world solution, and preventative solution (give an option to disable this popup) (also if a simulated attack, show a help button or something somewhere to show this popup?)
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
     private static final String CHANNEL_ID_SIMULATED_ATTACKS = "simulated_attacks";
     private static final String CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE =
@@ -126,14 +125,14 @@ public class DefenseDrillNotificationManager {
      * Create a notification for a simulated self defense attack. If clicked, will bring the user to
      * that Drill's {@link DrillInfoActivity} activity.
      *
-     * @param drill Simulated Drill attack
+     * @param drill Simulated Drill attack.
      */
     public void notifySimulatedAttack(@NonNull Drill drill) {
         if (!initSuccess || !systemNotificationManager.areNotificationsEnabled()) {
             return;
         }
 
-        Intent intent =DrillInfoActivity
+        Intent intent = DrillInfoActivity
                 .createIntentToStartActivityFromSimulatedAttack(context, drill.getId());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(drill.getName()); // This is to avoid conflict with existing pendingIntents

@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 /*
- * Copyright 2024 Damien Westerman
+ * Copyright 2025 Damien Westerman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,8 +86,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 /**
  * Screen that lets the user turn on or off simulated attack notifications. Also allows them to
  * modify the times and frequencies of these notification.
- * <br><br>
- * INTENTS: None expected.
  */
 @AndroidEntryPoint
 public class SimulatedAttackSettingsActivity extends AppCompatActivity {
@@ -223,19 +221,34 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             UiUtils.displayDismissibleSnackbar(rootView,
                                     policyName + " has been deleted!");
 
-                            if (viewModel.getPoliciesByName().isEmpty()) {
+                            /*
+                            Check to see if we deleted the last remaining policy. We have to check
+                            this way because the viewModel will not have updated its lists yet.
+                             */
+                            if (1 == viewModel.getPoliciesByName().size()
+                                    && viewModel.getPoliciesByName().containsKey(policyName)) {
                                 // We deleted the last one
                                 SimulatedAttackManager.stop(context);
                             } else {
                                 SimulatedAttackManager.restart(context);
                             }
+
+                            /*
+                            viewModel will then post the new policies list, causing us to eventually
+                            call setLoading(false).
+                             */
                         }
 
                         @Override
                         public void onFailure(String error) {
                             UiUtils.displayDismissibleSnackbar(rootView, error);
+                            runOnUiThread(() -> setLoading(false));
                         }
                     });
+            } else {
+                UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                Log.e(TAG, "Failed to find policy for deletion: " + policyName);
+                setLoading(false);
             }
         });
         builder.create().show();
@@ -244,8 +257,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     /**
      * Popup to create or modify a policy.
      *
-     * @param policyBeingModified If modifying an existing policy, the name of that policy,
-     *                            otherwise leave null if creating a new policy(ies)
+     * @param policyBeingModified   If modifying an existing policy, the name of that policy,
+     *                              otherwise leave null if creating a new policy.
      */
     public void policyDetailsPopup(@Nullable String policyBeingModified) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -376,7 +389,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                                         Log.e(TAG, "Timed out waiting for UI update");
                                     }
                                 } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                                    // Not much we can do, log it and continue
+                                    Log.e(TAG, "Timed out waiting for UI update", e);
                                 }
 
                                 alert.dismiss();
@@ -438,7 +452,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             Snackbar snackbar = Snackbar.make(rootView,
-                                    "Category Created!", Snackbar.LENGTH_LONG);
+                                    "Category Created!", Snackbar.LENGTH_INDEFINITE);
                             snackbar.setAction("Create Drills", (callingView) -> {
                                 Intent createDrillsIntent =
                                         new Intent(context, CreateDrillActivity.class);
@@ -465,7 +479,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-
     /**
      * Set the UI to a loading state.
      *
@@ -554,7 +567,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                         new OperationCompleteCallback() {
                             @Override
                             public void onSuccess() {
-                                // Do nothing
+                                SimulatedAttackManager.restart(context);
                             }
 
                             @Override
@@ -563,6 +576,10 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             }
                         }
                     );
+                } else {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                    Log.e(TAG, "Policy activeness change failed for " + policyName
+                            + ", policies retrieved from viewModel was null");
                 }
             }
         ));
@@ -571,10 +588,11 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     /**
      * Extract a list of policies from a popup. Performs input validation.
      *
-     * @param view View object for layout_policy_details_popup.xml
-     * @param policyBeingModified Policy name being modified, or null if creating a new one.
-     * @param errorConsumer Callback for error conditions.
-     * @return List of correlated WeeklyHourPolicyEntity objects for a single policy name.
+     * @param view                  View object for layout_policy_details_popup.xml
+     * @param policyBeingModified   Policy name being modified, or null if creating a new one.
+     * @param errorConsumer         Callback for error conditions.
+     * @return                      List of correlated WeeklyHourPolicyEntity objects for a single
+     *                              policy name.
      */
     @NonNull
     private List<WeeklyHourPolicyEntity> extractPolicies(@NonNull View view,
@@ -600,7 +618,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                 || null == beginningHourSpinner
                 || null == endingHourSpinner
                 || null == frequencySpinner) {
-            errorConsumer.accept("There was an issue saving the new alarm.");
+            errorConsumer.accept("There was an issue saving the alarm.");
             return List.of();
         }
 
@@ -612,7 +630,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
         if (32 < policyName.length()) {
             // 32 is just arbitrary, there are no database constraints
-            errorConsumer.accept("Alarm Name exceed 32 characters.");
+            errorConsumer.accept("Alarm Name cannot exceed 32 characters.");
             return List.of();
         }
 
@@ -637,10 +655,10 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         // + 1 because of the first option being NO_ATTACKS
         Constants.SimulatedAttackFrequency frequency =
                 Constants.SimulatedAttackFrequency.values()[frequencyPosition + 1];
-        int alertHours = endingHourSpinner.getSelectedItemPosition()
+        int numAlertHours = endingHourSpinner.getSelectedItemPosition()
                 - beginningHourSpinner.getSelectedItemPosition();
-        if (alertHours < frequency.getMinimumHoursNeeded()) {
-            if (0 > alertHours) {
+        if (numAlertHours < frequency.getMinimumHoursNeeded()) {
+            if (0 > numAlertHours) {
                 // User has selected an overnight time window, which is not currently supported
                 errorConsumer.accept("Overnight alarms not currently supported, must create two separate alarms.");
             } else {
@@ -656,15 +674,16 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     beginningHourSpinner.getSelectedItemPosition(),
                     endingHourSpinner.getSelectedItemPosition())
                 .boxed().collect(Collectors.toList());
-        for (int i = 0; i < checkBoxes.size(); i++) {
-            if (checkBoxes.get(i).isChecked()) {
+        for (int dayOfWeek = 0; dayOfWeek < checkBoxes.size(); dayOfWeek++) {
+            if (checkBoxes.get(dayOfWeek).isChecked()) {
                 for (Integer hourOfDay : dailyHoursSelected) {
-                    int hourOfWeek = (i * 24) + hourOfDay;
+                    int hourOfWeek = (dayOfWeek * 24) + hourOfDay;
                     if (null != existingPolicies) {
                         boolean weeklyHourPolicyAlreadyExists = false;
 
                         WeeklyHourPolicyEntity weeklyHourPolicy = existingPolicies.get(hourOfWeek);
-                        if (!weeklyHourPolicy.getPolicyName().isBlank()) {
+                        if (!weeklyHourPolicy.getPolicyName().isBlank()
+                                || Constants.SimulatedAttackFrequency.NO_ATTACKS != weeklyHourPolicy.getFrequency()) {
                             weeklyHourPolicyAlreadyExists = true;
 
                             if (null != policyBeingModified

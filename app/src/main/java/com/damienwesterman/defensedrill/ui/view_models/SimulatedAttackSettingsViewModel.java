@@ -93,7 +93,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     public void populateDefaultPolicies() {
         new Thread(() -> {
-            simulatedAttackRepo.populateDefaultPolicies();
+            simulatedAttackRepo.populateEmptyDatabase();
             loadAllPoliciesFromDb();
         }).start();
     }
@@ -156,16 +156,16 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                                @NonNull OperationCompleteCallback callback) {
         new Thread(() -> {
             try {
-            if (simulatedAttackRepo.deletePolicies(weeklyHours.toArray(new Integer[0]))) {
-                callback.onSuccess();
+                if (simulatedAttackRepo.deletePolicies(weeklyHours.toArray(new Integer[0]))) {
+                    callback.onSuccess();
 
-                // Re-load policies to update UI
-                loadAllPoliciesFromDb();
-            } else {
-                // This shouldn't really happen
-                callback.onFailure("An error has occurred trying to save new alarm");
-                Log.e(TAG, "repo.insertPolicies() failed");
-            }
+                    // Re-load policies to update UI
+                    loadAllPoliciesFromDb();
+                } else {
+                    // This shouldn't really happen
+                    callback.onFailure("An error has occurred trying to save new alarm");
+                    Log.e(TAG, "repo.insertPolicies() failed");
+                }
             } catch (SQLiteConstraintException e) {
                 // Not sure how this would happen either
                 callback.onFailure("An error has occurred trying to save new alarm");
@@ -178,7 +178,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
      * Loads all policies from the database and posts the results so the UI callback is called.
      */
     private void loadAllPoliciesFromDb() {
-        List<WeeklyHourPolicyEntity> policyEntities = simulatedAttackRepo.getAllWeeklyHourPolicies();
+        List<WeeklyHourPolicyEntity> policyEntities = simulatedAttackRepo.getAllPolicies();
         this.policiesByName = policyEntities.stream()
                 .filter(policy -> !policy.getPolicyName().isEmpty())
                 .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
@@ -210,9 +210,9 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
     }
 
     /**
-     * Create a default Self Defense Category
+     * Create a default Self Defense Category.
      *
-     * @param callback OperationCompleteCallback
+     * @param callback OperationCompleteCallback.
      */
     public void createDefaultSelfDefenseCategory(OperationCompleteCallback callback) {
         new Thread(() -> {

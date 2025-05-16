@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 /*
- * Copyright 2024 Damien Westerman
+ * Copyright 2025 Damien Westerman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
 
         // Set Time Window
         policies.sort(Comparator.comparingInt(WeeklyHourPolicyEntity::getWeeklyHour));
-        int startingHour = policies.get(0).getWeeklyHour() % 24;
+        int startingHour = modelPolicy.getWeeklyHour() % 24;
         /*
          Now we iterate through the sorted list of policies until we find the first one that is not
          contiguous.
@@ -106,9 +106,9 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
     /**
      * Set the onClickListener for the card.
      *
-     * @param listener Consumer that acts as the onClickListener. Accepts the policyName of the
-     *                 policy that was clicked.
-     * @param policyName Name of the policy being clicked.
+     * @param listener      Consumer that acts as the onClickListener. Accepts the policyName of the
+     *                      policy that was clicked.
+     * @param policyName    Name of the policy being clicked.
      */
     public void setOnClickListener(@NonNull Consumer<String> listener, String policyName) {
         card.setOnClickListener(v -> listener.accept(policyName));
@@ -117,9 +117,9 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
     /**
      * Set the onLongClickListener for the card.
      *
-     * @param listener Consumer that acts as the onLongClickListener. Accepts the policyName of the
-     *                 policy that was clicked.
-     * @param policyName Name of the policy being clicked.
+     * @param listener      Consumer that acts as the onLongClickListener. Accepts the policyName of
+     *                      the policy that was clicked.
+     * @param policyName    Name of the policy being clicked.
      */
     public void setOnLongClickListener(@NonNull Consumer<String> listener, String policyName) {
         card.setOnLongClickListener(v -> {
@@ -131,9 +131,10 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
     /**
      * Set the onCheckedListener for when the radio button in the card denoting activeness changes.
      *
-     * @param listener BiConsumer that acts as the onCheckedChangeListener. Accepts the policyName
-     *                 of the policy that was clicked as well as a boolean if it is checked.
-     * @param policyName Name of the policy being clicked.
+     * @param listener      BiConsumer that acts as the onCheckedChangeListener. Accepts the
+     *                      policyName of the policy that was clicked as well as a boolean if it is
+     *                      checked.
+     * @param policyName    Name of the policy being clicked.
      */
     public void setCheckedListener(BiConsumer<String, Boolean> listener, String policyName) {
         card.setOnCheckedChangeListener((compoundButton, isChecked) -> {

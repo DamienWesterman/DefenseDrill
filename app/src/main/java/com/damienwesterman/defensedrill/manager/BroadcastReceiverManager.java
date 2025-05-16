@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 /*
- * Copyright 2024 Damien Westerman
+ * Copyright 2025 Damien Westerman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * TODO: DOC COMMENTS
+ * Broadcast Receiver for the DefenseDrill App.
  */
 @AndroidEntryPoint
 public class BroadcastReceiverManager extends BroadcastReceiver {
@@ -76,6 +76,7 @@ public class BroadcastReceiverManager extends BroadcastReceiver {
 
             default:
                 // Do nothing
+                pendingResult.finish();
                 break;
         }
     }

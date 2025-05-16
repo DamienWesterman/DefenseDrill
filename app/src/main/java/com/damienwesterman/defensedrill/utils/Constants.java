@@ -125,7 +125,6 @@ public class Constants {
     private static final int HIGH_CONFIDENCE_POSITION = 2;
 
     public static final String INTENT_PREFIX = "com.damienwesterman.defensedrill.";
-    /** Start the simulated attack notification manager */
     public static final String INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER =
             INTENT_PREFIX + "start_simulated_attack_manager";
     public static final String INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER =

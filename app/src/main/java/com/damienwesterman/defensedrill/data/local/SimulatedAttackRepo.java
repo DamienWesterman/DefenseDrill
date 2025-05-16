@@ -9,7 +9,7 @@
  *                            *
  \****************************/
 /*
- * Copyright 2024 Damien Westerman
+ * Copyright 2025 Damien Westerman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,14 +39,15 @@ import lombok.RequiredArgsConstructor;
  * <br><br>
  * If the database is not empty, there should ALWAYS be 168 policies (0 - 167); one for each hour of
  * the week starting with 0 = Sunday at midnight. A "deleted" policy is really just a blank policy,
- * denoted by no policyName and having active set to false.
+ * denoted by no policyName, frequency of {@link Constants.SimulatedAttackFrequency#NO_ATTACKS}, and
+ * having active set to false.
  */
 @RequiredArgsConstructor
 public class SimulatedAttackRepo {
     private final WeeklyHourPolicyDao weeklyHourPolicyDao;
 
     @NonNull
-    public synchronized List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies() {
+    public synchronized List<WeeklyHourPolicyEntity> getAllPolicies() {
         return this.weeklyHourPolicyDao.getAllWeeklyHourPolicies();
     }
 
@@ -58,8 +59,8 @@ public class SimulatedAttackRepo {
     /**
      * Create or update policies by their weekly hour.
      *
-     * @param policies WeeklyHourPolicyEntity objects to create or update.
-     * @return boolean if all inserts were successful.
+     * @param policies  WeeklyHourPolicyEntity objects to create or update.
+     * @return          boolean if all inserts were successful.
      */
     // TODO: Do this for all insert operations (including nonnull annotation)
     public synchronized boolean insertPolicies(@NonNull WeeklyHourPolicyEntity... policies) {
@@ -71,8 +72,8 @@ public class SimulatedAttackRepo {
      * Delete policies by their weekly hour. "Deleting" a policy just resets everything for that
      * weekly hour to defaults.
      *
-     * @param weeklyHours WeeklyHourPolicyEntity objects to delete.
-     * @return boolean if all deletes were successful.
+     * @param weeklyHours   WeeklyHourPolicyEntity objects to delete.
+     * @return              boolean if all deletes were successful.
      */
     public synchronized boolean deletePolicies(@NonNull Integer... weeklyHours) {
         WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[weeklyHours.length];
@@ -89,8 +90,17 @@ public class SimulatedAttackRepo {
         return insertPolicies(policies);
     }
 
-    public synchronized void populateDefaultPolicies() {
+    /**
+     * Populates an empty database with default policies. Does nothing if the database is already
+     * populated.
+     */
+    public synchronized void populateEmptyDatabase() {
         final int numPoliciesUpperBound = 24 * 7;
+        if (numPoliciesUpperBound == getAllPolicies().size()) {
+            // Database is already populated
+            return;
+        }
+
         WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[numPoliciesUpperBound];
         for (int i = 0; i < numPoliciesUpperBound; i++) {
             policies[i] = WeeklyHourPolicyEntity.builder()
