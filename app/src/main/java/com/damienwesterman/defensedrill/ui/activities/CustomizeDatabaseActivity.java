@@ -21,6 +21,11 @@ import com.damienwesterman.defensedrill.utils.Constants;
  * INTENTS: None expected.
  */
 public class CustomizeDatabaseActivity extends AppCompatActivity {
+    // TODO: Add an "unlock drills" activity
+        // TODO: This should basically be a list of cards as before, however we want to gray out anything that is "not known"
+        // TODO: On click should set in DB known or not known as well as change the card to "activate/deactivated" as denoted by gray or green
+        // TODO: There should be two buttons at the top: "showing/hiding learned drills" and "showing/hiding unknown drills"
+
     private LinearLayout rootView;
 
     // =============================================================================================

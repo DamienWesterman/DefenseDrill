@@ -41,7 +41,6 @@
     <string name="filter_by_category">Filter By Category</string>
     <string name="filter_by_sub_category">Filter by sub-Category</string>
     <string name="reset_filters">Reset Filters</string>
-    <string name="all_drills_instruction">Click to view/edit a Drill, hold to delete</string>
     <string name="create_new_drill">Create New Drill</string>
     <string name="name_label">Name:</string>
     <string name="create_new_drill_title">Create New Drill</string>
@@ -50,7 +49,6 @@
     <string name="add_sub_categories">Add sub-Categories</string>
     <string name="save_drill">Save Drill</string>
     <string name="categories">Categories</string>
-    <string name="all_categories_instructions">Click to view/edit a Category, hold to delete</string>
     <string name="create_new_category">Create New Category</string>
     <string name="sub_categories">Sub-Categories</string>
     <string name="all_sub_categories_instructions">Click to view/edit a sub-Category, hold to delete</string>
