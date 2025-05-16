@@ -61,7 +61,6 @@ import lombok.Setter;
     @Nullable
     @ColumnInfo(name = "server_drill_id")
     private Long serverDrillId;
-    // TODO: Future PR - Implement the features that make use of this, and use it during drill generation
     /** Represents whether the user knows the drill and if it should be used during drill generation */
     private boolean isKnownDrill;
 
