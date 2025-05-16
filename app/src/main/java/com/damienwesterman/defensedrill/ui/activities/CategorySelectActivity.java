@@ -111,7 +111,7 @@ public class CategorySelectActivity extends AppCompatActivity {
     // =============================================================================================
     public void randomCategoryClick(View view) {
         Intent intent = new Intent(this, SubCategorySelectActivity.class);
-        intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
         startActivity(intent);
     }
 
@@ -142,7 +142,7 @@ public class CategorySelectActivity extends AppCompatActivity {
                     // Card click listener
                     id -> {
                 Intent intent = new Intent(this, SubCategorySelectActivity.class);
-                intent.putExtra(Constants.INTENT_CATEGORY_CHOICE, id);
+                intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, id);
                 startActivity(intent);
             }, null));
         });

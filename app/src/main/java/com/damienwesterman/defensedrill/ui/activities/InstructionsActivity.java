@@ -53,8 +53,8 @@ import java.util.List;
  * <br><br>
  * INTENTS: Expects to receive BOTH of the following-
  * <ul>
- *    <li> A {@link Constants#INTENT_DRILL_DTO} intent.</li>
- *    <li> A {@link Constants#INTENT_INSTRUCTION_INDEX} intent.</li>
+ *    <li> A {@link Constants#INTENT_EXTRA_DRILL_DTO} intent.</li>
+ *    <li> A {@link Constants#INTENT_EXTRA_INSTRUCTION_INDEX} intent.</li>
  * </ul>
  */
 public class InstructionsActivity extends AppCompatActivity {
@@ -79,9 +79,9 @@ public class InstructionsActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.instructionsList);
 
         // Get Drill
-        if (getIntent().hasExtra(Constants.INTENT_DRILL_DTO)
-                && getIntent().hasExtra(Constants.INTENT_INSTRUCTION_INDEX)) {
-            Serializable serializedDrill = getIntent().getSerializableExtra(Constants.INTENT_DRILL_DTO);
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_DTO)
+                && getIntent().hasExtra(Constants.INTENT_EXTRA_INSTRUCTION_INDEX)) {
+            Serializable serializedDrill = getIntent().getSerializableExtra(Constants.INTENT_EXTRA_DRILL_DTO);
             DrillDTO drill;
             String drillName;
             if (serializedDrill instanceof DrillDTO) {
@@ -95,7 +95,7 @@ public class InstructionsActivity extends AppCompatActivity {
             }
 
             // Get instructions
-            int instructionsIndex = getIntent().getIntExtra(Constants.INTENT_INSTRUCTION_INDEX, -1);
+            int instructionsIndex = getIntent().getIntExtra(Constants.INTENT_EXTRA_INSTRUCTION_INDEX, -1);
             if (0 > instructionsIndex
                     || drill.getInstructions().size() <= instructionsIndex) {
                 // Did not receive the proper intents. Toast so it persists screens

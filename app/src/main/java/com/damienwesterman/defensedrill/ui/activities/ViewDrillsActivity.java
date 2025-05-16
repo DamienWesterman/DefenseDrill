@@ -52,7 +52,6 @@ import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapters.DrillAdapter;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.DrillListViewModel;
-import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -410,14 +409,10 @@ public class ViewDrillsActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new DrillAdapter(drills,
-                // Click listener
-                id -> {
-            Intent intent = new Intent(this, DrillInfoActivity.class);
-            intent.putExtra(Constants.INTENT_DRILL_ID, id);
-            startActivity(intent);
-        },
-                // Long click listener
-                id -> deleteDrillPopup(viewModel.findDrillById(id))));
+            // Click listener
+            id -> DrillInfoActivity.startActivity(this, id),
+            // Long click listener
+            id -> deleteDrillPopup(viewModel.findDrillById(id))));
     }
 
     /**

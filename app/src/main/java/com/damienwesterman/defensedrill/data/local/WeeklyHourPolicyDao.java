@@ -24,29 +24,27 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill;
+package com.damienwesterman.defensedrill.data.local;
 
-import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
 
-import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
-import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
+import java.util.List;
 
-import javax.inject.Inject;
+@Dao
+/* package-private */ interface WeeklyHourPolicyDao {
+    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME + " ORDER BY weekly_hour")
+    @NonNull
+    List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies();
 
-import dagger.hilt.android.HiltAndroidApp;
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long[] insertWeeklyHourPolicy(@NonNull WeeklyHourPolicyEntity... policies);
 
-/**
- * Hilt Application Class for Dependency Injection
- */
-@HiltAndroidApp
-public class DefenseDrillApplication extends Application {
-    @Inject
-    DefenseDrillNotificationManager notificationManager;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        notificationManager.init();
-    }
+    @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME
+            + " WHERE active = 1")
+    @NonNull
+    List<WeeklyHourPolicyEntity> getActivePolicies();
 }

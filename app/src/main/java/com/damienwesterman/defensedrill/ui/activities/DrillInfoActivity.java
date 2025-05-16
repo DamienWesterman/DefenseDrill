@@ -27,6 +27,7 @@
 package com.damienwesterman.defensedrill.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -88,13 +89,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  * provided with a categoryId and subCategoryId so that we can generate a drill. It can also be
  * launched from {@link ViewDrillsActivity} by providing a single drillId. Depending on which route
  * is taken to launch, different functionality will exist.
- * <br><br>
- * INTENTS: Expects to receive ONE of the following -
- * <ul>
- *    <li> A {@link Constants#INTENT_CATEGORY_CHOICE} AND {@link Constants#INTENT_SUB_CATEGORY_CHOICE}
- *         intent. These are then used to generate a drill.</li>
- *    <li> A {@link Constants#INTENT_DRILL_ID} intent.</li>
- * </ul>
  */
 @AndroidEntryPoint
 public class DrillInfoActivity extends AppCompatActivity {
@@ -105,7 +99,9 @@ public class DrillInfoActivity extends AppCompatActivity {
         /** We started at {@link ActivityState#GENERATED_DRILL}, but user skipped at least one Drill */
         REGENERATED_DRILL,
         /** This drill was not generated and we are only displaying its information */
-        DISPLAYING_DRILL
+        DISPLAYING_DRILL,
+        /** Same as {@link ActivityState#DISPLAYING_DRILL} but started from a simulated attack */
+        SIMULATED_ATTACK_DRILL
     }
 
     private DrillInfoViewModel viewModel;
@@ -131,6 +127,52 @@ public class DrillInfoActivity extends AppCompatActivity {
     private Button resetSkippedDrillsButton;
 
     // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+
+    /**
+     * Start DrillInfoActivity using a selected category and subcategory.
+     *
+     * @param context       Context.
+     * @param categoryId    Category ID.
+     * @param subCategoryId SubCategory ID.
+     */
+    public static void startActivity(Context context, long categoryId, long subCategoryId) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, categoryId);
+        intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, subCategoryId);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Starting DrillInfoActivity for a specific Drill.
+     *
+     * @param context   Context.
+     * @param drillId   Drill ID.
+     */
+    public static void startActivity(Context context, long drillId) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Create an intent to start the DrillInfoActivity for a specific Drill. Also indicates this is
+     * from a simulated attack notification, meaning it will show a popup for instructions and offer
+     * a help icon to show the popup again.
+     *
+     * @param context   Context.
+     * @param drillId   Drill ID.
+     * @return          Intent that can then start the DrillInfoActivity.
+     */
+    public static Intent createIntentToStartActivityFromSimulatedAttack(Context context, long drillId) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
+        intent.putExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK, "");
+        return intent;
+    }
+
+    // =============================================================================================
     // Activity Methods
     // =============================================================================================
     @Override
@@ -141,10 +183,13 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveViews();
         setUiLoading(true);
 
-        if (getIntent().hasExtra(Constants.INTENT_DRILL_ID)) {
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)
+                && getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
+            activityState = ActivityState.SIMULATED_ATTACK_DRILL;
+        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.DISPLAYING_DRILL;
-        } else if (getIntent().hasExtra(Constants.INTENT_CATEGORY_CHOICE)
-                    && getIntent().hasExtra(Constants.INTENT_SUB_CATEGORY_CHOICE)) {
+        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE)
+                    && getIntent().hasExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE)) {
             activityState = ActivityState.GENERATED_DRILL;
         } else {
             // Did not receive the proper intents. Toast so it persists screens
@@ -191,11 +236,23 @@ public class DrillInfoActivity extends AppCompatActivity {
         });
 
         setUpViewModel();
+
+        if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
+                && sharedPrefs.isSimulatedAttackPopupDefault()) {
+            simulatedAttackInstructionsPopup();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        if (ActivityState.SIMULATED_ATTACK_DRILL == activityState) {
+            menu.add(Menu.NONE, R.id.simulatedAttackInstructionsButton, Menu.NONE, "Attack Instructions")
+                    .setIcon(R.drawable.danger_alert_icon)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -207,7 +264,11 @@ public class DrillInfoActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return true;
+        } else if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
+                && R.id.simulatedAttackInstructionsButton == item.getItemId()) {
+            simulatedAttackInstructionsPopup();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -440,10 +501,10 @@ public class DrillInfoActivity extends AppCompatActivity {
      * {@link #whatNextPopup()}.
      */
     private void confidencePopup() {
-        Drill drill = collectDrillInfo();
+        Drill drill = collectDrillInfo(true);
 
         if (null == drill) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Issue marking as practiced");
+            // User feedback offered in collectDrillInfo()
             return;
         }
 
@@ -573,11 +634,41 @@ public class DrillInfoActivity extends AppCompatActivity {
                 break;
             case DISPLAYING_DRILL:
                 // Fallthrough intentional
+            case SIMULATED_ATTACK_DRILL:
+                // Fallthrough intentional
             default:
                 builder.setNegativeButton("Back", (dialog, position) -> finish());
                 break;
         }
 
+        builder.create().show();
+    }
+
+    /**
+     * Display a popup with helpful instructions for dealing with a simulated attack. Allows the
+     * user to set the default behavior if this popup is shown for every simulated attack.
+     */
+    private void simulatedAttackInstructionsPopup() {
+        boolean showPopupDefault = sharedPrefs.isSimulatedAttackPopupDefault();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Instructions");
+        builder.setIcon(R.drawable.danger_alert_icon);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.simulated_attack_instructions);
+        builder.setNeutralButton(showPopupDefault ? "Don't Show Every Time" : "Show Every Time",
+            ((dialogInterface, i) -> {
+                if (showPopupDefault) {
+                    // Don't show every time
+                    sharedPrefs.setSimulatedAttackPopupDefault(false);
+                    UiUtils.displayDismissibleSnackbar(rootView, "To see Instructions, click the Alert Button at the top right.");
+                } else {
+                    // Show every time
+                    sharedPrefs.setSimulatedAttackPopupDefault(true);
+                    UiUtils.displayDismissibleSnackbar(rootView, "Instructions will show every time!");
+                }
+            }));
+        builder.setPositiveButton("OK", null);
         builder.create().show();
     }
 
@@ -641,17 +732,27 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (null == drill) {
             // First time loading activity
             Intent intent = getIntent();
-            if (ActivityState.DISPLAYING_DRILL == activityState) {
-                long drillId = intent.getLongExtra(Constants.INTENT_DRILL_ID, -1);
-                viewModel.populateDrill(drillId);
-            } else if (ActivityState.GENERATED_DRILL == activityState) {
-                long categoryId = intent.getLongExtra(Constants.INTENT_CATEGORY_CHOICE, -1);
-                long subCategoryId = intent.getLongExtra(Constants.INTENT_SUB_CATEGORY_CHOICE, -1);
-                viewModel.populateDrill(categoryId, subCategoryId);
-            } else {
-                // Not in a correct state. Toast so it persists screens
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
-                finish();
+            switch (activityState) {
+                case SIMULATED_ATTACK_DRILL:
+                    // Fallthrough intentional
+                case DISPLAYING_DRILL:
+                    long drillId = intent.getLongExtra(Constants.INTENT_EXTRA_DRILL_ID, -1);
+                    viewModel.populateDrill(drillId);
+                    break;
+                case GENERATED_DRILL:
+                    long categoryId =intent
+                            .getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, -1);
+                    long subCategoryId = intent
+                            .getLongExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, -1);
+                    viewModel.populateDrill(categoryId, subCategoryId);
+                    break;
+                case REGENERATED_DRILL:
+                    // Fallthrough intentional
+                default:
+                    // Not in a correct state. Toast so it persists screens
+                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    finish();
+                    break;
             }
         } else {
             // Screen rotation or something, re-load existing drill from viewModel
@@ -696,6 +797,9 @@ public class DrillInfoActivity extends AppCompatActivity {
                 alertMessage = getString(R.string.no_drills_left);
                 break;
             case DISPLAYING_DRILL:
+                // Fallthrough intentional
+            case SIMULATED_ATTACK_DRILL:
+                // Fallthrough intentional
             default:
                 alertMessage = getString(R.string.no_drill_found_by_id);
                 break;
@@ -732,12 +836,15 @@ public class DrillInfoActivity extends AppCompatActivity {
      * Create a drill object based on the the current user input on the screen. Handles and displays
      * errors.
      *
-     * @return Drill object or null on error.
+     * @param displayError  Should we display error message to the user.
+     * @return              Drill object or null on error.
      */
-    private @Nullable Drill collectDrillInfo() {
+    private @Nullable Drill collectDrillInfo(boolean displayError) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill) {
-            UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
+            if (displayError) {
+                UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
+            }
             return null;
         }
 
@@ -749,8 +856,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         // database layer
         final int NOTES_CHARACTER_LIMIT = 2048;
         if (NOTES_CHARACTER_LIMIT <= notesString.length()) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Notes must be less than "
-                    + NOTES_CHARACTER_LIMIT + " characters");
+            if (displayError) {
+                UiUtils.displayDismissibleSnackbar(rootView, "Notes must be less than "
+                        + NOTES_CHARACTER_LIMIT + " characters");
+            }
             return null;
         }
         drill.setNotes(notes.getText().toString());
@@ -760,20 +869,24 @@ public class DrillInfoActivity extends AppCompatActivity {
 
     /**
      * Collect and save the current drill info on screen to the database.
+     *
+     * @param displayFeedback   Should we display success/error messages to the user.
      */
-    public void saveDrillInfo(boolean displaySuccess) {
-        Drill drill = collectDrillInfo();
+    public void saveDrillInfo(boolean displayFeedback) {
+        Drill drill = collectDrillInfo(displayFeedback);
         viewModel.saveDrill(drill, false, new OperationCompleteCallback() { // this method handles null check
             @Override
             public void onSuccess() {
-                if (displaySuccess) {
+                if (displayFeedback) {
                     UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
                 }
             }
 
             @Override
             public void onFailure(String error) {
-                UiUtils.displayDismissibleSnackbar(rootView, error);
+                if (displayFeedback) {
+                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                }
             }
         });
     }
@@ -812,8 +925,8 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(this, InstructionsActivity.class);
-        intent.putExtra(Constants.INTENT_DRILL_DTO, drillDTO);
-        intent.putExtra(Constants.INTENT_INSTRUCTION_INDEX, instructionsIndex);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_DTO, drillDTO);
+        intent.putExtra(Constants.INTENT_EXTRA_INSTRUCTION_INDEX, instructionsIndex);
         startActivity(intent);
     }
 
@@ -833,16 +946,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         viewModel.findDrillIdByServerId(
-                drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
-                localDrillId -> {
-                    if (localDrillId == Drill.INVALID_SERVER_DRILL_ID) {
-                        UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
-                    } else {
-                        Intent intent = new Intent(this, DrillInfoActivity.class);
-                        intent.putExtra(Constants.INTENT_DRILL_ID, localDrillId);
-                        startActivity(intent);
-                    }
-                });
+            drillDTO.getRelatedDrills().get(relatedDrillIndex).getId(),
+            localDrillId -> {
+                if (null == localDrillId) {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Issue loading Related Drill");
+                } else {
+                    DrillInfoActivity.startActivity(this, localDrillId);
+                }
+            });
     }
 
     /**

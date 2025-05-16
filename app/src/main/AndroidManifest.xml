@@ -4,7 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".DefenseDrillApplication"
@@ -17,6 +18,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.activities.SimulatedAttackSettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.HomeActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".ui.activities.WebDrillOptionsActivity"
             android:exported="false"
@@ -68,9 +77,11 @@
             android:name=".ui.activities.InstructionsActivity"
             android:exported="false"
             android:parentActivityName=".ui.activities.DrillInfoActivity" />
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+
+        <meta-data
+            android:name="android.app.lib_name"
+            android:value="" />
+
         <activity
             android:name=".ui.activities.SubCategorySelectActivity"
             android:exported="false"
@@ -101,9 +112,29 @@
                 android:value="" />
         </activity>
 
-        <service android:name=".service.CheckServerUpdateService"
+        <service
+            android:name=".service.CheckServerUpdateService"
+            android:enabled="true"
             android:exported="false"
-            android:stopWithTask="true"/>
+            android:stopWithTask="true" />
+
+        <receiver
+            android:name=".manager.BroadcastReceiverManager"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.start_simulated_attack_manager" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.stop_simulated_attack_manager" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.damienwesterman.defensedrill.simulate_attack" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

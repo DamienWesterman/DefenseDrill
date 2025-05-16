@@ -50,6 +50,17 @@
             android:onClick="onCardClick"/>
 
         <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+            android:id="@+id/simulatedAttackSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/simulated_attack_settings_title"
+            app:description="@string/simulated_attack_settings_description"
+            android:onClick="onCardClick" />
+
+        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
             android:id="@+id/webDrillOptionsCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
