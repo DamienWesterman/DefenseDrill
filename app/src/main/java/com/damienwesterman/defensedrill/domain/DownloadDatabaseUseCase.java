@@ -41,12 +41,12 @@ import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
-import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -94,15 +94,41 @@ public class DownloadDatabaseUseCase {
     /**
      * Download and save all Drills, Categories, and SubCategories from the server.
      *
-     * @param callback Callback
+     * @param successCallback   Callback for successful operation. Takes in a list of newly added
+     *                          Drills. List may be empty.
+     * @param failureCallback   Callback for failure operation. Takes in a string containing the
+     *                          error message.
      */
-    public void download(OperationCompleteCallback callback) {
+    public void download(@NonNull Consumer<List<DrillDTO>> successCallback,
+                         @NonNull Consumer<String> failureCallback) {
         notificationManager.removeDatabaseUpdateAvailableNotification();
         databaseUpdated = false;
         categoryMap.clear();
         subCategoryMap.clear();
 
-        final long lastDrillUpdateTime = sharedPrefs.getLastDrillUpdateTime();
+        final long lastDrillUpdateTime = 1745070674000L;//sharedPrefs.getLastDrillUpdateTime(); TODO: PUT BACK
+drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO: REMOVE - OBVIOUSLY
+            // TODO: This should update:
+                /*
+                Single Leg Takedown
+                Side Headlock Defense
+                Kimura: From Half Guard
+                Half Guard to Guard
+                Half Guard Sweep to Single Leg
+                Half Guard Sweep to Side Control
+                Half Guard Pass to Side Control
+                Half Guard
+                Guard Pass: Under
+                Guard Pass: Over
+                Double Leg Takedown
+                Double Arm Bar
+                Combo: Jab > Hook
+                Choke Escape: Front - Two Hands
+                Choke Escape: Bottom Guard - Hand Choke
+                Choke Escape: Front - Two Hands
+                Choke Escape: Bottom Guard - Hand Choke
+                Buck Trap and Roll
+                 */
         if (0 >= lastDrillUpdateTime) {
             // First download from the database, get all
             disposable = loadAllCategoriesFromServer()
@@ -110,15 +136,15 @@ public class DownloadDatabaseUseCase {
                     .flatMap(response -> loadAllDrillsFromServer())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            response -> {
+                            newDrills -> {
                                 if (databaseUpdated) {
                                     sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
                                 }
-                                callback.onSuccess();
+                                successCallback.accept(newDrills);
                                 disposable = null;
                             },
                             throwable -> {
-                                callback.onFailure(extractErrorMessage(throwable));
+                                failureCallback.accept(extractErrorMessage(throwable));
                                 disposable = null;
                             }
                     );
@@ -129,15 +155,15 @@ public class DownloadDatabaseUseCase {
                     .flatMap(response -> updateDrillsFromServer(lastDrillUpdateTime))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            response -> {
+                            newDrills -> {
                                 if (databaseUpdated) {
                                     sharedPrefs.setLastDrillUpdateTime(System.currentTimeMillis());
                                 }
-                                callback.onSuccess();
+                                successCallback.accept(newDrills);
                                 disposable = null;
                             },
                             throwable -> {
-                                callback.onFailure(extractErrorMessage(throwable));
+                                failureCallback.accept(extractErrorMessage(throwable));
                                 disposable = null;
                             }
                     );
@@ -167,19 +193,18 @@ public class DownloadDatabaseUseCase {
      *
      * @return Observable for a List of DrillDTO objects.
      */
-    private Observable<Response<List<DrillDTO>>> loadAllDrillsFromServer() {
+    private Observable<List<DrillDTO>> loadAllDrillsFromServer() {
         return apiRepo.getAllDrills()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
-            .doOnNext(
+            .map(
                 response -> {
                     switch (response.code()) {
                         case HttpsURLConnection.HTTP_OK:
-                            saveDrillsToDatabase(response.body(), false);
-                            break;
+                            return saveDrillsToDatabase(response.body(), false);
                         case HttpsURLConnection.HTTP_NO_CONTENT:
                             // Not an error, but nothing more to do here
-                            break;
+                            return List.of();
                         default:
                             // Failure
                             throw new HttpException(response);
@@ -247,19 +272,18 @@ public class DownloadDatabaseUseCase {
      * @param timestamp Timestamp of millis since epoch in UTC
      * @return Observable for a List of DrillDTO objects
      */
-    private Observable<Response<List<DrillDTO>>> updateDrillsFromServer(long timestamp) {
+    private Observable<List<DrillDTO>> updateDrillsFromServer(long timestamp) {
         return apiRepo.getAllDrillsUpdatedAfterTimestamp(timestamp)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .doOnNext(
+                .map(
                         response -> {
                             switch (response.code()) {
                                 case HttpsURLConnection.HTTP_OK:
-                                    saveDrillsToDatabase(response.body(), true);
-                                    break;
+                                    return saveDrillsToDatabase(response.body(), true);
                                 case HttpsURLConnection.HTTP_NO_CONTENT:
                                     // Not an error, but nothing more to do here
-                                    break;
+                                    return List.of();
                                 default:
                                     // Failure
                                     throw new HttpException(response);
@@ -331,8 +355,9 @@ public class DownloadDatabaseUseCase {
      *
      * @param drills List of drills to save
      * @param isUpdate true if this is an update operation, false if it is an insert operation
+     * @return List of Drills that are new to the database
      */
-    private void saveDrillsToDatabase(List<DrillDTO> drills, boolean isUpdate) {
+    private List<DrillDTO> saveDrillsToDatabase(List<DrillDTO> drills, boolean isUpdate) {
         if (null == drills) {
             // Shouldn't really happen
             throw new NullPointerException("Drill response.body() was NULL");
@@ -347,9 +372,9 @@ public class DownloadDatabaseUseCase {
         List<Drill> drillsToUpdate = new ArrayList<>();
 
         /*
-        We want to filter this list so that certain categories that may already
+        We want to filter this list so that certain drills that may already
         be in the database are not persisted again, causing issue. We are filtering
-        in place as the list ends in this method and is not used again.
+        in place as the list returned signals the newly added drills.
          */
         drills.removeIf(drill -> {
             if (drillServerIdMap.containsKey(drill.getId())) {
@@ -400,6 +425,8 @@ public class DownloadDatabaseUseCase {
                     drillsToUpdate.toArray(new Drill[0]));
             databaseUpdated = true;
         }
+
+        return drills;
     }
 
     /**

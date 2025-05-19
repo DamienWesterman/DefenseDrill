@@ -62,7 +62,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
-    // TODO: after download, if there are new drills, make a popup (before saving)?
+    // TODO: after download, if there are new drills, make a popup?
         // TODO: this popup should show a scrollable list of all drills with a checkmark next to it
         // TODO: Can't close the popup
         // TODO: On save, mark (and save) those drills as known or unknown
@@ -188,21 +188,19 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
 
-        viewModel.downloadDb(new OperationCompleteCallback() {
-            @Override
-            public void onSuccess() {
+        viewModel.downloadDb(
+            newDrills -> {
                 alert.dismiss();
                 UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
-            }
-
-            @Override
-            public void onFailure(String error) {
+                // TODO: FIXME: START HERE - make a new popup that displays the list of drills in a check mark list to say if we know this one or not
+            },
+            error -> {
                 loadingText.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setText(error);
                 errorMessage.setVisibility(View.VISIBLE);
             }
-        });
+        );
 
         alert.show();
     }

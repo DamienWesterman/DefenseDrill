@@ -31,8 +31,12 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -56,10 +60,14 @@ public class WebDrillApiViewModel extends AndroidViewModel {
      * Begin the operation to download and save all Drills, Categories, and SubCategories from the
      * server.
      *
-     * @param callback Callback
+     * @param successCallback   Callback for successful operation. Takes in a list of newly added
+     *                          Drills. List may be empty.
+     * @param failureCallback   Callback for failure operation. Takes in a string containing the
+     *                          error message.
      */
-    public void downloadDb(OperationCompleteCallback callback) {
-        downloadDb.download(callback);
+    public void downloadDb(@NonNull Consumer<List<DrillDTO>> successCallback,
+                           @NonNull Consumer<String> failureCallback) {
+        downloadDb.download(successCallback, failureCallback);
     }
 
     /**
