@@ -110,6 +110,12 @@ import java.util.Optional;
     List<Drill> findAllDrillsByCategoryAndSubCategory(@NonNull List<Long> categoryIds, @NonNull List<Long> subCategoryIds);
 
     @Transaction
+    @Query("SELECT drill.* FROM " + DrillEntity.TABLE_NAME + " AS drill " +
+                    " WHERE drill.server_drill_id IN (:serverIds) ORDER BY drill.name")
+    @NonNull
+    List<Drill> findAllDrillsByServerId(@NonNull List<Long> serverIds);
+
+    @Transaction
     @Query("SELECT * FROM " + DrillEntity.TABLE_NAME + " WHERE id = :id")
     @NonNull
     Optional<Drill> findDrillById(long id);

@@ -99,7 +99,7 @@ public class DownloadDatabaseUseCase {
      * @param failureCallback   Callback for failure operation. Takes in a string containing the
      *                          error message.
      */
-    public void download(@NonNull Consumer<List<DrillDTO>> successCallback,
+    public void download(@NonNull Consumer<List<Drill>> successCallback,
                          @NonNull Consumer<String> failureCallback) {
         notificationManager.removeDatabaseUpdateAvailableNotification();
         databaseUpdated = false;
@@ -193,7 +193,7 @@ drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO:
      *
      * @return Observable for a List of DrillDTO objects.
      */
-    private Observable<List<DrillDTO>> loadAllDrillsFromServer() {
+    private Observable<List<Drill>> loadAllDrillsFromServer() {
         return apiRepo.getAllDrills()
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.io())
@@ -270,9 +270,9 @@ drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO:
      * saves them locally.
      *
      * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable for a List of DrillDTO objects
+     * @return Observable for a List of Drill objects
      */
-    private Observable<List<DrillDTO>> updateDrillsFromServer(long timestamp) {
+    private Observable<List<Drill>> updateDrillsFromServer(long timestamp) {
         return apiRepo.getAllDrillsUpdatedAfterTimestamp(timestamp)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -357,7 +357,7 @@ drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO:
      * @param isUpdate true if this is an update operation, false if it is an insert operation
      * @return List of Drills that are new to the database
      */
-    private List<DrillDTO> saveDrillsToDatabase(List<DrillDTO> drills, boolean isUpdate) {
+    private List<Drill> saveDrillsToDatabase(List<DrillDTO> drills, boolean isUpdate) {
         if (null == drills) {
             // Shouldn't really happen
             throw new NullPointerException("Drill response.body() was NULL");
@@ -414,10 +414,14 @@ drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO:
         });
 
         // These will throw if there are any issues
+        List<Drill> newDrills = List.of();
         if (!drills.isEmpty()) {
             drillRepo.insertDrills(drills.stream()
                     .map(drill -> drill.toDrill(categoryMap, subCategoryMap))
                     .toArray(Drill[]::new));
+            newDrills = drillRepo.getAllDrillsByServerId(drills.stream()
+                    .map(DrillDTO::getId)
+                    .collect(Collectors.toList()));
             databaseUpdated = true;
         }
         if (!drillsToUpdate.isEmpty()) {
@@ -426,7 +430,7 @@ drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO:
             databaseUpdated = true;
         }
 
-        return drills;
+        return newDrills;
     }
 
     /**

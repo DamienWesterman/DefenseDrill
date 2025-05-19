@@ -102,7 +102,9 @@ public class DrillListViewModel extends AndroidViewModel {
      * Force re-load  the Drills from the database, even if they are already loaded.
      */
     public void rePopulateDrills() {
-        executor.execute(() -> drills.postValue(repo.getAllDrills()));
+        executor.execute(() -> drills.postValue(repo.getAllDrills().stream()
+            .filter(Drill::isKnownDrill)
+            .collect(Collectors.toList())));
     }
 
     /**
@@ -116,7 +118,9 @@ public class DrillListViewModel extends AndroidViewModel {
      * @param subCategoryIds    List of sub-category IDs to filter by.
      */
     public void filterDrills(@Nullable List<Long> categoryIds,@Nullable List<Long> subCategoryIds) {
-        executor.execute(() -> drills.postValue(repo.getAllDrills(categoryIds, subCategoryIds)));
+        executor.execute(() -> drills.postValue(repo.getAllDrills(categoryIds, subCategoryIds).stream()
+                .filter(Drill::isKnownDrill)
+                .collect(Collectors.toList())));
     }
 
     /**

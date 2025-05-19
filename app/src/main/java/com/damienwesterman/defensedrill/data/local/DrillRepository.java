@@ -91,6 +91,17 @@ public class DrillRepository {
     }
 
     /**
+     * Returns a list of all Drills that have the supplied server IDs.
+     *
+     * @param serverIds List of Server IDs to retrieve.
+     * @return          List of Drill objects.
+     */
+    @NonNull
+    public synchronized List<Drill> getAllDrillsByServerId(@NonNull List<Long> serverIds) {
+        return this.drillDao.findAllDrillsByServerId(serverIds);
+    }
+
+    /**
      * Return a list of all Drills that belong to both the specified category and sub category.
      *
      * @param categoryId       ID of the specific category of drills.
