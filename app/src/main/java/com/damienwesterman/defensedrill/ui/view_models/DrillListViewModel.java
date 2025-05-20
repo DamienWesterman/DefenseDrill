@@ -48,6 +48,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * View model for {@link Drill} objects geared towards displaying a list of all drills, and allowing
@@ -58,10 +60,13 @@ public class DrillListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Drill>> drills;
     private List<CategoryEntity> allCategories;
     private List<SubCategoryEntity> allSubCategories;
+    @Setter
     private Set<Long> categoryFilterIds;
+    @Setter
     private Set<Long> subCategoryFilterIds;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    @Getter
     private SortOrder sortOrder;
 
     public enum SortOrder {
@@ -180,10 +185,6 @@ public class DrillListViewModel extends AndroidViewModel {
         return categoryFilterIds;
     }
 
-    public void setCategoryFilterIds(Set<Long> categoryFilterIds) {
-        this.categoryFilterIds = categoryFilterIds;
-    }
-
     /**
      * Return a set of sub-category IDs currently being filtered.
      * <br><br>
@@ -198,10 +199,6 @@ public class DrillListViewModel extends AndroidViewModel {
         }
 
         return subCategoryFilterIds;
-    }
-
-    public void setSubCategoryFilterIds(Set<Long> subCategoryFilterIds) {
-        this.subCategoryFilterIds = subCategoryFilterIds;
     }
 
     /**
@@ -270,14 +267,5 @@ public class DrillListViewModel extends AndroidViewModel {
             drills.postValue(sortedDrills);
             sortOrder = newSortOrder;
         }
-    }
-
-    /**
-     * Return the current sort order.
-     *
-     * @return Current sort order.
-     */
-    public SortOrder getSortOrder() {
-        return sortOrder;
     }
 }

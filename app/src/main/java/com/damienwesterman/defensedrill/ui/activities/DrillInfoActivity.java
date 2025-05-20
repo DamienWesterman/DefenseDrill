@@ -129,7 +129,6 @@ public class DrillInfoActivity extends AppCompatActivity {
     // =============================================================================================
     // Activity Creation Methods
     // =============================================================================================
-
     /**
      * Start DrillInfoActivity using a selected category and subcategory.
      *

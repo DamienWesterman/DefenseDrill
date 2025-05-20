@@ -69,10 +69,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
-    // TODO: after download, if there are new drills, make a popup?
-        // TODO: this popup should show a scrollable list of all drills with a checkmark next to it
-        // TODO: Can't close the popup
-        // TODO: On save, mark (and save) those drills as known or unknown
     private LinearLayout rootView;
     @Inject
     SharedPrefs sharedPrefs;
@@ -212,6 +208,11 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     }
 
     private void selectKnownDrillsPopup(@NonNull List<Drill> newDrills) {
+        if (newDrills.isEmpty()) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         // The following two should line up completely in index positions, along with newDrills

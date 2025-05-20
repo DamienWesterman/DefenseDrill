@@ -79,6 +79,8 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
         if (R.id.viewDrillsCard == cardId) {
             Intent intent = new Intent(this, ViewDrillsActivity.class);
             startActivity(intent);
+        } else if (R.id.unlockDrillsCard == cardId) {
+            UnlockDrillsActivity.startActivity(this);
         } else if (R.id.viewCategoriesCard == cardId) {
             Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
             intent.putExtra(Constants.INTENT_EXTRA_VIEW_CATEGORIES, "");

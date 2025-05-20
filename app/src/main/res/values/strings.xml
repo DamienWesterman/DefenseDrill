@@ -118,6 +118,12 @@ To get the most out of this exercise, try to figure out three different solution
 
 3. Preventative Solution: How could you have prevented this attack from happening? This may usually just boil down to not being there, allowing yourself an easy escape, or having been more vigilant."
     </string>
+    <string name="unlock_drills_title">Unlock Drills</string>
+    <string name="unlock_drills_description">Display a list of all saved Drills and mark which ones you know. Only known Drills will be shown and used during Drill generation.</string>
+    <string name="showing_known_drills">Showing Known Drills</string>
+    <string name="hiding_known_drills">Hiding Known Drills</string>
+    <string name="showing_unknown_drills">Showing Unknown Drills</string>
+    <string name="hiding_unknown_drills">Hiding Unknown Drills</string>
     <string-array name="daily_hours">
         <item>12:00 AM</item>
         <item>1:00 AM</item>
