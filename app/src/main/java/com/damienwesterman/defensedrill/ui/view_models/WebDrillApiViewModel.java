@@ -54,8 +54,8 @@ public class WebDrillApiViewModel extends AndroidViewModel {
 
     @Inject
     public WebDrillApiViewModel(@NonNull Application application,
-                                DownloadDatabaseUseCase downloadDb,
-                                DrillRepository drillRepo) {
+                                @NonNull DownloadDatabaseUseCase downloadDb,
+                                @NonNull DrillRepository drillRepo) {
         super(application);
 
         this.downloadDb = downloadDb;

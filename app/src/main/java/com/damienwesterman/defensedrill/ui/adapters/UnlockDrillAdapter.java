@@ -47,14 +47,14 @@ import lombok.RequiredArgsConstructor;
  * RecyclerView Adapter class for use with {@link Drill} objects.
  * <br><br>
  * Basically a checklist denoting if the Drill is known or not. Allows setting on the
- * OnCheckedChangeListener.
+ * OnCheckedChangeListener via BiConsumer.
  */
 @RequiredArgsConstructor
 public class UnlockDrillAdapter extends RecyclerView.Adapter<CheckBoxListViewHolder> {
     @NonNull
     private final List<Drill> drills;
     /**
-     * Callback for when the check box is checked. Accepts the related drill being checked and
+     * Callback for when the check box is checked. Passes in the drill being checked and boolean
      * whether it is checked or not.
      */
     @Nullable

@@ -163,8 +163,8 @@ public class UnlockDrillsActivity extends AppCompatActivity {
     // Private Helper Methods
     // =============================================================================================
     /**
-     * Callback method for when the drills list has been loaded from the database. Sets the UI and
-     * attaches checked listener.
+     * Callback method for when the drills list has been loaded from the database or updated via
+     * filter. Sets the UI and attaches checked listener.
      *
      * @param displayedDrills   List of Drill objects.
      */

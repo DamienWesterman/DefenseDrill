@@ -65,7 +65,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
     private final Object lock = new Object();
 
     @Inject
-    public UnlockDrillsViewModel(@NonNull Application application, DrillRepository repo) {
+    public UnlockDrillsViewModel(@NonNull Application application, @NonNull DrillRepository repo) {
         super(application);
 
         this.repo = repo;
@@ -129,28 +129,30 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
      */
     public void setDrillKnown(@NonNull Drill drill, boolean isKnown) {
         new Thread(() -> {
-            drill.setIsKnownDrill(isKnown);
-            try {
-                if (repo.updateDrills(drill)) {
-                /*
-                 Update the list so if there is a destructive action (like screen rotation) we can
-                 have to correct information. However, the checkbox is already changed in the UI, so
-                 we don't need to call displayedDrills.postValue(). This should also be okay to do
-                 slowly in the background as it should not be time sensitive.
-                 */
-                    for (Drill oneDrill : allDrills) {
-                        if (oneDrill.getId() == drill.getId()) {
-                            oneDrill.setIsKnownDrill(isKnown);
-                            break;
+            synchronized (lock) {
+                drill.setIsKnownDrill(isKnown);
+                try {
+                    if (repo.updateDrills(drill)) {
+                    /*
+                     Update the list so if there is a destructive action (like screen rotation) we
+                     can have the correct information. However, the checkbox is already changed in
+                     the UI, so we don't need to call displayedDrills.postValue(). This should also
+                     be okay to do slowly in the background as it should not be time sensitive.
+                     */
+                        for (Drill oneDrill : allDrills) {
+                            if (oneDrill.getId() == drill.getId()) {
+                                oneDrill.setIsKnownDrill(isKnown);
+                                break;
+                            }
                         }
+                    } else {
+                        // Should not happen
+                        Log.e(TAG, "setDrillKnown() failed call to updateDrills(0");
                     }
-                } else {
-                    // Should not happen
-                    Log.e(TAG, "setDrillKnown() failed call to updateDrills(0");
+                } catch (SQLiteConstraintException e) {
+                    // Also should not happen
+                    Log.e(TAG, "setDrillKnown() threw exception:", e);
                 }
-            } catch (SQLiteConstraintException e) {
-                // Also should not happen
-                Log.e(TAG, "setDrillKnown() threw exception:", e);
             }
         }).start();
     }
