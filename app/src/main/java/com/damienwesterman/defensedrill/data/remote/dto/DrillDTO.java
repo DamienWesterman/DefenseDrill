@@ -80,7 +80,7 @@ public class DrillDTO implements Serializable {
                 Drill.LOW_CONFIDENCE,
                 "",
                 id, // serverId
-                true,
+                false,
                 new ArrayList<>(),
                 new ArrayList<>()
         );

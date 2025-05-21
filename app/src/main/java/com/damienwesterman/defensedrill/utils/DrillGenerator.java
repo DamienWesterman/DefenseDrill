@@ -126,8 +126,9 @@ public class DrillGenerator {
      */
     private Map<Long, Drill> idDrillMapFromDrillList(List<Drill> drills) {
         return drills.stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(
+            .filter(Objects::nonNull)
+            .filter(Drill::isKnownDrill)
+            .collect(Collectors.toMap(
                 Drill::getId,
                 drill -> drill,
                 (existing, replacement) -> existing,

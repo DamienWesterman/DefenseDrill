@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activities.ViewAbstractCategoriesActivity"
-    android:id="@+id/activityViewAbstractCategories" >
+    tools:context=".ui.activities.UnlockDrillsActivity"
+    android:id="@+id/activityUnlockDrills" >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/appToolbar"
@@ -18,47 +18,54 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <TextView
-        android:id="@+id/allAbstractCategoriesText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/drills"
         android:textAlignment="center"
         android:textSize="36sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/createAbstractCategoryButton"
-        android:onClick="createAbstractCategory"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/add_circle_icon"
-        tools:ignore="ButtonStyle,RtlHardcoded" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/toggleKnownDrillsButton"
+            android:onClick="toggleKnownDrills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_weight="1"
+            android:text="@string/showing_known_drills"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/toggleUnknownDrillsButton"
+            android:onClick="toggleUnknownDrills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:text="@string/showing_unknown_drills"
+            tools:ignore="ButtonStyle" />
+
+    </LinearLayout>
 
     <View
-        android:id="@+id/allAbstractCategoriesDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="?attr/dividerColor"/>
 
     <ProgressBar
-        android:id="@+id/allAbstractCategoriesProgressBar"
+        android:id="@+id/unlockDrillsProgressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/modifyInstructions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:textSize="15sp"
-        android:text="@string/click_to_modify_hold_to_delete"
-        android:textColor="@color/field_label"/>
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/allAbstractCategoriesRecyclerView"
+        android:id="@+id/unlockDrillsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

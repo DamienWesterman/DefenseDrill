@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -43,12 +45,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.utils.CommonPopups;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.ui.view_models.WebDrillApiViewModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -184,20 +191,93 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
 
-        viewModel.downloadDb(new OperationCompleteCallback() {
-            @Override
-            public void onSuccess() {
+        viewModel.downloadDb(
+            newDrills -> {
                 alert.dismiss();
-                UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
-            }
-
-            @Override
-            public void onFailure(String error) {
+                selectKnownDrillsPopup(newDrills);
+            },
+            error -> {
                 loadingText.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 errorMessage.setText(error);
                 errorMessage.setVisibility(View.VISIBLE);
             }
+        );
+
+        alert.show();
+    }
+
+    private void selectKnownDrillsPopup(@NonNull List<Drill> newDrills) {
+        if (newDrills.isEmpty()) {
+            UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // The following two should line up completely in index positions, along with newDrills
+        final String[] drillNames = newDrills.stream()
+            .map(Drill::getName)
+            .toArray(String[]::new);
+        // They all start false
+        final boolean[] checkedKnownDrills = new boolean[drillNames.length];
+
+        builder.setTitle("New Drills! Select the ones you know:");
+        builder.setIcon(R.drawable.save_icon);
+        builder.setMultiChoiceItems(drillNames, checkedKnownDrills,
+                ((dialogInterface, position, isChecked) -> checkedKnownDrills[position] = isChecked));
+        builder.setCancelable(false);
+        builder.setPositiveButton("Save", null);
+        builder.setNegativeButton("Check All", null);
+        builder.setNeutralButton("Clear All", null);
+
+        AlertDialog alert = builder.create();
+        alert.setOnShowListener(dialogInterface -> {
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+                // "Save"
+                List<Drill> knownDrills = new ArrayList<>(checkedKnownDrills.length);
+                for (int i = 0; i < checkedKnownDrills.length; i++) {
+                    if (checkedKnownDrills[i]) {
+                        knownDrills.add(newDrills.get(i));
+                    }
+                }
+
+                viewModel.markDrillsAsKnown(knownDrills, new OperationCompleteCallback() {
+                    @Override
+                    public void onSuccess() {
+                        alert.dismiss();
+                        UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        alert.dismiss();
+                        UiUtils.displayDismissibleSnackbar(rootView, error);
+                    }
+                });
+            });
+
+            alert.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(view -> {
+                // "Check All"
+                Arrays.fill(checkedKnownDrills, true);
+
+                ListView listView = alert.getListView();
+                for (int i = 0; i < listView.getCount(); i++) {
+                    listView.setItemChecked(i, true);
+                }
+                // Do not dismiss
+            });
+
+            alert.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
+                // "Clear All"
+                Arrays.fill(checkedKnownDrills, false);
+
+                ListView listView = alert.getListView();
+                for (int i = 0; i < listView.getCount(); i++) {
+                    listView.setItemChecked(i, false);
+                }
+                // Do not dismiss
+            });
         });
 
         alert.show();

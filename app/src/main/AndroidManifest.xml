@@ -19,6 +19,13 @@
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activities.UnlockDrillsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity"/>
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        <activity
             android:name=".ui.activities.SimulatedAttackSettingsActivity"
             android:exported="false"
             android:parentActivityName=".ui.activities.HomeActivity">

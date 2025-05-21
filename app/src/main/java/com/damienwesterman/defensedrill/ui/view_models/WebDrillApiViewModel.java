@@ -27,12 +27,18 @@
 package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
 import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -44,22 +50,30 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class WebDrillApiViewModel extends AndroidViewModel {
     private final DownloadDatabaseUseCase downloadDb;
+    private final DrillRepository drillRepo;
 
     @Inject
-    public WebDrillApiViewModel(@NonNull Application application, DownloadDatabaseUseCase downloadDb) {
+    public WebDrillApiViewModel(@NonNull Application application,
+                                @NonNull DownloadDatabaseUseCase downloadDb,
+                                @NonNull DrillRepository drillRepo) {
         super(application);
 
         this.downloadDb = downloadDb;
+        this.drillRepo = drillRepo;
     }
 
     /**
      * Begin the operation to download and save all Drills, Categories, and SubCategories from the
      * server.
      *
-     * @param callback Callback
+     * @param successCallback   Callback for successful operation. Takes in a list of newly added
+     *                          Drills. List may be empty.
+     * @param failureCallback   Callback for failure operation. Takes in a string containing the
+     *                          error message.
      */
-    public void downloadDb(OperationCompleteCallback callback) {
-        downloadDb.download(callback);
+    public void downloadDb(@NonNull Consumer<List<Drill>> successCallback,
+                           @NonNull Consumer<String> failureCallback) {
+        downloadDb.download(successCallback, failureCallback);
     }
 
     /**
@@ -67,5 +81,27 @@ public class WebDrillApiViewModel extends AndroidViewModel {
      */
     public void stopDownload() {
         downloadDb.cancel();
+    }
+
+    /**
+     * Mark the provided drills as "known" in the database.
+     *
+     * @param knownDrills   List of drills the user has indicated they know.
+     * @param callback      Callback.
+     */
+    public void markDrillsAsKnown(@NonNull List<Drill> knownDrills,
+                                  @NonNull OperationCompleteCallback callback) {
+        knownDrills.forEach(drill -> drill.setIsKnownDrill(true));
+        new Thread(() -> {
+            try {
+                if (drillRepo.updateDrills(knownDrills.toArray(new Drill[0]))) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure("Something went wrong");
+                }
+            } catch (SQLiteConstraintException e) {
+                callback.onFailure("Something went wrong");
+            }
+        }).start();
     }
 }

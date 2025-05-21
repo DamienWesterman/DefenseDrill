@@ -39,6 +39,17 @@
             android:onClick="onCardClick" />
 
         <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+            android:id="@+id/unlockDrillsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/unlock_drills_title"
+            app:description="@string/unlock_drills_description"
+            android:onClick="onCardClick" />
+
+        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
             android:id="@+id/viewCategoriesCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
