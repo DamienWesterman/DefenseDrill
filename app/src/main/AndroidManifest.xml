@@ -93,7 +93,11 @@
         <activity
             android:name=".ui.activities.InstructionsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.DrillInfoActivity" />
+            android:parentActivityName=".ui.activities.DrillInfoActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".ui.activities.SubCategorySelectActivity"
             android:exported="false"
