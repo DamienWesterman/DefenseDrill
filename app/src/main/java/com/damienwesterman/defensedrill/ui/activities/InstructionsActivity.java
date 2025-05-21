@@ -27,6 +27,9 @@
 package com.damienwesterman.defensedrill.ui.activities;
 
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,18 +42,32 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.ui.PlayerView;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.utils.Constants;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Displays the a list of Instructions for a given drill Drill.
@@ -175,8 +192,9 @@ public class InstructionsActivity extends AppCompatActivity {
     // =============================================================================================
     public void watchVideo(View view) {
         if (null != videoId && !videoId.isEmpty()) {
-            // TODO: properly implement to play the video somehow ?
-            UiUtils.displayDismissibleSnackbar(rootView, "Playing video: " + videoId);
+            InstructionsVideoActivity.startActivity(this, videoId);
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Something Went Wrong");
         }
     }
 

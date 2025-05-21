@@ -20,12 +20,21 @@
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activities.UnlockDrillsActivity"
+            android:name=".ui.activities.InstructionsVideoActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity"/>
+            android:parentActivityName=".ui.activities.InstructionsActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+        </activity>
+        <activity
+            android:name=".ui.activities.UnlockDrillsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".ui.activities.SimulatedAttackSettingsActivity"
             android:exported="false"
@@ -85,11 +94,6 @@
             android:name=".ui.activities.InstructionsActivity"
             android:exported="false"
             android:parentActivityName=".ui.activities.DrillInfoActivity" />
-
-        <meta-data
-            android:name="android.app.lib_name"
-            android:value="" />
-
         <activity
             android:name=".ui.activities.SubCategorySelectActivity"
             android:exported="false"

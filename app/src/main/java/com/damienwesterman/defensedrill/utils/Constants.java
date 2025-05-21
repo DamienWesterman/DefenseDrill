@@ -148,6 +148,8 @@ public class Constants {
     public static final String INTENT_EXTRA_DRILL_DTO = "drill_dto";
     /** Should be accompanied by an int of the index position of the instruction to be displayed */
     public static final String INTENT_EXTRA_INSTRUCTION_INDEX = "instruction_index";
+    /** Should be accompanied by a string of an instruction's video id. */
+    public static final String INTENT_EXTRA_VIDEO_ID = "video_id";
 
     /**
      * Converts a confidence weight into its respective position in the confidence_levels string
