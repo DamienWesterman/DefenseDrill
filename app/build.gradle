@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.damienwesterman.defensedrill'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.damienwesterman.defensedrill"
@@ -107,4 +107,8 @@ dependencies {
     androidTestAnnotationProcessor 'com.google.dagger:hilt-compiler:2.56'
     testImplementation 'com.google.dagger:hilt-android-testing:2.56'
     testAnnotationProcessor 'com.google.dagger:hilt-compiler:2.56'
+
+    // Exoplayer
+    implementation 'androidx.media3:media3-exoplayer:1.7.1'
+    implementation 'androidx.media3:media3-ui:1.7.1'
 }

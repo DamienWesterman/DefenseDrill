@@ -30,7 +30,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +45,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
+import com.damienwesterman.defensedrill.ui.utils.UiUtils;
 import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.io.Serializable;
@@ -58,6 +62,10 @@ import java.util.List;
  * </ul>
  */
 public class InstructionsActivity extends AppCompatActivity {
+    private String videoId;
+
+    private LinearLayout rootView;
+
     // =============================================================================================
     // Activity Methods
     // =============================================================================================
@@ -74,8 +82,10 @@ public class InstructionsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        rootView = findViewById(R.id.activityInstructions);
         TextView drillNameView = findViewById(R.id.drillName);
         TextView instructionsDescriptionView = findViewById(R.id.instructionsDescription);
+        Button watchVideoButton = findViewById(R.id.watchVideoButton);
         ListView listView = findViewById(R.id.instructionsList);
 
         // Get Drill
@@ -110,6 +120,13 @@ public class InstructionsActivity extends AppCompatActivity {
             // Setup UI
             drillNameView.setText(drillName);
             instructionsDescriptionView.setText(instructionsDescription);
+
+            // Set up video
+            videoId = instructions.getVideoId();
+            if (null != videoId && !videoId.isEmpty()) {
+                watchVideoButton.setVisibility(View.VISIBLE);
+            }
+
             List<String> formattedSteps = new ArrayList<>(steps.size());
             for (int i = 0; i < steps.size(); i++) {
                 String sb = (i + 1) +
@@ -152,4 +169,16 @@ public class InstructionsActivity extends AppCompatActivity {
         finish();
         return true;
     }
+
+    // =============================================================================================
+    // OnClickListener Methods
+    // =============================================================================================
+    public void watchVideo(View view) {
+        if (null != videoId && !videoId.isEmpty()) {
+            InstructionsVideoActivity.startActivity(this, videoId);
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Something Went Wrong");
+        }
+    }
+
 }

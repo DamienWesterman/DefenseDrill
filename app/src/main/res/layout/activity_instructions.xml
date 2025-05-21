@@ -34,6 +34,17 @@
         android:textStyle="italic"
         android:textSize="20sp" />
 
+    <Button
+        android:id="@+id/watchVideoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="watchVideo"
+        android:text="@string/watch_video"
+        android:layout_gravity="center"
+        android:drawableLeft="@drawable/play_icon"
+        tools:ignore="ButtonStyle,RtlHardcoded"
+        android:visibility="gone"/>
+
     <View
         android:id="@+id/instructionsDivider"
         android:layout_width="match_parent"
