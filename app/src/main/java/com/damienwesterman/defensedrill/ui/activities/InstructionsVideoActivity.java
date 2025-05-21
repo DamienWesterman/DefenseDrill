@@ -17,9 +17,8 @@ import androidx.media3.ui.PlayerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
+import com.damienwesterman.defensedrill.data.remote.ApiRepo;
 import com.damienwesterman.defensedrill.utils.Constants;
-
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -64,21 +63,22 @@ public class InstructionsVideoActivity extends AppCompatActivity {
         String videoId;
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_VIDEO_ID)) {
             videoId = getIntent().getStringExtra(Constants.INTENT_EXTRA_VIDEO_ID);
+            if (null == videoId || videoId.isEmpty()) {
+                Log.e(TAG, "No videoId extra");
+                finish();
+                return;
+            }
         } else {
             Log.e(TAG, "No videoId extra");
             finish();
             return;
         }
 
-        // TODO: properly implement and pull logic into appropriate classes
         DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
-            .setDefaultRequestProperties(Map.of(
-                "Content-Type", "application/json",
-                "Cookie", "jwt=" + sharedPrefs.getJwt()
-            ));
+            .setDefaultRequestProperties(ApiRepo.getHeaders(sharedPrefs.getJwt()));
 
         MediaItem mediaItem = new MediaItem.Builder()
-            .setUri("https://defensedrillweb.duckdns.org/videos/" + videoId + "/stream")
+            .setUri(ApiRepo.createVideoUri(videoId))
             .build();
 
         player = new ExoPlayer.Builder(this)

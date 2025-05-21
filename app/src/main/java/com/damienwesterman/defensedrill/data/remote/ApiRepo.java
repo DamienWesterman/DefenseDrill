@@ -32,8 +32,10 @@ import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.rxjava3.core.Observable;
 import lombok.AccessLevel;
@@ -166,5 +168,33 @@ public class ApiRepo {
         String jwtHeader = "jwt=" + jwt;
 
         return apiDao.getDrillById(jwtHeader, serverDrillId);
+    }
+
+    /**
+     * Create a String URI for accessing an instruction's video.
+     *
+     * @param videoId   Video ID.
+     * @return          String URI.
+     */
+    @NonNull
+    public static String createVideoUri(@NonNull String videoId) {
+        return Constants.SERVER_URL +
+                "/videos/" +
+                videoId +
+                "/stream";
+    }
+
+    /**
+     * Create a Map containing the necessary headers for API access.
+     *
+     * @param jwt   String JWT.
+     * @return      Map containing the headers.
+     */
+    @NonNull
+    public static Map<String, String> getHeaders(@NonNull String jwt) {
+        return Map.of(
+                "Content-Type", "application/json",
+                "Cookie", "jwt=" + jwt
+        );
     }
 }
