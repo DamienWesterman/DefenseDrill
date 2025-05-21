@@ -60,7 +60,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class UnlockDrillsActivity extends AppCompatActivity {
     private UnlockDrillsViewModel viewModel;
 
-    private View rootView;
     private Button toggleKnownDrillsButton;
     private Button toggleUnknownDrillsButton;
     private ProgressBar progressBar;
@@ -97,7 +96,6 @@ public class UnlockDrillsActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(UnlockDrillsViewModel.class);
 
-        rootView = findViewById(R.id.activityUnlockDrills);
         toggleKnownDrillsButton = findViewById(R.id.toggleKnownDrillsButton);
         toggleUnknownDrillsButton = findViewById(R.id.toggleUnknownDrillsButton);
         progressBar = findViewById(R.id.unlockDrillsProgressBar);
@@ -110,7 +108,7 @@ public class UnlockDrillsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        // TODO: setLoading() and viewModel stuff - make sure to maintain the sorted order or whatever (and the button text)
+        viewModel.displayFilteredList();
     }
 
     @Override
@@ -142,7 +140,6 @@ public class UnlockDrillsActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void toggleKnownDrills(View view) {
-        // TODO: Set loading?
         if (viewModel.isShowKnownDrills()) {
             toggleKnownDrillsButton.setText(R.string.hiding_known_drills);
             viewModel.setShowKnownDrills(false);
@@ -153,7 +150,6 @@ public class UnlockDrillsActivity extends AppCompatActivity {
     }
 
     public void toggleUnknownDrills(View view) {
-        // TODO: Set loading?
         if (viewModel.isShowUnknownDrills()) {
             toggleUnknownDrillsButton.setText(R.string.hiding_unknown_drills);
             viewModel.setShowUnknownDrills(false);
@@ -178,17 +174,12 @@ public class UnlockDrillsActivity extends AppCompatActivity {
             public void onGlobalLayout() {
                 // Once all the items are rendered: remove this listener, hide progress bar
                 recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                // TODO: Change to set loading
                 progressBar.setVisibility(View.GONE);
             }
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager((this)));
-        recyclerView.setAdapter(new UnlockDrillAdapter(displayedDrills,
-            // Checked Changed Listener
-            (drill, isChecked) -> {
-//                viewModel.setDrillKnown(drill, isChecked); TODO: START HERE - implement properly, may need a set or something in the viewModel
-            }));
+        recyclerView.setAdapter(new UnlockDrillAdapter(displayedDrills, viewModel::setDrillKnown));
         recyclerView.addItemDecoration(
                 new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }

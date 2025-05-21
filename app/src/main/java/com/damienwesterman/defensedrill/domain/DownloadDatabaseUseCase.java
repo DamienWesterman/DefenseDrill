@@ -106,29 +106,7 @@ public class DownloadDatabaseUseCase {
         categoryMap.clear();
         subCategoryMap.clear();
 
-        final long lastDrillUpdateTime = 1745070674000L;//sharedPrefs.getLastDrillUpdateTime(); TODO: PUT BACK
-drillRepo.deleteDrills(drillRepo.getAllDrills().toArray(new Drill[0])); // TODO: REMOVE - OBVIOUSLY
-            // TODO: This should update:
-                /*
-                Single Leg Takedown
-                Side Headlock Defense
-                Kimura: From Half Guard
-                Half Guard to Guard
-                Half Guard Sweep to Single Leg
-                Half Guard Sweep to Side Control
-                Half Guard Pass to Side Control
-                Half Guard
-                Guard Pass: Under
-                Guard Pass: Over
-                Double Leg Takedown
-                Double Arm Bar
-                Combo: Jab > Hook
-                Choke Escape: Front - Two Hands
-                Choke Escape: Bottom Guard - Hand Choke
-                Choke Escape: Front - Two Hands
-                Choke Escape: Bottom Guard - Hand Choke
-                Buck Trap and Roll
-                 */
+        final long lastDrillUpdateTime = sharedPrefs.getLastDrillUpdateTime();
         if (0 >= lastDrillUpdateTime) {
             // First download from the database, get all
             disposable = loadAllCategoriesFromServer()

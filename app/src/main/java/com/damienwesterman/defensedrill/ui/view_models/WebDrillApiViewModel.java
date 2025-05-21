@@ -73,8 +73,7 @@ public class WebDrillApiViewModel extends AndroidViewModel {
      */
     public void downloadDb(@NonNull Consumer<List<Drill>> successCallback,
                            @NonNull Consumer<String> failureCallback) {
-        // TODO: REMOVE TEST CODE
-        new Thread(() -> downloadDb.download(successCallback, failureCallback)).start();
+        downloadDb.download(successCallback, failureCallback);
     }
 
     /**

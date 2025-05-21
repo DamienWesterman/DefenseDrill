@@ -27,6 +27,8 @@
 package com.damienwesterman.defensedrill.ui.view_models;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -49,6 +51,8 @@ import lombok.Getter;
  */
 @HiltViewModel
 public class UnlockDrillsViewModel extends AndroidViewModel {
+    private final static String TAG = UnlockDrillsViewModel.class.getSimpleName();
+
     private final DrillRepository repo;
 
     @Getter
@@ -58,6 +62,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
     private boolean showKnownDrills;
     @Getter
     private boolean showUnknownDrills;
+    private final Object lock = new Object();
 
     @Inject
     public UnlockDrillsViewModel(@NonNull Application application, DrillRepository repo) {
@@ -86,7 +91,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
      */
     public void setShowKnownDrills(boolean show) {
         this.showKnownDrills = show;
-        filterList();
+        displayFilteredList();
     }
 
     /**
@@ -96,13 +101,13 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
      */
     public void setShowUnknownDrills(boolean show) {
         this.showUnknownDrills = show;
-        filterList();
+        displayFilteredList();
     }
 
     /**
      * Filter the displayed drills based on the current filter settings.
      */
-    public void filterList() {
+    public void displayFilteredList() {
         displayedDrills.postValue(allDrills.stream()
             .filter(drill -> {
                 if (!showKnownDrills && drill.isKnownDrill()) {
@@ -114,5 +119,39 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
                 }
             })
             .collect(Collectors.toList()));
+    }
+
+    /**
+     * Update and save if the drill is known.
+     *
+     * @param drill     Drill to update.
+     * @param isKnown   true if the user set to known.
+     */
+    public void setDrillKnown(@NonNull Drill drill, boolean isKnown) {
+        new Thread(() -> {
+            drill.setIsKnownDrill(isKnown);
+            try {
+                if (repo.updateDrills(drill)) {
+                /*
+                 Update the list so if there is a destructive action (like screen rotation) we can
+                 have to correct information. However, the checkbox is already changed in the UI, so
+                 we don't need to call displayedDrills.postValue(). This should also be okay to do
+                 slowly in the background as it should not be time sensitive.
+                 */
+                    for (Drill oneDrill : allDrills) {
+                        if (oneDrill.getId() == drill.getId()) {
+                            oneDrill.setIsKnownDrill(isKnown);
+                            break;
+                        }
+                    }
+                } else {
+                    // Should not happen
+                    Log.e(TAG, "setDrillKnown() failed call to updateDrills(0");
+                }
+            } catch (SQLiteConstraintException e) {
+                // Also should not happen
+                Log.e(TAG, "setDrillKnown() threw exception:", e);
+            }
+        }).start();
     }
 }
