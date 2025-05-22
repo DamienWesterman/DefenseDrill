@@ -1,5 +1,6 @@
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,15 +14,25 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
-import com.damienwesterman.defensedrill.utils.Constants;
 
 /**
  * Screen to offer the user options for altering the local database via CRUD operations.
- * <br><br>
- * INTENTS: None expected.
  */
 public class CustomizeDatabaseActivity extends AppCompatActivity {
     private LinearLayout rootView;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the CustomizeDatabaseActivity.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, CustomizeDatabaseActivity.class);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods
@@ -70,18 +81,15 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
     public void onCardClick(View view) {
         int cardId = view.getId();
         if (R.id.viewDrillsCard == cardId) {
-            Intent intent = new Intent(this, ViewDrillsActivity.class);
-            startActivity(intent);
+            ViewDrillsActivity.startActivity(this);
         } else if (R.id.unlockDrillsCard == cardId) {
             UnlockDrillsActivity.startActivity(this);
         } else if (R.id.viewCategoriesCard == cardId) {
-            Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
-            intent.putExtra(Constants.INTENT_EXTRA_VIEW_CATEGORIES, "");
-            startActivity(intent);
+            ViewAbstractCategoriesActivity.startActivity(this,
+                    ViewAbstractCategoriesActivity.ActivityMode.MODE_CATEGORIES);
         } else if (R.id.viewSubCategoriesCard == cardId) {
-            Intent intent = new Intent(this, ViewAbstractCategoriesActivity.class);
-            intent.putExtra(Constants.INTENT_EXTRA_VIEW_SUB_CATEGORIES, "");
-            startActivity(intent);
+            ViewAbstractCategoriesActivity.startActivity(this,
+                    ViewAbstractCategoriesActivity.ActivityMode.MODE_SUB_CATEGORIES);
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

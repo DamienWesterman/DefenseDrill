@@ -73,7 +73,7 @@ public class UnlockDrillsActivity extends AppCompatActivity {
      *
      * @param context       Context.
      */
-    public static void startActivity(Context context) {
+    public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, UnlockDrillsActivity.class);
         context.startActivity(intent);
     }

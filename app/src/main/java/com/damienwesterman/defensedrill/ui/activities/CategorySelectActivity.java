@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -55,11 +56,33 @@ import dagger.hilt.android.AndroidEntryPoint;
  * Activity during Drill Generation to select a Category of drill, or random.
  * <br><br>
  * Then Launches {@link SubCategorySelectActivity} sending the selected Category.
- * <br><br>
- * INTENTS: None required.
  */
 @AndroidEntryPoint
 public class CategorySelectActivity extends AppCompatActivity {
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the CategorySelectActivity.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, CategorySelectActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start the CategorySelectActivity. Clears the activity stack so CategorySelect is now the top.
+     *
+     * @param context   Context.
+     */
+    public static void startActivityClearTop(@NonNull Context context) {
+        Intent intent = new Intent(context, CategorySelectActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods
@@ -108,9 +131,7 @@ public class CategorySelectActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void randomCategoryClick(View view) {
-        Intent intent = new Intent(this, SubCategorySelectActivity.class);
-        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
-        startActivity(intent);
+        SubCategorySelectActivity.startActivity(this, Constants.USER_RANDOM_SELECTION);
     }
 
     // =============================================================================================
@@ -137,12 +158,10 @@ public class CategorySelectActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(new AbstractCategoryAdapter(categories,
-                    // Card click listener
-                    id -> {
-                Intent intent = new Intent(this, SubCategorySelectActivity.class);
-                intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, id);
-                startActivity(intent);
-            }, null));
+                // Card Click Listener
+                id -> SubCategorySelectActivity.startActivity(this, id),
+                // Long Card Click Listener
+                null));
         });
     }
 }

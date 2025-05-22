@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -54,17 +55,31 @@ import java.util.List;
 
 /**
  * Displays the a list of Instructions for a given drill Drill.
- * <br><br>
- * INTENTS: Expects to receive BOTH of the following-
- * <ul>
- *    <li> A {@link Constants#INTENT_EXTRA_DRILL_DTO} intent.</li>
- *    <li> A {@link Constants#INTENT_EXTRA_INSTRUCTION_INDEX} intent.</li>
- * </ul>
  */
 public class InstructionsActivity extends AppCompatActivity {
     private String videoId;
 
     private LinearLayout rootView;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the InstructionsActivity using a Drill and position in the instructions array.
+     *
+     * @param context               Context.
+     * @param drill                 Drill.
+     * @param instructionsIndex     Index position of the desired instructions in the Drill's
+     *                              instructions array.
+     */
+    public static void startActivity(@NonNull Context context,
+                                     @NonNull DrillDTO drill,
+                                     int instructionsIndex) {
+        Intent intent = new Intent(context, InstructionsActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_DRILL_DTO, drill);
+        intent.putExtra(Constants.INTENT_EXTRA_INSTRUCTION_INDEX, instructionsIndex);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods

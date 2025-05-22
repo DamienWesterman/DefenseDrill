@@ -88,7 +88,7 @@ public class DefenseDrillNotificationManager {
             return;
         }
 
-        Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        Intent intent = WebDrillOptionsActivity.createIntentToStartActivity(context);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,

@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -43,7 +42,6 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
-import com.damienwesterman.defensedrill.utils.Constants;
 
 import javax.inject.Inject;
 
@@ -52,8 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 /**
  * Home screen activity and entry point for the application. Displays the different general
  * functionalities of the app. CRUD operations in the database, Drill generation, and feedback.
- * <br><br>
- * INTENTS: None expected.
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
@@ -79,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
      *
      * @param context   Context.
      */
-    public static void startActivity(Context context) {
+    public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
@@ -114,22 +110,19 @@ public class HomeActivity extends AppCompatActivity {
     // =============================================================================================
     // OnClickListener Methods
     // =============================================================================================
-    public void onCardClick(View view) {
+    public void onCardClick(@NonNull View view) {
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
-            Intent intent = new Intent(this, CategorySelectActivity.class);
-            startActivity(intent);
+            CategorySelectActivity.startActivityClearTop(this);
         } else if (R.id.customizeDatabaseCard == cardId) {
-            Intent intent = new Intent(this, CustomizeDatabaseActivity.class);
-            startActivity(intent);
+            CustomizeDatabaseActivity.startActivity(this);
         } else if (R.id.simulatedAttackSettings == cardId) {
             SimulatedAttackSettingsActivity.startActivity(this);
         } else if (R.id.webDrillOptionsCard == cardId) {
             if (!internetConnection.isNetworkConnected()) {
                 UiUtils.displayDismissibleSnackbar(rootView, "No internet connection.");
             } else {
-                Intent intent = new Intent(this, WebDrillOptionsActivity.class);
-                startActivity(intent);
+                WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");

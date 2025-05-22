@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,8 +65,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Activity to create a new Drill.
- * <br><br>
- * INTENTS: None required.
  */
 @AndroidEntryPoint
 public class CreateDrillActivity extends AppCompatActivity {
@@ -78,6 +77,19 @@ public class CreateDrillActivity extends AppCompatActivity {
     private Button subCategoriesButton;
     private EditText enteredNotes;
     private Snackbar savingSnackbar;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the CreateDrillActivity.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, CreateDrillActivity.class);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods

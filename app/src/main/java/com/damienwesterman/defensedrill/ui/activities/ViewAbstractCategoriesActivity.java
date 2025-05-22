@@ -26,9 +26,11 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,12 +72,10 @@ import dagger.hilt.android.AndroidEntryPoint;
  * is determined by the intent passed in. This screen allows a user to view all of an
  * AbstractCategory's entries, edit them (by click), delete them (by long click), or create a new
  * one (by popup).
- * <br><br>
- * INTENTS: Expects to receive <i>either</i> {@link Constants#INTENT_EXTRA_VIEW_CATEGORIES} or
- * {@link Constants#INTENT_EXTRA_VIEW_SUB_CATEGORIES} to determine what screen to show.
  */
 @AndroidEntryPoint
 public class ViewAbstractCategoriesActivity extends AppCompatActivity {
+    private static final String TAG = ViewAbstractCategoriesActivity.class.getSimpleName();
     // The following are abstract limits and do not represent any limits imposed by the database
     private static final int NAME_CHARACTER_LIMIT = 128;
     private static final int DESCRIPTION_CHARACTER_LIMIT = 512;
@@ -89,9 +89,35 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
 
-    private enum ActivityMode {
+    public enum ActivityMode {
         MODE_CATEGORIES,
         MODE_SUB_CATEGORIES
+    }
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the ViewAbstractCategoriesActivity for either Categories or SubCategories.
+     *
+     * @param context   Context.
+     * @param mode      The ActivityMode to launch the activity in, either Category or Sub-Category.
+     */
+    public static void startActivity(@NonNull Context context, @NonNull ActivityMode mode) {
+        Intent intent = new Intent(context, ViewAbstractCategoriesActivity.class);
+        switch (mode) {
+            case MODE_CATEGORIES:
+                intent.putExtra(Constants.INTENT_EXTRA_VIEW_CATEGORIES, "");
+                break;
+            case MODE_SUB_CATEGORIES:
+                intent.putExtra(Constants.INTENT_EXTRA_VIEW_SUB_CATEGORIES, "");
+                break;
+            default:
+                // No idea how this would happen, but whatever
+                Log.e(TAG, "Invalid mode for start activity: " + mode);
+                throw new RuntimeException("Invalid mode for start activity: " + mode);
+        }
+        context.startActivity(intent);
     }
 
     // =============================================================================================
@@ -201,7 +227,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             // "Save" button
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
-            if (0 == name.length()) {
+            if (name.isEmpty()) {
                 UiUtils.displayDismissibleSnackbar(dialogView,
                         "Name can not be empty");
                 return; // Do not dismiss
@@ -211,7 +237,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 return; // Do not dismiss
             }
 
-            if (0 == description.length()) {
+            if (description.isEmpty()) {
                 UiUtils.displayDismissibleSnackbar(dialogView,
                         "Description can not be empty");
                 return; // Do not dismiss
@@ -279,7 +305,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
             // "Save" button
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
-            if (0 == name.length()) {
+            if (name.isEmpty()) {
                 UiUtils.displayDismissibleSnackbar(dialogView,
                         "Name can not be empty");
                 return; // Do not dismiss
@@ -289,7 +315,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 return; // Do not dismiss
             }
 
-            if (0 == description.length()) {
+            if (description.isEmpty()) {
                 UiUtils.displayDismissibleSnackbar(dialogView,
                         "Description can not be empty");
                 return; // Do not dismiss
