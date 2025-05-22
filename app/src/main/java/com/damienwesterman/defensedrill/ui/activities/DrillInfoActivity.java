@@ -258,9 +258,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         } else if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
@@ -611,9 +609,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setMessage(message);
         builder.setCancelable(false);
         builder.setPositiveButton("Go Home", (dialog, position) -> {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
         });
         switch(activityState) {
             case REGENERATED_DRILL:

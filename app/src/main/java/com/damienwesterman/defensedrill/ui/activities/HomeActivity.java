@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -42,6 +43,7 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.utils.UiUtils;
+import com.damienwesterman.defensedrill.utils.Constants;
 
 import javax.inject.Inject;
 
@@ -70,6 +72,20 @@ public class HomeActivity extends AppCompatActivity {
     SimulatedAttackManager simulatedAttackManager;
 
     // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the HomeActivity. Clears the activity stack so home is now the top.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    // =============================================================================================
     // Activity Methods
     // =============================================================================================
     @Override
@@ -93,18 +109,6 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     // =============================================================================================
