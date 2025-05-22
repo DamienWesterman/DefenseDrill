@@ -485,7 +485,8 @@ public class CreateDrillActivity extends AppCompatActivity {
      *
      * @return Drill object created from user input or null if input sanitation failed.
      */
-    private @Nullable Drill generateDrillFromUserInput() {
+    @Nullable
+    private Drill generateDrillFromUserInput() {
         // Both of these are limits just for display purposes on other screens. They are a little
         // arbitrary and do not represent actual limits in the database layer.
         final int NAME_CHARACTER_LIMIT = 256;
