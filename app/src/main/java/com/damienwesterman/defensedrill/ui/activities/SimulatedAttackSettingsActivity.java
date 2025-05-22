@@ -108,7 +108,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // =============================================================================================
     // Activity Creation Methods
     // =============================================================================================
-    public static void startActivity(Context context) {
+    public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, SimulatedAttackSettingsActivity.class);
         context.startActivity(intent);
     }
@@ -175,9 +175,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         }
@@ -443,8 +441,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             switch (position) {
                 case 0:
                     // Download Drills from Database
-                    Intent webDrillsIntent = new Intent(this, WebDrillOptionsActivity.class);
-                    startActivity(webDrillsIntent);
+                    WebDrillOptionsActivity.startActivity(this);
                     break;
                 case 1:
                     // Create Self Defense Category
@@ -454,9 +451,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             Snackbar snackbar = Snackbar.make(rootView,
                                     "Category Created!", Snackbar.LENGTH_INDEFINITE);
                             snackbar.setAction("Create Drills", (callingView) -> {
-                                Intent createDrillsIntent =
-                                        new Intent(context, CreateDrillActivity.class);
-                                startActivity(createDrillsIntent);
+                                CreateDrillActivity.startActivity(context);
                                 snackbar.dismiss();
                             });
                             snackbar.show();

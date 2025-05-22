@@ -73,7 +73,7 @@ public class UnlockDrillsActivity extends AppCompatActivity {
      *
      * @param context       Context.
      */
-    public static void startActivity(Context context) {
+    public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, UnlockDrillsActivity.class);
         context.startActivity(intent);
     }
@@ -120,9 +120,7 @@ public class UnlockDrillsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         }

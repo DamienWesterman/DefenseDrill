@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -66,8 +67,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  * <br><br>
  * This screen allows a user to view all Drills, edit them (by click), delete them (by long click),
  * or create a new one (by launching {@link CreateDrillActivity}).
- * <br><br>
- * INTENTS: None expected.
  */
 @AndroidEntryPoint
 public class ViewDrillsActivity extends AppCompatActivity {
@@ -81,6 +80,19 @@ public class ViewDrillsActivity extends AppCompatActivity {
     private Button resetFiltersButton;
     private Button categoryFilterButton;
     private Button subCategoryFilterButton;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the ViewDrillsActivity.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, ViewDrillsActivity.class);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods
@@ -132,9 +144,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         }
@@ -180,8 +190,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     }
 
     public void createDrill(View view) {
-        Intent intent = new Intent(this, CreateDrillActivity.class);
-        startActivity(intent);
+        CreateDrillActivity.startActivity(this);
     }
 
     // =============================================================================================

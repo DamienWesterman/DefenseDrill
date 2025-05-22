@@ -136,7 +136,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param categoryId    Category ID.
      * @param subCategoryId SubCategory ID.
      */
-    public static void startActivity(Context context, long categoryId, long subCategoryId) {
+    public static void startActivity(@NonNull Context context, long categoryId, long subCategoryId) {
         Intent intent = new Intent(context, DrillInfoActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, categoryId);
         intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, subCategoryId);
@@ -149,7 +149,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param context   Context.
      * @param drillId   Drill ID.
      */
-    public static void startActivity(Context context, long drillId) {
+    public static void startActivity(@NonNull Context context, long drillId) {
         Intent intent = new Intent(context, DrillInfoActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
         context.startActivity(intent);
@@ -164,7 +164,8 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param drillId   Drill ID.
      * @return          Intent that can then start the DrillInfoActivity.
      */
-    public static Intent createIntentToStartActivityFromSimulatedAttack(Context context, long drillId) {
+    public static Intent createIntentToStartActivityFromSimulatedAttack(@NonNull Context context,
+                                                                        long drillId) {
         Intent intent = new Intent(context, DrillInfoActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_DRILL_ID, drillId);
         intent.putExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK, "");
@@ -258,9 +259,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         } else if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
@@ -583,9 +582,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                     break;
                 case 1:
                     // New Category
-                    Intent intent = new Intent(this, CategorySelectActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    CategorySelectActivity.startActivityClearTop(this);
                     break;
             }
         });
@@ -610,26 +607,20 @@ public class DrillInfoActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.warning_icon);
         builder.setMessage(message);
         builder.setCancelable(false);
-        builder.setPositiveButton("Go Home", (dialog, position) -> {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        });
+        builder.setPositiveButton("Go Home", (dialog, position) ->
+                HomeActivity.startActivity(this));
         switch(activityState) {
             case REGENERATED_DRILL:
-                // Fallthrough intentional
                 builder.setNeutralButton("Reset skipped Drills", (dialog, position) -> {
                     setUiLoading(true);
                     viewModel.resetSkippedDrills();
                     activityState = ActivityState.GENERATED_DRILL;
                     viewModel.regenerateDrill();
                 });
+                // Fallthrough intentional
             case GENERATED_DRILL:
-                builder.setNegativeButton("Select different Category", (dialog, position) -> {
-                    Intent intent = new Intent(this, CategorySelectActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                });
+                builder.setNegativeButton("Select different Category", (dialog, position) ->
+                        CategorySelectActivity.startActivityClearTop(this));
                 break;
             case DISPLAYING_DRILL:
                 // Fallthrough intentional
@@ -923,10 +914,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(this, InstructionsActivity.class);
-        intent.putExtra(Constants.INTENT_EXTRA_DRILL_DTO, drillDTO);
-        intent.putExtra(Constants.INTENT_EXTRA_INSTRUCTION_INDEX, instructionsIndex);
-        startActivity(intent);
+        InstructionsActivity.startActivity(this, drillDTO, instructionsIndex);
     }
 
     /**

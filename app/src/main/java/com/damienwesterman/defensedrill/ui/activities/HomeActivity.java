@@ -26,10 +26,10 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -50,8 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 /**
  * Home screen activity and entry point for the application. Displays the different general
  * functionalities of the app. CRUD operations in the database, Drill generation, and feedback.
- * <br><br>
- * INTENTS: None expected.
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
@@ -68,6 +66,20 @@ public class HomeActivity extends AppCompatActivity {
     CheckPhoneInternetConnection internetConnection;
     @Inject
     SimulatedAttackManager simulatedAttackManager;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the HomeActivity. Clears the activity stack so home is now the top.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods
@@ -95,37 +107,22 @@ public class HomeActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     // =============================================================================================
     // OnClickListener Methods
     // =============================================================================================
-    public void onCardClick(View view) {
+    public void onCardClick(@NonNull View view) {
         int cardId = view.getId();
         if (R.id.generateDrillCard == cardId) {
-            Intent intent = new Intent(this, CategorySelectActivity.class);
-            startActivity(intent);
+            CategorySelectActivity.startActivityClearTop(this);
         } else if (R.id.customizeDatabaseCard == cardId) {
-            Intent intent = new Intent(this, CustomizeDatabaseActivity.class);
-            startActivity(intent);
+            CustomizeDatabaseActivity.startActivity(this);
         } else if (R.id.simulatedAttackSettings == cardId) {
             SimulatedAttackSettingsActivity.startActivity(this);
         } else if (R.id.webDrillOptionsCard == cardId) {
             if (!internetConnection.isNetworkConnected()) {
                 UiUtils.displayDismissibleSnackbar(rootView, "No internet connection.");
             } else {
-                Intent intent = new Intent(this, WebDrillOptionsActivity.class);
-                startActivity(intent);
+                WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");

@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,8 +65,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 /**
  * Screen to allow user to select from network related actions such as logging in or out to the
  * server, downloading, and updating drills from the server.
- * <br><br>
- * INTENTS: None expected.
  */
 @AndroidEntryPoint
 public class WebDrillOptionsActivity extends AppCompatActivity {
@@ -78,6 +77,29 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     CheckPhoneInternetConnection internetConnection;
 
     private WebDrillApiViewModel viewModel;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the WebDrillOptionsActivity.
+     *
+     * @param context   Context.
+     */
+    public static void startActivity(@NonNull Context context) {
+        Intent webDrillsIntent = new Intent(context, WebDrillOptionsActivity.class);
+        context.startActivity(webDrillsIntent);
+    }
+
+    /**
+     * Create an intent designed to launch the WebDrillOptionsActivity.
+     *
+     * @param context   Context.
+     * @return          Intent that can be used to launch WebDrillOptionsActivity.
+     */
+    public static Intent createIntentToStartActivity(@NonNull Context context) {
+        return new Intent(context, WebDrillOptionsActivity.class);
+    }
 
     // =============================================================================================
     // Activity Methods
@@ -109,9 +131,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         }

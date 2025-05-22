@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -59,8 +60,6 @@ import dagger.hilt.android.AndroidEntryPoint;
  * <br><br>
  * Proceeds {@link CategorySelectActivity}, then Launches {@link DrillInfoActivity} sending the
  * selected Category and SubCategory.
- * <br><br>
- * INTENTS: Expects to receive a {@link Constants#INTENT_EXTRA_CATEGORY_CHOICE} intent.
  */
 @AndroidEntryPoint
 public class SubCategorySelectActivity extends AppCompatActivity {
@@ -69,6 +68,21 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     SubCategoryViewModel subCategoryViewModel;
     CategoryViewModel categoryViewModel;
     long selectedCategoryId;
+
+    // =============================================================================================
+    // Activity Creation Methods
+    // =============================================================================================
+    /**
+     * Start the SubCategorySelectActivity.
+     *
+     * @param context           Context.
+     * @param categoryChoice    Category ID the user chose, or {@link Constants#USER_RANDOM_SELECTION}.
+     */
+    public static void startActivity(@NonNull Context context, long categoryChoice) {
+        Intent intent = new Intent(context, SubCategorySelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, categoryChoice);
+        context.startActivity(intent);
+    }
 
     // =============================================================================================
     // Activity Methods
@@ -119,9 +133,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (R.id.homeButton == item.getItemId()) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            HomeActivity.startActivity(this);
             finish();
             return true;
         }
