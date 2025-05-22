@@ -58,6 +58,20 @@ public class HomeActivity extends AppCompatActivity {
         // https://developer.android.com/training/permissions/requesting#request-permission
     // TODO: THEN prompt the user for unrestricted background usage:
         // https://stackoverflow.com/a/54852199
+
+    // TODO: Refactor to do list:
+        /*
+        - Add NonNull/Nullable everywhere (replace NotNull with NonNull)
+        - Check ever file for null warnings (I guess just any warnings really)
+        - Any methods that return nullable, surround calls in optionals
+        - Update RecyclerViews using solution provided by  https://chatgpt.com/c/682ceac4-64d0-800d-ade0-d3ec6f26b1a5
+        - Check all Doc comments for params/return lining up and having periods
+        - Package names should be singular
+        - Check if/else for switch (like onCardClick methods)
+        - Can we just use onCardClick for every activity?
+        - Refactor utils into appropriate packages
+        - Replace callback classes with lambdas? Maybe keep OperationCompleteCallback
+         */
     private static boolean isUpdateServiceStarted = false;
 
     private LinearLayout rootView;
