@@ -31,7 +31,6 @@ import android.database.sqlite.SQLiteConstraintException;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +50,7 @@ public class DrillRepository {
     private final CategoryDao categoryDao;
     private final SubCategoryDao subCategoryDao;
 
-    /* package-private */ DrillRepository(DrillDatabase db) {
+    /* package-private */ DrillRepository(@NonNull DrillDatabase db) {
         this.db = db;
         this.drillDao = this.db.getDrillDao();
         this.categoryDao = this.db.getCategoryDao();
@@ -189,13 +188,6 @@ public class DrillRepository {
                     continue;
                 }
 
-                if (null == drill.getCategories()) {
-                    drill.setCategories(new ArrayList<>());
-                }
-                if (null == drill.getSubCategories()) {
-                    drill.setSubCategories(new ArrayList<>());
-                }
-
                 if (1 != drillDao.insert(drill.getDrillEntity()).length) {
                     success.set(false);
                 }
@@ -249,12 +241,6 @@ public class DrillRepository {
             for (Drill drill : drills) {
                 if (null == drill) {
                     continue;
-                }
-                if (null == drill.getCategories()) {
-                    drill.setCategories(new ArrayList<>());
-                }
-                if (null == drill.getSubCategories()) {
-                    drill.setSubCategories(new ArrayList<>());
                 }
 
                 if (1 != drillDao.update(drill.getDrillEntity())) {

@@ -63,7 +63,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
  * Manager for scheduling and sending Simulated Attack notifications to the user.
  */
 public class SimulatedAttackManager {
-    // TODO: FIXME: REMOVE THE DxTag TEST LOGS
     private static final String TAG = SimulatedAttackManager.class.getSimpleName();
     private static final long INVALID_ALARM_TIME = -1L;
 
@@ -105,8 +104,7 @@ public class SimulatedAttackManager {
      *
      * @param context   Context.
      */
-    public static void start(Context context) {
-Log.i("DxTag", "SimulatedAttackManager.start()");
+    public static void start(@NonNull Context context) {
         Intent intent = new Intent(Constants.INTENT_ACTION_START_SIMULATED_ATTACK_MANAGER);
         intent.setPackage(context.getPackageName());
         intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
@@ -120,8 +118,7 @@ Log.i("DxTag", "SimulatedAttackManager.start()");
      *
      * @param context   Context.
      */
-    public static void restart(Context context) {
-Log.i("DxTag", "SimulatedAttackManager.restart()");
+    public static void restart(@NonNull Context context) {
         // The start process already cancels previous alarms
         start(context);
     }
@@ -131,8 +128,7 @@ Log.i("DxTag", "SimulatedAttackManager.restart()");
      *
      * @param context   Context.
      */
-    public static void stop(Context context) {
-Log.i("DxTag", "SimulatedAttackManager.stop()");
+    public static void stop(@NonNull Context context) {
         Intent intent = new Intent(Constants.INTENT_ACTION_STOP_SIMULATED_ATTACK_MANAGER);
         intent.setPackage(context.getPackageName());
         intent.setComponent(new ComponentName(context, BroadcastReceiverManager.class));
@@ -149,18 +145,14 @@ Log.i("DxTag", "SimulatedAttackManager.stop()");
      * custom notification policies.
      */
     /* package-private */ void scheduleSimulatedAttack() {
-Log.i("DxTag", "SimulatedAttackManager.scheduleSimulatedAttack()");
         stopSimulatedAttacks();
 
         long nextAlarmMillis = getNextAlarmMillis();
         if (INVALID_ALARM_TIME == nextAlarmMillis) {
             // Something went wrong, don't schedule another notification
-Log.i("DxTag", "SimulatedAttackManager.scheduleSimulatedAttack() - INVALID_ALARM_TIME");
             return;
         }
 
-Log.i("DxTag", "SimulatedAttackManager.scheduleSimulatedAttack() - nextAlarmMillis<" + nextAlarmMillis + ">");
-Log.i("DxTag", "SimulatedAttackManager.scheduleSimulatedAttack() - sharedPrefs.areSimulatedAttacksEnabled()<" + sharedPrefs.areSimulatedAttacksEnabled() + "> | notificationManager.areNotificationsEnabled()<" + notificationManager.areNotificationsEnabled() + ">");
         if (sharedPrefs.areSimulatedAttacksEnabled()
                 && notificationManager.areNotificationsEnabled()) {
             // Schedule the next alarm, which will then trigger simulateAttack() at nextAlarmMillis
@@ -176,7 +168,6 @@ Log.i("DxTag", "SimulatedAttackManager.scheduleSimulatedAttack() - sharedPrefs.a
      * Stop any scheduled simulated attacks.
      */
     /* package-private */ void stopSimulatedAttacks() {
-Log.i("DxTag", "SimulatedAttackManager.stopSimulatedAttacks()");
         alarmManager.cancel(simulatedAttackPendingIntent);
     }
 
@@ -184,7 +175,6 @@ Log.i("DxTag", "SimulatedAttackManager.stopSimulatedAttacks()");
      * Simulate an attack by selecting a random drill, then scheduling the next simulated attack.
      */
     /* package-private */ void simulateAttack() {
-Log.i("DxTag", "SimulatedAttackManager.simulateAttack()");
         if (sendSimulatedAttackNotification()) {
             // Only schedule the next notification if we successfully generated this notification
             scheduleSimulatedAttack();
@@ -200,26 +190,22 @@ Log.i("DxTag", "SimulatedAttackManager.simulateAttack()");
      * @return  true if we successfully sent a notification, otherwise false.
      */
     private boolean sendSimulatedAttackNotification() {
-Log.i("DxTag", "SimulatedAttackManager.sendSimulatedAttackNotification()");
         Optional<CategoryEntity> optSelfDefenseCategory =
                 drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE);
         if (!optSelfDefenseCategory.isPresent()) {
             Log.w(TAG, "No Self Defense Category");
-Log.w("DxTag", "No Self Defense Category");
             return false;
         }
 
         List<Drill> drills = drillRepo.getAllDrillsByCategoryId(optSelfDefenseCategory.get().getId());
         if (drills.isEmpty()) {
             Log.w(TAG, "No Self Defense Drills");
-Log.w("DxTag", "No Self Defense Drills");
             return false;
         }
 
         DrillGenerator drillGenerator = new DrillGenerator(drills, new Random());
         Optional<Drill> optDrill = Optional.ofNullable(drillGenerator.generateDrill());
         optDrill.ifPresent(notificationManager::notifySimulatedAttack);
-Log.i("DxTag", "optDrill<" + optDrill.orElse(null) + ">");
 
         return optDrill.isPresent();
     }
@@ -231,7 +217,6 @@ Log.i("DxTag", "optDrill<" + optDrill.orElse(null) + ">");
      * @return Milliseconds after epoch of the next alarm, or {@link #INVALID_ALARM_TIME} on error.
      */
     private long getNextAlarmMillis() {
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis()");
         long currTime = System.currentTimeMillis();
         int currWeeklyHour = getWeeklyHourFromMillis(currTime);
 
@@ -242,7 +227,6 @@ Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis()");
             Constants.SimulatedAttackFrequency.NO_ATTACKS ==  policy.getFrequency());
         if (policies.isEmpty()) {
             Log.w(TAG, "No active policies");
-Log.w("DxTag", "No active policies");
             return INVALID_ALARM_TIME;
         }
 
@@ -252,7 +236,6 @@ Log.w("DxTag", "No active policies");
             time window. This should not really happen as an hour without a policy should never be
             chosen, but just in case.
              */
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #1 " + policies.get(0));
             return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
         }
 
@@ -269,7 +252,6 @@ Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #1 " + poli
                 window without having to do further checks. This should not really happen as an hour
                 without a policy should never be chosen, but just in case.
                  */
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #2 " + policy);
                 return generateAlarmFromBeginningOfTimeWindow(policy);
             }
         }
@@ -280,14 +262,12 @@ Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #2 " + poli
                 generateAlarmUsingFrequency(currTime, nextAlarmFrequency);
         int nextAlarmWeeklyHour = getWeeklyHourFromMillis(nextAlarmTimeMillis);
 
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - nextAlarmTimeMillis<" + nextAlarmTimeMillis + "> | nextAlarmFrequency<" + nextAlarmFrequency + ">");
         if (nextAlarmWeeklyHour != currWeeklyHour) {
             if (nextAlarmWeeklyHour > policies.get(policies.size() - 1).getWeeklyHour()) {
                 /*
                 Means we reached the end of the week, wrap around and start again, pick from the
                 first time window.
                  */
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #3 " + policies.get(0));
                 return generateAlarmFromBeginningOfTimeWindow(policies.get(0));
             }
 
@@ -302,13 +282,11 @@ Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #3 " + poli
                      We went past all other policies before nextAlarmWeeklyHour, meaning there is no
                      policy for this hour, so we need to pick from this subsequent policy.
                      */
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #4 "+ policy);
                     return generateAlarmFromBeginningOfTimeWindow(policy);
                 }
 
                 if (nextAlarmFrequency != policy.getFrequency()) {
                     // We have violated an intermittent policy, so just select from this next policy
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #5 " + policy);
                     return generateAlarmFromBeginningOfTimeWindow(policy);
                 }
 
@@ -319,7 +297,6 @@ Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #5 " + poli
             }
         }
 
-Log.i("DxTag", "SimulatedAttackManager.getNextAlarmMillis() - Return #6");
         return nextAlarmTimeMillis;
     }
 

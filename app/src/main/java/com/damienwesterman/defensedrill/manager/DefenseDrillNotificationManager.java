@@ -57,7 +57,9 @@ public class DefenseDrillNotificationManager {
     private static final int NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE = 1;
     private static final int NOTIFICATION_ID_SIMULATED_ATTACKS = 2;
 
+    @NonNull
     private final Context context;
+    @NonNull
     private final NotificationManager systemNotificationManager;
 
     private boolean initSuccess = false;

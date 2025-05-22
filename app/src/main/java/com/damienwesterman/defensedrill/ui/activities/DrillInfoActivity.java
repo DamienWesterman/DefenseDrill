@@ -286,11 +286,19 @@ public class DrillInfoActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void editCategories(View view) {
-        editCategoriesPopup(viewModel.getAllCategories());
+        if (viewModel.getAllCategories() != null) {
+            editCategoriesPopup(viewModel.getAllCategories());
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
+        }
     }
 
     public void editSubCategories(View view) {
-        editSubCategoriesPopup(viewModel.getAllSubCategories());
+        if (viewModel.getAllSubCategories() != null) {
+            editSubCategoriesPopup(viewModel.getAllSubCategories());
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
+        }
     }
 
     public void regenerateDrill(View view) {
@@ -325,9 +333,9 @@ public class DrillInfoActivity extends AppCompatActivity {
      *
      * @param categoryEntities List of categories.
      */
-    private void editCategoriesPopup(List<CategoryEntity> categoryEntities) {
+    private void editCategoriesPopup(@NonNull List<CategoryEntity> categoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
-        if (null == drill || null == categoryEntities) {
+        if (null == drill) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
         } else if (categoryEntities.isEmpty()) {
@@ -412,9 +420,9 @@ public class DrillInfoActivity extends AppCompatActivity {
      *
      * @param subCategoryEntities List of sub-categories.
      */
-    private void editSubCategoriesPopup(List<SubCategoryEntity> subCategoryEntities) {
+    private void editSubCategoriesPopup(@NonNull List<SubCategoryEntity> subCategoryEntities) {
         Drill drill = viewModel.getDrill().getValue();
-        if (null == drill || null == subCategoryEntities) {
+        if (null == drill) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
         } else if (subCategoryEntities.isEmpty()) {
@@ -829,7 +837,8 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param displayError  Should we display error message to the user.
      * @return              Drill object or null on error.
      */
-    private @Nullable Drill collectDrillInfo(boolean displayError) {
+    @Nullable
+    private Drill collectDrillInfo(boolean displayError) {
         Drill drill = viewModel.getDrill().getValue();
         if (null == drill) {
             if (displayError) {
@@ -948,8 +957,8 @@ public class DrillInfoActivity extends AppCompatActivity {
      *
      * @param instructions List of InstructionDTO objects
      */
-    private void setUpInstructions(List<InstructionsDTO> instructions) {
-        if (null != instructions && !instructions.isEmpty()) {
+    private void setUpInstructions(@NonNull List<InstructionsDTO> instructions) {
+        if (!instructions.isEmpty()) {
             List<String> formattedInstructions = new ArrayList<>(instructions.size() + 1);
             formattedInstructions.add("Select one...");
             formattedInstructions.addAll(instructions.stream()
@@ -990,8 +999,8 @@ public class DrillInfoActivity extends AppCompatActivity {
      *
      * @param relatedDrills List of RelatedDrillDTO objects
      */
-    private void setUpRelatedDrills(List<RelatedDrillDTO> relatedDrills) {
-        if (null != relatedDrills && !relatedDrills.isEmpty()) {
+    private void setUpRelatedDrills(@NonNull List<RelatedDrillDTO> relatedDrills) {
+        if (!relatedDrills.isEmpty()) {
             List<String> formattedRelatedDrills = new ArrayList<>(relatedDrills.size() + 1);
             formattedRelatedDrills.add("Select one...");
             formattedRelatedDrills.addAll(relatedDrills.stream()

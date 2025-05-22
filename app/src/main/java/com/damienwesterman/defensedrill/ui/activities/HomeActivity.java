@@ -61,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
+        START HERE in UnlockDrillsActivity looking for Null annotations
         - Add NonNull/Nullable everywhere (replace NotNull with NonNull)
         - Check ever file for null warnings (I guess just any warnings really)
         - Any methods that return nullable, surround calls in optionals
@@ -71,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         - Can we just use onCardClick for every activity?
         - Refactor utils into appropriate packages
         - Replace callback classes with lambdas? Maybe keep OperationCompleteCallback
+        - Simplify insert operations like in SimulatedAttackRepo
          */
     private static boolean isUpdateServiceStarted = false;
 

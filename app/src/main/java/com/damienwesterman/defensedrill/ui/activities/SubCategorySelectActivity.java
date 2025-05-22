@@ -65,8 +65,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SubCategorySelectActivity extends AppCompatActivity {
     private static final String RANDOM_CATEGORY_NAME = "Random";
 
-    SubCategoryViewModel subCategoryViewModel;
-    CategoryViewModel categoryViewModel;
+    private CategoryViewModel categoryViewModel;
     long selectedCategoryId;
 
     // =============================================================================================
@@ -100,13 +99,11 @@ public class SubCategorySelectActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        subCategoryViewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
-
         selectedCategoryId = getIntent().getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE,
                 Constants.USER_RANDOM_SELECTION);
 
 
-        subCategoryViewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
+        SubCategoryViewModel subCategoryViewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
         subCategoryViewModel.getAbstractCategories().observe(this, this::setUpRecyclerView);
 
         if (Constants.USER_RANDOM_SELECTION == selectedCategoryId) {
@@ -159,7 +156,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     /**
      * Private helper method to set up the recyclerView list of SubCategories and their callback.
      */
-    private void setUpRecyclerView(List<AbstractCategoryEntity> abstractCategories) {
+    private void setUpRecyclerView(@NonNull List<AbstractCategoryEntity> abstractCategories) {
         List<SubCategoryEntity> subCategories = SubCategoryViewModel.getSubCategoryList(abstractCategories);
 
         RecyclerView recyclerView = findViewById(R.id.subCategoryRecyclerView);

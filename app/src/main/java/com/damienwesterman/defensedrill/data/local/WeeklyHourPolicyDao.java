@@ -41,7 +41,7 @@ import java.util.List;
     List<WeeklyHourPolicyEntity> getAllWeeklyHourPolicies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertWeeklyHourPolicy(@NonNull WeeklyHourPolicyEntity... policies);
+    long[] insertWeeklyHourPolicy(WeeklyHourPolicyEntity... policies);
 
     @Query("SELECT * FROM " + WeeklyHourPolicyEntity.TABLE_NAME
             + " WHERE active = 1")

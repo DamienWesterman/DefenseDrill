@@ -155,11 +155,19 @@ public class CreateDrillActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void addCategories(View view) {
-        addCategoriesPopup(viewModel.getAllCategories());
+        if (viewModel.getAllCategories() != null) {
+            addCategoriesPopup(viewModel.getAllCategories());
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
+        }
     }
 
     public void addSubCategories(View view) {
-        addSubCategoriesPopup(viewModel.getAllSubCategories());
+        if (viewModel.getAllSubCategories() != null) {
+            addSubCategoriesPopup(viewModel.getAllSubCategories());
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub categories");
+        }
     }
 
     /**
@@ -205,11 +213,8 @@ public class CreateDrillActivity extends AppCompatActivity {
      *
      * @param categories List of categories.
      */
-    private void addCategoriesPopup(List<CategoryEntity> categories) {
-        if (null == categories) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
-            return;
-        } else if (categories.isEmpty()) {
+    private void addCategoriesPopup(@NonNull List<CategoryEntity> categories) {
+        if (categories.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No Categories in database");
             return;
         }
@@ -277,11 +282,8 @@ public class CreateDrillActivity extends AppCompatActivity {
      *
      * @param subCategories List of categories.
      */
-    private void addSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
-        if (null == subCategories) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
-            return;
-        } else if (subCategories.isEmpty()) {
+    private void addSubCategoriesPopup(@NonNull List<SubCategoryEntity> subCategories) {
+        if (subCategories.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "No sub-Categories in database");
             return;
         }
@@ -370,7 +372,7 @@ public class CreateDrillActivity extends AppCompatActivity {
      *
      * @param drill Drill being created.
      */
-    private void confirmNoSubCategoriesPopup(Drill drill) {
+    private void confirmNoSubCategoriesPopup(@NonNull Drill drill) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("No sub-Categories Selected");
         builder.setIcon(R.drawable.warning_icon);
@@ -389,7 +391,7 @@ public class CreateDrillActivity extends AppCompatActivity {
      *
      * @param drill Drill being created.
      */
-    private void checkNamePopup(Drill drill) {
+    private void checkNamePopup(@NonNull Drill drill) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Double Check Name");
         builder.setIcon(R.drawable.warning_icon);

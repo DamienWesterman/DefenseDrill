@@ -140,7 +140,7 @@ public class CategorySelectActivity extends AppCompatActivity {
     /**
      * Private helper method to set up the recyclerView list of Categories and their callback.
      */
-    private void setUpRecyclerView(List<AbstractCategoryEntity> abstractCategories) {
+    private void setUpRecyclerView(@NonNull List<AbstractCategoryEntity> abstractCategories) {
         List<CategoryEntity> categories = CategoryViewModel.getCategoryList(abstractCategories);
 
         RecyclerView recyclerView = findViewById(R.id.categoryRecyclerView);

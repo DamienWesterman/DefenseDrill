@@ -51,8 +51,11 @@ import lombok.ToString;
 @ToString
 public class CategoryDTO implements Serializable {
     /** Server ID */
+    @NonNull
     private Long id;
+    @NonNull
     private String name;
+    @NonNull
     private String description;
 
     /**
