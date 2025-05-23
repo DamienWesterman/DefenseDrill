@@ -137,11 +137,11 @@ public class PolicyDetailsCard extends CardView {
         this.setEnabled(isChecked);
     }
 
-    public void setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener) {
+    public void setOnCheckedChangeListener(@NonNull CompoundButton.OnCheckedChangeListener listener) {
         this.enabledSwitch.setOnCheckedChangeListener(listener);
     }
 
-    private void init(Context context) {
+    private void init(@NonNull Context context) {
         LayoutInflater.from(context).inflate(R.layout.layout_policy_details_card, this, true);
 
         this.policyDetailsCard = findViewById(R.id.policyDetailsCard);

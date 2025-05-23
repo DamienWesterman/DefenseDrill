@@ -160,7 +160,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@NonNull String error) {
                     // On Login Failure
                     UiUtils.displayDismissibleSnackbar(rootView, error);
                 }
@@ -270,7 +270,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(String error) {
+                    public void onFailure(@NonNull String error) {
                         alert.dismiss();
                         UiUtils.displayDismissibleSnackbar(rootView, error);
                     }
@@ -324,7 +324,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@NonNull String error) {
                     UiUtils.displayDismissibleSnackbar(rootView, error);
                 }
             });

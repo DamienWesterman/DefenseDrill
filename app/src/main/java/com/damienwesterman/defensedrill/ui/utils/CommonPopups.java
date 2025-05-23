@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
@@ -135,7 +136,7 @@ public class CommonPopups {
                             }
 
                             @Override
-                            public void onFailure(String error) {
+                            public void onFailure(@NonNull String error) {
                                 usernameText.setEnabled(true);
                                 passwordText.setEnabled(true);
                                 errorMessage.setText(error);

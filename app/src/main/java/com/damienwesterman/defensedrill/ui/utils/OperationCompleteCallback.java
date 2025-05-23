@@ -26,11 +26,13 @@
 
 package com.damienwesterman.defensedrill.ui.utils;
 
+import androidx.annotation.NonNull;
+
 /**
  * Generic callback for an operation that can either succeed or fail.
  */
 public interface OperationCompleteCallback {
     void onSuccess();
 
-    void onFailure(String error);
+    void onFailure(@NonNull String error);
 }

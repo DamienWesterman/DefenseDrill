@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
@@ -44,6 +45,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * RecyclerView Adapter class for use with {@link Drill} objects.
  * <br><br>
@@ -51,17 +54,14 @@ import java.util.Locale;
  * {@link com.damienwesterman.defensedrill.ui.utils.TitleDescCard}. Uses {@link CardViewHolder}.
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
+@RequiredArgsConstructor
 public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
+    @NonNull
     private final List<Drill> drills;
+    @Nullable
     private final CardClickListener clickListener;
+    @Nullable
     private final CardLongClickListener longClickListener;
-
-    public DrillAdapter(@NonNull List<Drill> drills, CardClickListener clickListener,
-                        CardLongClickListener longClickListener) {
-        this.drills = drills;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-    }
 
     @NonNull
     @Override

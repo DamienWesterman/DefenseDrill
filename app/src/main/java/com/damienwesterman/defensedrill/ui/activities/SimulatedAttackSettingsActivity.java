@@ -238,7 +238,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(String error) {
+                        public void onFailure(@NonNull String error) {
                             UiUtils.displayDismissibleSnackbar(rootView, error);
                             runOnUiThread(() -> setLoading(false));
                         }
@@ -398,7 +398,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onFailure(String error) {
+                            public void onFailure(@NonNull String error) {
                                 errorMessage.setText(error);
                                 errorMessage.setVisibility(View.VISIBLE);
 
@@ -458,7 +458,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(String error) {
+                        public void onFailure(@NonNull String error) {
                             UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
                         }
                     });
@@ -566,7 +566,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onFailure(String error) {
+                            public void onFailure(@NonNull String error) {
                                 UiUtils.displayDismissibleSnackbar(rootView, error);
                             }
                         }

@@ -242,7 +242,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      *
      * @param categories List of possible Categories to filter by.
      */
-    private void filterCategoriesPopup(List<CategoryEntity> categories) {
+    private void filterCategoriesPopup(@NonNull List<CategoryEntity> categories) {
         final Set<Long> categoryFilterIds = viewModel.getCategoryFilterIds();
         final Set<Long> subCategoryFilterIds = viewModel.getSubCategoryFilterIds();
 
@@ -310,7 +310,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      *
      * @param subCategories List of possible SubCategories to filter by.
      */
-    private void filterSubCategoriesPopup(List<SubCategoryEntity> subCategories) {
+    private void filterSubCategoriesPopup(@NonNull List<SubCategoryEntity> subCategories) {
         final Set<Long> categoryFilterIds = viewModel.getCategoryFilterIds();
         final Set<Long> subCategoryFilterIds = viewModel.getSubCategoryFilterIds();
 
@@ -376,12 +376,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      *
      * @param drill Drill to potentially delete
      */
-    private void deleteDrillPopup(Drill drill) {
-        if (null == drill) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong trying to delete");
-            return;
-        }
-
+    private void deleteDrillPopup(@NonNull Drill drill) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Are you sure you want to delete:");
         builder.setIcon(R.drawable.warning_icon);
@@ -404,7 +399,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      *
      * @param drills List of Drill objects.
      */
-    private void setUpRecyclerView(List<Drill> drills) {
+    private void setUpRecyclerView(@NonNull List<Drill> drills) {
         setLoading(true);
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -421,7 +416,14 @@ public class ViewDrillsActivity extends AppCompatActivity {
             // Click listener
             id -> DrillInfoActivity.startActivity(this, id),
             // Long click listener
-            id -> deleteDrillPopup(viewModel.findDrillById(id))));
+            id -> {
+            Drill drill = viewModel.findDrillById(id);
+                if (null != drill) {
+                    deleteDrillPopup(drill);
+                } else {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                }
+            }));
     }
 
     /**
@@ -447,6 +449,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
         }
     }
 
+    @NonNull
     private DrillListViewModel.SortOrder indexToSortOrder(int index) {
         switch(index) {
             case 1:
@@ -462,7 +465,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
         }
     }
 
-    private int sortOrderToIndex(DrillListViewModel.SortOrder sortOrder) {
+    private int sortOrderToIndex(@NonNull DrillListViewModel.SortOrder sortOrder) {
         switch (sortOrder) {
             case SORT_NAME_DESCENDING:
                 return 1;

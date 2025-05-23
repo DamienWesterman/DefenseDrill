@@ -89,21 +89,23 @@ public class TitleDescCard extends CardView {
      * @param context   Context.
      * @param attrs     AttributeSet.
      */
-    private void init(Context context, AttributeSet attrs) {
+    private void init(@NonNull Context context, @Nullable AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.layout_title_desc_card, this, true);
 
         this.titleView = findViewById(R.id.title);
         this.descView = findViewById(R.id.description);
 
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleDescCard);
-            String title = typedArray.getString(R.styleable.TitleDescCard_title);
-            String description = typedArray.getString(R.styleable.TitleDescCard_description);
+            try (TypedArray typedArray =
+                         context.obtainStyledAttributes(attrs, R.styleable.TitleDescCard)) {
+                String title = typedArray.getString(R.styleable.TitleDescCard_title);
+                String description = typedArray.getString(R.styleable.TitleDescCard_description);
 
-            setTitle(title);
-            setDescription(description);
+                setTitle(title);
+                setDescription(description);
 
-            typedArray.recycle();
+                typedArray.recycle();
+            }
         }
 
     }

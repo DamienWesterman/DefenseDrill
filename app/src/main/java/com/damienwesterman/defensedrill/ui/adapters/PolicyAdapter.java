@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
@@ -53,17 +54,22 @@ import javax.annotation.Nonnull;
  * policy name and act together to span multiple days/hours.
  */
 public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
+    @NonNull
     private final Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
     /** This will be used as the list of items, as the policies are grouped by policy name */
+    @NonNull
     private final List<String> policyNames;
+    @Nullable
     private final Consumer<String> onClickListener;
+    @Nullable
     private final Consumer<String> onLongClickListener;
+    @Nullable
     private final BiConsumer<String, Boolean> onCheckedListener;
 
     public PolicyAdapter(@NonNull Map<String, List<WeeklyHourPolicyEntity>> policiesByName,
-                         @NonNull Consumer<String> onClickListener,
-                         @Nonnull Consumer<String> onLongClickListener,
-                         @NonNull BiConsumer<String, Boolean> onCheckedListener) {
+                         @Nullable Consumer<String> onClickListener,
+                         @Nullable Consumer<String> onLongClickListener,
+                         @Nullable BiConsumer<String, Boolean> onCheckedListener) {
         this.policiesByName = policiesByName;
         this.policyNames = new ArrayList<>(policiesByName.keySet());
         this.onClickListener = onClickListener;
@@ -86,9 +92,15 @@ public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
                     policiesByName.get(policyNames.get(position)))
                 .orElse(List.of());
         holder.setCardDetails(weeklyPolicies);
-        holder.setOnClickListener(onClickListener, policyNames.get(position));
+        if (null != onClickListener) {
+            holder.setOnClickListener(onClickListener, policyNames.get(position));
+        }
+        if (null != onLongClickListener) {
         holder.setOnLongClickListener(onLongClickListener, policyNames.get(position));
-        holder.setCheckedListener(onCheckedListener, policyNames.get(position));
+        }
+        if (null != onCheckedListener) {
+            holder.setCheckedListener(onCheckedListener, policyNames.get(position));
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.view_holders;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
@@ -53,13 +54,13 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void setOnClickListener(CardClickListener clickListener, long id) {
+    public void setOnClickListener(@Nullable CardClickListener clickListener, long id) {
         if (null != clickListener) {
             card.setOnClickListener(v -> clickListener.onCardClick(id));
         }
     }
 
-    public void setLongClickListener(CardLongClickListener longClickListener, long id) {
+    public void setLongClickListener(@Nullable CardLongClickListener longClickListener, long id) {
         if (null != longClickListener) {
             card.setOnLongClickListener(v -> {
                 longClickListener.onCardLongClick(id);

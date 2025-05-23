@@ -26,6 +26,8 @@
 
 package com.damienwesterman.defensedrill.data.remote.dto;
 
+import androidx.annotation.NonNull;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class LoginDTO {
+    @NonNull
     private final String username;
+    @NonNull
     private final String password;
 }

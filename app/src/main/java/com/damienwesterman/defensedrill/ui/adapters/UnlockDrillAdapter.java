@@ -76,11 +76,10 @@ public class UnlockDrillAdapter extends RecyclerView.Adapter<CheckBoxListViewHol
 
         holder.setText(drill.getName());
         holder.setChecked(drill.isKnownDrill());
-        holder.setOnCheckedListener((view, isChecked) -> {
-            if (null != listener) {
-                listener.accept(drill, isChecked);
-            }
-        });
+        if (null != listener) {
+            holder.setOnCheckedListener(
+                    (view, isChecked) -> listener.accept(drill, isChecked));
+        }
     }
 
     @Override

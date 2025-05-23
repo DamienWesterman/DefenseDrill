@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
@@ -42,6 +43,8 @@ import java.util.List;
 
 import com.damienwesterman.defensedrill.R;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * RecyclerView Adapter class for use with {@link AbstractCategoryEntity} objects.
  * <br><br>
@@ -49,17 +52,14 @@ import com.damienwesterman.defensedrill.R;
  * {@link com.damienwesterman.defensedrill.ui.utils.TitleDescCard}. Uses {@link CardViewHolder}.
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
+@RequiredArgsConstructor
 public class AbstractCategoryAdapter extends RecyclerView.Adapter<CardViewHolder> {
+    @NonNull
     private final List<? extends AbstractCategoryEntity> categories;
-    final CardClickListener clickListener;
-    final CardLongClickListener longClickListener;
-
-    public AbstractCategoryAdapter(@NonNull List<? extends AbstractCategoryEntity> categories, CardClickListener clickListener,
-                                   CardLongClickListener longClickListener) {
-        this.categories = categories;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-    }
+    @Nullable
+    private final CardClickListener clickListener;
+    @Nullable
+    private final CardLongClickListener longClickListener;
 
     @NonNull
     @Override

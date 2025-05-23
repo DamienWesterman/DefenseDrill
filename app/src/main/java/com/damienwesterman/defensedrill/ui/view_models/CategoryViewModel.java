@@ -69,6 +69,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
     /**
      * {@inheritDoc}
      */
+    @NonNull
     @Override
     public LiveData<List<AbstractCategoryEntity>> getAbstractCategories() {
         return categories;
@@ -96,27 +97,25 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void deleteAbstractCategory(AbstractCategoryEntity entity) {
-        if (null != entity) {
-            executor.execute(() -> {
-                List<AbstractCategoryEntity> newCategories = categories.getValue();
-                if (null != newCategories) {
-                    if (CategoryEntity.class == entity.getClass()) {
-                        newCategories.remove(entity);
-                        CategoryEntity category = (CategoryEntity) entity;
-                        categories.postValue(newCategories);
-                        repo.deleteCategories(category);
-                    }
+    public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
+        executor.execute(() -> {
+            List<AbstractCategoryEntity> newCategories = categories.getValue();
+            if (null != newCategories) {
+                if (CategoryEntity.class == entity.getClass()) {
+                    newCategories.remove(entity);
+                    CategoryEntity category = (CategoryEntity) entity;
+                    categories.postValue(newCategories);
+                    repo.deleteCategories(category);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void saveAbstractEntity(String name, String description, @NonNull OperationCompleteCallback callback) {
+    public void saveAbstractEntity(@NonNull String name, @NonNull String description, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 CategoryEntity category = new CategoryEntity(name, description);
@@ -135,7 +134,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
+    public void updateAbstractEntity(@NonNull AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (CategoryEntity.class == entity.getClass()) {

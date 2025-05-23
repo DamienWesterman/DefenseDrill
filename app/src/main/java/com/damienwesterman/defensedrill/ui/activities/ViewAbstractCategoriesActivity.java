@@ -257,7 +257,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@NonNull String error) {
                     UiUtils.displayDismissibleSnackbar(dialogView, error);
                     runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
@@ -274,13 +274,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
      *
      * @param entity AbstractCategoryEntity to view and edit.
      */
-    private void viewEditAbstractCategoryPopup(AbstractCategoryEntity entity) {
-        if (null == entity) {
-            UiUtils.displayDismissibleSnackbar(rootView,
-                    "Something went wrong");
-            return;
-        }
-
+    private void viewEditAbstractCategoryPopup(@NonNull AbstractCategoryEntity entity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_abstract_category_popup, null);
@@ -337,7 +331,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@NonNull String error) {
                     UiUtils.displayDismissibleSnackbar(dialogView, error);
                     runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
@@ -354,13 +348,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
      *
      * @param entity AbstractCategoryEntity to potentially delete.
      */
-    private void deleteAbstractCategoryPopup(AbstractCategoryEntity entity) {
-        if (null == entity) {
-            UiUtils.displayDismissibleSnackbar(rootView,
-                    "Something went wrong trying to delete");
-            return;
-        }
-
+    private void deleteAbstractCategoryPopup(@NonNull AbstractCategoryEntity entity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Are you sure you want to delete:");
         builder.setIcon(R.drawable.warning_icon);
@@ -383,7 +371,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
      *
      * @param abstractCategoryEntities List of AbstractCategoryEntity objects.
      */
-    private void setUpRecyclerView(List<AbstractCategoryEntity> abstractCategoryEntities) {
+    private void setUpRecyclerView(@NonNull List<AbstractCategoryEntity> abstractCategoryEntities) {
         setLoading(true);
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -397,10 +385,24 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new AbstractCategoryAdapter(abstractCategoryEntities,
-                // Click listener
-                id -> viewEditAbstractCategoryPopup(viewModel.findById(id)),
-                // Long Click listener
-                id -> deleteAbstractCategoryPopup(viewModel.findById(id))));
+            // Click listener
+            id -> {
+                AbstractCategoryEntity category = viewModel.findById(id);
+                if (null != category) {
+                    viewEditAbstractCategoryPopup(category);
+                } else {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                }
+            },
+            // Long Click listener
+            id -> {
+                AbstractCategoryEntity category = viewModel.findById(id);
+                if (null != category) {
+                    deleteAbstractCategoryPopup(category);
+                } else {
+                    UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                }
+            }));
     }
 
     /**

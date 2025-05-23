@@ -110,7 +110,7 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
      *                      policy that was clicked.
      * @param policyName    Name of the policy being clicked.
      */
-    public void setOnClickListener(@NonNull Consumer<String> listener, String policyName) {
+    public void setOnClickListener(@NonNull Consumer<String> listener, @NonNull String policyName) {
         card.setOnClickListener(v -> listener.accept(policyName));
     }
 
@@ -121,7 +121,7 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
      *                      the policy that was clicked.
      * @param policyName    Name of the policy being clicked.
      */
-    public void setOnLongClickListener(@NonNull Consumer<String> listener, String policyName) {
+    public void setOnLongClickListener(@NonNull Consumer<String> listener, @NonNull String policyName) {
         card.setOnLongClickListener(v -> {
             listener.accept(policyName);
             return true;
@@ -136,7 +136,8 @@ public class PolicyViewHolder extends RecyclerView.ViewHolder {
      *                      checked.
      * @param policyName    Name of the policy being clicked.
      */
-    public void setCheckedListener(BiConsumer<String, Boolean> listener, String policyName) {
+    public void setCheckedListener(@NonNull BiConsumer<String, Boolean> listener,
+                                   @NonNull String policyName) {
         card.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             listener.accept(policyName, isChecked);
             card.setEnabled(isChecked);

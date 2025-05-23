@@ -26,6 +26,7 @@
 
 package com.damienwesterman.defensedrill.data.local;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -60,6 +61,7 @@ public class WeeklyHourPolicyEntity {
     @ColumnInfo(name = "weekly_hour")
     private int weeklyHour;
 
+    @NonNull
     private Constants.SimulatedAttackFrequency frequency;
 
     private boolean active;
@@ -69,5 +71,6 @@ public class WeeklyHourPolicyEntity {
      * among unrelated policies.
      */
     @ColumnInfo(name = "policy_name")
+    @NonNull
     private String policyName;
 }
