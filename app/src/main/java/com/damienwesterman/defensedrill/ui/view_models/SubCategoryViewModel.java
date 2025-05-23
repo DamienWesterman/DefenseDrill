@@ -69,6 +69,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
     /**
      * {@inheritDoc}
      */
+    @NonNull
     @Override
     public LiveData<List<AbstractCategoryEntity>> getAbstractCategories() {
         return subCategories;
@@ -118,7 +119,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void deleteAbstractCategory(AbstractCategoryEntity entity) {
+    public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
         if (null != entity) {
             executor.execute(() -> {
                 List<AbstractCategoryEntity> newSubCategories = subCategories.getValue();
@@ -138,7 +139,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void saveAbstractEntity(String name, String description, @NonNull OperationCompleteCallback callback) {
+    public void saveAbstractEntity(@NonNull String name, @NonNull String description, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 SubCategoryEntity subCategory = new SubCategoryEntity(name, description);
@@ -157,7 +158,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
+    public void updateAbstractEntity(@NonNull AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (SubCategoryEntity.class == entity.getClass()) {

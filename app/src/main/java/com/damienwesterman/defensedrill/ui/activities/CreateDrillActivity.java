@@ -408,7 +408,7 @@ public class CreateDrillActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onFailure(@NonNull String error) {
                 runOnUiThread(() -> {
                     UiUtils.displayDismissibleSnackbar(rootView, error);
                     setViewsEnabled(true);

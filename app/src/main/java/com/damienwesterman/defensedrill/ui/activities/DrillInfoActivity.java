@@ -384,7 +384,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(String error) {
+                        public void onFailure(@NonNull String error) {
                             runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                                     rootView, "Failed to update categories"
                             ));
@@ -471,7 +471,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(String error) {
+                        public void onFailure(@NonNull String error) {
                             runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                                     rootView, "Failed to update sub-categories"
                             ));
@@ -534,7 +534,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@NonNull String error) {
                     runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(
                             rootView, error
                     ));
@@ -554,7 +554,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(@NonNull String error) {
                     // Do nothing
                 }
             });
@@ -702,7 +702,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                             }
 
                             @Override
-                            public void onFailure(String error) {
+                            public void onFailure(@NonNull String error) {
                                 UiUtils.displayDismissibleSnackbar(rootView,
                                         "You are not signed in.");
                                 /*
@@ -882,7 +882,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onFailure(@NonNull String error) {
                 if (displayFeedback) {
                     UiUtils.displayDismissibleSnackbar(rootView, error);
                 }

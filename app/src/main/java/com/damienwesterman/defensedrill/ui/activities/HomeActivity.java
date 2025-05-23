@@ -61,7 +61,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
-        START HERE in UnlockDrillsActivity looking for Null annotations
+        START HERE in DrillInfoViewModel looking for Null annotations
         - Add NonNull/Nullable everywhere (replace NotNull with NonNull)
         - Check ever file for null warnings (I guess just any warnings really)
         - Any methods that return nullable, surround calls in optionals

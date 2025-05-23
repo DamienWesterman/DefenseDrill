@@ -54,6 +54,7 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      *
      * @return  LiveData object.
      */
+    @NonNull
     public abstract LiveData<List<AbstractCategoryEntity>> getAbstractCategories();
 
     /**
@@ -71,7 +72,7 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      *
      * @param entity AbstractCategoryEntity to delete.
      */
-    public abstract void deleteAbstractCategory(AbstractCategoryEntity entity);
+    public abstract void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity);
 
     /**
      * Attempt to add a new AbstractCategoryEntity to the database.
@@ -82,7 +83,9 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      * @param description   Description of the abstract category.
      * @param callback      Callback to call when the insert is finished.
      */
-    public abstract void saveAbstractEntity(String name, String description, @NonNull OperationCompleteCallback callback);
+    public abstract void saveAbstractEntity(@NonNull String name,
+                                            @NonNull String description,
+                                            @NonNull OperationCompleteCallback callback);
 
     /**
      * Attempt to update an AbstractCategoryEntity in the database.
@@ -92,7 +95,8 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      * @param entity    AbstractCategoryEntity object to attempt to update.
      * @param callback  Callback to call when the update is finished.
      */
-    public abstract void updateAbstractEntity(AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback);
+    public abstract void updateAbstractEntity(@NonNull AbstractCategoryEntity entity,
+                                              @NonNull OperationCompleteCallback callback);
 
     /**
      * Retrieve a single AbstractCategoryEntity by the associated database ID.

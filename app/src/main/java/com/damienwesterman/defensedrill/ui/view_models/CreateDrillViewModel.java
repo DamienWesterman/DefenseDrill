@@ -56,10 +56,14 @@ import lombok.Getter;
 @HiltViewModel
 public class CreateDrillViewModel extends AndroidViewModel {
     private final DrillRepository repo;
+    @Nullable
     private List<CategoryEntity> allCategories;
+    @Nullable
     private List<SubCategoryEntity> allSubCategories;
+    @NonNull
     @Getter
     private final Set<CategoryEntity> checkedCategoryEntities = new HashSet<>();
+    @NonNull
     @Getter
     private final Set<SubCategoryEntity> checkedSubCategoryEntities = new HashSet<>();
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -77,7 +81,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
      * @param drill     Drill to attempt to add to the database.
      * @param callback  Callback to call when the insert is finished.
      */
-    public void saveDrill(Drill drill, @NonNull OperationCompleteCallback callback) {
+    public void saveDrill(@NonNull Drill drill, @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (!repo.insertDrills(drill)) {
@@ -98,7 +102,8 @@ public class CreateDrillViewModel extends AndroidViewModel {
      *
      * @return List of CategoryEntity objects.
      */
-    public @Nullable List<CategoryEntity> getAllCategories() {
+    @Nullable
+    public List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
@@ -109,7 +114,8 @@ public class CreateDrillViewModel extends AndroidViewModel {
      *
      * @return List of SubCategoryEntity objects.
      */
-    public @Nullable List<SubCategoryEntity> getAllSubCategories() {
+    @Nullable
+    public List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 

@@ -166,7 +166,7 @@ public class UnlockDrillsActivity extends AppCompatActivity {
      *
      * @param displayedDrills   List of Drill objects.
      */
-    private void setUpRecyclerView(List<Drill> displayedDrills) {
+    private void setUpRecyclerView(@NonNull List<Drill> displayedDrills) {
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
