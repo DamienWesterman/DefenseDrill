@@ -96,16 +96,14 @@ public class TitleDescCard extends CardView {
         this.descView = findViewById(R.id.description);
 
         if (attrs != null) {
-            try (TypedArray typedArray =
-                         context.obtainStyledAttributes(attrs, R.styleable.TitleDescCard)) {
-                String title = typedArray.getString(R.styleable.TitleDescCard_title);
-                String description = typedArray.getString(R.styleable.TitleDescCard_description);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleDescCard);
+            String title = typedArray.getString(R.styleable.TitleDescCard_title);
+            String description = typedArray.getString(R.styleable.TitleDescCard_description);
 
-                setTitle(title);
-                setDescription(description);
+            setTitle(title);
+            setDescription(description);
 
-                typedArray.recycle();
-            }
+            typedArray.recycle();
         }
 
     }
