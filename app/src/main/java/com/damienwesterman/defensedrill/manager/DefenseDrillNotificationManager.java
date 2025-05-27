@@ -38,8 +38,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
-import com.damienwesterman.defensedrill.ui.activities.DrillInfoActivity;
-import com.damienwesterman.defensedrill.ui.activities.WebDrillOptionsActivity;
+import com.damienwesterman.defensedrill.ui.activity.DrillInfoActivity;
+import com.damienwesterman.defensedrill.ui.activity.WebDrillOptionsActivity;
 
 import lombok.RequiredArgsConstructor;
 

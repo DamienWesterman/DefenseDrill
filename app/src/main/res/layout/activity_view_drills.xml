@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activities.ViewDrillsActivity"
+    tools:context=".ui.activity.ViewDrillsActivity"
     android:id="@+id/activityAllDrills" >
 
     <androidx.appcompat.widget.Toolbar

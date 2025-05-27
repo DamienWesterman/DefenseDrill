@@ -25,9 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context=".ui.activities.HomeActivity" >
+        tools:context=".ui.activity.HomeActivity" >
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.util.TitleDescCard
             android:id="@+id/downloadFromDatabaseCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             app:description="@string/download_from_database_description"
             android:onClick="onCardClick"/>
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.util.TitleDescCard
             android:id="@+id/loginCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             app:description="@string/login_description"
             android:onClick="onCardClick"/>
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.util.TitleDescCard
             android:id="@+id/logoutCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

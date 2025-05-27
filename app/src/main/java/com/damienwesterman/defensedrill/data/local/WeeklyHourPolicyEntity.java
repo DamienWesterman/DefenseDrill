@@ -32,7 +32,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.damienwesterman.defensedrill.utils.Constants;
+import com.damienwesterman.defensedrill.util.Constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
