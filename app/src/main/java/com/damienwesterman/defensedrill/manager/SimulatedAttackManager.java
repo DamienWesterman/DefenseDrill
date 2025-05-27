@@ -153,8 +153,13 @@ public class SimulatedAttackManager {
             return;
         }
 
-        if (sharedPrefs.areSimulatedAttacksEnabled()
-                && notificationManager.areNotificationsEnabled()) {
+        if (!notificationManager.areNotificationsEnabled()) {
+            // Update the shared prefs so the UI in SimulatedAttackSettingsActivity is accurate
+            sharedPrefs.setSimulatedAttacksEnabled(false);
+            return;
+        }
+
+        if (sharedPrefs.areSimulatedAttacksEnabled()) {
             // Schedule the next alarm, which will then trigger simulateAttack() at nextAlarmMillis
             alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,

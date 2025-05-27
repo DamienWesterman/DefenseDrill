@@ -143,6 +143,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
             showPolicies(isChecked);
 
+            // TODO: Future PR - Check if notifications are enabled, if not prompt to enable them (and if they don't, return and mark this as unchecked)
+
             viewModel.checkForSelfDefenseDrills(
                 categoryExists -> {
                     boolean policiesExist = !viewModel.getPoliciesByName().isEmpty();
