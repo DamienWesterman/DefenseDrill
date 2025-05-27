@@ -83,6 +83,17 @@ public class UnlockDrillAdapter extends RecyclerView.Adapter<CheckBoxListViewHol
     }
 
     @Override
+    public void onViewRecycled(@NonNull CheckBoxListViewHolder holder) {
+        /*
+        Need to do this because of how views are recycled, the old listener is still active when we
+        begin to use it for a new drill, causing the onCheckedListener to trigger inaccurately.
+         */
+        holder.setOnCheckedListener(null);
+
+        super.onViewRecycled(holder);
+    }
+
+    @Override
     public int getItemCount() {
         return drills.size();
     }

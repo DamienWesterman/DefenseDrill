@@ -61,8 +61,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
-        START HERE with some bugs:
-        - Unlock Drills Recycler View seemingly shuts off things and maybe mixes things up?
         START HERE in DrillInfoViewModel looking for Null annotations
         - Add NonNull/Nullable everywhere (replace NotNull with NonNull)
         - Check ever file for null warnings (I guess just any warnings really)

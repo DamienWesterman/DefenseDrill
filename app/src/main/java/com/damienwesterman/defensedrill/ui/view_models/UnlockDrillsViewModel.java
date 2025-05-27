@@ -147,7 +147,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
                         }
                     } else {
                         // Should not happen
-                        Log.e(TAG, "setDrillKnown() failed call to updateDrills(0");
+                        Log.e(TAG, "setDrillKnown() failed call to updateDrills()");
                     }
                 } catch (SQLiteConstraintException e) {
                     // Also should not happen
