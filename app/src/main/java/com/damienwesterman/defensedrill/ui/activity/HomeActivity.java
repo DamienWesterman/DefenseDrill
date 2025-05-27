@@ -64,8 +64,6 @@ public class HomeActivity extends AppCompatActivity {
         - Any methods that return nullable, surround calls in optionals
         - Update RecyclerViews using solution provided by  https://chatgpt.com/c/682ceac4-64d0-800d-ade0-d3ec6f26b1a5
         - Check all Doc comments for params/return lining up and having periods
-        - Package names should be singular
-        - Check if/else for switch (like onCardClick methods)
         - Can we just use onCardClick for every activity?
         - Refactor utils into appropriate packages
         - Replace callback classes with lambdas? Maybe keep OperationCompleteCallback
