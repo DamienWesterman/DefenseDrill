@@ -284,10 +284,9 @@ public class DrillInfoViewModel extends AndroidViewModel {
                         instructions.postValue(drill.getInstructions());
                         relatedDrills.postValue(drill.getRelatedDrills());
                     },
-                    throwable -> {
-                        handleLoadNetworkLinksFailure(throwable, unauthorizedCallback,
-                                failureCallback);
-                    }
+                    throwable -> handleLoadNetworkLinksFailure(throwable,
+                            unauthorizedCallback,
+                            failureCallback)
                 );
         }
     }

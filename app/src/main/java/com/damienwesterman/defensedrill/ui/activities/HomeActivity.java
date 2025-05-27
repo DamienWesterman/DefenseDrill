@@ -61,7 +61,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
-        - Check ever file for null warnings (I guess just any warnings really)
         - Any methods that return nullable, surround calls in optionals
         - Update RecyclerViews using solution provided by  https://chatgpt.com/c/682ceac4-64d0-800d-ade0-d3ec6f26b1a5
         - Check all Doc comments for params/return lining up and having periods

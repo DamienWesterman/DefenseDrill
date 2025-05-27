@@ -873,21 +873,27 @@ public class DrillInfoActivity extends AppCompatActivity {
      */
     public void saveDrillInfo(boolean displayFeedback) {
         Drill drill = collectDrillInfo(displayFeedback);
-        viewModel.saveDrill(drill, false, new OperationCompleteCallback() { // this method handles null check
-            @Override
-            public void onSuccess() {
-                if (displayFeedback) {
-                    UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
+        if (null != drill) {
+            viewModel.saveDrill(drill, false, new OperationCompleteCallback() { // this method handles null check
+                @Override
+                public void onSuccess() {
+                    if (displayFeedback) {
+                        UiUtils.displayDismissibleSnackbar(rootView, "Successfully saved changes!");
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull String error) {
-                if (displayFeedback) {
-                    UiUtils.displayDismissibleSnackbar(rootView, error);
+                @Override
+                public void onFailure(@NonNull String error) {
+                    if (displayFeedback) {
+                        UiUtils.displayDismissibleSnackbar(rootView, error);
+                    }
                 }
+            });
+        } else {
+            if (displayFeedback) {
+                UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong.");
             }
-        });
+        }
     }
 
     /**

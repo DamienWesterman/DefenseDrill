@@ -45,8 +45,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-
 /**
  * RecyclerView Adapter class for use with {@link WeeklyHourPolicyEntity} objects.
  * <br><br>
