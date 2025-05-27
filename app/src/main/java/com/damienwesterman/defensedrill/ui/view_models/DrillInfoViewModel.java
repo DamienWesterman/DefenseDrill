@@ -73,13 +73,17 @@ public class DrillInfoViewModel extends AndroidViewModel {
     private static final String TAG = DrillInfoViewModel.class.getSimpleName();
 
     private final MutableLiveData<Drill> currentDrill;
+    @Nullable
     private DrillDTO drillDTO;
     private final MutableLiveData<List<InstructionsDTO>> instructions;
     private final MutableLiveData<List<RelatedDrillDTO>> relatedDrills;
+    @Nullable
     private List<CategoryEntity> allCategories;
+    @Nullable
     private List<SubCategoryEntity> allSubCategories;
     private final DrillRepository drillRepo;
     private final ApiRepo apiRepo;
+    @Nullable
     private DrillGenerator drillGenerator;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -165,24 +169,26 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param reloadScreen  Should we post the results for force a screen re-load?
      * @param callback      Callback to call when the update is finished.
      */
-    public void saveDrill(Drill drill, boolean reloadScreen, OperationCompleteCallback callback) {
-        if (null == drill) {
-            callback.onFailure("Issue saving Drill");
-            return;
-        }
-
+    public void saveDrill(@NonNull Drill drill, boolean reloadScreen,
+                          @Nullable OperationCompleteCallback callback) {
         executor.execute(() -> {
            try {
                if (!drillRepo.updateDrills(drill)) {
-                   callback.onFailure("Something went wrong");
+                   if (callback != null) {
+                       callback.onFailure("Something went wrong");
+                   }
                } else {
                    if (reloadScreen) {
                        currentDrill.postValue(drill);
                    }
-                   callback.onSuccess();
+                   if (callback != null) {
+                       callback.onSuccess();
+                   }
                }
            } catch (SQLiteConstraintException e) {
-               callback.onFailure("Issue saving Drill");
+               if (callback != null) {
+                   callback.onFailure("Issue saving Drill");
+               }
            }
         });
     }
@@ -194,7 +200,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
      *
      * @return List of CategoryEntity objects.
      */
-    public @Nullable List<CategoryEntity> getAllCategories() {
+    @Nullable
+    public List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
@@ -205,7 +212,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
      *
      * @return List of SubCategoryEntity objects.
      */
-    public @Nullable List<SubCategoryEntity> getAllSubCategories() {
+    @Nullable
+    public List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 

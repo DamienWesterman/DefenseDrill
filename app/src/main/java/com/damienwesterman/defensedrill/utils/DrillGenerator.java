@@ -26,11 +26,10 @@
 
 package com.damienwesterman.defensedrill.utils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.damienwesterman.defensedrill.data.local.Drill;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +60,7 @@ public class DrillGenerator {
 
     private final Random random;
     private final List<Drill> originalDrills;
+    @NonNull
     private Map<Long, Drill> drillPossibilities;
     private long lastGeneratedDrillId;
 
@@ -70,7 +70,7 @@ public class DrillGenerator {
      * @param drills    List of Drills to randomly select from.
      * @param random    Random object to use for random Drill selection. Can be seeded.
      */
-    public DrillGenerator(@NotNull List<Drill> drills, @NotNull Random random) {
+    public DrillGenerator(@NonNull List<Drill> drills, @NonNull Random random) {
         this.originalDrills = drills;
         this.random = random;
         this.drillPossibilities = idDrillMapFromDrillList(originalDrills);
@@ -82,7 +82,8 @@ public class DrillGenerator {
      *
      * @return  Random Drill.
      */
-    public synchronized @Nullable Drill generateDrill() {
+    @Nullable
+    public synchronized Drill generateDrill() {
         generateDrillIndexFromPossibilities();
 
         return (0 <= lastGeneratedDrillId) ? drillPossibilities.get(lastGeneratedDrillId) : null;
@@ -97,7 +98,8 @@ public class DrillGenerator {
      *
      * @return  Newly regenerated Drill.
      */
-    public synchronized @Nullable Drill regenerateDrill() {
+    @Nullable
+    public synchronized Drill regenerateDrill() {
         if (0 <= lastGeneratedDrillId) {
             // Only remove the last generated drill if we have a valid lastGeneratedDrillId
             drillPossibilities.remove(lastGeneratedDrillId);
@@ -124,7 +126,8 @@ public class DrillGenerator {
      * @param drills    List of drills
      * @return          Map of Drill IDs to their respective Drill.
      */
-    private Map<Long, Drill> idDrillMapFromDrillList(List<Drill> drills) {
+    @NonNull
+    private Map<Long, Drill> idDrillMapFromDrillList(@NonNull List<Drill> drills) {
         return drills.stream()
             .filter(Objects::nonNull)
             .filter(Drill::isKnownDrill)

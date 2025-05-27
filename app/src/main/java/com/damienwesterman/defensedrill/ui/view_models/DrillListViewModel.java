@@ -58,14 +58,19 @@ import lombok.Setter;
 @HiltViewModel
 public class DrillListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Drill>> drills;
+    @Nullable
     private List<CategoryEntity> allCategories;
+    @Nullable
     private List<SubCategoryEntity> allSubCategories;
+    @Nullable
     @Setter
     private Set<Long> categoryFilterIds;
+    @Nullable
     @Setter
     private Set<Long> subCategoryFilterIds;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    @Nullable
     @Getter
     private SortOrder sortOrder;
 
@@ -135,7 +140,8 @@ public class DrillListViewModel extends AndroidViewModel {
      *
      * @return List of CategoryEntity objects.
      */
-    public @Nullable List<CategoryEntity> getAllCategories() {
+    @Nullable
+    public List<CategoryEntity> getAllCategories() {
         return allCategories;
     }
 
@@ -146,7 +152,8 @@ public class DrillListViewModel extends AndroidViewModel {
      *
      * @return List of SubCategoryEntity objects.
      */
-    public @Nullable List<SubCategoryEntity> getAllSubCategories() {
+    @Nullable
+    public List<SubCategoryEntity> getAllSubCategories() {
         return allSubCategories;
     }
 
@@ -176,10 +183,16 @@ public class DrillListViewModel extends AndroidViewModel {
      *
      * @return  Set of category IDs.
      */
+    @NonNull
     public Set<Long> getCategoryFilterIds() {
         if (null == categoryFilterIds) {
-            categoryFilterIds = allCategories.stream().map(CategoryEntity::getId)
-                    .collect(Collectors.toSet());
+            if (allCategories != null) {
+                categoryFilterIds = allCategories.stream().map(CategoryEntity::getId)
+                        .collect(Collectors.toSet());
+            } else {
+                // Return an empty set while leaving categoryFilterIds null for future checks
+                return Set.of();
+            }
         }
 
         return categoryFilterIds;
@@ -192,10 +205,16 @@ public class DrillListViewModel extends AndroidViewModel {
      *
      * @return  Set of sub-category IDs.
      */
+    @NonNull
     public Set<Long> getSubCategoryFilterIds() {
         if (null == subCategoryFilterIds) {
-            subCategoryFilterIds = allSubCategories.stream().map(SubCategoryEntity::getId)
-                    .collect(Collectors.toSet());
+            if (allSubCategories != null) {
+                subCategoryFilterIds = allSubCategories.stream().map(SubCategoryEntity::getId)
+                        .collect(Collectors.toSet());
+            } else {
+                // Return an empty set while leaving subCategoryFilterIds null for future checks
+                return Set.of();
+            }
         }
 
         return subCategoryFilterIds;
@@ -207,7 +226,8 @@ public class DrillListViewModel extends AndroidViewModel {
      * @param id    ID of the desired drill.
      * @return      The Drill that maps to the given ID, or null if is doesn't exist.
      */
-    public @Nullable Drill findDrillById(long id) {
+    @Nullable
+    public Drill findDrillById(long id) {
         Drill ret = null;
         List<Drill> allDrills = drills.getValue();
 
@@ -223,15 +243,13 @@ public class DrillListViewModel extends AndroidViewModel {
         return ret;
     }
 
-    public void deleteDrill(Drill drill) {
+    public void deleteDrill(@NonNull Drill drill) {
         executor.execute(() -> {
-            if (null != drill) {
-                List<Drill> newDrills = drills.getValue();
-                if (newDrills != null) {
-                    newDrills.remove(drill);
-                    drills.postValue(newDrills);
-                    repo.deleteDrills(drill);
-                }
+            List<Drill> newDrills = drills.getValue();
+            repo.deleteDrills(drill);
+            if (newDrills != null) {
+                newDrills.remove(drill);
+                drills.postValue(newDrills);
             }
         });
     }
@@ -245,7 +263,7 @@ public class DrillListViewModel extends AndroidViewModel {
      *
      * @param newSortOrder New order to sort by.
      */
-    public void setSortOrder(SortOrder newSortOrder) {
+    public void setSortOrder(@NonNull SortOrder newSortOrder) {
         List<Drill> sortedDrills = drills.getValue();
 
         if (null != sortedDrills) {

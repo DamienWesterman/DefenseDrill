@@ -31,6 +31,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -57,6 +58,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
 
     @Getter
     private final MutableLiveData<List<Drill>> displayedDrills;
+    @Nullable
     private List<Drill> allDrills;
     @Getter
     private boolean showKnownDrills;
@@ -108,17 +110,19 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
      * Filter the displayed drills based on the current filter settings.
      */
     public void displayFilteredList() {
-        displayedDrills.postValue(allDrills.stream()
-            .filter(drill -> {
-                if (!showKnownDrills && drill.isKnownDrill()) {
-                    return false;
-                } else if (!showUnknownDrills && !drill.isKnownDrill()) {
-                    return false;
-                } else {
-                    return true;
-                }
-            })
-            .collect(Collectors.toList()));
+        if (allDrills != null) {
+            displayedDrills.postValue(allDrills.stream()
+                .filter(drill -> {
+                    if (!showKnownDrills && drill.isKnownDrill()) {
+                        return false;
+                    } else if (!showUnknownDrills && !drill.isKnownDrill()) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                })
+                .collect(Collectors.toList()));
+        }
     }
 
     /**
@@ -133,17 +137,23 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
                 drill.setIsKnownDrill(isKnown);
                 try {
                     if (repo.updateDrills(drill)) {
-                    /*
-                     Update the list so if there is a destructive action (like screen rotation) we
-                     can have the correct information. However, the checkbox is already changed in
-                     the UI, so we don't need to call displayedDrills.postValue(). This should also
-                     be okay to do slowly in the background as it should not be time sensitive.
-                     */
-                        for (Drill oneDrill : allDrills) {
-                            if (oneDrill.getId() == drill.getId()) {
-                                oneDrill.setIsKnownDrill(isKnown);
-                                break;
+                        if (allDrills != null) {
+                            /*
+                             Update the list so if there is a destructive action (like screen
+                             rotation) we can have the correct information. However, the checkbox is
+                             already changed in the UI, so we don't need to call
+                             displayedDrills.postValue(). This should also be okay to do slowly in
+                             the background as it should not be time sensitive.
+                             */
+                            for (Drill oneDrill : allDrills) {
+                                if (oneDrill.getId() == drill.getId()) {
+                                    oneDrill.setIsKnownDrill(isKnown);
+                                    break;
+                                }
                             }
+                        } else {
+                            // We somehow did this before the drills were loaded, big issue
+                            throw new RuntimeException("called setDrillKnown() before populateDrills()");
                         }
                     } else {
                         // Should not happen

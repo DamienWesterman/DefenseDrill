@@ -204,7 +204,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
      * @param callback Callback that accepts a boolean of whether or not there are self defense
      *                 Drills in the database.
      */
-    public void checkForSelfDefenseDrills(Consumer<Boolean> callback) {
+    public void checkForSelfDefenseDrills(@NonNull Consumer<Boolean> callback) {
         new Thread(() -> {
             Optional<CategoryEntity> optSelfDefenseCategory =
                     drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE);
@@ -226,11 +226,13 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
      *
      * @param callback OperationCompleteCallback.
      */
-    public void createDefaultSelfDefenseCategory(OperationCompleteCallback callback) {
+    public void createDefaultSelfDefenseCategory(@Nullable OperationCompleteCallback callback) {
         new Thread(() -> {
             if (drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE).isPresent()) {
                 // Category already exists
-                callback.onSuccess();
+                if (callback != null) {
+                    callback.onSuccess();
+                }
                 return;
             }
 
@@ -239,9 +241,13 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                     .description("Drills used for Self Defense")
                     .build());
             if (success) {
-                callback.onSuccess();
+                if (callback != null) {
+                    callback.onSuccess();
+                }
             } else {
-                callback.onFailure("Failed to create Self Defense Category");
+                if (callback != null) {
+                    callback.onFailure("Failed to create Self Defense Category");
+                }
             }
         }).start();
     }

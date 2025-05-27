@@ -120,19 +120,17 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      */
     @Override
     public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
-        if (null != entity) {
-            executor.execute(() -> {
-                List<AbstractCategoryEntity> newSubCategories = subCategories.getValue();
-                if (null != newSubCategories) {
-                    if (SubCategoryEntity.class == entity.getClass()) {
-                        newSubCategories.remove(entity);
-                        SubCategoryEntity subCategory = (SubCategoryEntity) entity;
-                        subCategories.postValue(newSubCategories);
-                        repo.deleteSubCategories(subCategory);
-                    }
+        executor.execute(() -> {
+            List<AbstractCategoryEntity> newSubCategories = subCategories.getValue();
+            if (null != newSubCategories) {
+                if (SubCategoryEntity.class == entity.getClass()) {
+                    newSubCategories.remove(entity);
+                    SubCategoryEntity subCategory = (SubCategoryEntity) entity;
+                    subCategories.postValue(newSubCategories);
+                    repo.deleteSubCategories(subCategory);
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -203,6 +201,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * @param abstractCategories    List of AbstractCategoryEntity objects.
      * @return                      Converted list of SubCategoryEntity objects.
      */
+    @NonNull
     public static List<SubCategoryEntity> getSubCategoryList(@NonNull List<AbstractCategoryEntity> abstractCategories) {
         List<SubCategoryEntity> subCategories = new ArrayList<>(abstractCategories.size());
 

@@ -280,7 +280,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
                     }
                 }
                 viewModel.filterDrills(new ArrayList<>(categoryFilterIds),
-                        null != subCategoryFilterIds ? new ArrayList<>(subCategoryFilterIds) : null);
+                        !subCategoryFilterIds.isEmpty() ? new ArrayList<>(subCategoryFilterIds) : null);
                 alert.dismiss();
             });
             alert.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(view -> {
@@ -347,7 +347,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
                         subCategoryFilterIds.remove(subCategoryIds.get(i));
                     }
                 }
-                viewModel.filterDrills( null != categoryFilterIds ? new ArrayList<>(categoryFilterIds) : null,
+                viewModel.filterDrills( !categoryFilterIds.isEmpty() ? new ArrayList<>(categoryFilterIds) : null,
                         new ArrayList<>(subCategoryFilterIds));
                 alert.dismiss();
             });
