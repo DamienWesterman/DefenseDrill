@@ -61,6 +61,9 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
+        START HERE with some bugs:
+        - Unlock Drills Recycler View seemingly shuts off things and maybe mixes things up?
+        - What happens if notifications are off? Then update shared prefs. Leave a to do in the simulated attacks settings activity to activate notifications
         START HERE in DrillInfoViewModel looking for Null annotations
         - Add NonNull/Nullable everywhere (replace NotNull with NonNull)
         - Check ever file for null warnings (I guess just any warnings really)

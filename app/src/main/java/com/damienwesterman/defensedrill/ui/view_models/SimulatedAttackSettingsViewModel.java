@@ -31,6 +31,7 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -98,17 +99,28 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
         }).start();
     }
 
+    /**
+     * Save policies to the database. This may be an insert or update operation. If it is an update
+     * operation, provide a value in policyToUpdate. If it is an insert operation, leave null.
+     *
+     * @param policies          List of related policies to save.
+     * @param policyToUpdate    If this is an update operation, this is the name of the policy to
+     *                          update. Necessary in the event the name itself is updated.
+     * @param reloadUi          Should we reload the UI by posting the new values in the
+     *                          MutableLiveData.
+     * @param callback          Operation Complete Callback.
+     */
     public void savePolicies(@NonNull List<WeeklyHourPolicyEntity> policies,
-                             boolean updateOperation,
+                             @Nullable String policyToUpdate,
                              boolean reloadUi,
                              @NonNull OperationCompleteCallback callback) {
         if (!policies.isEmpty()) {
             new Thread(() -> {
                 try {
-                    if (updateOperation) {
+                    if (null != policyToUpdate) {
                         // Check to see if any weekly policies have been removed
                         List<WeeklyHourPolicyEntity> existingPolicies = policiesByName
-                            .get(policies.get(0).getPolicyName());
+                            .get(policyToUpdate);
                         if (null == existingPolicies) {
                             callback.onFailure("Something went wrong");
                             return;

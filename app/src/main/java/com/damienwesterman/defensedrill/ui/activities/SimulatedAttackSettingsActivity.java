@@ -370,7 +370,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                 if (!policies.isEmpty()) {
                     viewModel.savePolicies(
                         policies,
-                        null != policyBeingModified,
+                        policyBeingModified,
                         true,
                         new OperationCompleteCallback() {
                             @Override
@@ -557,7 +557,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                     policies.forEach(policy -> policy.setActive(isChecked));
                     viewModel.savePolicies(
                         policies,
-                        false,
+                        null,
                         false,
                         new OperationCompleteCallback() {
                             @Override
