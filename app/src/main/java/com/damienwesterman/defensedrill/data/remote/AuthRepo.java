@@ -34,7 +34,7 @@ import androidx.annotation.NonNull;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
-import com.damienwesterman.defensedrill.ui.utils.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 
 import java.net.HttpURLConnection;
 

@@ -55,13 +55,19 @@ import lombok.ToString;
 @Builder
 @ToString
 public class DrillDTO implements Serializable {
+    @NonNull
     private Long id;
+    @NonNull
     private String name;
+    @NonNull
     private List<CategoryDTO> categories;
     @SerializedName(value = "sub_categories")
+    @NonNull
     private List<SubCategoryDTO> subCategories;
+    @NonNull
     private List<InstructionsDTO> instructions;
     @SerializedName("related_drills")
+    @NonNull
     private List<RelatedDrillDTO> relatedDrills;
 
     /**

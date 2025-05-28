@@ -27,6 +27,9 @@
 package com.damienwesterman.defensedrill.data.remote.dto;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -49,8 +52,11 @@ import lombok.ToString;
 @Builder
 @ToString
 public class InstructionsDTO implements Serializable {
+    @NonNull
     private String description;
+    @NonNull
     private List<String> steps;
     @SerializedName(value = "video_id")
+    @Nullable
     private String videoId;
 }

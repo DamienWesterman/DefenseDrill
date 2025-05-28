@@ -56,6 +56,7 @@ import lombok.Setter;
     private long lastDrilled;
     /** Should correspond to values such as {@link Drill#LOW_CONFIDENCE} */
     private int confidence;
+    @Nullable
     private String notes;
     /** ID of this drill on the server, for retrieving instructions and videos */
     @Nullable
@@ -90,7 +91,7 @@ import lombok.Setter;
      */
     @Ignore
     public DrillEntity(@NonNull String name, long lastDrilled, int confidence,
-                       String notes, @Nullable Long serverDrillId, boolean isKnownDrill) {
+                       @Nullable String notes, @Nullable Long serverDrillId, boolean isKnownDrill) {
         this.name = name;
         this.lastDrilled = lastDrilled;
         this.confidence = confidence;

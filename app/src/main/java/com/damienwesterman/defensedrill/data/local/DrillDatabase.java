@@ -46,7 +46,7 @@ import androidx.room.RoomDatabase;
         WeeklyHourPolicyEntity.class
 }, version = 1, exportSchema = false)
 /* package-private */ abstract class DrillDatabase extends RoomDatabase {
-    public static final String DATABASE_NAME = "drill_database";
+    private static final String DATABASE_NAME = "drill_database";
 
     /**
      * Build the DrillDatabase object.
@@ -59,8 +59,8 @@ import androidx.room.RoomDatabase;
                 DATABASE_NAME).build();
     }
 
-    public abstract DrillDao getDrillDao();
-    public abstract CategoryDao getCategoryDao();
-    public abstract SubCategoryDao getSubCategoryDao();
-    public abstract WeeklyHourPolicyDao getWeeklyHourPolicyDao();
+    /* package-private */ abstract DrillDao getDrillDao();
+    /* package-private */ abstract CategoryDao getCategoryDao();
+    /* package-private */ abstract SubCategoryDao getSubCategoryDao();
+    /* package-private */ abstract WeeklyHourPolicyDao getWeeklyHourPolicyDao();
 }

@@ -49,8 +49,11 @@ import lombok.ToString;
 @Builder
 @ToString
 public class SubCategoryDTO implements Serializable {
+    @NonNull
     private Long id;
+    @NonNull
     private String name;
+    @NonNull
     private String description;
 
     /**
