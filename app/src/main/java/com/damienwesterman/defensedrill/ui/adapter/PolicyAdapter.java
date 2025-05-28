@@ -36,7 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
-import com.damienwesterman.defensedrill.ui.viewHolder.PolicyViewHolder;
+import com.damienwesterman.defensedrill.ui.viewholder.PolicyViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

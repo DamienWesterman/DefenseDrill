@@ -47,7 +47,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.ui.adapter.UnlockDrillAdapter;
-import com.damienwesterman.defensedrill.ui.viewModel.UnlockDrillsViewModel;
+import com.damienwesterman.defensedrill.ui.viewmodel.UnlockDrillsViewModel;
 
 import java.util.List;
 

@@ -52,7 +52,7 @@ import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapter.DrillAdapter;
 import com.damienwesterman.defensedrill.ui.util.UiUtils;
-import com.damienwesterman.defensedrill.ui.viewModel.DrillListViewModel;
+import com.damienwesterman.defensedrill.ui.viewmodel.DrillListViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;

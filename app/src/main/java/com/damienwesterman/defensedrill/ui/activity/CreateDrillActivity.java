@@ -52,7 +52,7 @@ import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.util.UiUtils;
-import com.damienwesterman.defensedrill.ui.viewModel.CreateDrillViewModel;
+import com.damienwesterman.defensedrill.ui.viewmodel.CreateDrillViewModel;
 import com.damienwesterman.defensedrill.util.Constants;
 import com.google.android.material.snackbar.Snackbar;
 

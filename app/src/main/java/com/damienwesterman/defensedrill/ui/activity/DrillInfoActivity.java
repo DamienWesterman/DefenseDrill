@@ -64,7 +64,7 @@ import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.util.CommonPopups;
 import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.util.UiUtils;
-import com.damienwesterman.defensedrill.ui.viewModel.DrillInfoViewModel;
+import com.damienwesterman.defensedrill.ui.viewmodel.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.util.Constants;
 
 import java.text.DateFormat;

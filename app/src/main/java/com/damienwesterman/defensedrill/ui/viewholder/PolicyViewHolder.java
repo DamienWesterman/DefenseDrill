@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.ui.viewHolder;
+package com.damienwesterman.defensedrill.ui.viewholder;
 
 import android.view.View;
 

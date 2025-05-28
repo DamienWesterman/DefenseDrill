@@ -62,7 +62,7 @@ import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.adapter.PolicyAdapter;
 import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.util.UiUtils;
-import com.damienwesterman.defensedrill.ui.viewModel.SimulatedAttackSettingsViewModel;
+import com.damienwesterman.defensedrill.ui.viewmodel.SimulatedAttackSettingsViewModel;
 import com.damienwesterman.defensedrill.util.Constants;
 import com.google.android.material.snackbar.Snackbar;
 

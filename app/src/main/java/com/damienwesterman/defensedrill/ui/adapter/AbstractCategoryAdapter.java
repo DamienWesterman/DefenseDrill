@@ -37,7 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.util.CardClickListener;
 import com.damienwesterman.defensedrill.ui.util.CardLongClickListener;
-import com.damienwesterman.defensedrill.ui.viewHolder.CardViewHolder;
+import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import java.util.List;
 

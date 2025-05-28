@@ -36,7 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
-import com.damienwesterman.defensedrill.ui.viewHolder.CheckBoxListViewHolder;
+import com.damienwesterman.defensedrill.ui.viewholder.CheckBoxListViewHolder;
 
 import java.util.List;
 import java.util.function.BiConsumer;

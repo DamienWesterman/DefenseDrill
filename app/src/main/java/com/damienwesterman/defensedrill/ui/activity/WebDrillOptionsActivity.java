@@ -52,7 +52,7 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.util.CommonPopups;
 import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.util.UiUtils;
-import com.damienwesterman.defensedrill.ui.viewModel.WebDrillApiViewModel;
+import com.damienwesterman.defensedrill.ui.viewmodel.WebDrillApiViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;

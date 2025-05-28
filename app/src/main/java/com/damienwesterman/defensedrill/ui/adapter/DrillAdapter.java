@@ -38,7 +38,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.ui.util.CardClickListener;
 import com.damienwesterman.defensedrill.ui.util.CardLongClickListener;
-import com.damienwesterman.defensedrill.ui.viewHolder.CardViewHolder;
+import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import java.text.DateFormat;
 import java.util.Date;

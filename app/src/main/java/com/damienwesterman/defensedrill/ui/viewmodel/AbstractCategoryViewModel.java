@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.ui.viewModel;
+package com.damienwesterman.defensedrill.ui.viewmodel;
 
 import android.app.Application;
 
