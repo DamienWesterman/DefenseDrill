@@ -40,9 +40,6 @@ import com.damienwesterman.defensedrill.ui.util.CardClickListener;
 import com.damienwesterman.defensedrill.ui.util.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.damienwesterman.defensedrill.R;
 
 /**
@@ -53,8 +50,6 @@ import com.damienwesterman.defensedrill.R;
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
 public class AbstractCategoryAdapter extends ListAdapter<AbstractCategoryEntity, CardViewHolder> {
-    @NonNull
-    private final List<? extends AbstractCategoryEntity> categories;
     @Nullable
     private final CardClickListener clickListener;
     @Nullable
@@ -75,20 +70,9 @@ public class AbstractCategoryAdapter extends ListAdapter<AbstractCategoryEntity,
                 }
             };
 
-    // TODO: REMOVE ME AND REFACTOR
-    public AbstractCategoryAdapter(@NonNull List<? extends AbstractCategoryEntity> categories,
-                                   @Nullable CardClickListener clickListener,
-                                   @Nullable CardLongClickListener longClickListener) {
-        super(DIFF_CALLBACK);
-        this.categories = categories;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-    }
-
     public AbstractCategoryAdapter(@Nullable CardClickListener clickListener,
                                    @Nullable CardLongClickListener longClickListener) {
         super(DIFF_CALLBACK);
-this.categories = new ArrayList<>(); // TODO REMOVE
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
     }

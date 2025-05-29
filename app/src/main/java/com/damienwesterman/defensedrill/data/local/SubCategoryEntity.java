@@ -40,7 +40,7 @@ import lombok.experimental.SuperBuilder;
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = SubCategoryEntity.TABLE_NAME)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Getter
 @Setter
 public class SubCategoryEntity extends AbstractCategoryEntity {

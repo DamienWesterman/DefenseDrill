@@ -121,14 +121,13 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
     @Override
     public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
         executor.execute(() -> {
-            List<AbstractCategoryEntity> newSubCategories = subCategories.getValue();
-            if (null != newSubCategories) {
-                if (SubCategoryEntity.class == entity.getClass()) {
-                    newSubCategories.remove(entity);
-                    SubCategoryEntity subCategory = (SubCategoryEntity) entity;
-                    subCategories.postValue(newSubCategories);
-                    repo.deleteSubCategories(subCategory);
-                }
+            if (null != subCategories.getValue()
+                    && SubCategoryEntity.class == entity.getClass()) {
+                // Must be a new list to trigger submitList() logic
+                List<AbstractCategoryEntity> newSubCategories = new ArrayList<>(subCategories.getValue());
+                newSubCategories.remove(entity);
+                subCategories.postValue(newSubCategories);
+                repo.deleteSubCategories((SubCategoryEntity) entity);
             }
         });
     }
@@ -137,7 +136,9 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void saveAbstractEntity(@NonNull String name, @NonNull String description, @NonNull OperationCompleteCallback callback) {
+    public void saveAbstractEntity(@NonNull String name,
+                                   @NonNull String description,
+                                   @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 SubCategoryEntity subCategory = new SubCategoryEntity(name, description);
@@ -145,6 +146,11 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
                     callback.onFailure("Something went wrong");
                 } else {
                     callback.onSuccess();
+                    /*
+                    We only need to rePopulate ViewAbstractCategoriesActivity, so it is okay to call
+                    the non-parameterized version.
+                     */
+                    rePopulateAbstractCategories();
                 }
             } catch (SQLiteConstraintException e) {
                 callback.onFailure("Name already exists");
@@ -160,15 +166,23 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
                                      @NonNull String name,
                                      @NonNull String description,
                                      @NonNull OperationCompleteCallback callback) {
-        // TODO: FINISH ME just like CategoryViewModel
         executor.execute(() -> {
             try {
                 if (SubCategoryEntity.class == entity.getClass()) {
-                    SubCategoryEntity subCategory = (SubCategoryEntity) entity;
+                    // Get a copy of the current category. Must do this to trigger submitList() logic
+                    SubCategoryEntity subCategory = ((SubCategoryEntity) entity).toBuilder()
+                            .name(name)
+                            .description(description)
+                            .build();
                     if (!repo.updateSubCategories(subCategory)) {
                         callback.onFailure("Something went wrong");
                     } else {
                         callback.onSuccess();
+                        /*
+                        We only need to rePopulate ViewAbstractCategoriesActivity, so it is okay to
+                        call the non-parameterized version.
+                         */
+                        rePopulateAbstractCategories();
                     }
                 }
             } catch (SQLiteConstraintException e) {

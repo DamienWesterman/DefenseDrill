@@ -42,13 +42,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.util.Constants;
-
-import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -100,9 +96,7 @@ public class CategorySelectActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        CategoryViewModel viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
-        viewModel.getAbstractCategories().observe(this, this::setUpRecyclerView);
-        viewModel.populateAbstractCategories();
+        setUpRecyclerView();
     }
 
     @Override
@@ -140,9 +134,7 @@ public class CategorySelectActivity extends AppCompatActivity {
     /**
      * Private helper method to set up the recyclerView list of Categories and their callback.
      */
-    private void setUpRecyclerView(@NonNull List<AbstractCategoryEntity> abstractCategories) {
-        List<CategoryEntity> categories = CategoryViewModel.getCategoryList(abstractCategories);
-
+    private void setUpRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.categoryRecyclerView);
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -155,13 +147,17 @@ public class CategorySelectActivity extends AppCompatActivity {
             }
         });
 
-        runOnUiThread(() -> {
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new AbstractCategoryAdapter(categories,
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        AbstractCategoryAdapter adapter = new AbstractCategoryAdapter(
                 // Card Click Listener
                 id -> SubCategorySelectActivity.startActivity(this, id),
                 // Long Card Click Listener
-                null));
-        });
+                null);
+        recyclerView.setAdapter(adapter);
+
+
+        CategoryViewModel viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        viewModel.getAbstractCategories().observe(this, adapter::submitList);
+        viewModel.populateAbstractCategories();
     }
 }

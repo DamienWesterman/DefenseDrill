@@ -111,9 +111,4 @@ public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
         holder.setOnClickListener(clickListener, drills.get(position).getId());
         holder.setLongClickListener(longClickListener, drills.get(position).getId());
     }
-
-    @Override
-    public int getItemCount() {
-        return drills.size();
-    }
 }

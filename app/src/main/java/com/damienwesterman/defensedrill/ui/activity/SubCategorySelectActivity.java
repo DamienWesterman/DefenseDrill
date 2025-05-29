@@ -43,15 +43,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
-import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.util.Constants;
-
-import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -65,7 +61,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SubCategorySelectActivity extends AppCompatActivity {
     private static final String RANDOM_CATEGORY_NAME = "Random";
 
-    private CategoryViewModel categoryViewModel;
+    private SubCategoryViewModel subCategoryViewModel;
     long selectedCategoryId;
 
     // =============================================================================================
@@ -103,8 +99,8 @@ public class SubCategorySelectActivity extends AppCompatActivity {
                 Constants.USER_RANDOM_SELECTION);
 
 
-        SubCategoryViewModel subCategoryViewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
-        subCategoryViewModel.getAbstractCategories().observe(this, this::setUpRecyclerView);
+        subCategoryViewModel = new ViewModelProvider(this).get(SubCategoryViewModel.class);
+        setUpRecyclerView();
 
         if (Constants.USER_RANDOM_SELECTION == selectedCategoryId) {
             subCategoryViewModel.populateAbstractCategories();
@@ -112,7 +108,8 @@ public class SubCategorySelectActivity extends AppCompatActivity {
         } else {
             subCategoryViewModel.populateAbstractCategories(selectedCategoryId);
 
-            categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+            CategoryViewModel categoryViewModel =
+                    new ViewModelProvider(this).get(CategoryViewModel.class);
             categoryViewModel.getAbstractCategories().observe(this, (categories) -> {
                 CategoryEntity category = (CategoryEntity) categoryViewModel.findById(selectedCategoryId);
                 setCategoryTitle(null != category ? category.getName() : RANDOM_CATEGORY_NAME);
@@ -156,9 +153,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     /**
      * Private helper method to set up the recyclerView list of SubCategories and their callback.
      */
-    private void setUpRecyclerView(@NonNull List<AbstractCategoryEntity> abstractCategories) {
-        List<SubCategoryEntity> subCategories = SubCategoryViewModel.getSubCategoryList(abstractCategories);
-
+    private void setUpRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.subCategoryRecyclerView);
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -171,12 +166,14 @@ public class SubCategorySelectActivity extends AppCompatActivity {
             }
         });
 
-        runOnUiThread(() -> {
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new AbstractCategoryAdapter(subCategories,
-                    // Card click listener
-                id -> DrillInfoActivity.startActivity(this, selectedCategoryId, id), null));
-        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        AbstractCategoryAdapter adapter = new AbstractCategoryAdapter(
+                // Card click listener
+                id -> DrillInfoActivity.startActivity(this, selectedCategoryId, id),
+                // Long Card Click Listener
+                null);
+        recyclerView.setAdapter(adapter);
+        subCategoryViewModel.getAbstractCategories().observe(this, adapter::submitList);
     }
 
     private void setCategoryTitle(@NonNull String category) {

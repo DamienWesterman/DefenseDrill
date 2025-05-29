@@ -60,8 +60,6 @@ import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.util.Constants;
 
-import java.util.List;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
@@ -161,13 +159,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        // TODO: REMOVE?
-//        viewModel.rePopulateAbstractCategories();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -251,7 +242,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                     alert.dismiss();
                     UiUtils.displayDismissibleSnackbar(rootView,
                             "Save successful!");
-                    onRestart();
                 }
 
                 @Override
@@ -321,7 +311,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                     alert.dismiss();
                     UiUtils.displayDismissibleSnackbar(rootView,
                             "Save successful!");
-                    onRestart();
                 }
 
                 @Override
@@ -348,9 +337,8 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         builder.setCancelable(true);
         builder.setMessage(entity.getName());
         builder.setNegativeButton("Cancel", null);
-        builder.setPositiveButton("Delete", (dialog, position) -> {
-            viewModel.deleteAbstractCategory(entity);
-        });
+        builder.setPositiveButton("Delete", (dialog, position) ->
+                viewModel.deleteAbstractCategory(entity));
         builder.create().show();
     }
 
