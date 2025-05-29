@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -56,7 +57,7 @@ import java.util.stream.Collectors;
  * returned drill (by generateDrill() or regenerateDrill()) is <i>guaranteed</i> to be a new drill.
  */
 public class DrillGenerator {
-    private static final int NO_DRILL_GENERATED = -1;
+    private static final long NO_DRILL_GENERATED = -1L;
 
     private final Random random;
     private final List<Drill> originalDrills;

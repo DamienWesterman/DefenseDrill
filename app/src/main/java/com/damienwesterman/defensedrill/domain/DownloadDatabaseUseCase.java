@@ -88,7 +88,7 @@ public class DownloadDatabaseUseCase {
         this.notificationManager = notificationManager;
         this.categoryMap = Map.of();
         this.subCategoryMap = Map.of();
-        disposable = null;
+        this.disposable = null;
     }
 
     /**
@@ -335,6 +335,7 @@ public class DownloadDatabaseUseCase {
      * @param isUpdate true if this is an update operation, false if it is an insert operation
      * @return List of Drills that are new to the database
      */
+    @NonNull
     private List<Drill> saveDrillsToDatabase(List<DrillDTO> drills, boolean isUpdate) {
         if (null == drills) {
             // Shouldn't really happen

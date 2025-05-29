@@ -286,7 +286,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void editCategories(View view) {
-        if (viewModel.getAllCategories() != null) {
+        if (null != viewModel.getAllCategories()) {
             editCategoriesPopup(viewModel.getAllCategories());
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
@@ -294,7 +294,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     }
 
     public void editSubCategories(View view) {
-        if (viewModel.getAllSubCategories() != null) {
+        if (null != viewModel.getAllSubCategories()) {
             editSubCategoriesPopup(viewModel.getAllSubCategories());
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");

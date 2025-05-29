@@ -121,7 +121,7 @@ public class InstructionsVideoActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (player != null) {
+        if (null != player) {
             player.release();
             player = null;
         }

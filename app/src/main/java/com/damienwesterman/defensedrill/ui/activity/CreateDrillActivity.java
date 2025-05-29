@@ -155,7 +155,7 @@ public class CreateDrillActivity extends AppCompatActivity {
     // OnClickListener Methods
     // =============================================================================================
     public void addCategories(View view) {
-        if (viewModel.getAllCategories() != null) {
+        if (null != viewModel.getAllCategories()) {
             addCategoriesPopup(viewModel.getAllCategories());
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
@@ -163,7 +163,7 @@ public class CreateDrillActivity extends AppCompatActivity {
     }
 
     public void addSubCategories(View view) {
-        if (viewModel.getAllSubCategories() != null) {
+        if (null != viewModel.getAllSubCategories()) {
             addSubCategoriesPopup(viewModel.getAllSubCategories());
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub categories");

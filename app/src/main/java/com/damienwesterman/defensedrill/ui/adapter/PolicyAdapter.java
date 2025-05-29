@@ -94,7 +94,7 @@ public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
             holder.setOnClickListener(onClickListener, policyNames.get(position));
         }
         if (null != onLongClickListener) {
-        holder.setOnLongClickListener(onLongClickListener, policyNames.get(position));
+            holder.setOnLongClickListener(onLongClickListener, policyNames.get(position));
         }
         if (null != onCheckedListener) {
             holder.setCheckedListener(onCheckedListener, policyNames.get(position));
