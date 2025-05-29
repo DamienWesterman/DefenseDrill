@@ -99,14 +99,13 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
     @Override
     public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
         executor.execute(() -> {
-            List<AbstractCategoryEntity> newCategories = categories.getValue();
-            if (null != newCategories) {
-                if (CategoryEntity.class == entity.getClass()) {
-                    newCategories.remove(entity);
-                    CategoryEntity category = (CategoryEntity) entity;
-                    categories.postValue(newCategories);
-                    repo.deleteCategories(category);
-                }
+            if (null != categories.getValue()
+                    && CategoryEntity.class == entity.getClass()) {
+                // Must be a new list to trigger submitList() logic
+                List<AbstractCategoryEntity> newCategories = new ArrayList<>(categories.getValue());
+                newCategories.remove(entity);
+                categories.postValue(newCategories);
+                repo.deleteCategories((CategoryEntity) entity);
             }
         });
     }
@@ -123,6 +122,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
                     callback.onFailure("Something went wrong");
                 } else {
                     callback.onSuccess();
+                    rePopulateAbstractCategories();
                 }
             } catch (SQLiteConstraintException e) {
                 callback.onFailure("Name already exists");
@@ -134,15 +134,23 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void updateAbstractEntity(@NonNull AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
+    public void updateAbstractEntity(@NonNull AbstractCategoryEntity entity,
+                                     @NonNull String name,
+                                     @NonNull String description,
+                                     @NonNull OperationCompleteCallback callback) {
         executor.execute(() -> {
             try {
                 if (CategoryEntity.class == entity.getClass()) {
-                    CategoryEntity category = (CategoryEntity) entity;
+                    // Get a copy of the current category. Must do this to trigger submitList() logic
+                    CategoryEntity category = ((CategoryEntity) entity).toBuilder()
+                            .name(name)
+                            .description(description)
+                            .build();
                     if (!repo.updateCategories(category)) {
                         callback.onFailure("Something went wrong");
                     } else {
                         callback.onSuccess();
+                        rePopulateAbstractCategories();
                     }
                 }
             } catch (SQLiteConstraintException e) {

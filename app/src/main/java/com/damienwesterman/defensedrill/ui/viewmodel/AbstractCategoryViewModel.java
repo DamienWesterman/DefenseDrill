@@ -96,6 +96,8 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      * @param callback  Callback to call when the update is finished.
      */
     public abstract void updateAbstractEntity(@NonNull AbstractCategoryEntity entity,
+                                              @NonNull String name,
+                                              @NonNull String description,
                                               @NonNull OperationCompleteCallback callback);
 
     /**

@@ -32,7 +32,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
@@ -45,8 +46,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * RecyclerView Adapter class for use with {@link Drill} objects.
  * <br><br>
@@ -54,14 +53,35 @@ import lombok.RequiredArgsConstructor;
  * {@link com.damienwesterman.defensedrill.ui.util.TitleDescCard}. Uses {@link CardViewHolder}.
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
-@RequiredArgsConstructor
-public class DrillAdapter extends RecyclerView.Adapter<CardViewHolder> {
+public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
     @NonNull
     private final List<Drill> drills;
     @Nullable
     private final CardClickListener clickListener;
     @Nullable
     private final CardLongClickListener longClickListener;
+
+    // TODO: FINISH ME implement like in CategoryViewModel
+    private static final DiffUtil.ItemCallback<Drill> DIFF_CALLBACK = new DiffUtil.ItemCallback<Drill>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Drill oldItem, @NonNull Drill newItem) {
+            return oldItem.getId() == newItem.getId();
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Drill oldItem, @NonNull Drill newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
+
+    public DrillAdapter(@NonNull List<Drill> drills,
+                           @Nullable CardClickListener clickListener,
+                           @Nullable CardLongClickListener longClickListener) {
+        super(DIFF_CALLBACK);
+        this.drills = drills;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+    }
 
     @NonNull
     @Override

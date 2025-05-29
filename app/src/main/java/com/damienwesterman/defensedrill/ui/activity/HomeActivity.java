@@ -61,8 +61,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
-        - Any methods that return nullable, surround calls in optionals when it makes sense (check also to make sure that null check is on the left side)
-        - Update RecyclerViews using solution provided by  https://chatgpt.com/c/682ceac4-64d0-800d-ade0-d3ec6f26b1a5
         - Check all Doc comments for params/return lining up and having periods
         - Can we just use onCardClick for every activity?
         - Refactor utils into appropriate packages

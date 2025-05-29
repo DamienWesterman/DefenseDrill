@@ -535,6 +535,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
      * Fill the recycler view with the drills and set up the adapters and their callbacks.
      */
     public void setUpRecyclerView() {
+        // TODO: FIXME: make sure that we use the new recycler view update method
         setLoading(true);
         existingPoliciesRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

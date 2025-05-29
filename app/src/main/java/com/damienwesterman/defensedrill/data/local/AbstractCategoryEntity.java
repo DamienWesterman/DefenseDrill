@@ -44,7 +44,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @EqualsAndHashCode
 @ToString
 public abstract class AbstractCategoryEntity {

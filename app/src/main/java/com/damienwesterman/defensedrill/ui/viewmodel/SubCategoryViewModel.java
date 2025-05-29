@@ -156,7 +156,11 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * {@inheritDoc}
      */
     @Override
-    public void updateAbstractEntity(@NonNull AbstractCategoryEntity entity, @NonNull OperationCompleteCallback callback) {
+    public void updateAbstractEntity(@NonNull AbstractCategoryEntity entity,
+                                     @NonNull String name,
+                                     @NonNull String description,
+                                     @NonNull OperationCompleteCallback callback) {
+        // TODO: FINISH ME just like CategoryViewModel
         executor.execute(() -> {
             try {
                 if (SubCategoryEntity.class == entity.getClass()) {

@@ -156,16 +156,15 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.allAbstractCategoriesRecyclerView);
 
         setScreenTextByMode();
-        setLoading(true);
-        viewModel.getAbstractCategories().observe(this, this::setUpRecyclerView);
+        setUpRecyclerView();
         viewModel.populateAbstractCategories();
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        setLoading(true);
-        viewModel.rePopulateAbstractCategories();
+        // TODO: REMOVE?
+//        viewModel.rePopulateAbstractCategories();
     }
 
     @Override
@@ -246,7 +245,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                         "Description must be less than " + DESCRIPTION_CHARACTER_LIMIT +  " characters");
                 return; // Do not dismiss
             }
-            setLoading(true);
             viewModel.saveAbstractEntity(name, description, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
@@ -259,7 +257,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull String error) {
                     UiUtils.displayDismissibleSnackbar(dialogView, error);
-                    runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
                 }
             });
@@ -318,10 +315,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                         "Description must be less than " + DESCRIPTION_CHARACTER_LIMIT +  " characters");
                 return; // Do not dismiss
             }
-            setLoading(true);
-            entity.setName(name);
-            entity.setDescription(description);
-            viewModel.updateAbstractEntity(entity, new OperationCompleteCallback() {
+            viewModel.updateAbstractEntity(entity, name, description, new OperationCompleteCallback() {
                 @Override
                 public void onSuccess() {
                     alert.dismiss();
@@ -333,7 +327,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull String error) {
                     UiUtils.displayDismissibleSnackbar(dialogView, error);
-                    runOnUiThread(() -> setLoading(false));
                     // Do not dismiss
                 }
             });
@@ -356,7 +349,6 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         builder.setMessage(entity.getName());
         builder.setNegativeButton("Cancel", null);
         builder.setPositiveButton("Delete", (dialog, position) -> {
-            setLoading(true);
             viewModel.deleteAbstractCategory(entity);
         });
         builder.create().show();
@@ -368,10 +360,8 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
     /**
      * Callback method for when the abstract categories list has been loaded from the database. Sets
      * the UI and attaches click listeners.
-     *
-     * @param abstractCategoryEntities List of AbstractCategoryEntity objects.
      */
-    private void setUpRecyclerView(@NonNull List<AbstractCategoryEntity> abstractCategoryEntities) {
+    private void setUpRecyclerView() {
         setLoading(true);
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -384,7 +374,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new AbstractCategoryAdapter(abstractCategoryEntities,
+        AbstractCategoryAdapter adapter = new AbstractCategoryAdapter(
             // Click listener
             id -> {
                 AbstractCategoryEntity category = viewModel.findById(id);
@@ -402,7 +392,9 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 } else {
                     UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
                 }
-            }));
+            });
+        recyclerView.setAdapter(adapter);
+        viewModel.getAbstractCategories().observe(this, adapter::submitList);
     }
 
     /**

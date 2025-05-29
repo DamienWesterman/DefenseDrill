@@ -32,18 +32,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.util.CardClickListener;
 import com.damienwesterman.defensedrill.ui.util.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.damienwesterman.defensedrill.R;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * RecyclerView Adapter class for use with {@link AbstractCategoryEntity} objects.
@@ -52,14 +52,46 @@ import lombok.RequiredArgsConstructor;
  * {@link com.damienwesterman.defensedrill.ui.util.TitleDescCard}. Uses {@link CardViewHolder}.
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
-@RequiredArgsConstructor
-public class AbstractCategoryAdapter extends RecyclerView.Adapter<CardViewHolder> {
+public class AbstractCategoryAdapter extends ListAdapter<AbstractCategoryEntity, CardViewHolder> {
     @NonNull
     private final List<? extends AbstractCategoryEntity> categories;
     @Nullable
     private final CardClickListener clickListener;
     @Nullable
     private final CardLongClickListener longClickListener;
+
+    private static final DiffUtil.ItemCallback<AbstractCategoryEntity> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<AbstractCategoryEntity>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull AbstractCategoryEntity oldItem,
+                                               @NonNull AbstractCategoryEntity newItem) {
+                    return oldItem.getId() == newItem.getId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull AbstractCategoryEntity oldItem,
+                                                  @NonNull AbstractCategoryEntity newItem) {
+                    return oldItem.equals(newItem);
+                }
+            };
+
+    // TODO: REMOVE ME AND REFACTOR
+    public AbstractCategoryAdapter(@NonNull List<? extends AbstractCategoryEntity> categories,
+                                   @Nullable CardClickListener clickListener,
+                                   @Nullable CardLongClickListener longClickListener) {
+        super(DIFF_CALLBACK);
+        this.categories = categories;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+    }
+
+    public AbstractCategoryAdapter(@Nullable CardClickListener clickListener,
+                                   @Nullable CardLongClickListener longClickListener) {
+        super(DIFF_CALLBACK);
+this.categories = new ArrayList<>(); // TODO REMOVE
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+    }
 
     @NonNull
     @Override
@@ -73,14 +105,9 @@ public class AbstractCategoryAdapter extends RecyclerView.Adapter<CardViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
-        holder.getCard().setTitle(categories.get(position).getName());
-        holder.getCard().setDescription(categories.get(position).getDescription());
-        holder.setOnClickListener(clickListener, categories.get(position).getId());
-        holder.setLongClickListener(longClickListener, categories.get(position).getId());
-    }
-
-    @Override
-    public int getItemCount() {
-        return categories.size();
+        holder.getCard().setTitle(getItem(position).getName());
+        holder.getCard().setDescription(getItem(position).getDescription());
+        holder.setOnClickListener(clickListener, getItem(position).getId());
+        holder.setLongClickListener(longClickListener, getItem(position).getId());
     }
 }

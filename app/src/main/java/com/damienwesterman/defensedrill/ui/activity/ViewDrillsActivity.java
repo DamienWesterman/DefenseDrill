@@ -400,6 +400,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
      * @param drills List of Drill objects.
      */
     private void setUpRecyclerView(@NonNull List<Drill> drills) {
+        // TODO: FIXME: make sure that we use the new recycler view update method
         setLoading(true);
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
