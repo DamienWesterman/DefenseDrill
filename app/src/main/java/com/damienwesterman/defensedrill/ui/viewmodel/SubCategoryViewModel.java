@@ -211,24 +211,4 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
 
         return ret;
     }
-
-    /**
-     * Static helper method to convert a list of AbstractCategoryEntity objects to a list of
-     * SubCategoryEntity objects.
-     *
-     * @param abstractCategories    List of AbstractCategoryEntity objects.
-     * @return                      Converted list of SubCategoryEntity objects.
-     */
-    @NonNull
-    public static List<SubCategoryEntity> getSubCategoryList(@NonNull List<AbstractCategoryEntity> abstractCategories) {
-        List<SubCategoryEntity> subCategories = new ArrayList<>(abstractCategories.size());
-
-        for (AbstractCategoryEntity abstractCategory : abstractCategories) {
-            if (SubCategoryEntity.class == abstractCategory.getClass()) {
-                subCategories.add((SubCategoryEntity) abstractCategory);
-            }
-        }
-
-        return subCategories;
-    }
 }

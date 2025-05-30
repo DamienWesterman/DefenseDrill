@@ -43,7 +43,6 @@ import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -54,14 +53,11 @@ import java.util.Locale;
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
 public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
-    @NonNull
-    private final List<Drill> drills;
     @Nullable
     private final CardClickListener clickListener;
     @Nullable
     private final CardLongClickListener longClickListener;
 
-    // TODO: FINISH ME implement like in CategoryViewModel
     private static final DiffUtil.ItemCallback<Drill> DIFF_CALLBACK = new DiffUtil.ItemCallback<Drill>() {
         @Override
         public boolean areItemsTheSame(@NonNull Drill oldItem, @NonNull Drill newItem) {
@@ -74,11 +70,9 @@ public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
         }
     };
 
-    public DrillAdapter(@NonNull List<Drill> drills,
-                           @Nullable CardClickListener clickListener,
-                           @Nullable CardLongClickListener longClickListener) {
+    public DrillAdapter(@Nullable CardClickListener clickListener,
+                        @Nullable CardLongClickListener longClickListener) {
         super(DIFF_CALLBACK);
-        this.drills = drills;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
     }
@@ -95,9 +89,9 @@ public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
-        holder.getCard().setTitle(drills.get(position).getName());
+        holder.getCard().setTitle(getItem(position).getName());
 
-        long lastDrilledLong = drills.get(position).getLastDrilled();
+        long lastDrilledLong = getItem(position).getLastDrilled();
         String lastDrilled;
         if (0 < lastDrilledLong) {
             Date drilledDate = new Date(lastDrilledLong);
@@ -108,7 +102,7 @@ public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
         }
 
         holder.getCard().setDescription(lastDrilled);
-        holder.setOnClickListener(clickListener, drills.get(position).getId());
-        holder.setLongClickListener(longClickListener, drills.get(position).getId());
+        holder.setOnClickListener(clickListener, getItem(position).getId());
+        holder.setLongClickListener(longClickListener, getItem(position).getId());
     }
 }

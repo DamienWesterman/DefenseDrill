@@ -121,8 +121,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
         categoryFilterButton = findViewById(R.id.categoryFilterButton);
         subCategoryFilterButton = findViewById(R.id.subCategoryFilterButton);
 
-        setLoading(true);
-        viewModel.getDrills().observe(this, this::setUpRecyclerView);
+        setUpRecyclerView();
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
         viewModel.populateDrills();
@@ -131,7 +130,6 @@ public class ViewDrillsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        setLoading(true);
         viewModel.rePopulateDrills();
     }
 
@@ -216,17 +214,14 @@ public class ViewDrillsActivity extends AppCompatActivity {
                 return;
             }
 
-            setLoading(true);
             viewModel.setSortOrder(selectedSortOrder);
             DrillListViewModel.SortOrder newSortOrder = viewModel.getSortOrder();
 
             if (newSortOrder == sortOrder) {
                 // Indicates an error and we didn't switch
                 UiUtils.displayDismissibleSnackbar(rootView, "Could not switch sort order");
-                setLoading(false);
             } else {
                 sortOrder = newSortOrder;
-                // RecyclerView callback will take care of setLoading(false)
             }
         });
         builder.setNegativeButton("Cancel", null);
@@ -384,7 +379,6 @@ public class ViewDrillsActivity extends AppCompatActivity {
         builder.setMessage(drill.getName());
         builder.setNegativeButton("Cancel", null);
         builder.setPositiveButton("Delete", (dialog, position) -> {
-            setLoading(true);
             viewModel.deleteDrill(drill);
         });
         builder.create().show();
@@ -396,11 +390,8 @@ public class ViewDrillsActivity extends AppCompatActivity {
     /**
      * Callback method for when the drills list has been loaded from the database. Sets the UI and
      * attaches click listeners.
-     *
-     * @param drills List of Drill objects.
      */
-    private void setUpRecyclerView(@NonNull List<Drill> drills) {
-        // TODO: FIXME: make sure that we use the new recycler view update method
+    private void setUpRecyclerView() {
         setLoading(true);
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -413,18 +404,20 @@ public class ViewDrillsActivity extends AppCompatActivity {
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new DrillAdapter(drills,
-            // Click listener
-            id -> DrillInfoActivity.startActivity(this, id),
-            // Long click listener
-            id -> {
-            Drill drill = viewModel.findDrillById(id);
-                if (null != drill) {
-                    deleteDrillPopup(drill);
-                } else {
-                    UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
-                }
-            }));
+        DrillAdapter adapter = new DrillAdapter(
+                // Click listener
+                id -> DrillInfoActivity.startActivity(this, id),
+                // Long click listener
+                id -> {
+                    Drill drill = viewModel.findDrillById(id);
+                    if (null != drill) {
+                        deleteDrillPopup(drill);
+                    } else {
+                        UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                    }
+                });
+        recyclerView.setAdapter(adapter);
+        viewModel.getDrills().observe(this, adapter::submitList);
     }
 
     /**
