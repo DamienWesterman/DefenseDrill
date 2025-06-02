@@ -26,37 +26,34 @@
 
 package com.damienwesterman.defensedrill.ui.adapter;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.viewholder.PolicyViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
  * RecyclerView Adapter class for use with {@link WeeklyHourPolicyEntity} objects.
  * <br><br>
- * Each item represents a policy, which is really a list of WeeklyPolicyEntity objects that share a
- * policy name and act together to span multiple days/hours.
+ * Each item is in the form of a Pair {@code <stringPolicyName, policyEntitiesList>} in ascending
+ * order by the policy name for consistency. Each item conceptually represents a policy, which is
+ * really a list of WeeklyPolicyEntity objects that share a policy name and act together to span
+ * multiple days/hours.
  */
-public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
-    @NonNull
-    private final Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
-    /** This will be used as the list of items, as the policies are grouped by policy name */
-    @NonNull
-    private final List<String> policyNames;
+public class PolicyAdapter
+        extends ListAdapter<Pair<String, List<WeeklyHourPolicyEntity>>, PolicyViewHolder> {
     @Nullable
     private final Consumer<String> onClickListener;
     @Nullable
@@ -64,12 +61,42 @@ public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
     @Nullable
     private final BiConsumer<String, Boolean> onCheckedListener;
 
-    public PolicyAdapter(@NonNull Map<String, List<WeeklyHourPolicyEntity>> policiesByName,
-                         @Nullable Consumer<String> onClickListener,
+    private static final DiffUtil.ItemCallback<Pair<String, List<WeeklyHourPolicyEntity>>> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<Pair<String, List<WeeklyHourPolicyEntity>>>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull Pair<String, List<WeeklyHourPolicyEntity>> oldItem,
+                                               @NonNull Pair<String, List<WeeklyHourPolicyEntity>> newItem) {
+                    // Compare policy names
+                    return oldItem.first.equals(newItem.first);
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull Pair<String, List<WeeklyHourPolicyEntity>> oldItem,
+                                                  @NonNull Pair<String, List<WeeklyHourPolicyEntity>> newItem) {
+                    if (oldItem.second.isEmpty() || newItem.second.isEmpty()) {
+                        // This shouldn't really happen
+                        return false;
+                    }
+
+                    if (oldItem.second.size() != newItem.second.size()) {
+                        return false;
+                    }
+
+                    for (int i = 0; i < oldItem.second.size(); i++) {
+                        // Each item in each list should line up and be equal
+                        if (!oldItem.second.get(i).equals(newItem.second.get(i))) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            };
+
+    public PolicyAdapter(@Nullable Consumer<String> onClickListener,
                          @Nullable Consumer<String> onLongClickListener,
                          @Nullable BiConsumer<String, Boolean> onCheckedListener) {
-        this.policiesByName = policiesByName;
-        this.policyNames = new ArrayList<>(policiesByName.keySet());
+        super(DIFF_CALLBACK);
         this.onClickListener = onClickListener;
         this.onLongClickListener = onLongClickListener;
         this.onCheckedListener = onCheckedListener;
@@ -86,23 +113,23 @@ public class PolicyAdapter extends RecyclerView.Adapter<PolicyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull PolicyViewHolder holder, int position) {
-        List<WeeklyHourPolicyEntity> weeklyPolicies = Optional.ofNullable(
-                    policiesByName.get(policyNames.get(position)))
-                .orElse(List.of());
+        List<WeeklyHourPolicyEntity> weeklyPolicies = getItem(position).second;
         holder.setCardDetails(weeklyPolicies);
+
+        if (weeklyPolicies.isEmpty()) {
+            // Can't retrieve a name
+            return;
+        }
+
+        String policyName = weeklyPolicies.get(0).getPolicyName();
         if (null != onClickListener) {
-            holder.setOnClickListener(onClickListener, policyNames.get(position));
+            holder.setOnClickListener(onClickListener, policyName);
         }
         if (null != onLongClickListener) {
-            holder.setOnLongClickListener(onLongClickListener, policyNames.get(position));
+            holder.setOnLongClickListener(onLongClickListener, policyName);
         }
         if (null != onCheckedListener) {
-            holder.setCheckedListener(onCheckedListener, policyNames.get(position));
+            holder.setCheckedListener(onCheckedListener, policyName);
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return policyNames.size();
     }
 }

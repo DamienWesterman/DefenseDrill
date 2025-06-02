@@ -70,7 +70,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -165,7 +164,8 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                 });
         });
 
-        setUpViewModel();
+        setUpRecyclerView();
+        viewModel.loadPolicies();
     }
 
     @Override
@@ -208,7 +208,6 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         builder.setMessage(policyName);
         builder.setNegativeButton("Cancel", null);
         builder.setPositiveButton("Delete", (dialog, position) -> {
-            setLoading(true);
             List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
             if (null != policies) {
                 viewModel.removePolicies(
@@ -232,23 +231,16 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             } else {
                                 SimulatedAttackManager.restart(context);
                             }
-
-                            /*
-                            viewModel will then post the new policies list, causing us to eventually
-                            call setLoading(false).
-                             */
                         }
 
                         @Override
                         public void onFailure(@NonNull String error) {
                             UiUtils.displayDismissibleSnackbar(rootView, error);
-                            runOnUiThread(() -> setLoading(false));
                         }
                     });
             } else {
                 UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
                 Log.e(TAG, "Failed to find policy for deletion: " + policyName);
-                setLoading(false);
             }
         });
         builder.create().show();
@@ -378,10 +370,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess() {
                                 CountDownLatch latch = new CountDownLatch(1);
-                                runOnUiThread(() -> {
-                                    setLoading(true);
-                                    latch.countDown();
-                                });
+                                runOnUiThread(latch::countDown);
                                 try {
                                     boolean finished = latch.await(250, TimeUnit.MILLISECONDS);
                                     if (!finished) {
@@ -516,26 +505,9 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Set up the view model for this activity.
-     */
-    private void setUpViewModel() {
-        viewModel.getPolicies().observe(this, policies -> {
-            if (policies.isEmpty()) {
-                // Set up the database with defaults
-                viewModel.populateDefaultPolicies();
-            } else {
-                setUpRecyclerView();
-            }
-        });
-
-        viewModel.loadPolicies();
-    }
-
-    /**
      * Fill the recycler view with the drills and set up the adapters and their callbacks.
      */
     public void setUpRecyclerView() {
-        // TODO: FIXME: make sure that we use the new recycler view update method
         setLoading(true);
         existingPoliciesRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -547,40 +519,47 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         });
 
         existingPoliciesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Map<String, List<WeeklyHourPolicyEntity>> policiesByName = viewModel.getPoliciesByName();
-        existingPoliciesRecyclerView.setAdapter(new PolicyAdapter(policiesByName,
-            // On Click Listener -> Modify Policy
-            this::policyDetailsPopup,
-            // Long Click Listener -> Delete Policy
-            this::deletePolicyPopup,
-            (policyName, isChecked) -> {
-                // Radio button clicked, change activeness
-                List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
-                if (null != policies) {
-                    policies.forEach(policy -> policy.setActive(isChecked));
-                    viewModel.savePolicies(
-                        policies,
-                        null,
-                        false,
-                        new OperationCompleteCallback() {
-                            @Override
-                            public void onSuccess() {
-                                SimulatedAttackManager.restart(context);
-                            }
+        PolicyAdapter adapter = new PolicyAdapter(
+                // On Click Listener -> Modify Policy
+                this::policyDetailsPopup,
+                // Long Click Listener -> Delete Policy
+                this::deletePolicyPopup,
+                (policyName, isChecked) -> {
+                    // Radio button clicked, change activeness
+                    List<WeeklyHourPolicyEntity> policies = viewModel.getPoliciesByName().get(policyName);
+                    if (null != policies) {
+                        policies.forEach(policy -> policy.setActive(isChecked));
+                        viewModel.savePolicies(
+                                policies,
+                                null,
+                                false,
+                                new OperationCompleteCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        SimulatedAttackManager.restart(context);
+                                    }
 
-                            @Override
-                            public void onFailure(@NonNull String error) {
-                                UiUtils.displayDismissibleSnackbar(rootView, error);
-                            }
-                        }
-                    );
-                } else {
-                    UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
-                    Log.e(TAG, "Policy activeness change failed for " + policyName
-                            + ", policies retrieved from viewModel was null");
+                                    @Override
+                                    public void onFailure(@NonNull String error) {
+                                        UiUtils.displayDismissibleSnackbar(rootView, error);
+                                    }
+                                }
+                        );
+                    } else {
+                        UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+                        Log.e(TAG, "Policy activeness change failed for " + policyName
+                                + ", policies retrieved from viewModel was null");
+                    }
                 }
+        );
+        existingPoliciesRecyclerView.setAdapter(adapter);
+        viewModel.getUiList().observe(this, list -> {
+            if (viewModel.getPolicies().isEmpty()) {
+                // Set up the database with defaults
+                viewModel.populateDefaultPolicies();
             }
-        ));
+            adapter.submitList(list);
+        });
     }
 
     /**
@@ -667,7 +646,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
 
         // Check Weekly Hour Criteria
-        List<WeeklyHourPolicyEntity> existingPolicies = viewModel.getPolicies().getValue();
+        List<WeeklyHourPolicyEntity> existingPolicies = viewModel.getPolicies();
         List<Integer> dailyHoursSelected = IntStream.range(
                     beginningHourSpinner.getSelectedItemPosition(),
                     endingHourSpinner.getSelectedItemPosition())
@@ -676,25 +655,23 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             if (checkBoxes.get(dayOfWeek).isChecked()) {
                 for (Integer hourOfDay : dailyHoursSelected) {
                     int hourOfWeek = (dayOfWeek * 24) + hourOfDay;
-                    if (null != existingPolicies) {
-                        boolean weeklyHourPolicyAlreadyExists = false;
+                    boolean weeklyHourPolicyAlreadyExists = false;
 
-                        WeeklyHourPolicyEntity weeklyHourPolicy = existingPolicies.get(hourOfWeek);
-                        if (!weeklyHourPolicy.getPolicyName().isBlank()
-                                || Constants.SimulatedAttackFrequency.NO_ATTACKS != weeklyHourPolicy.getFrequency()) {
-                            weeklyHourPolicyAlreadyExists = true;
+                    WeeklyHourPolicyEntity weeklyHourPolicy = existingPolicies.get(hourOfWeek);
+                    if (!weeklyHourPolicy.getPolicyName().isBlank()
+                            || Constants.SimulatedAttackFrequency.NO_ATTACKS != weeklyHourPolicy.getFrequency()) {
+                        weeklyHourPolicyAlreadyExists = true;
 
-                            if (null != policyBeingModified
-                                    && policyBeingModified.equals(weeklyHourPolicy.getPolicyName())) {
-                                // Yes this time overlaps because we are actively modifying it
-                                weeklyHourPolicyAlreadyExists = false;
-                            }
+                        if (null != policyBeingModified
+                                && policyBeingModified.equals(weeklyHourPolicy.getPolicyName())) {
+                            // Yes this time overlaps because we are actively modifying it
+                            weeklyHourPolicyAlreadyExists = false;
                         }
+                    }
 
-                        if (weeklyHourPolicyAlreadyExists) {
-                            errorConsumer.accept("Time frame overlaps with another alarm.");
-                            return List.of();
-                        }
+                    if (weeklyHourPolicyAlreadyExists) {
+                        errorConsumer.accept("Time frame overlaps with another alarm.");
+                        return List.of();
                     }
 
                     // All checks have passed, add it to the list of new policies

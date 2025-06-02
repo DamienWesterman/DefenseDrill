@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.viewmodel;
 import android.app.Application;
 import android.database.sqlite.SQLiteConstraintException;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +45,7 @@ import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.util.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +68,14 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
     private final SimulatedAttackRepo simulatedAttackRepo;
     private final DrillRepository drillRepo;
-    private final MutableLiveData<List<WeeklyHourPolicyEntity>> policies;
+    /**
+     * This a substitute for the Map policiesByName to be used by the ListAdapter. This should be
+     * a list in the form of {@code <stringPolicyName, policyEntitiesList>} in ascending order by
+     * the policy name for consistency.
+     */
+    private final MutableLiveData<List<Pair<String, List<WeeklyHourPolicyEntity>>>> uiList;
+    @Getter
+    private List<WeeklyHourPolicyEntity> policies;
     @Getter
     private Map<String, List<WeeklyHourPolicyEntity>> policiesByName;
 
@@ -78,16 +87,17 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
         this.simulatedAttackRepo = simulatedAttackRepo;
         this.drillRepo = drillRepo;
-        this.policies = new MutableLiveData<>();
+        this.uiList = new MutableLiveData<>();
+        this.policies = new ArrayList<>();
         this.policiesByName = new HashMap<>();
     }
 
-    public LiveData<List<WeeklyHourPolicyEntity>> getPolicies() {
-        return this.policies;
+    public LiveData<List<Pair<String, List<WeeklyHourPolicyEntity>>>> getUiList() {
+        return this.uiList;
     }
 
     public void loadPolicies() {
-        if (!policies.isInitialized()) {
+        if (!uiList.isInitialized()) {
             new Thread(this::loadAllPoliciesFromDb).start();
         }
     }
@@ -190,11 +200,18 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
      * Loads all policies from the database and posts the results so the UI callback is called.
      */
     private void loadAllPoliciesFromDb() {
-        List<WeeklyHourPolicyEntity> policyEntities = simulatedAttackRepo.getAllPolicies();
-        this.policiesByName = policyEntities.stream()
+        this.policies = simulatedAttackRepo.getAllPolicies();
+        this.policiesByName = policies.stream()
                 .filter(policy -> !policy.getPolicyName().isEmpty())
                 .collect(Collectors.groupingBy(WeeklyHourPolicyEntity::getPolicyName));
-        policies.postValue(policyEntities);
+
+        List<String> policyNames = new ArrayList<>(policiesByName.keySet());
+        policyNames.sort(null);
+        uiList.postValue(policyNames.stream()
+                .map(policyName ->
+                        new Pair<>(policyName, policiesByName.get(policyName)))
+                .collect(Collectors.toList()));
+
     }
 
     /**

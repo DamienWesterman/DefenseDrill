@@ -378,9 +378,8 @@ public class ViewDrillsActivity extends AppCompatActivity {
         builder.setCancelable(true);
         builder.setMessage(drill.getName());
         builder.setNegativeButton("Cancel", null);
-        builder.setPositiveButton("Delete", (dialog, position) -> {
-            viewModel.deleteDrill(drill);
-        });
+        builder.setPositiveButton("Delete", (dialog, position) ->
+                viewModel.deleteDrill(drill));
         builder.create().show();
     }
 
