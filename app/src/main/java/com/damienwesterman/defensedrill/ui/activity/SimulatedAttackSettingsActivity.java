@@ -553,7 +553,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                 }
         );
         existingPoliciesRecyclerView.setAdapter(adapter);
-        viewModel.getUiList().observe(this, list -> {
+        viewModel.getUiPoliciesList().observe(this, list -> {
             if (viewModel.getPolicies().isEmpty()) {
                 // Set up the database with defaults
                 viewModel.populateDefaultPolicies();

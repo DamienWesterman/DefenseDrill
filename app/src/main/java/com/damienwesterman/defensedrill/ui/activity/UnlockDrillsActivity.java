@@ -101,7 +101,7 @@ public class UnlockDrillsActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.unlockDrillsProgressBar);
         recyclerView = findViewById(R.id.unlockDrillsRecyclerView);
 
-        viewModel.getDisplayedDrills().observe(this, this::setUpRecyclerView);
+        viewModel.getUiDrillsList().observe(this, this::setUpRecyclerView);
         viewModel.populateDrills();
     }
 

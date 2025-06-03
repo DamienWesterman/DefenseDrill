@@ -157,7 +157,7 @@ public class CategorySelectActivity extends AppCompatActivity {
 
 
         CategoryViewModel viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
-        viewModel.getAbstractCategories().observe(this, adapter::submitList);
+        viewModel.getUiAbstractCategoriesList().observe(this, adapter::submitList);
         viewModel.populateAbstractCategories();
     }
 }

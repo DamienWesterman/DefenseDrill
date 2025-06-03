@@ -31,7 +31,6 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
@@ -58,7 +57,8 @@ import lombok.Setter;
  */
 @HiltViewModel
 public class DrillListViewModel extends AndroidViewModel {
-    private final MutableLiveData<List<Drill>> drills;
+    @Getter
+    private final MutableLiveData<List<Drill>> uiDrillsList;
     @Nullable
     private List<CategoryEntity> allCategories;
     @Nullable
@@ -87,24 +87,15 @@ public class DrillListViewModel extends AndroidViewModel {
         super(application);
 
         this.repo = repo;
-        drills = new MutableLiveData<>();
+        uiDrillsList = new MutableLiveData<>();
         sortOrder = SortOrder.SORT_NAME_ASCENDING;
-    }
-
-    /**
-     * Get the LiveData object to observe for the list of Drill objects.
-     *
-     * @return LiveData object.
-     */
-    public LiveData<List<Drill>> getDrills() {
-        return drills;
     }
 
     /**
      * Populate our list of Drills if it has not already been done.
      */
     public void populateDrills() {
-        if (null == drills.getValue()) {
+        if (null == uiDrillsList.getValue()) {
             rePopulateDrills();
         }
     }
@@ -113,7 +104,7 @@ public class DrillListViewModel extends AndroidViewModel {
      * Force re-load  the Drills from the database, even if they are already loaded.
      */
     public void rePopulateDrills() {
-        executor.execute(() -> drills.postValue(repo.getAllDrills().stream()
+        executor.execute(() -> uiDrillsList.postValue(repo.getAllDrills().stream()
             .filter(Drill::isKnownDrill)
             .collect(Collectors.toList())));
     }
@@ -129,7 +120,7 @@ public class DrillListViewModel extends AndroidViewModel {
      * @param subCategoryIds    List of sub-category IDs to filter by.
      */
     public void filterDrills(@Nullable List<Long> categoryIds,@Nullable List<Long> subCategoryIds) {
-        executor.execute(() -> drills.postValue(repo.getAllDrills(categoryIds, subCategoryIds).stream()
+        executor.execute(() -> uiDrillsList.postValue(repo.getAllDrills(categoryIds, subCategoryIds).stream()
                 .filter(Drill::isKnownDrill)
                 .collect(Collectors.toList())));
     }
@@ -230,7 +221,7 @@ public class DrillListViewModel extends AndroidViewModel {
     @Nullable
     public Drill findDrillById(long id) {
         Drill ret = null;
-        List<Drill> allDrills = drills.getValue();
+        List<Drill> allDrills = uiDrillsList.getValue();
 
         if (null != allDrills) {
             for (Drill drill : allDrills) {
@@ -246,12 +237,12 @@ public class DrillListViewModel extends AndroidViewModel {
 
     public void deleteDrill(@NonNull Drill drill) {
         executor.execute(() -> {
-            if (null != drills.getValue()) {
+            if (null != uiDrillsList.getValue()) {
                 // Must be a new list to trigger submitList() logic
-                List<Drill> newDrills = new ArrayList<>(drills.getValue());
+                List<Drill> newDrills = new ArrayList<>(uiDrillsList.getValue());
                 repo.deleteDrills(drill);
                 newDrills.remove(drill);
-                drills.postValue(newDrills);
+                uiDrillsList.postValue(newDrills);
             }
         });
     }
@@ -266,12 +257,12 @@ public class DrillListViewModel extends AndroidViewModel {
      * @param newSortOrder New order to sort by.
      */
     public void setSortOrder(@NonNull SortOrder newSortOrder) {
-        if (null == drills.getValue()) {
+        if (null == uiDrillsList.getValue()) {
             return;
         }
 
         // Must be a new list to trigger submitList() logic
-        List<Drill> sortedDrills = new ArrayList<>(drills.getValue());
+        List<Drill> sortedDrills = new ArrayList<>(uiDrillsList.getValue());
 
         sortedDrills.sort((drill1, drill2) -> {
             switch(newSortOrder) {
@@ -288,7 +279,7 @@ public class DrillListViewModel extends AndroidViewModel {
 
             }
         });
-        drills.postValue(sortedDrills);
+        uiDrillsList.postValue(sortedDrills);
         sortOrder = newSortOrder;
     }
 }

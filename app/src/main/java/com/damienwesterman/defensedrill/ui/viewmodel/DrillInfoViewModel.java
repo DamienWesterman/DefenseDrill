@@ -33,7 +33,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
@@ -63,6 +62,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import lombok.Getter;
 import retrofit2.HttpException;
 
 /**
@@ -72,11 +72,14 @@ import retrofit2.HttpException;
 public class DrillInfoViewModel extends AndroidViewModel {
     private static final String TAG = DrillInfoViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Drill> currentDrill;
+    @Getter
+    private final MutableLiveData<Drill> uiCurrentDrill;
     @Nullable
     private DrillDTO drillDTO;
-    private final MutableLiveData<List<InstructionsDTO>> instructions;
-    private final MutableLiveData<List<RelatedDrillDTO>> relatedDrills;
+    @Getter
+    private final MutableLiveData<List<InstructionsDTO>> uiInstructionsList;
+    @Getter
+    private final MutableLiveData<List<RelatedDrillDTO>> uiRelatedDrillsList;
     @Nullable
     private List<CategoryEntity> allCategories;
     @Nullable
@@ -91,20 +94,11 @@ public class DrillInfoViewModel extends AndroidViewModel {
     public DrillInfoViewModel(Application application, DrillRepository drillRepo, ApiRepo apiRepo) {
         super(application);
 
-        currentDrill = new MutableLiveData<>();
-        instructions = new MutableLiveData<>();
-        relatedDrills = new MutableLiveData<>();
+        uiCurrentDrill = new MutableLiveData<>();
+        uiInstructionsList = new MutableLiveData<>();
+        uiRelatedDrillsList = new MutableLiveData<>();
         this.drillRepo = drillRepo;
         this.apiRepo = apiRepo;
-    }
-
-    /**
-     * Get the LiveData object to observe for the Drill object.
-     *
-     * @return LiveData object.
-     */
-    public LiveData<Drill> getDrill() {
-        return currentDrill;
     }
 
     /**
@@ -113,7 +107,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param drillId ID of the drill.
      */
     public void populateDrill(long drillId) {
-        executor.execute(() -> currentDrill.postValue(drillRepo.getDrill(drillId).orElse(null)));
+        executor.execute(() -> uiCurrentDrill.postValue(drillRepo.getDrill(drillId).orElse(null)));
     }
 
     /**
@@ -136,7 +130,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
                 drills = drillRepo.getAllDrills(categoryId, subCategoryId);
             }
             drillGenerator = new DrillGenerator(drills, new Random());
-            currentDrill.postValue(drillGenerator.generateDrill());
+            uiCurrentDrill.postValue(drillGenerator.generateDrill());
         });
     }
 
@@ -147,7 +141,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
      */
     public void regenerateDrill() {
         if (null != drillGenerator) {
-            currentDrill.setValue(drillGenerator.regenerateDrill());
+            uiCurrentDrill.setValue(drillGenerator.regenerateDrill());
         }
     }
 
@@ -179,7 +173,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
                    }
                } else {
                    if (reloadScreen) {
-                       currentDrill.postValue(drill);
+                       uiCurrentDrill.postValue(drill);
                    }
                    if (callback != null) {
                        callback.onSuccess();
@@ -249,24 +243,6 @@ public class DrillInfoViewModel extends AndroidViewModel {
     }
 
     /**
-     * Get the LiveData object to observe for the list of Drill Instructions.
-     *
-     * @return LiveData object.
-     */
-    public LiveData<List<InstructionsDTO>> getInstructions() {
-        return instructions;
-    }
-
-    /**
-     * Get the LiveData object to observe for the list of related Drills.
-     *
-     * @return LiveData object.
-     */
-    public LiveData<List<RelatedDrillDTO>> getRelatedDrills() {
-        return relatedDrills;
-    }
-
-    /**
      * Fetch and load instructions and related drills for the Drill. Drill has to have been
      * initialized otherwise nothing will happen.
      *
@@ -274,20 +250,24 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * @param failureCallback Callback for when the network request fails
      */
     public void loadNetworkLinks(Runnable unauthorizedCallback, Consumer<String> failureCallback) {
-        if (null != currentDrill.getValue() && null != currentDrill.getValue().getServerDrillId()) {
-            Disposable disposable = apiRepo.getDrill(currentDrill.getValue().getServerDrillId())
+        if (null != uiCurrentDrill.getValue() && null != uiCurrentDrill.getValue().getServerDrillId()) {
+            Disposable disposable = apiRepo.getDrill(uiCurrentDrill.getValue().getServerDrillId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     drill -> {
                         this.drillDTO = drill;
-                        instructions.postValue(drill.getInstructions());
-                        relatedDrills.postValue(drill.getRelatedDrills());
+                        uiInstructionsList.postValue(drill.getInstructions());
+                        uiRelatedDrillsList.postValue(drill.getRelatedDrills());
                     },
                     throwable -> handleLoadNetworkLinksFailure(throwable,
                             unauthorizedCallback,
                             failureCallback)
                 );
+
+            if (!disposable.isDisposed()) {
+                disposable.dispose();
+            }
         }
     }
 
@@ -312,8 +292,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
                 case HttpsURLConnection.HTTP_NOT_FOUND:
                     // A little weird, but not exactly an error we can do anything about
                     this.drillDTO = null;
-                    instructions.postValue(null);
-                    relatedDrills.postValue(null);
+                    uiInstructionsList.postValue(null);
+                    uiRelatedDrillsList.postValue(null);
                     break;
                 default:
                     // Should not get here
@@ -326,8 +306,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
             // Thrown by ApiRepo if the JWT from SharedPrefs is empty
             // This is actually acceptable, means user has not signed in, no error message necessary
             this.drillDTO = null;
-            instructions.postValue(null);
-            relatedDrills.postValue(null);
+            uiInstructionsList.postValue(null);
+            uiRelatedDrillsList.postValue(null);
         } else if (throwable instanceof SocketTimeoutException) {
             // getLocalizedMessage(): failed to connect to your.server.org/1.1.1.1 (port 99999) from /2.2.2.2 (port 99999) after 10000ms
             failureCallback.accept("Issue connecting to the server, try again later");

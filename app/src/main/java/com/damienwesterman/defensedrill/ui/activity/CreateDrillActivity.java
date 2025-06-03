@@ -108,8 +108,6 @@ public class CreateDrillActivity extends AppCompatActivity {
         }
 
         viewModel = new ViewModelProvider(this).get(CreateDrillViewModel.class);
-        viewModel.loadAllCategories();
-        viewModel.loadAllSubCategories();
 
         rootView = findViewById(R.id.activityCreateDrill);
         enteredName = findViewById(R.id.nameEditText);

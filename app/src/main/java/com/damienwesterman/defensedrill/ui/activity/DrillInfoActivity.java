@@ -221,7 +221,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         confidenceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int confidence, long l) {
-                Drill drill = viewModel.getDrill().getValue();
+                Drill drill = viewModel.getUiCurrentDrill().getValue();
                 // Only save if this changed
                 if (null != drill &&
                         confidence != Constants.confidenceWeightToPosition(drill.getConfidence())) {
@@ -334,7 +334,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param categoryEntities List of categories.
      */
     private void editCategoriesPopup(@NonNull List<CategoryEntity> categoryEntities) {
-        Drill drill = viewModel.getDrill().getValue();
+        Drill drill = viewModel.getUiCurrentDrill().getValue();
         if (null == drill) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving categories");
             return;
@@ -421,7 +421,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * @param subCategoryEntities List of sub-categories.
      */
     private void editSubCategoriesPopup(@NonNull List<SubCategoryEntity> subCategoryEntities) {
-        Drill drill = viewModel.getDrill().getValue();
+        Drill drill = viewModel.getUiCurrentDrill().getValue();
         if (null == drill) {
             UiUtils.displayDismissibleSnackbar(rootView, "Issue retrieving sub-categories");
             return;
@@ -679,7 +679,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     private void setUpViewModel() {
         viewModel = new ViewModelProvider(this).get(DrillInfoViewModel.class);
 
-        viewModel.getDrill().observe(this, drill -> runOnUiThread(() -> {
+        viewModel.getUiCurrentDrill().observe(this, drill -> runOnUiThread(() -> {
             if (null == drill) {
                 alertNoDrillFound();
                 return;
@@ -717,16 +717,16 @@ public class DrillInfoActivity extends AppCompatActivity {
             }
         }));
 
-        viewModel.getInstructions().observe(this, instructions ->
+        viewModel.getUiInstructionsList().observe(this, instructions ->
                 runOnUiThread(() -> setUpInstructions(instructions)));
 
-        viewModel.getRelatedDrills().observe(this, relatedDrills ->
+        viewModel.getUiRelatedDrillsList().observe(this, relatedDrills ->
                 runOnUiThread(() -> setUpRelatedDrills(relatedDrills)));
 
         viewModel.loadAllCategories();
         viewModel.loadAllSubCategories();
 
-        Drill drill = viewModel.getDrill().getValue();
+        Drill drill = viewModel.getUiCurrentDrill().getValue();
         if (null == drill) {
             // First time loading activity
             Intent intent = getIntent();
@@ -839,7 +839,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      */
     @Nullable
     private Drill collectDrillInfo(boolean displayError) {
-        Drill drill = viewModel.getDrill().getValue();
+        Drill drill = viewModel.getUiCurrentDrill().getValue();
         if (null == drill) {
             if (displayError) {
                 UiUtils.displayDismissibleSnackbar(rootView, "An error occurred");
@@ -918,7 +918,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * Launch the activity to view a specific set of instructions.
      *
      * @param instructionsIndex Index position of the instructions in the list returned by
-*    *                          {@link DrillInfoViewModel#getInstructions()}
+*    *                          {@link DrillInfoViewModel#getUiInstructionsList()}
      */
     public void viewInstructions(int instructionsIndex) {
         DrillDTO drillDTO = viewModel.getDrillDTO();
@@ -936,7 +936,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * Launch the activity to view a specific related drill.
      *
      * @param relatedDrillIndex Index position of the related drill in the list returned by
-     *                          {@link DrillInfoViewModel#getRelatedDrills()}
+     *                          {@link DrillInfoViewModel#getUiRelatedDrillsList()}
      */
     public void viewRelatedDrills(int relatedDrillIndex) {
         DrillDTO drillDTO = viewModel.getDrillDTO();

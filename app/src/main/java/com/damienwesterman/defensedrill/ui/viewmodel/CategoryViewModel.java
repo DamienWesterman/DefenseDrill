@@ -54,7 +54,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class CategoryViewModel extends AbstractCategoryViewModel {
-    private final MutableLiveData<List<AbstractCategoryEntity>> categories;
+    private final MutableLiveData<List<AbstractCategoryEntity>> uiCategoriesList;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -63,7 +63,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
         super(application);
 
         this.repo = repo;
-        categories = new MutableLiveData<>();
+        uiCategoriesList = new MutableLiveData<>();
     }
 
     /**
@@ -71,8 +71,8 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      */
     @NonNull
     @Override
-    public LiveData<List<AbstractCategoryEntity>> getAbstractCategories() {
-        return categories;
+    public LiveData<List<AbstractCategoryEntity>> getUiAbstractCategoriesList() {
+        return uiCategoriesList;
     }
 
     /**
@@ -80,7 +80,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      */
     @Override
     public void populateAbstractCategories() {
-        if (null == categories.getValue()) {
+        if (null == uiCategoriesList.getValue()) {
             rePopulateAbstractCategories();
         }
     }
@@ -90,7 +90,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
      */
     @Override
     public void rePopulateAbstractCategories() {
-        executor.execute(() -> categories.postValue(new ArrayList<>(repo.getAllCategories())));
+        executor.execute(() -> uiCategoriesList.postValue(new ArrayList<>(repo.getAllCategories())));
     }
 
     /**
@@ -99,12 +99,12 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
     @Override
     public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
         executor.execute(() -> {
-            if (null != categories.getValue()
+            if (null != uiCategoriesList.getValue()
                     && CategoryEntity.class == entity.getClass()) {
                 // Must be a new list to trigger submitList() logic
-                List<AbstractCategoryEntity> newCategories = new ArrayList<>(categories.getValue());
+                List<AbstractCategoryEntity> newCategories = new ArrayList<>(uiCategoriesList.getValue());
                 newCategories.remove(entity);
-                categories.postValue(newCategories);
+                uiCategoriesList.postValue(newCategories);
                 repo.deleteCategories((CategoryEntity) entity);
             }
         });
@@ -166,7 +166,7 @@ public class CategoryViewModel extends AbstractCategoryViewModel {
     @Override
     public AbstractCategoryEntity findById(long id) {
         AbstractCategoryEntity ret = null;
-        List<AbstractCategoryEntity> allCategories = categories.getValue();
+        List<AbstractCategoryEntity> allCategories = uiCategoriesList.getValue();
 
         if (null != allCategories) {
             for (AbstractCategoryEntity category : allCategories) {

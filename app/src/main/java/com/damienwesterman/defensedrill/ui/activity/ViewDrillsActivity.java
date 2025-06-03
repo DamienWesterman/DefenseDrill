@@ -416,7 +416,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
                     }
                 });
         recyclerView.setAdapter(adapter);
-        viewModel.getDrills().observe(this, adapter::submitList);
+        viewModel.getUiDrillsList().observe(this, adapter::submitList);
     }
 
     /**

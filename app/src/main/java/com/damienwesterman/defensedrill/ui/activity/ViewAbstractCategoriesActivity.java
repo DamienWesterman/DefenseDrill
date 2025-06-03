@@ -382,7 +382,7 @@ public class ViewAbstractCategoriesActivity extends AppCompatActivity {
                 }
             });
         recyclerView.setAdapter(adapter);
-        viewModel.getAbstractCategories().observe(this, adapter::submitList);
+        viewModel.getUiAbstractCategoriesList().observe(this, adapter::submitList);
     }
 
     /**

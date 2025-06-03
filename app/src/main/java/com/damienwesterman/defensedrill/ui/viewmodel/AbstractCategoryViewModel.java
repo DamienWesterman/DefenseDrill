@@ -55,7 +55,7 @@ public abstract class AbstractCategoryViewModel extends AndroidViewModel {
      * @return  LiveData object.
      */
     @NonNull
-    public abstract LiveData<List<AbstractCategoryEntity>> getAbstractCategories();
+    public abstract LiveData<List<AbstractCategoryEntity>> getUiAbstractCategoriesList();
 
     /**
      * Populate our list of abstract categories if it has not already been done.

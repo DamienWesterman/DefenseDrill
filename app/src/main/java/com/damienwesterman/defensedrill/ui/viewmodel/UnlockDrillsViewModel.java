@@ -57,7 +57,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
     private final DrillRepository repo;
 
     @Getter
-    private final MutableLiveData<List<Drill>> displayedDrills;
+    private final MutableLiveData<List<Drill>> uiDrillsList;
     @Nullable
     private List<Drill> allDrills;
     @Getter
@@ -72,7 +72,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
 
         this.repo = repo;
 
-        displayedDrills = new MutableLiveData<>();
+        uiDrillsList = new MutableLiveData<>();
         showKnownDrills = true;
         showUnknownDrills = true;
     }
@@ -81,7 +81,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
         if (null == allDrills) {
             new Thread(() -> {
                 allDrills = repo.getAllDrills();
-                displayedDrills.postValue(allDrills);
+                uiDrillsList.postValue(allDrills);
             }).start();
         }
     }
@@ -111,7 +111,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
      */
     public void displayFilteredList() {
         if (allDrills != null) {
-            displayedDrills.postValue(allDrills.stream()
+            uiDrillsList.postValue(allDrills.stream()
                 .filter(drill -> {
                     if (!showKnownDrills && drill.isKnownDrill()) {
                         return false;

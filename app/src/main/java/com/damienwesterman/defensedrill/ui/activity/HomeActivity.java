@@ -61,7 +61,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
-        - Rename all the viewModel lists/observables/etc to "uiList" or something?
         - Check all Doc comments for params/return lining up and having periods
         - Can we just use onCardClick for every activity?
         - Refactor utils into appropriate packages

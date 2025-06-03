@@ -34,7 +34,6 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
@@ -73,7 +72,8 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
      * a list in the form of {@code <stringPolicyName, policyEntitiesList>} in ascending order by
      * the policy name for consistency.
      */
-    private final MutableLiveData<List<Pair<String, List<WeeklyHourPolicyEntity>>>> uiList;
+    @Getter
+    private final MutableLiveData<List<Pair<String, List<WeeklyHourPolicyEntity>>>> uiPoliciesList;
     @Getter
     private List<WeeklyHourPolicyEntity> policies;
     @Getter
@@ -87,17 +87,13 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
         this.simulatedAttackRepo = simulatedAttackRepo;
         this.drillRepo = drillRepo;
-        this.uiList = new MutableLiveData<>();
+        this.uiPoliciesList = new MutableLiveData<>();
         this.policies = new ArrayList<>();
         this.policiesByName = new HashMap<>();
     }
 
-    public LiveData<List<Pair<String, List<WeeklyHourPolicyEntity>>>> getUiList() {
-        return this.uiList;
-    }
-
     public void loadPolicies() {
-        if (!uiList.isInitialized()) {
+        if (!uiPoliciesList.isInitialized()) {
             new Thread(this::loadAllPoliciesFromDb).start();
         }
     }
@@ -207,7 +203,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
 
         List<String> policyNames = new ArrayList<>(policiesByName.keySet());
         policyNames.sort(null);
-        uiList.postValue(policyNames.stream()
+        uiPoliciesList.postValue(policyNames.stream()
                 .map(policyName ->
                         new Pair<>(policyName, policiesByName.get(policyName)))
                 .collect(Collectors.toList()));

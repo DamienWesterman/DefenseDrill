@@ -54,7 +54,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class SubCategoryViewModel extends AbstractCategoryViewModel {
-    private final MutableLiveData<List<AbstractCategoryEntity>> subCategories;
+    private final MutableLiveData<List<AbstractCategoryEntity>> uiSubCategoriesList;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -63,7 +63,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
         super(application);
 
         this.repo = repo;
-        subCategories = new MutableLiveData<>();
+        uiSubCategoriesList = new MutableLiveData<>();
     }
 
     /**
@@ -71,8 +71,8 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      */
     @NonNull
     @Override
-    public LiveData<List<AbstractCategoryEntity>> getAbstractCategories() {
-        return subCategories;
+    public LiveData<List<AbstractCategoryEntity>> getUiAbstractCategoriesList() {
+        return uiSubCategoriesList;
     }
 
     /**
@@ -80,7 +80,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      */
     @Override
     public void populateAbstractCategories() {
-        if (null == subCategories.getValue()) {
+        if (null == uiSubCategoriesList.getValue()) {
             rePopulateAbstractCategories();
         }
     }
@@ -92,7 +92,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * @param categoryId Category ID to filter by.
      */
     public void populateAbstractCategories(long categoryId) {
-        if (null == subCategories.getValue()) {
+        if (null == uiSubCategoriesList.getValue()) {
             rePopulateAbstractCategories(categoryId);
         }
     }
@@ -102,7 +102,8 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      */
     @Override
     public void rePopulateAbstractCategories() {
-        executor.execute(() -> subCategories.postValue(new ArrayList<>(repo.getAllSubCategories())));
+        executor.execute(()
+                -> uiSubCategoriesList.postValue(new ArrayList<>(repo.getAllSubCategories())));
     }
 
     /**
@@ -112,7 +113,8 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
      * @param categoryId Category ID to filter by.
      */
     public void rePopulateAbstractCategories(long categoryId) {
-        executor.execute(() -> subCategories.postValue(new ArrayList<>(repo.getAllSubCategories(categoryId))));
+        executor.execute(() ->
+                uiSubCategoriesList.postValue(new ArrayList<>(repo.getAllSubCategories(categoryId))));
     }
 
     /**
@@ -121,12 +123,13 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
     @Override
     public void deleteAbstractCategory(@NonNull AbstractCategoryEntity entity) {
         executor.execute(() -> {
-            if (null != subCategories.getValue()
+            if (null != uiSubCategoriesList.getValue()
                     && SubCategoryEntity.class == entity.getClass()) {
                 // Must be a new list to trigger submitList() logic
-                List<AbstractCategoryEntity> newSubCategories = new ArrayList<>(subCategories.getValue());
+                List<AbstractCategoryEntity> newSubCategories =
+                        new ArrayList<>(uiSubCategoriesList.getValue());
                 newSubCategories.remove(entity);
-                subCategories.postValue(newSubCategories);
+                uiSubCategoriesList.postValue(newSubCategories);
                 repo.deleteSubCategories((SubCategoryEntity) entity);
             }
         });
@@ -198,7 +201,7 @@ public class SubCategoryViewModel extends AbstractCategoryViewModel {
     @Override
     public AbstractCategoryEntity findById(long id) {
         AbstractCategoryEntity ret = null;
-        List<AbstractCategoryEntity> allSubCategories = subCategories.getValue();
+        List<AbstractCategoryEntity> allSubCategories = uiSubCategoriesList.getValue();
 
         if (null != allSubCategories) {
             for (AbstractCategoryEntity subCategory : allSubCategories) {

@@ -73,6 +73,8 @@ public class CreateDrillViewModel extends AndroidViewModel {
         super(application);
 
         this.repo = repo;
+        loadAllCategories();
+        loadAllSubCategories();
     }
 
     /**
@@ -98,7 +100,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
     /**
      * Get the list of all categories in the database.
      * <br><br>
-     * {@link #loadAllCategories()} should have been called prior otherwise will return null.
+     * May return null if it has not loaded from the database yet.
      *
      * @return List of CategoryEntity objects.
      */
@@ -110,7 +112,7 @@ public class CreateDrillViewModel extends AndroidViewModel {
     /**
      * Get the list of all sub-categories in the database.
      * <br><br>
-     * {@link #loadAllSubCategories()} should have been called prior otherwise will return null.
+     * May return null if it has not loaded from the database yet.
      *
      * @return List of SubCategoryEntity objects.
      */
@@ -120,19 +122,18 @@ public class CreateDrillViewModel extends AndroidViewModel {
     }
 
     /**
-     * Load all categories from the database. Should be called before {@link #getAllCategories()}.
+     * Load all categories from the database.
      */
-    public void loadAllCategories() {
+    private void loadAllCategories() {
         if (null == allCategories) {
             executor.execute(() -> allCategories = repo.getAllCategories());
         }
     }
 
     /**
-     * Load all sub-categories from the database. Should be called before
-     * {@link #getAllSubCategories()}.
+     * Load all sub-categories from the database.
      */
-    public void loadAllSubCategories() {
+    private void loadAllSubCategories() {
         if (null == allSubCategories) {
             executor.execute(() -> allSubCategories = repo.getAllSubCategories());
         }

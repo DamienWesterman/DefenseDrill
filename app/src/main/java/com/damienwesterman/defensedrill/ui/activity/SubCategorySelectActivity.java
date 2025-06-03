@@ -110,7 +110,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
 
             CategoryViewModel categoryViewModel =
                     new ViewModelProvider(this).get(CategoryViewModel.class);
-            categoryViewModel.getAbstractCategories().observe(this, (categories) -> {
+            categoryViewModel.getUiAbstractCategoriesList().observe(this, (categories) -> {
                 CategoryEntity category = (CategoryEntity) categoryViewModel.findById(selectedCategoryId);
                 setCategoryTitle(null != category ? category.getName() : RANDOM_CATEGORY_NAME);
             });
@@ -173,7 +173,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
                 // Long Card Click Listener
                 null);
         recyclerView.setAdapter(adapter);
-        subCategoryViewModel.getAbstractCategories().observe(this, adapter::submitList);
+        subCategoryViewModel.getUiAbstractCategoriesList().observe(this, adapter::submitList);
     }
 
     private void setCategoryTitle(@NonNull String category) {
