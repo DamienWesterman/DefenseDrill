@@ -227,6 +227,12 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Display the popup to allow users to mark which of the new drills they know and update the
+     * database.
+     *
+     * @param newDrills List of drills downloaded from the server that were new.
+     */
     private void selectKnownDrillsPopup(@NonNull List<Drill> newDrills) {
         if (newDrills.isEmpty()) {
             UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");

@@ -246,8 +246,8 @@ public class DrillInfoViewModel extends AndroidViewModel {
      * Fetch and load instructions and related drills for the Drill. Drill has to have been
      * initialized otherwise nothing will happen.
      *
-     * @param unauthorizedCallback Callback for when 401 is returned
-     * @param failureCallback Callback for when the network request fails
+     * @param unauthorizedCallback  Callback for when 401 is returned.
+     * @param failureCallback       Callback for when the network request fails.
      */
     public void loadNetworkLinks(Runnable unauthorizedCallback, Consumer<String> failureCallback) {
         if (null != uiCurrentDrill.getValue() && null != uiCurrentDrill.getValue().getServerDrillId()) {
@@ -274,9 +274,9 @@ public class DrillInfoViewModel extends AndroidViewModel {
     /**
      * Handle failure to retrieve network links.
      *
-     * @param throwable Throwable given by Retrofit/RxJava
-     * @param unauthorizedCallback Callback for when 401 is returned
-     * @param failureCallback Callback for when the network request fails
+     * @param throwable             Throwable given by Retrofit/RxJava.
+     * @param unauthorizedCallback  Callback for when 401 is returned.
+     * @param failureCallback       Callback for when the network request fails.
      */
     private void handleLoadNetworkLinksFailure(@NonNull Throwable throwable,
                                                @NonNull Runnable unauthorizedCallback,
@@ -319,7 +319,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
     /**
      * Find the local Drill ID by a Drill's server ID.
      *
-     * @param serverId Server ID of the drill to find
+     * @param serverId Server ID of the drill to find.
      * @param callback Callback that consumes the found Drill's ID, or -1 if not found.
      */
     public void findDrillIdByServerId(@NonNull Long serverId,

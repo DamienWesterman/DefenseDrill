@@ -51,8 +51,8 @@ import androidx.room.RoomDatabase;
     /**
      * Build the DrillDatabase object.
      *
-     * @param applicationContext Application Context.
-     * @return DrillDatabase Object.
+     * @param applicationContext    Application Context.
+     * @return                      DrillDatabase Object.
      */
     /* package-private */ static DrillDatabase instantiate(Context applicationContext) {
         return Room.databaseBuilder(applicationContext, DrillDatabase.class,

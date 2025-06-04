@@ -247,8 +247,8 @@ public class DownloadDatabaseUseCase {
      * Return an observable that loads all drills updated after the timestamp on the server and
      * saves them locally.
      *
-     * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable for a List of Drill objects
+     * @param timestamp Timestamp of millis since epoch in UTC.
+     * @return          Observable for a List of Drill objects.
      */
     private Observable<List<Drill>> updateDrillsFromServer(long timestamp) {
         return apiRepo.getAllDrillsUpdatedAfterTimestamp(timestamp)
@@ -274,8 +274,8 @@ public class DownloadDatabaseUseCase {
      * Return an observable that loads all categories updated after the timestamp on the server and
      * saves them locally.
      *
-     * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable for a List of CategoryDTO objects
+     * @param timestamp Timestamp of millis since epoch in UTC.
+     * @return          Observable for a List of CategoryDTO objects.
      */
     private Observable<Response<List<CategoryDTO>>> updateCategoriesFromServer(long timestamp) {
         return apiRepo.getAllCategoriesUpdatedAfterTimestamp(timestamp)
@@ -303,8 +303,8 @@ public class DownloadDatabaseUseCase {
      * Return an observable that loads all sub-categories updated after the timestamp on the server
      * and saves them locally.
      *
-     * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable for a List of SubCategoryDTO objects
+     * @param timestamp Timestamp of millis since epoch in UTC.
+     * @return          Observable for a List of SubCategoryDTO objects.
      */
     private Observable<Response<List<SubCategoryDTO>>> updateSubCategoriesFromServer(long timestamp) {
         return apiRepo.getAllSubCategoriesUpdatedAfterTimestamp(timestamp)
@@ -331,9 +331,9 @@ public class DownloadDatabaseUseCase {
     /**
      * Convert a list of DTO objects into the appropriate entities and save them to the database.
      *
-     * @param drills List of drills to save
-     * @param isUpdate true if this is an update operation, false if it is an insert operation
-     * @return List of Drills that are new to the database
+     * @param drills    List of drills to save.
+     * @param isUpdate  true if this is an update operation, false if it is an insert operation.
+     * @return          List of Drills that are new to the database.
      */
     @NonNull
     private List<Drill> saveDrillsToDatabase(List<DrillDTO> drills, boolean isUpdate) {
@@ -415,8 +415,8 @@ public class DownloadDatabaseUseCase {
     /**
      * Convert a list of DTO objects into the appropriate entities and save them to the database.
      *
-     * @param categories List of categories to save
-     * @param isUpdate true if this is an update operation, false if it is an insert operation
+     * @param categories    List of categories to save.
+     * @param isUpdate      true if this is an update operation, false if it is an insert operation.
      */
     private void saveCategoriesToDatabase(List<CategoryDTO> categories, boolean isUpdate) {
         if (null == categories) {
@@ -493,8 +493,8 @@ public class DownloadDatabaseUseCase {
     /**
      * Convert a list of DTO objects into the appropriate entities and save them to the database.
      *
-     * @param subCategories List of subCategories to save
-     * @param isUpdate true if this is an update operation, false if it is an insert operation
+     * @param subCategories List of subCategories to save.
+     * @param isUpdate      true if this is an update operation, false if it is an insert operation.
      */
     private void saveSubCategoriesToDatabase(List<SubCategoryDTO> subCategories, boolean isUpdate) {
         if (null == subCategories) {
@@ -571,10 +571,10 @@ public class DownloadDatabaseUseCase {
     }
 
     /**
-     * Extract an error message from the throwable.
+     * Extract a user friendly error message from the throwable.
      *
-     * @param throwable Throwable
-     * @return String error message
+     * @param throwable Throwable to parse.
+     * @return          String error message.
      */
     @NonNull
     private String extractErrorMessage(@NonNull Throwable throwable) {

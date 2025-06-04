@@ -112,16 +112,16 @@ public class Constants {
     }
 
     public static final long USER_RANDOM_SELECTION = -1;
-    /** Expected name for a self defense CategoryEntity. Should match with the server */
+    /** Expected name for a self defense CategoryEntity. Should match with the server. */
     public static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
     public static final String SERVER_URL = BuildConfig.SERVER_URL;
 
-    /** Low Confidence index position of strings.xml's confidence_levels string-array */
+    /** Low Confidence index position of strings.xml's confidence_levels string-array. */
     private static final int LOW_CONFIDENCE_POSITION = 0;
-    /** Medium Confidence index position of strings.xml's confidence_levels string-array */
+    /** Medium Confidence index position of strings.xml's confidence_levels string-array. */
     private static final int MEDIUM_CONFIDENCE_POSITION = 1;
-    /** High Confidence index position of strings.xml's confidence_levels string-array */
+    /** High Confidence index position of strings.xml's confidence_levels string-array. */
     private static final int HIGH_CONFIDENCE_POSITION = 2;
 
     public static final String INTENT_PREFIX = "com.damienwesterman.defensedrill.";
@@ -132,21 +132,21 @@ public class Constants {
     public static final String INTENT_ACTION_SIMULATE_ATTACK =
             INTENT_PREFIX + "simulate_attack";
 
-    /** Should be accompanied by a long of the Category ID chosen */
+    /** Should be accompanied by a long of the Category ID chosen. */
     public static final String INTENT_EXTRA_CATEGORY_CHOICE = "category_choice";
-    /** Should be accompanied by a long of the SubCategory ID chosen */
+    /** Should be accompanied by a long of the SubCategory ID chosen. */
     public static final String INTENT_EXTRA_SUB_CATEGORY_CHOICE = "sub_category_choice";
-    /** Should be accompanied by a long of the Drill ID */
+    /** Should be accompanied by a long of the Drill ID. */
     public static final String INTENT_EXTRA_DRILL_ID = "drill_id";
-    /** Value does not matter */
+    /** Value does not matter. */
     public static final String INTENT_EXTRA_SIMULATED_ATTACK = "simulated_attack";
-    /** Value does not matter */
+    /** Value does not matter. */
     public static final String INTENT_EXTRA_VIEW_CATEGORIES = "view_categories";
-    /** Value does not matter */
+    /** Value does not matter. */
     public static final String INTENT_EXTRA_VIEW_SUB_CATEGORIES = "view_sub_categories";
-    /** Value should be an object of type {@link com.damienwesterman.defensedrill.data.remote.dto.DrillDTO} */
+    /** Value should be an object of type {@link com.damienwesterman.defensedrill.data.remote.dto.DrillDTO}. */
     public static final String INTENT_EXTRA_DRILL_DTO = "drill_dto";
-    /** Should be accompanied by an int of the index position of the instruction to be displayed */
+    /** Should be accompanied by an int of the index position of the instruction to be displayed. */
     public static final String INTENT_EXTRA_INSTRUCTION_INDEX = "instruction_index";
     /** Should be accompanied by a string of an instruction's video id. */
     public static final String INTENT_EXTRA_VIDEO_ID = "video_id";

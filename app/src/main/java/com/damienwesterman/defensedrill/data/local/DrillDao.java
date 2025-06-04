@@ -153,9 +153,11 @@ import java.util.Optional;
     @NonNull
     List<DrillSubCategoryJoinEntity> findAllSubCategoryJoinByCategoryId(long subCategoryId);
 
-    // Allow DrillEntity inserts to throw if there is an issue. Join tables should just replace for
-    // ease of insertions, as there are only two fields and no event observers, should not cause a
-    // problem.
+    /*
+    Allow DrillEntity inserts to throw if there is an issue. Join tables should just replace for
+    ease of insertions, as there are only two fields and no event observers, should not cause a
+    problem.
+     */
     @Insert
     long[] insert(DrillEntity... drills);
     @Insert(onConflict = OnConflictStrategy.REPLACE)

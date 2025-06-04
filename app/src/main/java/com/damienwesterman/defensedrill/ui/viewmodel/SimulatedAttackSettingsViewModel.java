@@ -170,6 +170,13 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Remove the provided weekly hours from the database.
+     *
+     * @param weeklyHours   List of policies denoted by their weekly hour to remove from the
+     *                      database.
+     * @param callback      Callback.
+     */
     public void removePolicies(@NonNull List<Integer> weeklyHours,
                                @NonNull OperationCompleteCallback callback) {
         new Thread(() -> {

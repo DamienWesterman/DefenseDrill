@@ -161,6 +161,11 @@ public class DefenseDrillNotificationManager {
         systemNotificationManager.notify(NOTIFICATION_ID_SIMULATED_ATTACKS, notification);
     }
 
+    /**
+     * Check if the user has granted us the Android notification permission in settings.
+     *
+     * @return true if Android notification permission is granted for the app.
+     */
     public boolean areNotificationsEnabled() {
         return systemNotificationManager.areNotificationsEnabled();
     }

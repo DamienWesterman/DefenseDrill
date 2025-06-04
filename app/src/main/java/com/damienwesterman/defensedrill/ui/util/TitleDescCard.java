@@ -83,12 +83,6 @@ public class TitleDescCard extends CardView {
         }
     }
 
-    /**
-     * Helper method to allow the setting of title and description from XML.
-     *
-     * @param context   Context.
-     * @param attrs     AttributeSet.
-     */
     private void init(@NonNull Context context, @Nullable AttributeSet attrs) {
         LayoutInflater.from(context).inflate(R.layout.layout_title_desc_card, this, true);
 

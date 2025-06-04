@@ -53,7 +53,7 @@ public class ApiRepo {
     /**
      * Get an observable for the API call to retrieve all Drills from the server.
      *
-     * @return Observable List of DrillDTO objects
+     * @return                          Observable List of DrillDTO objects.
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
     public Observable<Response<List<DrillDTO>>> getAllDrills()
@@ -71,8 +71,8 @@ public class ApiRepo {
      * Get an observable for the API call to retrieve all Drills from the server updated after the
      * given timestamp.
      *
-     * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable List of DrillDTO objects
+     * @param timestamp Timestamp of millis since epoch in UTC.
+     * @return          Observable List of DrillDTO objects.
      */
     public Observable<Response<List<DrillDTO>>> getAllDrillsUpdatedAfterTimestamp(long timestamp) {
         String jwt = sharedPrefs.getJwt();
@@ -87,7 +87,7 @@ public class ApiRepo {
     /**
      * Get an observable for the API call to retrieve all Categories from the server.
      *
-     * @return Observable List of CategoryDTO objects
+     * @return                          Observable List of CategoryDTO objects.
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
     public Observable<Response<List<CategoryDTO>>> getAllCategories()
@@ -105,8 +105,8 @@ public class ApiRepo {
      * Get an observable for the API call to retrieve all Categories from the server updated after
      * the given timestamp.
      *
-     * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable List of CategoryDTO objects
+     * @param timestamp Timestamp of millis since epoch in UTC.
+     * @return          Observable List of CategoryDTO objects.
      */
     public Observable<Response<List<CategoryDTO>>> getAllCategoriesUpdatedAfterTimestamp(long timestamp) {
         String jwt = sharedPrefs.getJwt();
@@ -121,7 +121,7 @@ public class ApiRepo {
     /**
      * Get an observable for the API call to retrieve all SubCategories from the server.
      *
-     * @return Observable List of SubCategoryDTO objects
+     * @return                          Observable List of SubCategoryDTO objects.
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
     public Observable<Response<List<SubCategoryDTO>>> getAllSubCategories()
@@ -139,8 +139,8 @@ public class ApiRepo {
      * Get an observable for the API call to retrieve all SubCategories from the server updated
      * after the given timestamp.
      *
-     * @param timestamp Timestamp of millis since epoch in UTC
-     * @return Observable List of SubCategoryDTO objects
+     * @param timestamp Timestamp of millis since epoch in UTC.
+     * @return          Observable List of SubCategoryDTO objects.
      */
     public Observable<Response<List<SubCategoryDTO>>> getAllSubCategoriesUpdatedAfterTimestamp(long timestamp) {
         String jwt = sharedPrefs.getJwt();
@@ -155,8 +155,8 @@ public class ApiRepo {
     /**
      * Get an observable for the API call to retrieve a Drill by its server ID.
      *
-     * @param serverDrillId Drill's server ID
-     * @return Observable DrillDTO
+     * @param serverDrillId             Drill's server ID.
+     * @return                          Observable DrillDTO.
      * @throws IllegalArgumentException Thrown if {@link SharedPrefs#getJwt()} is empty.
      */
     public Observable<DrillDTO> getDrill(@NonNull Long serverDrillId)

@@ -421,6 +421,11 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Create a display a popup for when there is no Category in the database titled "Self Defense",
+     * and alert the user that simulated attacks will not work and give them options to rectify the
+     * issue.
+     */
     public void noSelfDefenseDrillsPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         CharSequence[] options = {"Download Drills from Database", "Create \"Self Defense\" Category"};
@@ -565,7 +570,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     /**
      * Extract a list of policies from a popup. Performs input validation.
      *
-     * @param view                  View object for layout_policy_details_popup.xml
+     * @param view                  View object for layout_policy_details_popup.xml.
      * @param policyBeingModified   Policy name being modified, or null if creating a new one.
      * @param errorConsumer         Callback for error conditions.
      * @return                      List of correlated WeeklyHourPolicyEntity objects for a single

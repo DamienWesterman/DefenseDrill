@@ -70,8 +70,8 @@ public class DrillRepository {
     /**
      * Return a list of all Drills that belong to the specified category.
      *
-     * @param categoryId   ID of the specific category of drills.
-     * @return          List of Drill objects.
+     * @param categoryId    ID of the specific category of drills.
+     * @return              List of Drill objects.
      */
     @NonNull
     public synchronized List<Drill> getAllDrillsByCategoryId(long categoryId) {
@@ -81,7 +81,7 @@ public class DrillRepository {
     /**
      * Return a list of all Drills that belong to the specified sub category.
      *
-     * @param subCategoryId    ID of the specific sub category of drills.
+     * @param subCategoryId ID of the specific sub category of drills.
      * @return              List of Drill objects.
      */
     @NonNull
@@ -103,8 +103,8 @@ public class DrillRepository {
     /**
      * Return a list of all Drills that belong to both the specified category and sub category.
      *
-     * @param categoryId       ID of the specific category of drills.
-     * @param subCategoryId    ID of the specific sub category of drills.
+     * @param categoryId    ID of the specific category of drills.
+     * @param subCategoryId ID of the specific sub category of drills.
      * @return              List of Drill objects.
      */
     @NonNull
@@ -171,9 +171,11 @@ public class DrillRepository {
     /**
      * Insert the given drill(s).
      *
-     * @param drills    Drill(s) to insert.
-     * @throws SQLiteConstraintException If name is not unique, name is null, or a category/subcategory does not exist.
-     * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
+     * @param drills                        Drill(s) to insert.
+     * @throws SQLiteConstraintException    If name is not unique, name is null, or a category/
+     *                                      subcategory does not exist.
+     * @return                              True if <i>all</i> inserts succeeded. False if <i>ANY
+     *                                      SINGLE</i> insert fails.
      */
     public synchronized boolean insertDrills(Drill... drills) {
         AtomicBoolean success = new AtomicBoolean(true);
@@ -226,9 +228,11 @@ public class DrillRepository {
     /**
      * Update the given drill(s).
      *
-     * @param drills    Drill(s) to update.
-     * @throws SQLiteConstraintException If name is not unique, name is null, or a category/subcategory does not exist.
-     * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
+     * @param drills                        Drill(s) to update.
+     * @throws SQLiteConstraintException    If name is not unique, name is null, or a category/
+     *                                      subcategory does not exist.
+     * @return                              True if <i>all</i> updates succeeded. False if <i>ANY
+     *                                      SINGLE</i> updates fails.
      */
     public synchronized boolean updateDrills(Drill... drills) {
         AtomicBoolean success = new AtomicBoolean(true);
@@ -366,9 +370,10 @@ public class DrillRepository {
     /**
      * Insert the given category(s).
      *
-     * @param categories    Category(s) to insert.
-     * @throws SQLiteConstraintException If name is not unique or name is null.
-     * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
+     * @param categories                    Category(s) to insert.
+     * @throws SQLiteConstraintException    If name is not unique or name is null.
+     * @return                              True if <i>all</i> inserts succeeded. False if <i>ANY
+     *                                      SINGLE</i> insert fails.
      */
     public synchronized boolean insertCategories(CategoryEntity... categories) {
         AtomicBoolean success = new AtomicBoolean(true);
@@ -394,9 +399,10 @@ public class DrillRepository {
     /**
      * Update the given category(s).
      *
-     * @param categories    Category(s) to update.
-     * @throws SQLiteConstraintException If name is not unique or name is null.
-     * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
+     * @param categories                    Category(s) to update.
+     * @throws SQLiteConstraintException    If name is not unique or name is null.
+     * @return                              True if <i>all</i> updates succeeded. False if <i>ANY
+     *                                      SINGLE</i> updates fails.
      */
     public synchronized boolean updateCategories(CategoryEntity... categories) {
         AtomicBoolean success = new AtomicBoolean(true);
@@ -452,8 +458,8 @@ public class DrillRepository {
     /**
      * Get all subCategories of a given category.
      *
-     * @param categoryId   ID of the category to search for its subCategories.
-     * @return          List of SubCategoryEntity objects.
+     * @param categoryId    ID of the category to search for its subCategories.
+     * @return              List of SubCategoryEntity objects.
      */
     @NonNull
     public synchronized List<SubCategoryEntity> getAllSubCategories(long categoryId) {
@@ -488,9 +494,10 @@ public class DrillRepository {
     /**
      * Insert the given subCategory(s).
      *
-     * @param subCategories SubCategory(s) to insert.
-     * @throws SQLiteConstraintException If name is not unique or name is null.
-     * @return boolean. True if <i>all</i> inserts succeeded. False if <i>ANY SINGLE</i> insert fails.
+     * @param subCategories                 SubCategory(s) to insert.
+     * @throws SQLiteConstraintException    If name is not unique or name is null.
+     * @return                              True if <i>all</i> inserts succeeded. False if <i>ANY
+     *                                      SINGLE</i> insert fails.
      */
     public synchronized boolean insertSubCategories(SubCategoryEntity... subCategories) {
         AtomicBoolean success = new AtomicBoolean(true);
@@ -517,9 +524,10 @@ public class DrillRepository {
     /**
      * Update the given subCategory(s).
      *
-     * @param subCategories SubCategory(s) to update.
-     * @throws SQLiteConstraintException If name is not unique or name is null.
-     * @return boolean. True if <i>all</i> updates succeeded. False if <i>ANY SINGLE</i> updates fails.
+     * @param subCategories                 SubCategory(s) to update.
+     * @throws SQLiteConstraintException    If name is not unique or name is null.
+     * @return                              True if <i>all</i> updates succeeded. False if <i>ANY
+     *                                      SINGLE</i> updates fails.
      */
     public synchronized boolean updateSubCategories(SubCategoryEntity... subCategories) {
         AtomicBoolean success = new AtomicBoolean(true);

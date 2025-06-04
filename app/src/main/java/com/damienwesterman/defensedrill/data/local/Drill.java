@@ -77,7 +77,7 @@ public class Drill {
     private List<SubCategoryEntity> subCategories;
 
     /**
-     * Default Constructor
+     * Default Constructor.
      */
     @Ignore
     public Drill() {
@@ -87,11 +87,11 @@ public class Drill {
     }
 
     /**
-     * Parameterized constructor - ROOM DB ONLY
+     * Parameterized constructor - ROOM DB ONLY.
      *
-     * @param drillEntity       DrillEntity
-     * @param categories        CategoryEntity list
-     * @param subCategories     SubCategoryEntity list
+     * @param drillEntity       DrillEntity.
+     * @param categories        CategoryEntity list.
+     * @param subCategories     SubCategoryEntity list.
      */
     Drill(@NonNull DrillEntity drillEntity, @NonNull List<CategoryEntity> categories,
           @NonNull List<SubCategoryEntity> subCategories) {
@@ -110,8 +110,8 @@ public class Drill {
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
      * @param isKnownDrill  Represents whether the user knows the drill and if it should be used
      *                      during drill generation.
-     * @param categories    List of categories the Drill belongs to
-     * @param subCategories List of subCategories the Drill belongs to
+     * @param categories    List of categories the Drill belongs to.
+     * @param subCategories List of subCategories the Drill belongs to.
      */
     @Ignore
     public Drill(@NonNull String name, long lastDrilled, int confidence,
@@ -125,7 +125,7 @@ public class Drill {
     }
 
     /**
-     * Internal use only
+     * Internal use only.
      */
     @NonNull
     DrillEntity getDrillEntity() {
@@ -133,7 +133,7 @@ public class Drill {
     }
 
     /**
-     * Room DB only
+     * Room DB only.
      */
     void setDrillEntity(@NonNull DrillEntity drillEntity) {
         this.drillEntity = drillEntity;
@@ -144,7 +144,7 @@ public class Drill {
     }
 
     /**
-     * Room DB only
+     * Room DB only.
      */
     void setId(long id) {
         this.drillEntity.setId(id);

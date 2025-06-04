@@ -65,8 +65,8 @@ public class AuthRepo {
     /**
      * Attempt to log in with the provided credentials.
      *
-     * @param login Login credentials.
-     * @param callback Callback.
+     * @param login     Login credentials.
+     * @param callback  Callback.
      */
     public void attemptLogin(@NonNull LoginDTO login,
                              @NonNull OperationCompleteCallback callback) {

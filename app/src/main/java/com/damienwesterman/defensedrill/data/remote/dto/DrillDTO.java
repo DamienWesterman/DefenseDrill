@@ -74,9 +74,9 @@ public class DrillDTO implements Serializable {
     /**
      * Convert the DTO into the locally used Drill object.
      *
-     * @param categoryMap Map of CategoryEntity objects mapped by their Server Id.
-     * @param subCategoryMap Map of SubCategoryEntity objects mapped by their Server Id.
-     * @return Drill object.
+     * @param categoryMap       Map of CategoryEntity objects mapped by their Server Id.
+     * @param subCategoryMap    Map of SubCategoryEntity objects mapped by their Server Id.
+     * @return                  Drill object.
      */
     @NonNull
     public Drill toDrill(@NonNull final Map<Long, CategoryEntity> categoryMap,

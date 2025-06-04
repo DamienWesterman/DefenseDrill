@@ -61,8 +61,6 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Refactor to do list:
         /*
-        - Check all Doc comments for params/return lining up and having periods
-        - Can we just use onCardClick for every activity?
         - Refactor utils into appropriate packages
         - Replace callback classes with lambdas? Maybe keep OperationCompleteCallback
         - Simplify insert operations like in SimulatedAttackRepo

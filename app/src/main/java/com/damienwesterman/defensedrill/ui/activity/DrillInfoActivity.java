@@ -96,11 +96,11 @@ public class DrillInfoActivity extends AppCompatActivity {
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
         GENERATED_DRILL,
-        /** We started at {@link ActivityState#GENERATED_DRILL}, but user skipped at least one Drill */
+        /** We started at {@link ActivityState#GENERATED_DRILL}, but user skipped at least one Drill. */
         REGENERATED_DRILL,
-        /** This drill was not generated and we are only displaying its information */
+        /** This drill was not generated and we are only displaying its information. */
         DISPLAYING_DRILL,
-        /** Same as {@link ActivityState#DISPLAYING_DRILL} but started from a simulated attack */
+        /** Same as {@link ActivityState#DISPLAYING_DRILL} but started from a simulated attack. */
         SIMULATED_ATTACK_DRILL
     }
 
@@ -918,7 +918,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * Launch the activity to view a specific set of instructions.
      *
      * @param instructionsIndex Index position of the instructions in the list returned by
-*    *                          {@link DrillInfoViewModel#getUiInstructionsList()}
+*    *                          {@link DrillInfoViewModel#getUiInstructionsList()}.
      */
     public void viewInstructions(int instructionsIndex) {
         DrillDTO drillDTO = viewModel.getDrillDTO();
@@ -936,7 +936,7 @@ public class DrillInfoActivity extends AppCompatActivity {
      * Launch the activity to view a specific related drill.
      *
      * @param relatedDrillIndex Index position of the related drill in the list returned by
-     *                          {@link DrillInfoViewModel#getUiRelatedDrillsList()}
+     *                          {@link DrillInfoViewModel#getUiRelatedDrillsList()}.
      */
     public void viewRelatedDrills(int relatedDrillIndex) {
         DrillDTO drillDTO = viewModel.getDrillDTO();
@@ -961,7 +961,7 @@ public class DrillInfoActivity extends AppCompatActivity {
     /**
      * Set up the UI for the instructions drop down menu.
      *
-     * @param instructions List of InstructionDTO objects
+     * @param instructions List of InstructionDTO objects.
      */
     private void setUpInstructions(@NonNull List<InstructionsDTO> instructions) {
         if (!instructions.isEmpty()) {

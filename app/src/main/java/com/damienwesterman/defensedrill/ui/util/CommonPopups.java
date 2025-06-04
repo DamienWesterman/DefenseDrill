@@ -80,7 +80,7 @@ public class CommonPopups {
     /**
      * Display a popup for the user to log in to the backend server.
      *
-     * @param callback Callback
+     * @param callback Callback.
      */
     public void displayLoginPopup(@Nullable OperationCompleteCallback callback) {
         if (!internetConnection.isNetworkConnected()) {

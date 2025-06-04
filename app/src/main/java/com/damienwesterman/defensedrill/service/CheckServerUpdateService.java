@@ -101,6 +101,11 @@ public class CheckServerUpdateService extends Service {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+
+    /**
+     * Check the backend if there has been any updates since our last download. If so, send the user
+     * a notification that they should download the drills from the backend.
+     */
     private void checkForDatabaseUpdate() {
         long lastUpdate = sharedPrefs.getLastDrillUpdateTime();
         if (internetConnection.isNetworkConnected()
