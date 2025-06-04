@@ -53,7 +53,6 @@ import dagger.hilt.android.scopes.ActivityScoped;
 /**
  * Common Popups used in multiple different activities.
  */
-// TODO: Move this to a use case obvi
 @ActivityScoped
 public class CommonPopups {
     private final Context context;

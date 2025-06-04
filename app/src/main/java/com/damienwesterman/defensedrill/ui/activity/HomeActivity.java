@@ -59,11 +59,6 @@ public class HomeActivity extends AppCompatActivity {
     // TODO: THEN prompt the user for unrestricted background usage:
         // https://stackoverflow.com/a/54852199
 
-    // TODO: Refactor to do list:
-        /*
-        - Refactor utils into appropriate packages
-        - Simplify insert operations like in SimulatedAttackRepo
-         */
     private static boolean isUpdateServiceStarted = false;
 
     private LinearLayout rootView;

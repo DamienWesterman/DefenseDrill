@@ -62,7 +62,6 @@ public class SimulatedAttackRepo {
      * @param policies  WeeklyHourPolicyEntity objects to create or update.
      * @return          boolean if all inserts were successful.
      */
-    // TODO: Do this for all insert operations
     public synchronized boolean insertPolicies(WeeklyHourPolicyEntity... policies) {
         int numInserts = this.weeklyHourPolicyDao.insertWeeklyHourPolicy(policies).length;
         return policies.length == numInserts;
