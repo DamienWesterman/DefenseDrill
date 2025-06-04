@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,21 +56,27 @@ import lombok.ToString;
 @Builder
 @ToString
 public class DrillDTO implements Serializable {
+    @NonNull
     private Long id;
+    @NonNull
     private String name;
+    @NonNull
     private List<CategoryDTO> categories;
     @SerializedName(value = "sub_categories")
+    @NonNull
     private List<SubCategoryDTO> subCategories;
+    @NonNull
     private List<InstructionsDTO> instructions;
     @SerializedName("related_drills")
+    @NonNull
     private List<RelatedDrillDTO> relatedDrills;
 
     /**
      * Convert the DTO into the locally used Drill object.
      *
-     * @param categoryMap Map of CategoryEntity objects mapped by their Server Id.
-     * @param subCategoryMap Map of SubCategoryEntity objects mapped by their Server Id.
-     * @return Drill object.
+     * @param categoryMap       Map of CategoryEntity objects mapped by their Server Id.
+     * @param subCategoryMap    Map of SubCategoryEntity objects mapped by their Server Id.
+     * @return                  Drill object.
      */
     @NonNull
     public Drill toDrill(@NonNull final Map<Long, CategoryEntity> categoryMap,
@@ -87,19 +94,15 @@ public class DrillDTO implements Serializable {
 
         for (CategoryDTO category : this.categories) {
             if (categoryMap.containsKey(category.getId())) {
-                if (null == categoryMap.get(category.getId())) {
-                    continue;
-                }
-                ret.addCategory(categoryMap.get(category.getId()));
+                Optional.ofNullable(categoryMap.get(category.getId()))
+                    .ifPresent(ret::addCategory);
             }
         }
 
         for (SubCategoryDTO subCategory : this.subCategories) {
             if (subCategoryMap.containsKey(subCategory.getId())) {
-                if (null == subCategoryMap.get(subCategory.getId())) {
-                    continue;
-                }
-                ret.addSubCategory(subCategoryMap.get(subCategory.getId()));
+                Optional.ofNullable(subCategoryMap.get(subCategory.getId()))
+                    .ifPresent(ret::addSubCategory);
             }
         }
 

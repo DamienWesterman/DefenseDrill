@@ -38,8 +38,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
-import com.damienwesterman.defensedrill.ui.activities.DrillInfoActivity;
-import com.damienwesterman.defensedrill.ui.activities.WebDrillOptionsActivity;
+import com.damienwesterman.defensedrill.ui.activity.DrillInfoActivity;
+import com.damienwesterman.defensedrill.ui.activity.WebDrillOptionsActivity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,7 +57,9 @@ public class DefenseDrillNotificationManager {
     private static final int NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE = 1;
     private static final int NOTIFICATION_ID_SIMULATED_ATTACKS = 2;
 
+    @NonNull
     private final Context context;
+    @NonNull
     private final NotificationManager systemNotificationManager;
 
     private boolean initSuccess = false;
@@ -144,7 +146,7 @@ public class DefenseDrillNotificationManager {
         );
 
         String contentText =
-                "You have to defend yourself from the following attack:\n" + drill.getName();
+                "You have to defend yourself by using:\n" + drill.getName();
         Notification notification =
             new NotificationCompat.Builder(context, CHANNEL_ID_SIMULATED_ATTACKS)
                 .setSmallIcon(R.drawable.danger_alert_icon)
@@ -159,6 +161,11 @@ public class DefenseDrillNotificationManager {
         systemNotificationManager.notify(NOTIFICATION_ID_SIMULATED_ATTACKS, notification);
     }
 
+    /**
+     * Check if the user has granted us the Android notification permission in settings.
+     *
+     * @return true if Android notification permission is granted for the app.
+     */
     public boolean areNotificationsEnabled() {
         return systemNotificationManager.areNotificationsEnabled();
     }

@@ -31,8 +31,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 
-import org.jetbrains.annotations.NotNull;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +40,7 @@ import lombok.experimental.SuperBuilder;
 @Entity(indices = {@Index(value = {"name"}, unique = true)}, tableName = SubCategoryEntity.TABLE_NAME)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @Getter
 @Setter
 public class SubCategoryEntity extends AbstractCategoryEntity {
@@ -56,7 +54,7 @@ public class SubCategoryEntity extends AbstractCategoryEntity {
      * @param name          Name of the subCategory.
      * @param description   Description of the subCategory.
      */
-    protected SubCategoryEntity(long id, @NotNull String name, @NonNull String description) {
+    protected SubCategoryEntity(long id, @NonNull String name, @NonNull String description) {
         super(id, name, description);
     }
 
@@ -67,7 +65,7 @@ public class SubCategoryEntity extends AbstractCategoryEntity {
      * @param description   Description of the subCategory.
      */
     @Ignore
-    public SubCategoryEntity(@NotNull String name, @NonNull String description) {
+    public SubCategoryEntity(@NonNull String name, @NonNull String description) {
         super(name, description);
     }
 

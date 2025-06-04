@@ -26,12 +26,13 @@
 
 package com.damienwesterman.defensedrill.data.local;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.damienwesterman.defensedrill.utils.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,6 +61,7 @@ public class WeeklyHourPolicyEntity {
     @ColumnInfo(name = "weekly_hour")
     private int weeklyHour;
 
+    @NonNull
     private Constants.SimulatedAttackFrequency frequency;
 
     private boolean active;
@@ -69,5 +71,6 @@ public class WeeklyHourPolicyEntity {
      * among unrelated policies.
      */
     @ColumnInfo(name = "policy_name")
+    @NonNull
     private String policyName;
 }

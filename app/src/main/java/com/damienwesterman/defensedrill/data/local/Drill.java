@@ -26,13 +26,12 @@
 
 package com.damienwesterman.defensedrill.data.local;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Ignore;
 import androidx.room.Junction;
 import androidx.room.Relation;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +51,7 @@ public class Drill {
     public static final int MEDIUM_CONFIDENCE = 2;
     public static final int LOW_CONFIDENCE = 4;
     @Embedded
+    @NonNull
     private DrillEntity drillEntity;
 
     @Setter
@@ -62,6 +62,7 @@ public class Drill {
             associateBy = @Junction(value = DrillCategoryJoinEntity.class,
                     parentColumn = "drill_id", entityColumn = "category_id")
     )
+    @NonNull
     private List<CategoryEntity> categories;
 
     @Setter
@@ -72,10 +73,11 @@ public class Drill {
             associateBy = @Junction(value = DrillSubCategoryJoinEntity.class,
                     parentColumn = "drill_id", entityColumn = "sub_category_id")
     )
+    @NonNull
     private List<SubCategoryEntity> subCategories;
 
     /**
-     * Default Constructor
+     * Default Constructor.
      */
     @Ignore
     public Drill() {
@@ -85,13 +87,14 @@ public class Drill {
     }
 
     /**
-     * Parameterized constructor - ROOM DB ONLY
+     * Parameterized constructor - ROOM DB ONLY.
      *
-     * @param drillEntity       DrillEntity
-     * @param categories        CategoryEntity list
-     * @param subCategories     SubCategoryEntity list
+     * @param drillEntity       DrillEntity.
+     * @param categories        CategoryEntity list.
+     * @param subCategories     SubCategoryEntity list.
      */
-    Drill(DrillEntity drillEntity, List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
+    Drill(@NonNull DrillEntity drillEntity, @NonNull List<CategoryEntity> categories,
+          @NonNull List<SubCategoryEntity> subCategories) {
         this.drillEntity = drillEntity;
         this.categories = categories;
         this.subCategories = subCategories;
@@ -107,13 +110,14 @@ public class Drill {
      * @param serverDrillId ID of this drill on the server, for retrieving drill information
      * @param isKnownDrill  Represents whether the user knows the drill and if it should be used
      *                      during drill generation.
-     * @param categories    List of categories the Drill belongs to
-     * @param subCategories List of subCategories the Drill belongs to
+     * @param categories    List of categories the Drill belongs to.
+     * @param subCategories List of subCategories the Drill belongs to.
      */
     @Ignore
-    public Drill(@NotNull String name, long lastDrilled, int confidence,
-                 String notes, @Nullable Long serverDrillId, boolean isKnownDrill,
-                 List<CategoryEntity> categories, List<SubCategoryEntity> subCategories) {
+    public Drill(@NonNull String name, long lastDrilled, int confidence,
+                 @Nullable String notes, @Nullable Long serverDrillId, boolean isKnownDrill,
+                 @NonNull List<CategoryEntity> categories,
+                 @NonNull List<SubCategoryEntity> subCategories) {
         this.drillEntity = new DrillEntity(name, lastDrilled, confidence, notes,
                                             serverDrillId, isKnownDrill);
         this.categories = categories;
@@ -121,16 +125,17 @@ public class Drill {
     }
 
     /**
-     * Internal use only
+     * Internal use only.
      */
+    @NonNull
     DrillEntity getDrillEntity() {
         return drillEntity;
     }
 
     /**
-     * Room DB only
+     * Room DB only.
      */
-    void setDrillEntity(DrillEntity drillEntity) {
+    void setDrillEntity(@NonNull DrillEntity drillEntity) {
         this.drillEntity = drillEntity;
     }
 
@@ -139,17 +144,18 @@ public class Drill {
     }
 
     /**
-     * Room DB only
+     * Room DB only.
      */
     void setId(long id) {
         this.drillEntity.setId(id);
     }
 
+    @NonNull
     public String getName() {
         return this.drillEntity.getName();
     }
 
-    public void setName(@NotNull String name) {
+    public void setName(@NonNull String name) {
         this.drillEntity.setName(name);
     }
 
@@ -169,19 +175,21 @@ public class Drill {
         this.drillEntity.setConfidence(confidence);
     }
 
+    @Nullable
     public String getNotes() {
         return this.drillEntity.getNotes();
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(@Nullable String notes) {
         this.drillEntity.setNotes(notes);
     }
 
+    @Nullable
     public Long getServerDrillId() {
         return this.drillEntity.getServerDrillId();
     }
 
-    public void setServerDrillId(Long serverDrillId) {
+    public void setServerDrillId(@Nullable Long serverDrillId) {
         this.drillEntity.setServerDrillId(serverDrillId);
     }
 
@@ -193,19 +201,19 @@ public class Drill {
         this.drillEntity.setKnownDrill(isKnownDrill);
     }
 
-    public void addCategory(CategoryEntity category) {
+    public void addCategory(@NonNull CategoryEntity category) {
         this.categories.add(category);
     }
 
-    public void removeCategory(CategoryEntity category) {
+    public void removeCategory(@NonNull CategoryEntity category) {
         this.categories.remove(category);
     }
 
-    public void addSubCategory(SubCategoryEntity subCategory) {
+    public void addSubCategory(@NonNull SubCategoryEntity subCategory) {
         this.subCategories.add(subCategory);
     }
 
-    public void removeSubCategory(SubCategoryEntity subCategory) {
+    public void removeSubCategory(@NonNull SubCategoryEntity subCategory) {
         this.subCategories.remove(subCategory);
     }
 

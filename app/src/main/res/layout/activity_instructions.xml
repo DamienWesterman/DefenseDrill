@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".ui.activities.InstructionsActivity">
+    tools:context=".ui.activity.InstructionsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/appToolbar"

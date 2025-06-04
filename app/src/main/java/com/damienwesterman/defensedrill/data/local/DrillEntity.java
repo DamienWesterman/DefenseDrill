@@ -56,6 +56,7 @@ import lombok.Setter;
     private long lastDrilled;
     /** Should correspond to values such as {@link Drill#LOW_CONFIDENCE} */
     private int confidence;
+    @Nullable
     private String notes;
     /** ID of this drill on the server, for retrieving instructions and videos */
     @Nullable
@@ -84,13 +85,13 @@ import lombok.Setter;
      * @param lastDrilled   Date (in milliseconds since epoch) the drill was last drilled.
      * @param confidence    Confidence level (HIGH/MEDIUM/LOW_CONFIDENCE).
      * @param notes         User notes on the drill.
-     * @param serverDrillId ID of this drill on the server, for retrieving drill information
-     * @param isKnownDrill    Represents whether the user knows the drill and if it should be used
+     * @param serverDrillId ID of this drill on the server, for retrieving drill information.
+     * @param isKnownDrill  Represents whether the user knows the drill and if it should be used
      *                      during drill generation.
      */
     @Ignore
     public DrillEntity(@NonNull String name, long lastDrilled, int confidence,
-                       String notes, @Nullable Long serverDrillId, boolean isKnownDrill) {
+                       @Nullable String notes, @Nullable Long serverDrillId, boolean isKnownDrill) {
         this.name = name;
         this.lastDrilled = lastDrilled;
         this.confidence = confidence;

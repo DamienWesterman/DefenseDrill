@@ -27,9 +27,8 @@
 package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.PrimaryKey;
-
-import org.jetbrains.annotations.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -45,7 +44,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @EqualsAndHashCode
 @ToString
 public abstract class AbstractCategoryEntity {
@@ -55,9 +54,10 @@ public abstract class AbstractCategoryEntity {
     private String name;
     @NonNull
     private String description;
+    @Nullable
     private Long serverId;
 
-    protected AbstractCategoryEntity(long id, @NotNull String name, @NonNull String description) {
+    protected AbstractCategoryEntity(long id, @NonNull String name, @NonNull String description) {
         this.id = id;
         this.name = name;
         this.description = description;

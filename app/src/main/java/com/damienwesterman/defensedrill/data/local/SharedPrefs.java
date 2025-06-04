@@ -58,9 +58,9 @@ public class SharedPrefs {
     /**
      * Private constructor.
      *
-     * @param applicationContext Application Context
+     * @param applicationContext Application Context.
      */
-    public SharedPrefs(Context applicationContext) {
+    public SharedPrefs(@NonNull Context applicationContext) {
         sharedPrefs = applicationContext
                 .getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
 

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".ui.activities.SubCategorySelectActivity">
+    tools:context=".ui.activity.SubCategorySelectActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/appToolbar"
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+    <com.damienwesterman.defensedrill.ui.view.TitleDescCard
         android:id="@+id/randomSubCategoryCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

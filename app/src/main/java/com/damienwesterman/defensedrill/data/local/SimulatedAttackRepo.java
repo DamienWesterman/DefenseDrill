@@ -28,7 +28,7 @@ package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
 
-import com.damienwesterman.defensedrill.utils.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import java.util.List;
 
@@ -62,8 +62,7 @@ public class SimulatedAttackRepo {
      * @param policies  WeeklyHourPolicyEntity objects to create or update.
      * @return          boolean if all inserts were successful.
      */
-    // TODO: Do this for all insert operations (including nonnull annotation)
-    public synchronized boolean insertPolicies(@NonNull WeeklyHourPolicyEntity... policies) {
+    public synchronized boolean insertPolicies(WeeklyHourPolicyEntity... policies) {
         int numInserts = this.weeklyHourPolicyDao.insertWeeklyHourPolicy(policies).length;
         return policies.length == numInserts;
     }
@@ -75,7 +74,7 @@ public class SimulatedAttackRepo {
      * @param weeklyHours   WeeklyHourPolicyEntity objects to delete.
      * @return              boolean if all deletes were successful.
      */
-    public synchronized boolean deletePolicies(@NonNull Integer... weeklyHours) {
+    public synchronized boolean deletePolicies(Integer... weeklyHours) {
         WeeklyHourPolicyEntity[] policies = new WeeklyHourPolicyEntity[weeklyHours.length];
         int i = 0;
         for (int weeklyHour : weeklyHours) {

@@ -30,7 +30,7 @@ import android.util.Log;
 import android.webkit.URLUtil;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
-import com.damienwesterman.defensedrill.utils.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import javax.inject.Singleton;
 

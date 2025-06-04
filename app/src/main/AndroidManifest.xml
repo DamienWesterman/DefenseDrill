@@ -20,102 +20,102 @@
         android:theme="@style/Theme.DefenseDrill"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activities.InstructionsVideoActivity"
+            android:name=".ui.activity.InstructionsVideoActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.InstructionsActivity">
+            android:parentActivityName=".ui.activity.InstructionsActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.UnlockDrillsActivity"
+            android:name=".ui.activity.UnlockDrillsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity" >
+            android:parentActivityName=".ui.activity.CustomizeDatabaseActivity" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.SimulatedAttackSettingsActivity"
+            android:name=".ui.activity.SimulatedAttackSettingsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.HomeActivity">
+            android:parentActivityName=".ui.activity.HomeActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.WebDrillOptionsActivity"
+            android:name=".ui.activity.WebDrillOptionsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.HomeActivity">
+            android:parentActivityName=".ui.activity.HomeActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.CustomizeDatabaseActivity"
+            android:name=".ui.activity.CustomizeDatabaseActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.HomeActivity">
+            android:parentActivityName=".ui.activity.HomeActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.ViewAbstractCategoriesActivity"
+            android:name=".ui.activity.ViewAbstractCategoriesActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity">
+            android:parentActivityName=".ui.activity.CustomizeDatabaseActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.CreateDrillActivity"
+            android:name=".ui.activity.CreateDrillActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.ViewDrillsActivity">
+            android:parentActivityName=".ui.activity.ViewDrillsActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.ViewDrillsActivity"
+            android:name=".ui.activity.ViewDrillsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.CustomizeDatabaseActivity">
+            android:parentActivityName=".ui.activity.CustomizeDatabaseActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.DrillInfoActivity"
+            android:name=".ui.activity.DrillInfoActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.InstructionsActivity"
+            android:name=".ui.activity.InstructionsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.DrillInfoActivity">
+            android:parentActivityName=".ui.activity.DrillInfoActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.SubCategorySelectActivity"
+            android:name=".ui.activity.SubCategorySelectActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.CategorySelectActivity">
+            android:parentActivityName=".ui.activity.CategorySelectActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.CategorySelectActivity"
+            android:name=".ui.activity.CategorySelectActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.HomeActivity">
+            android:parentActivityName=".ui.activity.HomeActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".ui.activities.HomeActivity"
+            android:name=".ui.activity.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

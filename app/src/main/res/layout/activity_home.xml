@@ -25,9 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context=".ui.activities.HomeActivity" >
+        tools:context=".ui.activity.HomeActivity" >
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/generateDrillCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             app:description="@string/generate_drills_description"
             android:onClick="onCardClick"/>
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/customizeDatabaseCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             app:description="@string/customize_database_description"
             android:onClick="onCardClick"/>
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/simulatedAttackSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             app:description="@string/simulated_attack_settings_description"
             android:onClick="onCardClick" />
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/webDrillOptionsCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
             app:description="@string/web_drill_options_description"
             android:onClick="onCardClick" />
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/feedbackCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

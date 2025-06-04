@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.damienwesterman.defensedrill.ui.utils.PolicyDetailsCard
+    <com.damienwesterman.defensedrill.ui.view.PolicyDetailsCard
         android:id="@+id/cardViewHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

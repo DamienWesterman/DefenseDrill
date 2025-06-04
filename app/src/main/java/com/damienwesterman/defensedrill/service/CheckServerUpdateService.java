@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
@@ -65,7 +66,7 @@ public class CheckServerUpdateService extends Service {
     // =============================================================================================
     // Service Creation Methods
     // =============================================================================================
-    public static void startService(Context context) {
+    public static void startService(@NonNull Context context) {
         Intent intent = new Intent(context, CheckServerUpdateService.class);
         context.startService(intent);
     }
@@ -100,6 +101,11 @@ public class CheckServerUpdateService extends Service {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
+
+    /**
+     * Check the backend if there has been any updates since our last download. If so, send the user
+     * a notification that they should download the drills from the backend.
+     */
     private void checkForDatabaseUpdate() {
         long lastUpdate = sharedPrefs.getLastDrillUpdateTime();
         if (internetConnection.isNetworkConnected()

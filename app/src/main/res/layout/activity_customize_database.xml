@@ -25,9 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context=".ui.activities.CustomizeDatabaseActivity" >
+        tools:context=".ui.activity.CustomizeDatabaseActivity" >
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/viewDrillsCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             app:description="@string/customize_drills_description"
             android:onClick="onCardClick" />
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/unlockDrillsCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             app:description="@string/unlock_drills_description"
             android:onClick="onCardClick" />
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/viewCategoriesCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             app:description="@string/customize_categories_description"
             android:onClick="onCardClick" />
 
-        <com.damienwesterman.defensedrill.ui.utils.TitleDescCard
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/viewSubCategoriesCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
