@@ -146,7 +146,7 @@ public class DefenseDrillNotificationManager {
         );
 
         String contentText =
-                "You have to defend yourself from the following attack:\n" + drill.getName();
+                "You have to defend yourself by using:\n" + drill.getName();
         Notification notification =
             new NotificationCompat.Builder(context, CHANNEL_ID_SIMULATED_ATTACKS)
                 .setSmallIcon(R.drawable.danger_alert_icon)

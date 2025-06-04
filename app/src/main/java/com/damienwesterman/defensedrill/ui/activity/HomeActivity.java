@@ -62,7 +62,6 @@ public class HomeActivity extends AppCompatActivity {
     // TODO: Refactor to do list:
         /*
         - Refactor utils into appropriate packages
-        - Replace callback classes with lambdas? Maybe keep OperationCompleteCallback
         - Simplify insert operations like in SimulatedAttackRepo
          */
     private static boolean isUpdateServiceStarted = false;
