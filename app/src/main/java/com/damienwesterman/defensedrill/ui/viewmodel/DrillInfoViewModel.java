@@ -264,10 +264,6 @@ public class DrillInfoViewModel extends AndroidViewModel {
                             unauthorizedCallback,
                             failureCallback)
                 );
-
-            if (!disposable.isDisposed()) {
-                disposable.dispose();
-            }
         }
     }
 
