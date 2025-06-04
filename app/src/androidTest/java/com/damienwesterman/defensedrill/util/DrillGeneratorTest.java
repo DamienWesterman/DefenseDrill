@@ -24,6 +24,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
+import com.damienwesterman.defensedrill.domain.DrillGenerator;
 
 import org.junit.Before;
 import org.junit.Test;

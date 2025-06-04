@@ -36,11 +36,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.ui.util.CardClickListener;
-import com.damienwesterman.defensedrill.ui.util.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import com.damienwesterman.defensedrill.R;
+
+import java.util.function.Consumer;
 
 /**
  * RecyclerView Adapter class for use with {@link AbstractCategoryEntity} objects.
@@ -50,10 +50,12 @@ import com.damienwesterman.defensedrill.R;
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
 public class AbstractCategoryAdapter extends ListAdapter<AbstractCategoryEntity, CardViewHolder> {
+    /** On Click Listener that accepts an ID Long. */
     @Nullable
-    private final CardClickListener clickListener;
+    private final Consumer<Long> clickListener;
+    /** On Long Click Listener that accepts an ID Long. */
     @Nullable
-    private final CardLongClickListener longClickListener;
+    private final Consumer<Long> longClickListener;
 
     private static final DiffUtil.ItemCallback<AbstractCategoryEntity> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<AbstractCategoryEntity>() {
@@ -70,8 +72,16 @@ public class AbstractCategoryAdapter extends ListAdapter<AbstractCategoryEntity,
                 }
             };
 
-    public AbstractCategoryAdapter(@Nullable CardClickListener clickListener,
-                                   @Nullable CardLongClickListener longClickListener) {
+    /**
+     * Parameterized constructor.
+     *
+     * @param clickListener     Click Listener that accepts an AbstractCategory ID in the form of a
+     *                          Long. Optional.
+     * @param longClickListener Long Click Listener that accepts an AbstractCategory ID in the form
+     *                          of a Long. Optional.
+     */
+    public AbstractCategoryAdapter(@Nullable Consumer<Long> clickListener,
+                                   @Nullable Consumer<Long> longClickListener) {
         super(DIFF_CALLBACK);
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;

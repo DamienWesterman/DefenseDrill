@@ -37,13 +37,12 @@ import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
-import com.damienwesterman.defensedrill.ui.util.CardClickListener;
-import com.damienwesterman.defensedrill.ui.util.CardLongClickListener;
 import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 /**
  * RecyclerView Adapter class for use with {@link Drill} objects.
@@ -54,9 +53,9 @@ import java.util.Locale;
  */
 public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
     @Nullable
-    private final CardClickListener clickListener;
+    private final Consumer<Long> clickListener;
     @Nullable
-    private final CardLongClickListener longClickListener;
+    private final Consumer<Long> longClickListener;
 
     private static final DiffUtil.ItemCallback<Drill> DIFF_CALLBACK = new DiffUtil.ItemCallback<Drill>() {
         @Override
@@ -70,8 +69,16 @@ public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {
         }
     };
 
-    public DrillAdapter(@Nullable CardClickListener clickListener,
-                        @Nullable CardLongClickListener longClickListener) {
+    /**
+     * Parameterized Constructor.
+     *
+     * @param clickListener     Click Listener that accepts a Drill ID in the form of a Long.
+     *                          Optional.
+     * @param longClickListener Long Click Listener that accepts a Drill ID in the form of a Long.
+     *                          Optional.
+     */
+    public DrillAdapter(@Nullable Consumer<Long> clickListener,
+                        @Nullable Consumer<Long> longClickListener) {
         super(DIFF_CALLBACK);
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;

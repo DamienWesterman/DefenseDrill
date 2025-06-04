@@ -45,7 +45,7 @@ import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.util.Constants;
-import com.damienwesterman.defensedrill.util.DrillGenerator;
+import com.damienwesterman.defensedrill.domain.DrillGenerator;
 
 import java.net.SocketTimeoutException;
 import java.util.List;

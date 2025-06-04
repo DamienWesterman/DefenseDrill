@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.util;
+package com.damienwesterman.defensedrill.domain;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
