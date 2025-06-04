@@ -41,7 +41,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
-import com.damienwesterman.defensedrill.ui.util.UiUtils;
+import com.damienwesterman.defensedrill.ui.common.UiUtils;
 
 import javax.inject.Inject;
 

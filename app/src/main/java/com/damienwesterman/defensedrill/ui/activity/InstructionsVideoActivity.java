@@ -44,7 +44,7 @@ import androidx.media3.ui.PlayerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.ApiRepo;
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import javax.inject.Inject;
 

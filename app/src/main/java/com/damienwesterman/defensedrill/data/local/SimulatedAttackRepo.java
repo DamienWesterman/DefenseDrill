@@ -28,7 +28,7 @@ package com.damienwesterman.defensedrill.data.local;
 
 import androidx.annotation.NonNull;
 
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import java.util.List;
 

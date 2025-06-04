@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.ui.util;
+package com.damienwesterman.defensedrill.ui.common;
 
 import android.app.Activity;
 import android.content.Context;
@@ -40,6 +40,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.data.remote.AuthRepo;
 import com.damienwesterman.defensedrill.data.remote.dto.LoginDTO;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;

@@ -41,7 +41,7 @@ import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.domain.DrillGenerator;
 
 import java.time.DayOfWeek;

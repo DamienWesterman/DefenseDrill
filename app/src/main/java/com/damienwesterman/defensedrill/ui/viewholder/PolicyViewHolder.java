@@ -33,7 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
-import com.damienwesterman.defensedrill.ui.util.PolicyDetailsCard;
+import com.damienwesterman.defensedrill.ui.view.PolicyDetailsCard;
 
 import java.util.Comparator;
 import java.util.List;

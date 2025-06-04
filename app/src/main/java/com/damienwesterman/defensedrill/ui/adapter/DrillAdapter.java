@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
+import com.damienwesterman.defensedrill.ui.view.TitleDescCard;
 import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import java.text.DateFormat;
@@ -48,7 +49,7 @@ import java.util.function.Consumer;
  * RecyclerView Adapter class for use with {@link Drill} objects.
  * <br><br>
  * Each item represents one Drill, displaying the name and last drilled date in a
- * {@link com.damienwesterman.defensedrill.ui.util.TitleDescCard}. Uses {@link CardViewHolder}.
+ * {@link TitleDescCard}. Uses {@link CardViewHolder}.
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
 public class DrillAdapter extends ListAdapter<Drill, CardViewHolder> {

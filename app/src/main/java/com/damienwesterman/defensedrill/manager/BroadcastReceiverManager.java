@@ -30,7 +30,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import javax.inject.Inject;
 

@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.damienwesterman.defensedrill.ui.util.TitleDescCard
+    <com.damienwesterman.defensedrill.ui.view.TitleDescCard
         android:id="@+id/randomSubCategoryCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

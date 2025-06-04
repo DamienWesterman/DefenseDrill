@@ -53,12 +53,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
-import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
-import com.damienwesterman.defensedrill.ui.util.UiUtils;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.AbstractCategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.SubCategoryViewModel;
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import dagger.hilt.android.AndroidEntryPoint;
 

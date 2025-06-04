@@ -24,15 +24,34 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.ui.util;
+package com.damienwesterman.defensedrill.ui.common;
+
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
-/**
- * Generic callback for an operation that can either succeed or fail.
- */
-public interface OperationCompleteCallback {
-    void onSuccess();
+import com.google.android.material.snackbar.Snackbar;
 
-    void onFailure(@NonNull String error);
+/**
+ * Static utilities for the UI layer.
+ */
+public class UiUtils {
+    /**
+     * No need to have instances of this class.
+     */
+    private UiUtils() { }
+
+    /**
+     * Create and display a snackbar. The snackbar will have a single "OK" button that dismisses the
+     * snackbar.
+     *
+     * @param rootView  View object to display the snackbar in.
+     * @param message   String message to display to the user.
+     */
+    public static void displayDismissibleSnackbar(@NonNull View rootView, @NonNull String message) {
+        Snackbar snackbar = Snackbar.make(rootView,
+                message, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("OK", (callingView) -> snackbar.dismiss());
+        snackbar.show();
+    }
 }

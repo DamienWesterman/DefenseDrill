@@ -37,7 +37,7 @@ import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SubCategoryEntity;
-import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 
 import java.util.HashSet;
 import java.util.List;

@@ -33,7 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.ui.util.TitleDescCard;
+import com.damienwesterman.defensedrill.ui.view.TitleDescCard;
 
 import java.util.function.Consumer;
 

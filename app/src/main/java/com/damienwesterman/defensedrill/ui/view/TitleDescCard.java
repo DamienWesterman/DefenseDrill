@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.ui.util;
+package com.damienwesterman.defensedrill.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

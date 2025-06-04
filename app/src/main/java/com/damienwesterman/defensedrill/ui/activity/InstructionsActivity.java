@@ -46,8 +46,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
-import com.damienwesterman.defensedrill.ui.util.UiUtils;
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.ui.common.UiUtils;
+import com.damienwesterman.defensedrill.common.Constants;
 
 import java.io.Serializable;
 import java.util.ArrayList;

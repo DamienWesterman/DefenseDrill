@@ -49,9 +49,9 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
-import com.damienwesterman.defensedrill.ui.util.CommonPopups;
-import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
-import com.damienwesterman.defensedrill.ui.util.UiUtils;
+import com.damienwesterman.defensedrill.ui.common.CommonPopups;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.WebDrillApiViewModel;
 
 import java.util.ArrayList;

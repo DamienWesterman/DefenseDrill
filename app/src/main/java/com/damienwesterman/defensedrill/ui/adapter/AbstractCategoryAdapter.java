@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
+import com.damienwesterman.defensedrill.ui.view.TitleDescCard;
 import com.damienwesterman.defensedrill.ui.viewholder.CardViewHolder;
 
 import com.damienwesterman.defensedrill.R;
@@ -46,7 +47,7 @@ import java.util.function.Consumer;
  * RecyclerView Adapter class for use with {@link AbstractCategoryEntity} objects.
  * <br><br>
  * Each item represents one AbstractCategoryEntity, displaying the name and description in a
- * {@link com.damienwesterman.defensedrill.ui.util.TitleDescCard}. Uses {@link CardViewHolder}.
+ * {@link TitleDescCard}. Uses {@link CardViewHolder}.
  * Allows the caller to set an onClickListener and a LongClickListener.
  */
 public class AbstractCategoryAdapter extends ListAdapter<AbstractCategoryEntity, CardViewHolder> {

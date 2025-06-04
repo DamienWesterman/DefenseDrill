@@ -60,10 +60,10 @@ import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.adapter.PolicyAdapter;
-import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
-import com.damienwesterman.defensedrill.ui.util.UiUtils;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.SimulatedAttackSettingsViewModel;
-import com.damienwesterman.defensedrill.util.Constants;
+import com.damienwesterman.defensedrill.common.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;

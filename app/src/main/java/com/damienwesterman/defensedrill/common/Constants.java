@@ -24,7 +24,7 @@
  * limitations under the License.
  */
 
-package com.damienwesterman.defensedrill.util;
+package com.damienwesterman.defensedrill.common;
 
 import com.damienwesterman.defensedrill.BuildConfig;
 import com.damienwesterman.defensedrill.data.local.Drill;

@@ -34,7 +34,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.damienwesterman.defensedrill.data.local.AbstractCategoryEntity;
-import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 
 import java.util.List;
 

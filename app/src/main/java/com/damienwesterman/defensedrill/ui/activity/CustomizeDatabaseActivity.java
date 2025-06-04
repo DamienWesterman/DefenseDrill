@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
-import com.damienwesterman.defensedrill.ui.util.UiUtils;
+import com.damienwesterman.defensedrill.ui.common.UiUtils;
 
 /**
  * Screen to offer the user options for altering the local database via CRUD operations.

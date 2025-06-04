@@ -35,7 +35,7 @@ import androidx.lifecycle.AndroidViewModel;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.domain.DownloadDatabaseUseCase;
-import com.damienwesterman.defensedrill.ui.util.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 
 import java.util.List;
 import java.util.function.Consumer;
