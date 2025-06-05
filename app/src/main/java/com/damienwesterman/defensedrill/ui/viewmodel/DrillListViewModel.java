@@ -71,7 +71,7 @@ public class DrillListViewModel extends AndroidViewModel {
     private Set<Long> subCategoryFilterIds;
     private final DrillRepository repo;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    @Nullable
+    @NonNull
     @Getter
     private SortOrder sortOrder;
 
@@ -92,18 +92,38 @@ public class DrillListViewModel extends AndroidViewModel {
     }
 
     /**
-     * Populate our list of Drills if it has not already been done.
+     * Populate our list of Drills and cause the UI to re-load.
      */
     public void populateDrills() {
         if (null == uiDrillsList.getValue()) {
-            rePopulateDrills();
+            resetDrills();
+        } else {
+            // Display an updated list of drills with the current filters
+            List<Long> categoryIds;
+            if (null == this.categoryFilterIds) {
+                categoryIds = null;
+            } else {
+                categoryIds = new ArrayList<>(this.categoryFilterIds);
+            }
+
+            List<Long> subCategoryIds;
+            if (null == this.subCategoryFilterIds) {
+                subCategoryIds = null;
+            } else {
+                subCategoryIds = new ArrayList<>(this.subCategoryFilterIds);
+            }
+
+            filterDrills(categoryIds, subCategoryIds);
         }
     }
 
     /**
-     * Force re-load  the Drills from the database, even if they are already loaded.
+     * Load the Drills from the database and reset all filters to their defaults.
      */
-    public void rePopulateDrills() {
+    public void resetDrills() {
+        this.categoryFilterIds = null;
+        this.subCategoryFilterIds = null;
+        this.sortOrder = SortOrder.SORT_NAME_ASCENDING;
         executor.execute(() -> uiDrillsList.postValue(repo.getAllDrills().stream()
             .filter(Drill::isKnownDrill)
             .collect(Collectors.toList())));
@@ -120,9 +140,16 @@ public class DrillListViewModel extends AndroidViewModel {
      * @param subCategoryIds    List of sub-category IDs to filter by.
      */
     public void filterDrills(@Nullable List<Long> categoryIds,@Nullable List<Long> subCategoryIds) {
-        executor.execute(() -> uiDrillsList.postValue(repo.getAllDrills(categoryIds, subCategoryIds).stream()
-                .filter(Drill::isKnownDrill)
-                .collect(Collectors.toList())));
+        executor.execute(() -> {
+            List<Drill> newDrills = repo.getAllDrills(categoryIds, subCategoryIds).stream()
+                    .filter(Drill::isKnownDrill)
+                    .collect(Collectors.toList());
+            if (SortOrder.SORT_DATE_ASCENDING != this.sortOrder) {
+                sortDrills(newDrills, this.sortOrder);
+            } else {
+                uiDrillsList.postValue(newDrills);
+            }
+        });
     }
 
     /**
@@ -248,21 +275,33 @@ public class DrillListViewModel extends AndroidViewModel {
     }
 
     /**
-     * Sort the list of drills by the given {@link SortOrder}.
+     * Sort the current ui list of drills by the given {@link SortOrder}.
      * <br><br>
      * Will sort the list of drills using the given sort order, then will refresh the list and the
-     * observable will be called again. Causes no effect if the new sort order is the same as the
-     * old.
+     * observable will be called again.
      *
-     * @param newSortOrder New order to sort by.
+     * @param newSortOrder  New order to sort by.
      */
-    public void setSortOrder(@NonNull SortOrder newSortOrder) {
+    public void sortDrills(@NonNull SortOrder newSortOrder) {
         if (null == uiDrillsList.getValue()) {
             return;
         }
 
+        sortDrills(uiDrillsList.getValue(), newSortOrder);
+    }
+
+    /**
+     * Sort the list of drills by the given {@link SortOrder}.
+     * <br><br>
+     * Will sort the list of drills using the given sort order, then will refresh the list and the
+     * observable will be called again.
+     *
+     * @param listToSort    Drill list to sort then update the UI with.
+     * @param newSortOrder  New order to sort by.
+     */
+    public void sortDrills(@NonNull List<Drill> listToSort, @NonNull SortOrder newSortOrder) {
         // Must be a new list to trigger submitList() logic
-        List<Drill> sortedDrills = new ArrayList<>(uiDrillsList.getValue());
+        List<Drill> sortedDrills = new ArrayList<>(listToSort);
 
         sortedDrills.sort((drill1, drill2) -> {
             switch(newSortOrder) {
