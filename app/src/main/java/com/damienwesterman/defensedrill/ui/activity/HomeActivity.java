@@ -126,6 +126,7 @@ public class HomeActivity extends AppCompatActivity {
                 WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
+            // TODO: Implement a feedback mechanism that opens an email address (**ADD THIS TO THE LIST OF SYSTEM ENVIRONMENT VARIABLES**)
             UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
