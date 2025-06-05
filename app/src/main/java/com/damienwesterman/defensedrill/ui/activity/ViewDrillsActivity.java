@@ -71,7 +71,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ViewDrillsActivity extends AppCompatActivity {
     private DrillListViewModel viewModel;
-    private DrillListViewModel.SortOrder sortOrder;
 
     private View rootView;
     private ProgressBar progressBar;
@@ -111,7 +110,6 @@ public class ViewDrillsActivity extends AppCompatActivity {
         }
 
         viewModel = new ViewModelProvider(this).get(DrillListViewModel.class);
-        sortOrder = viewModel.getSortOrder();
 
         rootView = findViewById(R.id.activityAllDrills);
         progressBar = findViewById(R.id.allDrillsProgressBar);
@@ -130,7 +128,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        viewModel.rePopulateDrills();
+        viewModel.populateDrills();
     }
 
     @Override
@@ -178,9 +176,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     }
 
     public void resetFilters(View view) {
-        viewModel.setCategoryFilterIds(null);
-        viewModel.setSubCategoryFilterIds(null);
-        viewModel.rePopulateDrills();
+        viewModel.resetDrills();
     }
 
     public void sortDrills(View view) {
@@ -201,7 +197,7 @@ public class ViewDrillsActivity extends AppCompatActivity {
     private void sortDrillsPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] options = getResources().getStringArray(R.array.drills_sort_options);
-        final int[] selectedOption = { sortOrderToIndex(sortOrder) };
+        final int[] selectedOption = { sortOrderToIndex(viewModel.getSortOrder()) };
 
         builder.setTitle("Sort By:");
         builder.setIcon(R.drawable.sort_icon);
@@ -209,20 +205,12 @@ public class ViewDrillsActivity extends AppCompatActivity {
         builder.setSingleChoiceItems(options, selectedOption[0], (dialog, position) -> selectedOption[0] = position);
         builder.setPositiveButton("Sort", (dialog, position) -> {
             DrillListViewModel.SortOrder selectedSortOrder = indexToSortOrder(selectedOption[0]);
-            if (selectedSortOrder == sortOrder) {
+            if (selectedSortOrder == viewModel.getSortOrder()) {
                 // Do nothing, no change
                 return;
             }
 
-            viewModel.setSortOrder(selectedSortOrder);
-            DrillListViewModel.SortOrder newSortOrder = viewModel.getSortOrder();
-
-            if (newSortOrder == sortOrder) {
-                // Indicates an error and we didn't switch
-                UiUtils.displayDismissibleSnackbar(rootView, "Could not switch sort order");
-            } else {
-                sortOrder = newSortOrder;
-            }
+            viewModel.sortDrills(selectedSortOrder);
         });
         builder.setNegativeButton("Cancel", null);
 
