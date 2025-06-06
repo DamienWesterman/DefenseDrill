@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -44,6 +45,9 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 import javax.inject.Inject;
 
@@ -61,9 +65,39 @@ public class HomeActivity extends AppCompatActivity {
     // TODO: THEN prompt the user for unrestricted background usage:
         // https://stackoverflow.com/a/54852199
 
+    // TODO: Create a process here to start the onboarding process
+        // TODO: This should be started if the sharePrefs value has not been set
+        // TODO: There should also be a startActivity (or maybe startOnboarding?) static method that then triggers something in onCreate)
+    // TODO: Maybe start this process with a popup the then requests the permissions before starting the TapTargetView sequence stuff
+        // TODO: Or maybe a sequence of popups that explain what a Drill is as well
+    // TODO: Set cancelable by checking sharedPrefs (if this is the first onboarding, then not cancelable
+    // TODO: Make sure to set battery option permissions if the user checks the simulated attacks notifications on
+    // TODO: Maybe make some dummy data or something? i don't know how to do this if we go through the generate drill process
+    // TODO: Sequence:
+        // TODO: Home screen - First let's get some drills to work with
+            // -> To DownloadDrills Activity
+        // TODO: DownloadDrills Activity
+            // -> Download Drills and log in (if you want)
+            // -> Home
+        // TODO: Home
+            // Highlight Customize drills activity (can view all the drills, categories, and sub-categories)
+            // Highlight Simulated Attack Settings
+            // -> Simulated Attack Settings
+        // TODO: Simulated Attack Settings:
+            // highlight slider (explain what these are)
+            // Check the slider, then highlight the create button
+            // -> Home
+        // TODO: home -> Generate Drill
+            // Then go through the sequence, selecting random each time, then get to drill info
+        // TODO: Drill Info
+            // TODO: Create some way to have this populate with default info
+            // Explain everything about this screen
+            // TODO: Return home and SET THAT WE HAVE COMPLETED ONBOARDING
+
     private static boolean isUpdateServiceStarted = false;
 
     private LinearLayout rootView;
+    private Context context;
 
     @Inject
     CheckPhoneInternetConnection internetConnection;
@@ -96,6 +130,7 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(appToolbar);
 
         rootView = findViewById(R.id.activityHome);
+        context = this;
 
         // Have to do this here so service is not started when the app is launched in the background
         if (!isUpdateServiceStarted) {
@@ -128,7 +163,39 @@ public class HomeActivity extends AppCompatActivity {
                 WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
-            sendFeedbackEmail();
+//            sendFeedbackEmail();
+
+
+            // TODO: Remove below - learning TapTargetView
+            TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
+                            "TITLE", "DESCRIPTION")
+                    .outerCircleColor(R.color.drill_green_variant)
+                    .tintTarget(false)
+                    .cancelable(false);
+            TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
+                            "TITLE 2", "DESCRIPTION 2")
+                    .outerCircleColor(R.color.drill_green_variant)
+                    .tintTarget(false)
+                    .cancelable(false);
+
+            new TapTargetSequence(this)
+                    .targets(drillCardTapTarget, customizeDatabaseTapTarget)
+                    .listener(new TapTargetSequence.Listener() {
+                        @Override
+                        public void onSequenceFinish() {
+                            WebDrillOptionsActivity.startActivity(context);
+                        }
+
+                        @Override
+                        public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                        }
+
+                        @Override
+                        public void onSequenceCanceled(TapTarget lastTarget) {
+
+                        }
+                    }).start();
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'com.google.dagger.hilt.android'
+    // Run with ./gradlew licenseDebugReport
+    id 'com.jaredsburrows.license' version '0.9.8'
 }
 
 android {
@@ -113,4 +115,7 @@ dependencies {
     // Exoplayer
     implementation 'androidx.media3:media3-exoplayer:1.7.1'
     implementation 'androidx.media3:media3-ui:1.7.1'
+
+    // TapTargetView for Onboarding/help screen
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.14.0'
 }
