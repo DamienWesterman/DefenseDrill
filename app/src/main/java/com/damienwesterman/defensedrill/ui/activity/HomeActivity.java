@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -44,6 +45,9 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 import javax.inject.Inject;
 
@@ -64,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
     private static boolean isUpdateServiceStarted = false;
 
     private LinearLayout rootView;
+    private Context context;
 
     @Inject
     CheckPhoneInternetConnection internetConnection;
@@ -96,6 +101,7 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(appToolbar);
 
         rootView = findViewById(R.id.activityHome);
+        context = this;
 
         // Have to do this here so service is not started when the app is launched in the background
         if (!isUpdateServiceStarted) {
@@ -128,7 +134,39 @@ public class HomeActivity extends AppCompatActivity {
                 WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
-            sendFeedbackEmail();
+//            sendFeedbackEmail();
+
+
+            // TODO: Remove below - learning TapTargetView
+            TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
+                            "TITLE", "DESCRIPTION")
+                    .outerCircleColor(R.color.drill_green_variant)
+                    .tintTarget(false)
+                    .cancelable(false);
+            TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
+                            "TITLE 2", "DESCRIPTION 2")
+                    .outerCircleColor(R.color.drill_green_variant)
+                    .tintTarget(false)
+                    .cancelable(false);
+
+            new TapTargetSequence(this)
+                    .targets(drillCardTapTarget, customizeDatabaseTapTarget)
+                    .listener(new TapTargetSequence.Listener() {
+                        @Override
+                        public void onSequenceFinish() {
+                            WebDrillOptionsActivity.startActivity(context);
+                        }
+
+                        @Override
+                        public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                        }
+
+                        @Override
+                        public void onSequenceCanceled(TapTarget lastTarget) {
+
+                        }
+                    }).start();
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

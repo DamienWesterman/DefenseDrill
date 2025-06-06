@@ -53,6 +53,8 @@ import com.damienwesterman.defensedrill.ui.common.CommonPopups;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.WebDrillApiViewModel;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +79,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     CheckPhoneInternetConnection internetConnection;
 
     private WebDrillApiViewModel viewModel;
+    private Context context;
 
     // =============================================================================================
     // Activity Creation Methods
@@ -118,8 +121,44 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         }
 
         rootView = findViewById(R.id.activityWebDrillOptions);
+        context = this;
 
         viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
+
+
+        // TODO: Remove below - learning TapTargetView
+        sharedPrefs.setJwt("");
+        TapTarget downloadDrillsTarget = TapTarget.forView(findViewById(R.id.downloadFromDatabaseCard),
+                        "TITLE", "DESCRIPTION")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(false);
+        TapTarget homeTarget = TapTarget.forView(findViewById(R.id.logoutCard),
+                        "TITLE 2", "DESCRIPTION 2")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(false);
+
+        new TapTargetSequence(this)
+                .targets(downloadDrillsTarget, homeTarget)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        HomeActivity.startActivity(context);
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                        if (lastTarget == downloadDrillsTarget) {
+                            handleDownloadDrills();
+                        }
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                }).start();
     }
 
     @Override
