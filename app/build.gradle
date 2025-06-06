@@ -49,9 +49,11 @@ android {
     buildTypes {
         release {
             buildConfigField "String", "SERVER_URL", "\"${System.getenv("DEFENSE_DRILL_SERVER_URL") ?: ""}\""
+            buildConfigField "String", "FEEDBACK_RECEIPT_EMAIL", "\"${System.getenv("DEFENSE_DRILL_FEEDBACK_RECEIPT_EMAIL") ?: ""}\""
         }
         debug {
             buildConfigField "String", "SERVER_URL", "\"${System.getenv("DEFENSE_DRILL_SERVER_URL") ?: ""}\""
+            buildConfigField "String", "FEEDBACK_RECEIPT_EMAIL", "\"${System.getenv("DEFENSE_DRILL_FEEDBACK_RECEIPT_EMAIL") ?: ""}\""
         }
     }
 

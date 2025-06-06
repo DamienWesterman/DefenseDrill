@@ -116,6 +116,7 @@ public class Constants {
     public static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
     public static final String SERVER_URL = BuildConfig.SERVER_URL;
+    public static final String FEEDBACK_RECEIPT_EMAIL = BuildConfig.FEEDBACK_RECEIPT_EMAIL;
 
     /** Low Confidence index position of strings.xml's confidence_levels string-array. */
     private static final int LOW_CONFIDENCE_POSITION = 0;

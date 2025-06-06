@@ -169,4 +169,15 @@ To get the most out of this exercise, try to figure out three different solution
         <item>Last Drilled (Old-New)</item>
         <item>Last Drilled (New-Old)</item>
     </string-array>
+    <string name="feedback_email_template">
+"Thank you for leaving us feedback on the Defense Drill App! Your feedback is very important to us, and we ask that you fill out the following information:
+
+Topic: [What is the nature of your feedback? i.e. feature suggestion, bug, color or verbiage issue, etc.]
+
+Details: [Please include a detailed description of your feedback, the more details the better]
+
+Username: [Online Database Username]
+
+Thank you and we will try to get back to you as quickly as possible!
+    </string>
 </resources>

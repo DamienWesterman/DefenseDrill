@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -38,6 +39,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
@@ -126,9 +128,25 @@ public class HomeActivity extends AppCompatActivity {
                 WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
-            UiUtils.displayDismissibleSnackbar(rootView, "Feedback unimplemented");
+            sendFeedbackEmail();
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }
+    }
+
+    // =============================================================================================
+    // Private Helper Methods
+    // =============================================================================================
+    /**
+     * Sends an intent to start an email for the user to send us feedback.
+     */
+    private void sendFeedbackEmail() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri data = Uri.parse("mailto:" + Constants.FEEDBACK_RECEIPT_EMAIL
+                + "?subject=Defense%20Drill%20Feedback&body="
+                + Uri.encode(getResources().getString(R.string.feedback_email_template)));
+
+        intent.setData(data);
+        startActivity(intent);
     }
 }
