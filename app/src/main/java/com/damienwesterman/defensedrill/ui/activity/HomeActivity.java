@@ -31,14 +31,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.common.Constants;
@@ -46,16 +50,20 @@ import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
+import com.damienwesterman.defensedrill.ui.adapter.ViewPagerAdapter;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Triple;
+import me.relex.circleindicator.CircleIndicator3;
 
 /**
  * Home screen activity and entry point for the application. Displays the different general
@@ -168,12 +176,16 @@ public class HomeActivity extends AppCompatActivity {
 
         if (!sharedPrefs.isOnboardingComplete()
                 || getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
-            Serializable serializable = getIntent()
-                    .getSerializableExtra(Constants.INTENT_EXTRA_START_ONBOARDING);
-            if (serializable instanceof Class) {
-                startOnboarding((Class<?>) serializable);
+            if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+                Serializable serializable = getIntent()
+                        .getSerializableExtra(Constants.INTENT_EXTRA_START_ONBOARDING);
+                if (serializable instanceof Class) {
+                    startOnboarding((Class<?>) serializable);
+                } else {
+                    Log.e(TAG, "serializable not of type Class, cannot call startOnboarding()");
+                }
             } else {
-                Log.e(TAG, "serializable not of type Class, cannot call startOnboarding()");
+                startOnboarding(null);
             }
         }
     }
@@ -282,7 +294,31 @@ public class HomeActivity extends AppCompatActivity {
 //                });
 //        sequence.start();
 //        sequence.cancel();
+        onboardingTerminologyIntroPopup(false);
         // TODO: NUMBER the sequence of popups (1/8 or whatever)
         // TODO: Give the sequence of popups a parameter to accept the sequence so we can cancel it? Or maybe just give it a callback actually
+    }
+
+    public void onboardingTerminologyIntroPopup(boolean cancelable) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.layout_onboarding_terminology_popup, null);
+        ViewPager2 viewPager = dialogView.findViewById(R.id.onboardingViewPager);
+        CircleIndicator3 indicator = dialogView.findViewById(R.id.indicator);
+
+        viewPager.setAdapter(new ViewPagerAdapter(List.of(
+                new Pair<>("Title 1", "Description 1"),
+                new Pair<>("Awesome 2", "Like super awesome"),
+                new Pair<>("Finish 3", "Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. ")
+        )));
+        indicator.setViewPager(viewPager);
+        // TODO: TELL USER TO SWIPE THROUGH
+
+        builder.setView(dialogView);
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setTitle("Welcome!");
+        builder.setCancelable(cancelable);
+        builder.setPositiveButton("Show me Around", null);
+
+        builder.create().show();
     }
 }

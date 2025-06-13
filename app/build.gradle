@@ -118,4 +118,10 @@ dependencies {
 
     // TapTargetView for Onboarding/help screen
     implementation 'com.getkeepsafe.taptargetview:taptargetview:1.14.0'
+
+    // ViewPager2 for Onboarding/help screen
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+
+    // Circle Indicator for Navigation
+    implementation 'me.relex:circleindicator:2.1.6'
 }
