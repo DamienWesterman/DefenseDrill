@@ -112,6 +112,17 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    /**
+     * Start the SimulatedAttackSettingsActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, SimulatedAttackSettingsActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
+        context.startActivity(intent);
+    }
+
     // =============================================================================================
     // Activity Methods
     // =============================================================================================

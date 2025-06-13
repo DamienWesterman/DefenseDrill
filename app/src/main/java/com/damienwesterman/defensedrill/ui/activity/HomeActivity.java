@@ -36,11 +36,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
@@ -48,6 +50,8 @@ import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
+
+import java.io.Serializable;
 
 import javax.inject.Inject;
 
@@ -59,15 +63,13 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
+    private static final String TAG = HomeActivity.class.getSimpleName();
     // TODO: On first startup, go through help screen. THEN prompt the user for notifications:
         // https://developer.android.com/develop/ui/views/notifications/notification-permission#best-practices
         // https://developer.android.com/training/permissions/requesting#request-permission
     // TODO: THEN prompt the user for unrestricted background usage:
         // https://stackoverflow.com/a/54852199
 
-    // TODO: Create a process here to start the onboarding process
-        // TODO: This should be started if the sharePrefs value has not been set
-        // TODO: There should also be a startActivity (or maybe startOnboarding?) static method that then triggers something in onCreate)
     // TODO: Maybe start this process with a popup the then requests the permissions before starting the TapTargetView sequence stuff
         // TODO: Or maybe a sequence of popups that explain what a Drill is as well
     // TODO: Set cancelable by checking sharedPrefs (if this is the first onboarding, then not cancelable
@@ -103,6 +105,8 @@ public class HomeActivity extends AppCompatActivity {
     CheckPhoneInternetConnection internetConnection;
     @Inject
     SimulatedAttackManager simulatedAttackManager;
+    @Inject
+    SharedPrefs sharedPrefs;
 
     // =============================================================================================
     // Activity Creation Methods
@@ -115,6 +119,30 @@ public class HomeActivity extends AppCompatActivity {
     public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start the HomeActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        continueOnboardingActivity(context, null);
+    }
+
+    /**
+     * Continue the HomeActivity in the Onboarding state from another activity.
+     *
+     * @param context           Context.
+     * @param previousActivity  Activity to continue the onboarding process from, or null to start
+     *                          a new onboarding session.
+     */
+    public static void continueOnboardingActivity(@NonNull Context context,
+                                                  @Nullable Class<?> previousActivity) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, previousActivity);
         context.startActivity(intent);
     }
 
@@ -136,6 +164,17 @@ public class HomeActivity extends AppCompatActivity {
         if (!isUpdateServiceStarted) {
             CheckServerUpdateService.startService(this);
             isUpdateServiceStarted = true;
+        }
+
+        if (!sharedPrefs.isOnboardingComplete()
+                || getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            Serializable serializable = getIntent()
+                    .getSerializableExtra(Constants.INTENT_EXTRA_START_ONBOARDING);
+            if (serializable instanceof Class) {
+                startOnboarding((Class<?>) serializable);
+            } else {
+                Log.e(TAG, "serializable not of type Class, cannot call startOnboarding()");
+            }
         }
     }
 
@@ -163,39 +202,7 @@ public class HomeActivity extends AppCompatActivity {
                 WebDrillOptionsActivity.startActivity(this);
             }
         } else if (R.id.feedbackCard == cardId) {
-//            sendFeedbackEmail();
-
-
-            // TODO: Remove below - learning TapTargetView
-            TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
-                            "TITLE", "DESCRIPTION")
-                    .outerCircleColor(R.color.drill_green_variant)
-                    .tintTarget(false)
-                    .cancelable(false);
-            TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
-                            "TITLE 2", "DESCRIPTION 2")
-                    .outerCircleColor(R.color.drill_green_variant)
-                    .tintTarget(false)
-                    .cancelable(false);
-
-            new TapTargetSequence(this)
-                    .targets(drillCardTapTarget, customizeDatabaseTapTarget)
-                    .listener(new TapTargetSequence.Listener() {
-                        @Override
-                        public void onSequenceFinish() {
-                            WebDrillOptionsActivity.startActivity(context);
-                        }
-
-                        @Override
-                        public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
-                        }
-
-                        @Override
-                        public void onSequenceCanceled(TapTarget lastTarget) {
-
-                        }
-                    }).start();
+            sendFeedbackEmail();
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }
@@ -209,11 +216,73 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void sendFeedbackEmail() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri data = Uri.parse("mailto:" + Constants.FEEDBACK_RECEIPT_EMAIL
+        Uri data = Uri.parse("mailto:" + Uri.encode(Constants.FEEDBACK_RECEIPT_EMAIL)
                 + "?subject=Defense%20Drill%20Feedback&body="
                 + Uri.encode(getResources().getString(R.string.feedback_email_template)));
 
         intent.setData(data);
         startActivity(intent);
+    }
+
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * Start the Onboarding process that will walk the user through how to use the app.
+     * <br><br>
+     * Onboarding Process:
+     * <ol>
+     *     <li>{@link #startOnboardingActivity(Context)}</li>
+     *     <li>{@link WebDrillOptionsActivity#startOnboardingActivity(Context)}</li>
+     *     <li>{@link #continueOnboardingActivity(Context, Class)} - using {@link WebDrillOptionsActivity}</li>
+     *     <li>{@link SimulatedAttackSettingsActivity#startOnboardingActivity(Context)}</li>
+     *     <li>{@link #continueOnboardingActivity(Context, Class)} - using {@link SimulatedAttackSettingsActivity}</li>
+     *     <li>{@link CategorySelectActivity#startOnboardingActivity(Context)}</li>
+     *     <li>{@link SubCategorySelectActivity#startOnboardingActivity(Context)}</li>
+     *     <li>{@link DrillInfoActivity#startOnboardingActivity(Context)}</li>
+     *     <li>{@link #continueOnboardingActivity(Context, Class)} - using {@link DrillInfoActivity}</li>
+     * </ol>
+     *
+     * @param previousActivity  Previous activity in the onboarding process. May be null if starting
+     *                          a new onboarding process.
+     */
+    private void startOnboarding(@Nullable Class<?> previousActivity) {
+        // TODO: Doc comments - Write the entire process here
+        // TODO: Also make sure to write the before/after steps inside each other activity
+        // How to:
+//        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
+//                        "TITLE", "DESCRIPTION")
+//                .outerCircleColor(R.color.drill_green_variant)
+//                .tintTarget(false)
+//                .cancelable(false);
+//        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
+//                        "TITLE 2", "DESCRIPTION 2")
+//                .outerCircleColor(R.color.drill_green_variant)
+//                .tintTarget(false)
+//                .cancelable(false);
+//
+//        TapTargetSequence sequence = new TapTargetSequence(this)
+//                .targets(drillCardTapTarget, customizeDatabaseTapTarget)
+//                .listener(new TapTargetSequence.Listener() {
+//                    @Override
+//                    public void onSequenceFinish() {
+//                        WebDrillOptionsActivity.startActivity(context);
+//                    }
+//
+//                    @Override
+//                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onSequenceCanceled(TapTarget lastTarget) {
+//
+//                    }
+//                });
+//        sequence.start();
+//        sequence.cancel();
+        // TODO: NUMBER the sequence of popups (1/8 or whatever)
+        // TODO: Give the sequence of popups a parameter to accept the sequence so we can cancel it? Or maybe just give it a callback actually
     }
 }

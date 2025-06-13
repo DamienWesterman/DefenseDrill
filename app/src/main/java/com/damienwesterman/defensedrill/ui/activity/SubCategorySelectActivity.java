@@ -79,6 +79,18 @@ public class SubCategorySelectActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    /**
+     * Start the SubCategorySelectActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, SubCategorySelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
+        context.startActivity(intent);
+    }
+
     // =============================================================================================
     // Activity Methods
     // =============================================================================================

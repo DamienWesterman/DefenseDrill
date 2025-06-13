@@ -80,6 +80,17 @@ public class CategorySelectActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    /**
+     * Start the CategorySelectActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, CategorySelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
+        context.startActivity(intent);
+    }
+
     // =============================================================================================
     // Activity Methods
     // =============================================================================================

@@ -46,6 +46,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
@@ -90,8 +91,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * @param context   Context.
      */
     public static void startActivity(@NonNull Context context) {
-        Intent webDrillsIntent = new Intent(context, WebDrillOptionsActivity.class);
-        context.startActivity(webDrillsIntent);
+        Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        context.startActivity(intent);
     }
 
     /**
@@ -102,6 +103,17 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      */
     public static Intent createIntentToStartActivity(@NonNull Context context) {
         return new Intent(context, WebDrillOptionsActivity.class);
+    }
+
+    /**
+     * Start the WebDrillOptionsActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
+        context.startActivity(intent);
     }
 
     // =============================================================================================
@@ -124,41 +136,6 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         context = this;
 
         viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
-
-
-        // TODO: Remove below - learning TapTargetView
-        sharedPrefs.setJwt("");
-        TapTarget downloadDrillsTarget = TapTarget.forView(findViewById(R.id.downloadFromDatabaseCard),
-                        "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.drill_green_variant)
-                .tintTarget(false)
-                .cancelable(false);
-        TapTarget homeTarget = TapTarget.forView(findViewById(R.id.logoutCard),
-                        "TITLE 2", "DESCRIPTION 2")
-                .outerCircleColor(R.color.drill_green_variant)
-                .tintTarget(false)
-                .cancelable(false);
-
-        new TapTargetSequence(this)
-                .targets(downloadDrillsTarget, homeTarget)
-                .listener(new TapTargetSequence.Listener() {
-                    @Override
-                    public void onSequenceFinish() {
-                        HomeActivity.startActivity(context);
-                    }
-
-                    @Override
-                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-                        if (lastTarget == downloadDrillsTarget) {
-                            handleDownloadDrills();
-                        }
-                    }
-
-                    @Override
-                    public void onSequenceCanceled(TapTarget lastTarget) {
-
-                    }
-                }).start();
     }
 
     @Override

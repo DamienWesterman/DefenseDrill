@@ -151,6 +151,8 @@ public class Constants {
     public static final String INTENT_EXTRA_INSTRUCTION_INDEX = "instruction_index";
     /** Should be accompanied by a string of an instruction's video id. */
     public static final String INTENT_EXTRA_VIDEO_ID = "video_id";
+    /** Should be accompanied by a Class of the calling activity if relevant to onboarding order. */
+    public static final String INTENT_EXTRA_START_ONBOARDING = "start_onboarding";
 
     /**
      * Converts a confidence weight into its respective position in the confidence_levels string

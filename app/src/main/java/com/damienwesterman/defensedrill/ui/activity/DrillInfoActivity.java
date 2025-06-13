@@ -172,6 +172,19 @@ public class DrillInfoActivity extends AppCompatActivity {
         return intent;
     }
 
+    /**
+     * Start the DrillInfoActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, DrillInfoActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        intent.putExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
+        context.startActivity(intent);
+    }
+
     // =============================================================================================
     // Activity Methods
     // =============================================================================================
