@@ -262,6 +262,8 @@ public class HomeActivity extends AppCompatActivity {
     private void startOnboarding(@Nullable Class<?> previousActivity) {
         // TODO: Doc comments - Write the entire process here
         // TODO: Also make sure to write the before/after steps inside each other activity
+
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
         // How to:
 //        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
 //                        "TITLE", "DESCRIPTION")
@@ -294,12 +296,14 @@ public class HomeActivity extends AppCompatActivity {
 //                });
 //        sequence.start();
 //        sequence.cancel();
-        onboardingTerminologyIntroPopup(false);
-        // TODO: NUMBER the sequence of popups (1/8 or whatever)
-        // TODO: Give the sequence of popups a parameter to accept the sequence so we can cancel it? Or maybe just give it a callback actually
+        onboardingTerminologyIntroPopup(cancelable, () -> {
+            // TODO: sequence.cancel();
+        });
     }
 
-    public void onboardingTerminologyIntroPopup(boolean cancelable) {
+    // TODO: Doc comments
+    public void onboardingTerminologyIntroPopup(boolean cancelable,
+                                                @Nullable Runnable onCancelCallback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.layout_onboarding_terminology_popup, null);
         ViewPager2 viewPager = dialogView.findViewById(R.id.onboardingViewPager);
@@ -318,7 +322,20 @@ public class HomeActivity extends AppCompatActivity {
         builder.setTitle("Welcome!");
         builder.setCancelable(cancelable);
         builder.setPositiveButton("Show me Around", null);
+        if (cancelable) {
+            builder.setNeutralButton("Exit", (dialogInterface, i) -> {
+                if (null != onCancelCallback) {
+                    onCancelCallback.run();
+                }
+            });
+        }
 
-        builder.create().show();
+        AlertDialog dialog = builder.create();
+
+        // Make sure we properly measure the page so it will only show one at a time
+        dialog.setOnShowListener(dialogInterface ->
+                        viewPager.post(viewPager::requestLayout));
+
+        dialog.show();
     }
 }

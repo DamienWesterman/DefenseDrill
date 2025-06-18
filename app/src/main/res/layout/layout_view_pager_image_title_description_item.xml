@@ -10,17 +10,25 @@
     <TextView
         android:id="@+id/pageTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/pageDescription"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textAlignment="center"
-        android:textStyle="italic" />
+        android:layout_height="0dp"
+        android:layout_weight="0.8" >
+
+        <TextView
+            android:id="@+id/pageDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textAlignment="center"
+            android:textStyle="italic" />
+
+    </ScrollView>
 
 </LinearLayout>

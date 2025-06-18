@@ -8,12 +8,11 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/onboardingViewPager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.8"/>
+        android:layout_height="200dp"/>
+<!--    TODO: ABOVE - Once everything is typed out, see if we can slim that down at all -->
 
     <me.relex.circleindicator.CircleIndicator3
         android:id="@+id/indicator"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"/>
+        android:layout_height="wrap_content"/>
 </LinearLayout>
