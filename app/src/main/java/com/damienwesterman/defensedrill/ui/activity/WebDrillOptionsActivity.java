@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -367,6 +368,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      */
     private void startOnboarding() {
         boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         List<TapTarget> tapTargets = new ArrayList<>();
 // TODO: Actually put the real things here for each class, maybe put in their own methods

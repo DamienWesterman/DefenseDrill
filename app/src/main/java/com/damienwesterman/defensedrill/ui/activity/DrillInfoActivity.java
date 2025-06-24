@@ -30,6 +30,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +67,8 @@ import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -96,16 +99,20 @@ public class DrillInfoActivity extends AppCompatActivity {
     private enum ActivityState {
         /** The activity is displaying a generated drill. */
         GENERATED_DRILL,
+        /** Similar to {@link ActivityState#GENERATED_DRILL}, but this is for onboarding and will
+         * use a set dummy drill and walk the user through the screen. */
+        ONBOARDING_DRILL,
         /** We started at {@link ActivityState#GENERATED_DRILL}, but user skipped at least one Drill. */
         REGENERATED_DRILL,
         /** This drill was not generated and we are only displaying its information. */
         DISPLAYING_DRILL,
         /** Same as {@link ActivityState#DISPLAYING_DRILL} but started from a simulated attack. */
-        SIMULATED_ATTACK_DRILL
+        SIMULATED_ATTACK_DRILL,
     }
 
     private DrillInfoViewModel viewModel;
     private ActivityState activityState;
+    private Context context;
     @Inject
     SharedPrefs sharedPrefs;
     @Inject
@@ -193,11 +200,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drill_info);
 
+        context = this;
         saveViews();
         setUiLoading(true);
 
         // TODO: FIXME: DO NEXT: Finish the onboarding stuff
-        if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            activityState = ActivityState.ONBOARDING_DRILL;
+        } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)
                 && getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.SIMULATED_ATTACK_DRILL;
         } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
@@ -214,7 +224,8 @@ public class DrillInfoActivity extends AppCompatActivity {
         // Modify Toolbar
         Toolbar appToolbar = findViewById(R.id.appToolbar);
         String toolbarTitle;
-        if (ActivityState.GENERATED_DRILL == activityState) {
+        if (ActivityState.GENERATED_DRILL == activityState
+                || ActivityState.ONBOARDING_DRILL == activityState) {
             toolbarTitle = "Generate Drill";
         } else {
             toolbarTitle = "Drill Details";
@@ -254,6 +265,10 @@ public class DrillInfoActivity extends AppCompatActivity {
         if (ActivityState.SIMULATED_ATTACK_DRILL == activityState
                 && sharedPrefs.isSimulatedAttackPopupDefault()) {
             simulatedAttackInstructionsPopup();
+        }
+
+        if (ActivityState.ONBOARDING_DRILL == activityState) {
+            startOnboarding();
         }
     }
 
@@ -702,7 +717,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             fillDrillInfo(drill);
             setUiLoading(false);
 
-            if (null !=drill.getServerDrillId() && !sharedPrefs.getJwt().isEmpty()) {
+            if (null != drill.getServerDrillId() && !sharedPrefs.getJwt().isEmpty()) {
                 // Keep the spinner visible until instructions and related drills are loaded (or not)
                 drillProgressBar.setVisibility(View.VISIBLE);
                 instructionsSelect.setVisibility(View.GONE);
@@ -760,6 +775,13 @@ public class DrillInfoActivity extends AppCompatActivity {
                     break;
                 case REGENERATED_DRILL:
                     // Fallthrough intentional
+                case ONBOARDING_DRILL:
+                    // Fallthrough intentional
+                    final long dummyTime = 1750781942000L; // June 24th, 2025 16:19 GMT
+                    Drill dummyDrill = new Drill("Jab", dummyTime, Drill.MEDIUM_CONFIDENCE,
+                            "Remember to keep your back hand up!", null, true, List.of(), List.of());
+                    viewModel.getUiCurrentDrill().setValue(dummyDrill);
+                    break;
                 default:
                     // Not in a correct state. Toast so it persists screens
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -836,6 +858,7 @@ public class DrillInfoActivity extends AppCompatActivity {
             divider.setVisibility(View.VISIBLE);
             drillInfoDetails.setVisibility(View.VISIBLE);
             if (ActivityState.GENERATED_DRILL == activityState
+                    || ActivityState.ONBOARDING_DRILL == activityState
                     || ActivityState.REGENERATED_DRILL == activityState) {
                 // Do not set these to visible unless we are in an activity state that uses them
                 regenerateButton.setVisibility(View.VISIBLE);
@@ -1054,5 +1077,52 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         drillProgressBar.setVisibility(View.GONE);
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * TODO: doc comments, explain previous and next
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
+        List<TapTarget> tapTargets = new ArrayList<>();
+// TODO: Actually put the real things here for each class, maybe put in their own methods
+        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.confidenceSpinner),
+                        "TITLE", "DESCRIPTION")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(cancelable);
+        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.markAsPracticed),
+                        "TITLE 2", "DESCRIPTION 2")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(cancelable);
+
+        tapTargets.add(drillCardTapTarget);
+        tapTargets.add(customizeDatabaseTapTarget);
+
+        new TapTargetSequence(this)
+                .targets(tapTargets)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        HomeActivity.continueOnboardingActivity(context, DrillInfoActivity.class);
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                }).start();
     }
 }

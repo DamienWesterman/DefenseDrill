@@ -249,6 +249,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/markAsPracticed"
                 android:onClick="markAsPracticed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

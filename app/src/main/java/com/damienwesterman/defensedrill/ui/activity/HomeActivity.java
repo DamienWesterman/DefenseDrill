@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -265,6 +266,8 @@ public class HomeActivity extends AppCompatActivity {
         List<TapTarget> tapTargets = new ArrayList<>();
         Runnable onSequenceFinish;
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
 // TODO: Actually put the real things here for each class, maybe put in their own methods
 TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
 "TITLE", "DESCRIPTION")
@@ -289,6 +292,7 @@ tapTargets.add(customizeDatabaseTapTarget);
             onSequenceFinish = () -> CategorySelectActivity.startOnboardingActivity(context);
         } else if (DrillInfoActivity.class == previousActivity) {
             // TODO: Another popup saying have fun or something
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             onSequenceFinish = () -> UiUtils.displayDismissibleSnackbar(rootView, "ALl DONE, YAY");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");

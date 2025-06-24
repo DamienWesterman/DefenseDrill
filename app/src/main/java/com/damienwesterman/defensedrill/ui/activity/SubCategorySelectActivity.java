@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -217,6 +218,8 @@ public class SubCategorySelectActivity extends AppCompatActivity {
      */
     private void startOnboarding() {
         boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         List<TapTarget> tapTargets = new ArrayList<>();
 // TODO: Actually put the real things here for each class, maybe put in their own methods
