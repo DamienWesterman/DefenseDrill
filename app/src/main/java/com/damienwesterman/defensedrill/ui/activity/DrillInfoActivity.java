@@ -196,6 +196,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveViews();
         setUiLoading(true);
 
+        // TODO: FIXME: DO NEXT: Finish the onboarding stuff
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)
                 && getIntent().hasExtra(Constants.INTENT_EXTRA_DRILL_ID)) {
             activityState = ActivityState.SIMULATED_ATTACK_DRILL;

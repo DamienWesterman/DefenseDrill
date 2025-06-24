@@ -44,10 +44,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -61,8 +69,11 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SubCategorySelectActivity extends AppCompatActivity {
     private static final String RANDOM_CATEGORY_NAME = "Random";
 
+    @Inject
+    SharedPrefs sharedPrefs;
     private SubCategoryViewModel subCategoryViewModel;
     long selectedCategoryId;
+    private Context context;
 
     // =============================================================================================
     // Activity Creation Methods
@@ -107,6 +118,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        context = this;
         selectedCategoryId = getIntent().getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE,
                 Constants.USER_RANDOM_SELECTION);
 
@@ -127,6 +139,10 @@ public class SubCategorySelectActivity extends AppCompatActivity {
                 setCategoryTitle(null != category ? category.getName() : RANDOM_CATEGORY_NAME);
             });
             categoryViewModel.populateAbstractCategories();
+        }
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            startOnboarding();
         }
     }
 
@@ -191,5 +207,44 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     private void setCategoryTitle(@NonNull String category) {
         TextView categorySelection = findViewById(R.id.categorySelection);
         runOnUiThread(() -> categorySelection.setText(getString(R.string.category_selected_prefix, category)));
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * TODO: doc comments, explain previous and next
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        List<TapTarget> tapTargets = new ArrayList<>();
+// TODO: Actually put the real things here for each class, maybe put in their own methods
+        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.randomSubCategoryCard),
+                        "TITLE", "DESCRIPTION")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(cancelable);
+
+        tapTargets.add(drillCardTapTarget);
+
+        new TapTargetSequence(this)
+                .targets(tapTargets)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        DrillInfoActivity.startOnboardingActivity(context);
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                }).start();
     }
 }

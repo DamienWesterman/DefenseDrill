@@ -27,14 +27,15 @@
 package com.damienwesterman.defensedrill.ui.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -54,15 +55,14 @@ import com.damienwesterman.defensedrill.ui.adapter.ViewPagerAdapter;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.getkeepsafe.taptargetview.TapTargetView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Triple;
 import me.relex.circleindicator.CircleIndicator3;
 
 /**
@@ -130,6 +130,7 @@ public class HomeActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    // TODO: Make a card for this somewhere, not sure where, maybe just here in the home screen eventually to be places into a settings activity or something
     /**
      * Start the HomeActivity in the Onboarding state.
      *
@@ -260,60 +261,84 @@ public class HomeActivity extends AppCompatActivity {
      *                          a new onboarding process.
      */
     private void startOnboarding(@Nullable Class<?> previousActivity) {
-        // TODO: Doc comments - Write the entire process here
-        // TODO: Also make sure to write the before/after steps inside each other activity
+        boolean cancelable = true; // sharedPrefs.isOnboardingComplete(); TODO: PUT BACK IN
+        List<TapTarget> tapTargets = new ArrayList<>();
+        Runnable onSequenceFinish;
 
-        boolean cancelable = sharedPrefs.isOnboardingComplete();
-        // How to:
-//        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
-//                        "TITLE", "DESCRIPTION")
-//                .outerCircleColor(R.color.drill_green_variant)
-//                .tintTarget(false)
-//                .cancelable(false);
-//        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
-//                        "TITLE 2", "DESCRIPTION 2")
-//                .outerCircleColor(R.color.drill_green_variant)
-//                .tintTarget(false)
-//                .cancelable(false);
-//
-//        TapTargetSequence sequence = new TapTargetSequence(this)
-//                .targets(drillCardTapTarget, customizeDatabaseTapTarget)
-//                .listener(new TapTargetSequence.Listener() {
-//                    @Override
-//                    public void onSequenceFinish() {
-//                        WebDrillOptionsActivity.startActivity(context);
-//                    }
-//
-//                    @Override
-//                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onSequenceCanceled(TapTarget lastTarget) {
-//
-//                    }
-//                });
-//        sequence.start();
-//        sequence.cancel();
-        onboardingTerminologyIntroPopup(cancelable, () -> {
-            // TODO: sequence.cancel();
-        });
+// TODO: Actually put the real things here for each class, maybe put in their own methods
+TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
+"TITLE", "DESCRIPTION")
+.outerCircleColor(R.color.drill_green_variant)
+.tintTarget(false)
+.cancelable(false);
+TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
+"TITLE 2", "DESCRIPTION 2")
+.outerCircleColor(R.color.drill_green_variant)
+.tintTarget(false)
+.cancelable(false);
+
+tapTargets.add(drillCardTapTarget);
+tapTargets.add(customizeDatabaseTapTarget);
+
+        if (null == previousActivity) {
+            // Starting of the onboarding
+            onSequenceFinish = () -> WebDrillOptionsActivity.startOnboardingActivity(context);
+        } else if (WebDrillOptionsActivity.class == previousActivity) {
+            onSequenceFinish = () -> SimulatedAttackSettingsActivity.startOnboardingActivity(context);
+        } else if (SimulatedAttackSettingsActivity.class == previousActivity) {
+            onSequenceFinish = () -> CategorySelectActivity.startOnboardingActivity(context);
+        } else if (DrillInfoActivity.class == previousActivity) {
+            // TODO: Another popup saying have fun or something
+            onSequenceFinish = () -> UiUtils.displayDismissibleSnackbar(rootView, "ALl DONE, YAY");
+        } else {
+            UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
+            Log.e(TAG, "Invalid class for previousActivity: " + previousActivity);
+            return;
+        }
+
+        TapTargetSequence sequence = new TapTargetSequence(this)
+                .targets(tapTargets)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        onSequenceFinish.run();
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                });
+
+        if (null == previousActivity) {
+            // Start with an introduction to the terminology
+            onboardingTerminologyIntroPopup(cancelable, sequence::start, sequence::cancel);
+        } else {
+            sequence.start();
+        }
     }
 
     // TODO: Doc comments
     public void onboardingTerminologyIntroPopup(boolean cancelable,
+                                                @Nullable Runnable onDialogFinish,
                                                 @Nullable Runnable onCancelCallback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.layout_onboarding_terminology_popup, null);
         ViewPager2 viewPager = dialogView.findViewById(R.id.onboardingViewPager);
         CircleIndicator3 indicator = dialogView.findViewById(R.id.indicator);
 
-        viewPager.setAdapter(new ViewPagerAdapter(List.of(
+        // TODO: Actually make real descriptions
+        List<Pair<String, String>> pages = List.of(
                 new Pair<>("Title 1", "Description 1"),
                 new Pair<>("Awesome 2", "Like super awesome"),
                 new Pair<>("Finish 3", "Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. ")
-        )));
+        );
+        viewPager.setAdapter(new ViewPagerAdapter(pages));
         indicator.setViewPager(viewPager);
         // TODO: TELL USER TO SWIPE THROUGH
 
@@ -321,7 +346,11 @@ public class HomeActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.ic_launcher_foreground);
         builder.setTitle("Welcome!");
         builder.setCancelable(cancelable);
-        builder.setPositiveButton("Show me Around", null);
+        builder.setPositiveButton("Show me Around", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
         if (cancelable) {
             builder.setNeutralButton("Exit", (dialogInterface, i) -> {
                 if (null != onCancelCallback) {
@@ -332,9 +361,38 @@ public class HomeActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
 
-        // Make sure we properly measure the page so it will only show one at a time
-        dialog.setOnShowListener(dialogInterface ->
-                        viewPager.post(viewPager::requestLayout));
+        // TODO: Only show positive button when we reach the end
+        dialog.setOnShowListener(dialogInterface -> {
+            // Make sure we properly measure the page so it will only show one at a time
+            viewPager.post(viewPager::requestLayout);
+
+            // Set up logic to only show the button to continue once the user has scrolled all pages
+            Button showMeAroundButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+    //        if (!cancelable) { //TODO: PUT BACK IN
+                showMeAroundButton.setVisibility(View.GONE);
+    //        }
+            viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    if (position == (pages.size() - 1)) {
+                        // User reached the last page, let them continue
+                        showMeAroundButton.setVisibility(View.VISIBLE);
+                    }
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    super.onPageScrollStateChanged(state);
+                }
+            });
+        });
 
         dialog.show();
     }

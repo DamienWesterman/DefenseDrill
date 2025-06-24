@@ -136,6 +136,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         context = this;
 
         viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            startOnboarding();
+        }
     }
 
     @Override
@@ -353,5 +357,50 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         } else {
             loadAllDrillsPopup();
         }
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * TODO: doc comments, explain previous and next
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        List<TapTarget> tapTargets = new ArrayList<>();
+// TODO: Actually put the real things here for each class, maybe put in their own methods
+        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.downloadFromDatabaseCard),
+                        "TITLE", "DESCRIPTION")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(cancelable);
+        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.logoutCard),
+                        "TITLE 2", "DESCRIPTION 2")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(cancelable);
+
+        tapTargets.add(drillCardTapTarget);
+        tapTargets.add(customizeDatabaseTapTarget);
+
+        new TapTargetSequence(this)
+                .targets(tapTargets)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        HomeActivity.continueOnboardingActivity(context, WebDrillOptionsActivity.class);
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                }).start();
     }
 }

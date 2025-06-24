@@ -42,9 +42,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -55,6 +63,10 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class CategorySelectActivity extends AppCompatActivity {
+    @Inject
+    SharedPrefs sharedPrefs;
+
+    private Context context;
 
     // =============================================================================================
     // Activity Creation Methods
@@ -100,6 +112,8 @@ public class CategorySelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category_select);
         Toolbar appToolbar = findViewById(R.id.appToolbar);
 
+        context = this;
+
         // Modify Toolbar
         appToolbar.setTitle("Generate Drill");
         setSupportActionBar(appToolbar);
@@ -108,6 +122,10 @@ public class CategorySelectActivity extends AppCompatActivity {
         }
 
         setUpRecyclerView();
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            startOnboarding();
+        }
     }
 
     @Override
@@ -170,5 +188,44 @@ public class CategorySelectActivity extends AppCompatActivity {
         CategoryViewModel viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         viewModel.getUiAbstractCategoriesList().observe(this, adapter::submitList);
         viewModel.populateAbstractCategories();
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * TODO: doc comments, explain previous and next
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        List<TapTarget> tapTargets = new ArrayList<>();
+// TODO: Actually put the real things here for each class, maybe put in their own methods
+        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.randomCategoryCard),
+                        "TITLE", "DESCRIPTION")
+                .outerCircleColor(R.color.drill_green_variant)
+                .tintTarget(false)
+                .cancelable(cancelable);
+
+        tapTargets.add(drillCardTapTarget);
+
+        new TapTargetSequence(this)
+                .targets(tapTargets)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        SubCategorySelectActivity.startOnboardingActivity(context);
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                }).start();
     }
 }
