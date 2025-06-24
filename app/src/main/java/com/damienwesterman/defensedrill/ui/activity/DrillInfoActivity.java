@@ -64,6 +64,7 @@ import com.damienwesterman.defensedrill.data.remote.dto.InstructionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.RelatedDrillDTO;
 import com.damienwesterman.defensedrill.ui.common.CommonPopups;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.DrillInfoViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
@@ -204,7 +205,6 @@ public class DrillInfoActivity extends AppCompatActivity {
         saveViews();
         setUiLoading(true);
 
-        // TODO: FIXME: DO NEXT: Finish the onboarding stuff
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
             activityState = ActivityState.ONBOARDING_DRILL;
         } else if (getIntent().hasExtra(Constants.INTENT_EXTRA_SIMULATED_ATTACK)
@@ -268,7 +268,11 @@ public class DrillInfoActivity extends AppCompatActivity {
         }
 
         if (ActivityState.ONBOARDING_DRILL == activityState) {
-            startOnboarding();
+            /*
+            We need to wait for the toolbar to be finished loading before calling onboarding, as we
+            want to access one of the buttons.
+             */
+            appToolbar.post(this::startOnboarding);
         }
     }
 
@@ -1083,31 +1087,48 @@ public class DrillInfoActivity extends AppCompatActivity {
     // Onboarding Methods
     // =============================================================================================
     /**
-     * TODO: doc comments, explain previous and next
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link SubCategorySelectActivity#startOnboardingActivity(Context)}, proceeded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)} from DrillInfoActivity.class.
      */
     private void startOnboarding() {
         boolean cancelable = sharedPrefs.isOnboardingComplete();
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
-        List<TapTarget> tapTargets = new ArrayList<>();
-// TODO: Actually put the real things here for each class, maybe put in their own methods
-        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.confidenceSpinner),
-                        "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.drill_green_variant)
-                .tintTarget(false)
-                .cancelable(cancelable);
-        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.markAsPracticed),
-                        "TITLE 2", "DESCRIPTION 2")
-                .outerCircleColor(R.color.drill_green_variant)
-                .tintTarget(false)
-                .cancelable(cancelable);
-
-        tapTargets.add(drillCardTapTarget);
-        tapTargets.add(customizeDatabaseTapTarget);
+        TapTarget confidenceTapTarget = OnboardingUtils.createTapTarget(context,
+                findViewById(R.id.confidenceContainer),
+                "Confidence",
+                getString(R.string.onboarding_confidence_description),
+                cancelable);
+        TapTarget lastDrilledTapTarget = OnboardingUtils.createTapTarget(context,
+                findViewById(R.id.lastDrilledContainer),
+                "Last Drilled Date",
+                getString(R.string.onboarding_last_drilled_description),
+                cancelable);
+        TapTarget regenerateTapTarget = OnboardingUtils.createTapTarget(context,
+                regenerateButton,
+                "Skip Drill",
+                getString(R.string.onboarding_skip_drill_description),
+                cancelable);
+        TapTarget resetSkippedDrillsTapTarget = OnboardingUtils.createTapTarget(context,
+                resetSkippedDrillsButton,
+                "Reset Skipped Drills",
+                getString(R.string.onboarding_reset_skipped_drills_description),
+                cancelable);
+        TapTarget markAsPracticedTapTarget = OnboardingUtils.createTapTarget(context,
+                findViewById(R.id.markAsPracticed),
+                "Mark as Practiced",
+                getString(R.string.onboarding_mark_as_practiced_description),
+                cancelable);
+        TapTarget homeTapTarget = OnboardingUtils.createToolbarHomeTapTarget(context,
+                findViewById(R.id.appToolbar),
+                cancelable);
 
         new TapTargetSequence(this)
-                .targets(tapTargets)
+                .targets(confidenceTapTarget, lastDrilledTapTarget, regenerateTapTarget,
+                        resetSkippedDrillsTapTarget, markAsPracticedTapTarget, homeTapTarget)
                 .listener(new TapTargetSequence.Listener() {
                     @Override
                     public void onSequenceFinish() {

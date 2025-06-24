@@ -115,6 +115,7 @@
                 android:layout_marginTop="16dp">
 
                 <LinearLayout
+                    android:id="@+id/confidenceContainer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -135,6 +136,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/lastDrilledContainer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

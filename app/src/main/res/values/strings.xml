@@ -181,4 +181,10 @@ Username: [Online Database Username]
 Thank you and we will try to get back to you as quickly as possible!
     </string>
     <string name="page_icon">Page Icon</string>
+    <string name="onboarding_confidence_description">This indicates how confident you feel executing this drill. The less confident you are, the more likely this drill is to be chosen first. This helps you work on drills you are less confident on.</string>
+    <string name="onboarding_last_drilled_description">The longer the time since you\'ve last practiced a drill, the more likely it is to be chosen first. This helps keep drills fresh.</string>
+    <string name="onboarding_skip_drill_description">If you do not like the drill that was generated, this will give you a new one!</string>
+    <string name="onboarding_reset_skipped_drills_description">Once you have completed or skipped a drill, it will not be chosen again during this workout. Press this button if you want to include them as options again.</string>
+    <string name="onboarding_mark_as_practiced_description">After you have finished practicing this drill, make sure to mark it as practiced! This will record your practice session and ask you how confident you felt. This is important so the app can make sure to pick the most appropriate drills during your workouts!</string>
+    <string name="onboarding_home_navigation_description">Let\'s go back to the home page</string>
 </resources>

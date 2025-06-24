@@ -206,7 +206,7 @@ public class CategorySelectActivity extends AppCompatActivity {
 // TODO: Actually put the real things here for each class, maybe put in their own methods
         TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.randomCategoryCard),
                         "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.drill_green_variant)
+                .outerCircleColor(R.color.tapTargetOuterCircleColor)
                 .tintTarget(false)
                 .cancelable(cancelable);
 

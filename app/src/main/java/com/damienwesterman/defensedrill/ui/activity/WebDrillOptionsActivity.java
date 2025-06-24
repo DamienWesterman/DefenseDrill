@@ -375,12 +375,12 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 // TODO: Actually put the real things here for each class, maybe put in their own methods
         TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.downloadFromDatabaseCard),
                         "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.drill_green_variant)
+                .outerCircleColor(R.color.tapTargetOuterCircleColor)
                 .tintTarget(false)
                 .cancelable(cancelable);
         TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.logoutCard),
                         "TITLE 2", "DESCRIPTION 2")
-                .outerCircleColor(R.color.drill_green_variant)
+                .outerCircleColor(R.color.tapTargetOuterCircleColor)
                 .tintTarget(false)
                 .cancelable(cancelable);
 

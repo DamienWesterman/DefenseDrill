@@ -271,12 +271,12 @@ public class HomeActivity extends AppCompatActivity {
 // TODO: Actually put the real things here for each class, maybe put in their own methods
 TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
 "TITLE", "DESCRIPTION")
-.outerCircleColor(R.color.drill_green_variant)
+.outerCircleColor(R.color.tapTargetOuterCircleColor)
 .tintTarget(false)
 .cancelable(false);
 TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
 "TITLE 2", "DESCRIPTION 2")
-.outerCircleColor(R.color.drill_green_variant)
+.outerCircleColor(R.color.tapTargetOuterCircleColor)
 .tintTarget(false)
 .cancelable(false);
 

@@ -13,4 +13,5 @@
     <color name="drill_yellow_variant">#FFF59A</color>
     <color name="field_label">#9E9E9E</color>
     <color name="error">#FF0000</color>
+    <color name="tapTargetOuterCircleColor">@color/drill_green_variant</color>
 </resources>
