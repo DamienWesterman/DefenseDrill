@@ -37,6 +37,8 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,14 +49,12 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
 import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.getkeepsafe.taptargetview.TapTargetView;
 
 import javax.inject.Inject;
 
@@ -214,40 +214,56 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     // Onboarding Methods
     // =============================================================================================
     /**
-     * TODO: doc comments, explain previous and next
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link CategorySelectActivity#startOnboardingActivity(Context)}, proceeded by
+     * {@link DrillInfoActivity#startOnboardingActivity(Context)}.
      */
     private void startOnboarding() {
         boolean cancelable = sharedPrefs.isOnboardingComplete();
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
-        List<TapTarget> tapTargets = new ArrayList<>();
-// TODO: Actually put the real things here for each class, maybe put in their own methods
-        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.randomSubCategoryCard),
-                        "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.tapTargetOuterCircleColor)
-                .tintTarget(false)
-                .cancelable(cancelable);
+        TapTarget randomTapTarget = OnboardingUtils.createTapTarget(
+                findViewById(R.id.randomSubCategoryCard),
+                "Select a Sub-Category",
+                getString(R.string.onboarding_random_sub_category_description),
+                cancelable);
 
-        tapTargets.add(drillCardTapTarget);
-
-        new TapTargetSequence(this)
-                .targets(tapTargets)
-                .listener(new TapTargetSequence.Listener() {
+        Runnable startTapTarget = () -> TapTargetView.showFor(this, randomTapTarget,
+                new TapTargetView.Listener() {
                     @Override
-                    public void onSequenceFinish() {
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);
                         DrillInfoActivity.startOnboardingActivity(context);
                     }
+                });
 
-                    @Override
-                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+        activityUsePopup(cancelable, startTapTarget);
+    }
 
-                    }
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     */
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Sub-Category");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.onboarding_sub_category_select_activity_description);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", null);
+        }
 
-                    @Override
-                    public void onSequenceCanceled(TapTarget lastTarget) {
-
-                    }
-                }).start();
+        builder.create().show();
     }
 }

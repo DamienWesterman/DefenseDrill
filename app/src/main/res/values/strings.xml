@@ -187,4 +187,9 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="onboarding_reset_skipped_drills_description">Once you have completed or skipped a drill, it will not be chosen again during this workout. Press this button if you want to include them as options again.</string>
     <string name="onboarding_mark_as_practiced_description">After you have finished practicing this drill, make sure to mark it as practiced! This will record your practice session and ask you how confident you felt. This is important so the app can make sure to pick the most appropriate drills during your workouts!</string>
     <string name="onboarding_home_navigation_description">Let\'s go back to the home page</string>
+    <string name="onboarding_drill_info_activity_details">This screen shows you all the details about a Drill. Here you can take notes about your drill, see when you last practiced it, modify what categories it belongs to, and most importantly: practice it!</string>
+    <string name="onboarding_category_select_activity_description">Here we will decide what category we want our workout to use - if any. One of the most useful will be \"Self Defense\"!</string>
+    <string name="onboarding_random_category_description">Rather than selecting a specific category, we will select \"Random\" and let the app choose any.</string>
+    <string name="onboarding_sub_category_select_activity_description">Here we will decide what sub-category we want our workout to use - if any.</string>
+    <string name="onboarding_random_sub_category_description">Rather than selecting a specific sub-category, we will select \"Random\" and let the app choose any.</string>
 </resources>

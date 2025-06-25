@@ -48,34 +48,20 @@ public class OnboardingUtils {
     /**
      * Create a TapTarget for any view to be used during onboarding screens. This customizes the
      * TapTarget to ensure a consistent look across activities.
-     * @param context       Activity context.
      * @param view          View to create a TapTarget for.
      * @param title         Title for the TapTarget.
      * @param description   Description of the TapTarget.
      * @param cancelable    true if the user is able to cancel the TapTarget.
      * @return              TapTarget with consistent customizations.
      */
-    public static TapTarget createTapTarget(@NonNull Context context,
-                                            @NonNull View view,
+    public static TapTarget createTapTarget(@NonNull View view,
                                             @NonNull String title,
                                             @NonNull String description,
                                             boolean cancelable) {
-        int targetRadiusPx;
-        // Select whichever dimension is larger
-        if (view.getWidth() > view.getHeight()) {
-            targetRadiusPx = view.getWidth() / 2;
-        } else {
-            targetRadiusPx = view.getHeight() / 2;
-        }
-        // Convert to dp
-        int targetRadiusDp =
-                (int) (targetRadiusPx / context.getResources().getDisplayMetrics().density);
-
         return TapTarget.forView(view, title, description)
                 .outerCircleColor(R.color.tapTargetOuterCircleColor)
                 .tintTarget(false)
-                .cancelable(cancelable)
-                .targetRadius(targetRadiusDp);
+                .cancelable(cancelable);
     }
 
     /**

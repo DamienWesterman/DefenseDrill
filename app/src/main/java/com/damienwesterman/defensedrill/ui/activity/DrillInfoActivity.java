@@ -1097,27 +1097,31 @@ public class DrillInfoActivity extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
-        TapTarget confidenceTapTarget = OnboardingUtils.createTapTarget(context,
+        TapTarget confidenceTapTarget = OnboardingUtils.createTapTarget(
                 findViewById(R.id.confidenceContainer),
                 "Confidence",
                 getString(R.string.onboarding_confidence_description),
-                cancelable);
-        TapTarget lastDrilledTapTarget = OnboardingUtils.createTapTarget(context,
+                cancelable)
+                // This view is a little awkwardly shaped, so encompass the entire view
+                .targetRadius(calculateTargetRadius(findViewById(R.id.confidenceContainer)));
+        TapTarget lastDrilledTapTarget = OnboardingUtils.createTapTarget(
                 findViewById(R.id.lastDrilledContainer),
                 "Last Drilled Date",
                 getString(R.string.onboarding_last_drilled_description),
-                cancelable);
-        TapTarget regenerateTapTarget = OnboardingUtils.createTapTarget(context,
+                cancelable)
+                // This view is a little awkwardly shaped, so encompass the entire view
+                .targetRadius(calculateTargetRadius(findViewById(R.id.lastDrilledContainer)));
+        TapTarget regenerateTapTarget = OnboardingUtils.createTapTarget(
                 regenerateButton,
                 "Skip Drill",
                 getString(R.string.onboarding_skip_drill_description),
                 cancelable);
-        TapTarget resetSkippedDrillsTapTarget = OnboardingUtils.createTapTarget(context,
+        TapTarget resetSkippedDrillsTapTarget = OnboardingUtils.createTapTarget(
                 resetSkippedDrillsButton,
                 "Reset Skipped Drills",
                 getString(R.string.onboarding_reset_skipped_drills_description),
                 cancelable);
-        TapTarget markAsPracticedTapTarget = OnboardingUtils.createTapTarget(context,
+        TapTarget markAsPracticedTapTarget = OnboardingUtils.createTapTarget(
                 findViewById(R.id.markAsPracticed),
                 "Mark as Practiced",
                 getString(R.string.onboarding_mark_as_practiced_description),
@@ -1126,7 +1130,7 @@ public class DrillInfoActivity extends AppCompatActivity {
                 findViewById(R.id.appToolbar),
                 cancelable);
 
-        new TapTargetSequence(this)
+        TapTargetSequence sequence = new TapTargetSequence(this)
                 .targets(confidenceTapTarget, lastDrilledTapTarget, regenerateTapTarget,
                         resetSkippedDrillsTapTarget, markAsPracticedTapTarget, homeTapTarget)
                 .listener(new TapTargetSequence.Listener() {
@@ -1144,6 +1148,42 @@ public class DrillInfoActivity extends AppCompatActivity {
                     public void onSequenceCanceled(TapTarget lastTarget) {
 
                     }
-                }).start();
+                });
+
+        activityUsePopup(cancelable, sequence::start, sequence::cancel);
+    }
+
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish,
+                                  @Nullable Runnable onCancelCallback) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Drill Information");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.onboarding_drill_info_activity_details);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", (dialogInterface, i) -> {
+                if (null != onCancelCallback) {
+                    onCancelCallback.run();
+                }
+            });
+        }
+
+        builder.create().show();
+    }
+
+    /**
+     * Calculate target radius in dp for TapTarget from a view.
+     * @param view  View to calculate the TapTarget radius for.
+     * @return      TapTarget radius in dp.
+     */
+    private int calculateTargetRadius(View view) {
+        int radiusPx = view.getWidth() / 2;
+        return (int) (radiusPx / getResources().getDisplayMetrics().density);
     }
 }

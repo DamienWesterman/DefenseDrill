@@ -291,9 +291,10 @@ tapTargets.add(customizeDatabaseTapTarget);
         } else if (SimulatedAttackSettingsActivity.class == previousActivity) {
             onSequenceFinish = () -> CategorySelectActivity.startOnboardingActivity(context);
         } else if (DrillInfoActivity.class == previousActivity) {
-            // TODO: Another popup saying have fun or something
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            onSequenceFinish = () -> UiUtils.displayDismissibleSnackbar(rootView, "ALl DONE, YAY");
+            onboardingDonePopup();
+//            sharedPrefs.setOnboardingComplete(true); TODO: PUT BACK IN
+            return;
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
             Log.e(TAG, "Invalid class for previousActivity: " + previousActivity);
@@ -365,7 +366,6 @@ tapTargets.add(customizeDatabaseTapTarget);
 
         AlertDialog dialog = builder.create();
 
-        // TODO: Only show positive button when we reach the end
         dialog.setOnShowListener(dialogInterface -> {
             // Make sure we properly measure the page so it will only show one at a time
             viewPager.post(viewPager::requestLayout);
@@ -399,5 +399,20 @@ tapTargets.add(customizeDatabaseTapTarget);
         });
 
         dialog.show();
+    }
+
+    /**
+     * Popup to finish off the onboarding process.
+     */
+    private void onboardingDonePopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("That's it!");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(true);
+        // TODO: Insert where to take this again and then extract string resource
+        builder.setMessage("And that's the run down! You can review this tutorial any time in __INSERT__. Have fun and make sure to practice for best results!");
+        builder.setPositiveButton("Finish", null);
+
+        builder.create().show();
     }
 }
