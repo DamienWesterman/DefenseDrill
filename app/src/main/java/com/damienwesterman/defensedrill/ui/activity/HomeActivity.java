@@ -53,6 +53,7 @@ import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.adapter.ViewPagerAdapter;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
@@ -81,9 +82,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // TODO: Maybe start this process with a popup the then requests the permissions before starting the TapTargetView sequence stuff
         // TODO: Or maybe a sequence of popups that explain what a Drill is as well
-    // TODO: Set cancelable by checking sharedPrefs (if this is the first onboarding, then not cancelable
     // TODO: Make sure to set battery option permissions if the user checks the simulated attacks notifications on
-    // TODO: Maybe make some dummy data or something? i don't know how to do this if we go through the generate drill process
     // TODO: Sequence:
         // TODO: Home screen - First let's get some drills to work with
             // -> To DownloadDrills Activity
@@ -98,12 +97,6 @@ public class HomeActivity extends AppCompatActivity {
             // highlight slider (explain what these are)
             // Check the slider, then highlight the create button
             // -> Home
-        // TODO: home -> Generate Drill
-            // Then go through the sequence, selecting random each time, then get to drill info
-        // TODO: Drill Info
-            // TODO: Create some way to have this populate with default info
-            // Explain everything about this screen
-            // TODO: Return home and SET THAT WE HAVE COMPLETED ONBOARDING
 
     private static boolean isUpdateServiceStarted = false;
 
@@ -288,8 +281,30 @@ tapTargets.add(customizeDatabaseTapTarget);
             onSequenceFinish = () -> WebDrillOptionsActivity.startOnboardingActivity(context);
         } else if (WebDrillOptionsActivity.class == previousActivity) {
             onSequenceFinish = () -> SimulatedAttackSettingsActivity.startOnboardingActivity(context);
+            tapTargets = List.of(
+                    OnboardingUtils.createTapTarget(
+                            findViewById(R.id.customizeDatabaseCard),
+                            "View saved Data",
+                            getString(R.string.onboarding_customize_database_description),
+                            cancelable
+                            ),
+                    OnboardingUtils.createTapTarget(
+                            findViewById(R.id.simulatedAttackSettings),
+                            "Simulated Attacks!",
+                            getString(R.string.onboarding_simulated_attacks_description),
+                            cancelable
+                    )
+            );
         } else if (SimulatedAttackSettingsActivity.class == previousActivity) {
             onSequenceFinish = () -> CategorySelectActivity.startOnboardingActivity(context);
+            tapTargets = List.of(
+                    OnboardingUtils.createTapTarget(
+                            findViewById(R.id.generateDrillCard),
+                            "Start a Workout",
+                            getString(R.string.onboarding_generate_drill_description),
+                            cancelable
+                    )
+            );
         } else if (DrillInfoActivity.class == previousActivity) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             onboardingDonePopup();

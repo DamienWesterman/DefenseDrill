@@ -44,6 +44,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -62,6 +63,7 @@ import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.adapter.PolicyAdapter;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.SimulatedAttackSettingsViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
@@ -182,7 +184,11 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         viewModel.loadPolicies();
 
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
-            startOnboarding();
+            /*
+            We need to wait for the toolbar to be finished loading before calling onboarding, as we
+            want to access one of the buttons.
+             */
+            appToolbar.post(this::startOnboarding);
         }
     }
 
@@ -721,46 +727,90 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // Onboarding Methods
     // =============================================================================================
     /**
-     * TODO: doc comments, explain previous and next
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)}, proceeded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)} from
+     * SimulatedAttackSettingsActivity.
      */
     private void startOnboarding() {
         boolean cancelable = sharedPrefs.isOnboardingComplete();
+        SwitchCompat enabledSwitch = findViewById(R.id.enabledSwitch);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        enabledSwitch.setOnCheckedChangeListener(null);
+        enabledSwitch.setChecked(false);
 
-        List<TapTarget> tapTargets = new ArrayList<>();
-// TODO: Actually put the real things here for each class, maybe put in their own methods
-        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.enabledSwitch),
-                        "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.tapTargetOuterCircleColor)
-                .tintTarget(false)
-                .cancelable(cancelable);
-        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.addPolicyButton),
-                        "TITLE 2", "DESCRIPTION 2")
-                .outerCircleColor(R.color.tapTargetOuterCircleColor)
-                .tintTarget(false)
-                .cancelable(cancelable);
+        TapTarget enableSwitchTapTarget = OnboardingUtils.createTapTarget(
+                enabledSwitch,
+                "Enable Simulated Attacks",
+                getString(R.string.onboarding_enable_simulated_attacks_description),
+                cancelable
+        );
+        TapTarget addPolicyTapTarget = OnboardingUtils.createTapTarget(
+                addPolicyButton,
+                "Add New Alarm",
+                getString(R.string.onboarding_add_new_alarm_description),
+                cancelable
+        );
+        TapTarget homeTapTarget = OnboardingUtils.createToolbarHomeTapTarget(context,
+                findViewById(R.id.appToolbar),
+                cancelable);
 
-        tapTargets.add(drillCardTapTarget);
-        tapTargets.add(customizeDatabaseTapTarget);
-
-        new TapTargetSequence(this)
-                .targets(tapTargets)
+        TapTargetSequence sequence = new TapTargetSequence(this)
+                .targets(enableSwitchTapTarget, addPolicyTapTarget, homeTapTarget)
                 .listener(new TapTargetSequence.Listener() {
                     @Override
                     public void onSequenceFinish() {
-                        HomeActivity.continueOnboardingActivity(context, SimulatedAttackSettingsActivity.class);
+                        HomeActivity.continueOnboardingActivity(context,
+                                SimulatedAttackSettingsActivity.class);
                     }
 
                     @Override
                     public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
+                        if (lastTarget == enableSwitchTapTarget) {
+                            enabledSwitch.setChecked(true);
+                            addPolicyButton.setEnabled(true);
+                        }
                     }
 
                     @Override
                     public void onSequenceCanceled(TapTarget lastTarget) {
 
                     }
-                }).start();
+                });
+
+        activityUsePopup(cancelable, sequence::start, sequence::cancel);
+    }
+
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     * @param onDialogCancel    Runnable if the user cancels the popup.
+     */
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish,
+                                  @Nullable Runnable onDialogCancel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("SSimulated Attack Notifications");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.simulated_attacks_description);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", ((dialogInterface, i) -> {
+                if (null != onDialogCancel) {
+                    onDialogCancel.run();
+                }
+            }));
+        }
+
+        builder.create().show();
     }
 }

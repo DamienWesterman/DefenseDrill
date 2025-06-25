@@ -139,7 +139,11 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
 
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
-            startOnboarding();
+            /*
+            We need to wait for the toolbar to be finished loading before calling onboarding, as we
+            want to access one of the buttons.
+             */
+            appToolbar.post(this::startOnboarding);
         }
     }
 
@@ -293,7 +297,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         alert.dismiss();
-                        UiUtils.displayDismissibleSnackbar(rootView, "Download Successful!");
+                        howToUnlockDrillsPopup();
                     }
 
                     @Override
@@ -328,6 +332,16 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         });
 
         alert.show();
+    }
+
+    private void howToUnlockDrillsPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Download Successful!");
+        builder.setIcon(R.drawable.checkmark_icon);
+        builder.setMessage(R.string.unlock_drills_how_to_popup_message);
+        builder.setPositiveButton("Done", null);
+
+        builder.create().show();
     }
 
     // =============================================================================================

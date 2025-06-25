@@ -192,4 +192,10 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="onboarding_random_category_description">Rather than selecting a specific category, we will select \"Random\" and let the app choose any.</string>
     <string name="onboarding_sub_category_select_activity_description">Here we will decide what sub-category we want our workout to use - if any.</string>
     <string name="onboarding_random_sub_category_description">Rather than selecting a specific sub-category, we will select \"Random\" and let the app choose any.</string>
+    <string name="onboarding_generate_drill_description">Now for the most important part of the app: the workout! Click here to have the app generate a custom workout for you.</string>
+    <string name="unlock_drills_how_to_popup_message"><![CDATA[Successfully downloaded drills. You can always unlock drills as you learn more by going to: Home -> Customize Database -> Unlock Drills]]></string>
+    <string name="onboarding_customize_database_description">You can go here to view drills, create your own, unlock new ones as you learn, and check what categories and sub-categories there are.</string>
+    <string name="onboarding_simulated_attacks_description">Now let\'s go through setting up custom notifications to help you put theory into context.</string>
+    <string name="onboarding_enable_simulated_attacks_description">Turn on Simulated Attack notifications. This requires notification permissions and will request permission the first time you enable it.</string>
+    <string name="onboarding_add_new_alarm_description">Create new alarms here. You will be able to select what day(s) and time(s) you want Simluated Attack Notifications, along with how frequently.</string>
 </resources>
