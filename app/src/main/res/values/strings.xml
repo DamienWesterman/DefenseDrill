@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Defense Drill</string>
-    <string name="generate_drill_title">Generate Drill</string>
-    <string name="generate_drills_description">Randomly generate a drill to practice.</string>
+    <string name="generate_drill_title">Generate Drills</string>
+    <string name="generate_drills_description">Randomly generate drills to practice.</string>
     <string name="customize_drills_title">Customize Drills</string>
     <string name="customize_drills_description">See all currently saved Drills and edit them, or create a new one. Filter drills by category and/or sub-category. Long click a Drill to delete it.</string>
     <string name="customize_categories_title">Customize Categories</string>
@@ -207,4 +207,6 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="onboarding_app_usage_description">This app will save different techniques related to self defense. Each of these techniques is referred to as a \'Drill\'. This app will help you practice by creating a workout of Drills, more on that later.</string>
     <string name="onboarding_terminology_description">Drills are categorized in two ways. A \'Category\' is usually a martial arts discipline like Krav Maga, Kickboxing, or Jiu-Jitsu. A \'Sub-Category\' is a more granular categorization describing what a drill does, such as Kicks, Escapes, or Takedowns.</string>
     <string name="onboarding_lets_go_description">That should be the basics, now let\'s explore the app, tap \'Show me Around\' to explore the app!</string>
+    <string name="help">Help</string>
+    <string name="send_feedback">Send Feedback</string>
 </resources>

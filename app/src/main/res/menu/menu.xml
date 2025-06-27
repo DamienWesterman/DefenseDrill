@@ -7,5 +7,17 @@
         android:icon="@drawable/home_icon"
         android:title="@string/home"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/feedbackButton"
+        android:icon="@drawable/feedback_icon"
+        android:title="@string/send_feedback"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+    <item
+        android:id="@+id/helpButton"
+        android:icon="@drawable/question_mark_icon"
+        android:title="@string/help"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
 
 </menu>

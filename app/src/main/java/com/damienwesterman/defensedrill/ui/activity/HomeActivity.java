@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -83,20 +84,6 @@ public class HomeActivity extends AppCompatActivity {
     // TODO: Maybe start this process with a popup the then requests the permissions before starting the TapTargetView sequence stuff
         // TODO: Or maybe a sequence of popups that explain what a Drill is as well
     // TODO: Make sure to set battery option permissions if the user checks the simulated attacks notifications on
-    // TODO: Sequence:
-        // TODO: Home screen - First let's get some drills to work with
-            // -> To DownloadDrills Activity
-        // TODO: DownloadDrills Activity
-            // -> Download Drills and log in (if you want)
-            // -> Home
-        // TODO: Home
-            // Highlight Customize drills activity (can view all the drills, categories, and sub-categories)
-            // Highlight Simulated Attack Settings
-            // -> Simulated Attack Settings
-        // TODO: Simulated Attack Settings:
-            // highlight slider (explain what these are)
-            // Check the slider, then highlight the create button
-            // -> Home
 
     private static boolean isUpdateServiceStarted = false;
 
@@ -124,7 +111,6 @@ public class HomeActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    // TODO: Make a card for this somewhere, not sure where, maybe just here in the home screen eventually to be places into a settings activity or something
     /**
      * Start the HomeActivity in the Onboarding state.
      *
@@ -156,9 +142,17 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // Set up toolbar
         Toolbar appToolbar = findViewById(R.id.appToolbar);
         appToolbar.setTitle("Defense Drill Home");
         setSupportActionBar(appToolbar);
+
+        appToolbar.post(() -> {
+            appToolbar.getMenu().findItem(R.id.homeButton).setVisible(false);
+            appToolbar.getMenu().findItem(R.id.feedbackButton).setVisible(true);
+            appToolbar.getMenu().findItem(R.id.helpButton).setVisible(true);
+        });
 
         rootView = findViewById(R.id.activityHome);
         context = this;
@@ -179,6 +173,7 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     Log.e(TAG, "serializable not of type Class, cannot call startOnboarding()");
                 }
+            // TODO: Else if we are on the final step of onboarding, do another toolbar.post() so we can access it?
             } else {
                 startOnboarding(null);
             }
@@ -189,6 +184,18 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (R.id.feedbackButton == item.getItemId()) {
+            sendFeedbackEmail();
+            return true;
+        } else if (R.id.helpButton == item.getItemId()) {
+            startOnboarding(null);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // =============================================================================================
@@ -208,8 +215,6 @@ public class HomeActivity extends AppCompatActivity {
             } else {
                 WebDrillOptionsActivity.startActivity(this);
             }
-        } else if (R.id.feedbackCard == cardId) {
-            sendFeedbackEmail();
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }
@@ -300,7 +305,7 @@ public class HomeActivity extends AppCompatActivity {
             );
         } else if (DrillInfoActivity.class == previousActivity) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            // TODO: Maybe actually create a help in the toolbar, do this as the tapTarget then as the onSequenceFinish do the popup (and change the popup text)
+            // TODO: Change this so tapTargets point to the toolbar stuff (shoot, how do I do this? A lock?), then onSequenceFinish is the popup
             onboardingDonePopup();
 //            sharedPrefs.setOnboardingComplete(true); TODO: PUT BACK IN
             return;
