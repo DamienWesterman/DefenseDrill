@@ -794,7 +794,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
                                   @Nullable Runnable onDialogFinish,
                                   @Nullable Runnable onDialogCancel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("SSimulated Attack Notifications");
+        builder.setTitle("Simulated Attack Notifications");
         builder.setIcon(R.drawable.ic_launcher_foreground);
         builder.setCancelable(cancelable);
         builder.setMessage(R.string.simulated_attacks_description);

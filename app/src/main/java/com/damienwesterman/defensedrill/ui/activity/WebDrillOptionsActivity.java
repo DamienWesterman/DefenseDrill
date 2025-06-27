@@ -41,6 +41,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -53,6 +54,7 @@ import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.ui.common.CommonPopups;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.WebDrillApiViewModel;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -297,7 +299,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         alert.dismiss();
-                        howToUnlockDrillsPopup();
+                        runOnUiThread(() -> howToUnlockDrillsPopup());
                     }
 
                     @Override
@@ -334,6 +336,9 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Popup that informs the user how to go back and unlock drills.
+     */
     private void howToUnlockDrillsPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Download Successful!");
@@ -378,31 +383,42 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     // Onboarding Methods
     // =============================================================================================
     /**
-     * TODO: doc comments, explain previous and next
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link HomeActivity#startOnboardingActivity(Context)}, proceeded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)} from
+     * WebDrillOptionsActivity.
      */
     private void startOnboarding() {
         boolean cancelable = sharedPrefs.isOnboardingComplete();
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
-        List<TapTarget> tapTargets = new ArrayList<>();
-// TODO: Actually put the real things here for each class, maybe put in their own methods
-        TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.downloadFromDatabaseCard),
-                        "TITLE", "DESCRIPTION")
-                .outerCircleColor(R.color.tapTargetOuterCircleColor)
-                .tintTarget(false)
-                .cancelable(cancelable);
-        TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.logoutCard),
-                        "TITLE 2", "DESCRIPTION 2")
-                .outerCircleColor(R.color.tapTargetOuterCircleColor)
-                .tintTarget(false)
-                .cancelable(cancelable);
+        String downloadDescription;
+        if (internetConnection.isNetworkConnected()) {
+            downloadDescription = getString(R.string.onboarding_download_drills_description);
+        } else {
+            downloadDescription = getString(R.string.onboarding_download_drills_no_internet_description);
+        }
 
-        tapTargets.add(drillCardTapTarget);
-        tapTargets.add(customizeDatabaseTapTarget);
+        TapTarget downloadTapTarget = OnboardingUtils.createTapTarget(
+                findViewById(R.id.downloadFromDatabaseCard),
+                "Download Drills",
+                downloadDescription,
+                cancelable
+        );
+        TapTarget logoutTapTarget = OnboardingUtils.createTapTarget(
+                findViewById(R.id.logoutCard),
+                "Logout",
+                getString(R.string.onboarding_logout_description),
+                cancelable
+        );
+        TapTarget homeTapTarget = OnboardingUtils.createToolbarHomeTapTarget(context,
+                findViewById(R.id.appToolbar),
+                cancelable);
 
-        new TapTargetSequence(this)
-                .targets(tapTargets)
+        TapTargetSequence sequence = new TapTargetSequence(this)
+                .targets(downloadTapTarget, logoutTapTarget, homeTapTarget)
                 .listener(new TapTargetSequence.Listener() {
                     @Override
                     public void onSequenceFinish() {
@@ -411,13 +427,53 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
                     @Override
                     public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
+                        if (lastTarget == downloadTapTarget && internetConnection.isNetworkConnected()) {
+                            /*
+                            This will technically still continue the TapTargetSequence, but the
+                            popup will be in the foreground and the user won't be able to continue
+                            the TapTargetSequence until the download popups are done.
+                             */
+                            handleDownloadDrills();
+                        }
                     }
 
                     @Override
                     public void onSequenceCanceled(TapTarget lastTarget) {
 
                     }
-                }).start();
+                });
+
+        activityUsePopup(cancelable, sequence::start, sequence::cancel);
+    }
+
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     * @param onDialogCancel    Runnable if the user cancels the popup.
+     */
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish,
+                                  @Nullable Runnable onDialogCancel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Online Drills");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.onboarding_web_drill_options_activity_description);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", ((dialogInterface, i) -> {
+                if (null != onDialogCancel) {
+                    onDialogCancel.run();
+                }
+            }));
+        }
+
+        builder.create().show();
     }
 }

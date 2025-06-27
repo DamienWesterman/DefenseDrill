@@ -261,24 +261,17 @@ public class HomeActivity extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
-// TODO: Actually put the real things here for each class, maybe put in their own methods
-TapTarget drillCardTapTarget = TapTarget.forView(findViewById(R.id.generateDrillCard),
-"TITLE", "DESCRIPTION")
-.outerCircleColor(R.color.tapTargetOuterCircleColor)
-.tintTarget(false)
-.cancelable(false);
-TapTarget customizeDatabaseTapTarget = TapTarget.forView(findViewById(R.id.customizeDatabaseCard),
-"TITLE 2", "DESCRIPTION 2")
-.outerCircleColor(R.color.tapTargetOuterCircleColor)
-.tintTarget(false)
-.cancelable(false);
-
-tapTargets.add(drillCardTapTarget);
-tapTargets.add(customizeDatabaseTapTarget);
-
         if (null == previousActivity) {
             // Starting of the onboarding
             onSequenceFinish = () -> WebDrillOptionsActivity.startOnboardingActivity(context);
+            tapTargets = List.of(
+                    OnboardingUtils.createTapTarget(
+                            findViewById(R.id.webDrillOptionsCard),
+                            "Online Options",
+                            getString(R.string.onboarding_web_drill_options_description),
+                            cancelable
+                    )
+            );
         } else if (WebDrillOptionsActivity.class == previousActivity) {
             onSequenceFinish = () -> SimulatedAttackSettingsActivity.startOnboardingActivity(context);
             tapTargets = List.of(
@@ -307,6 +300,7 @@ tapTargets.add(customizeDatabaseTapTarget);
             );
         } else if (DrillInfoActivity.class == previousActivity) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            // TODO: Maybe actually create a help in the toolbar, do this as the tapTarget then as the onSequenceFinish do the popup (and change the popup text)
             onboardingDonePopup();
 //            sharedPrefs.setOnboardingComplete(true); TODO: PUT BACK IN
             return;
@@ -343,7 +337,15 @@ tapTargets.add(customizeDatabaseTapTarget);
         }
     }
 
-    // TODO: Doc comments
+    /**
+     * Popup help screen that starts the onboarding. Primarily gives the basics of the app, what it
+     * is used for, and terminology like Drill and Category.
+     *
+     * @param cancelable        true if the user should be allowed to cancel the popup.
+     * @param onDialogFinish    Runnable for when the user closes the popup properly.
+     * @param onCancelCallback  Runnable for if the user cancels the popup. Only applicable is
+     *                          cancelable is true.
+     */
     public void onboardingTerminologyIntroPopup(boolean cancelable,
                                                 @Nullable Runnable onDialogFinish,
                                                 @Nullable Runnable onCancelCallback) {
@@ -352,15 +354,14 @@ tapTargets.add(customizeDatabaseTapTarget);
         ViewPager2 viewPager = dialogView.findViewById(R.id.onboardingViewPager);
         CircleIndicator3 indicator = dialogView.findViewById(R.id.indicator);
 
-        // TODO: Actually make real descriptions
         List<Pair<String, String>> pages = List.of(
-                new Pair<>("Title 1", "Description 1"),
-                new Pair<>("Awesome 2", "Like super awesome"),
-                new Pair<>("Finish 3", "Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. Alright cool we're done here. ")
+                new Pair<>("This Tutorial", getString(R.string.onboarding_this_tutorial_description)),
+                new Pair<>("What does the app do?", getString(R.string.onboarding_app_usage_description)),
+                new Pair<>("Terminology", getString(R.string.onboarding_terminology_description)),
+                new Pair<>("Let's Go!", getString(R.string.onboarding_lets_go_description))
         );
         viewPager.setAdapter(new ViewPagerAdapter(pages));
         indicator.setViewPager(viewPager);
-        // TODO: TELL USER TO SWIPE THROUGH
 
         builder.setView(dialogView);
         builder.setIcon(R.drawable.ic_launcher_foreground);
