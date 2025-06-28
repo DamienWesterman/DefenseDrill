@@ -209,4 +209,7 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="onboarding_lets_go_description">That should be the basics, now let\'s explore the app, tap \'Show me Around\' to explore the app!</string>
     <string name="help">Help</string>
     <string name="send_feedback">Send Feedback</string>
+    <string name="onboarding_feedback_description">You can press here to send feedback about the app. Feedback is highly appreciated! All feedback is welcome, what works, what doesn\'t, ideas of things you\'d like to see, anything you\'d like me to know.</string>
+    <string name="onboarding_help_description">Click this button any time you want to go through this tutorial again if you need a refresher</string>
+    <string name="onboarding_finished_popup_message">And that\'s the run down! Have fun and make sure to practice for best results!</string>
 </resources>

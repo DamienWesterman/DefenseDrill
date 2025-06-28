@@ -82,7 +82,6 @@ public class HomeActivity extends AppCompatActivity {
         // https://stackoverflow.com/a/54852199
 
     // TODO: Maybe start this process with a popup the then requests the permissions before starting the TapTargetView sequence stuff
-        // TODO: Or maybe a sequence of popups that explain what a Drill is as well
     // TODO: Make sure to set battery option permissions if the user checks the simulated attacks notifications on
 
     private static boolean isUpdateServiceStarted = false;
@@ -163,21 +162,7 @@ public class HomeActivity extends AppCompatActivity {
             isUpdateServiceStarted = true;
         }
 
-        if (!sharedPrefs.isOnboardingComplete()
-                || getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
-            if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
-                Serializable serializable = getIntent()
-                        .getSerializableExtra(Constants.INTENT_EXTRA_START_ONBOARDING);
-                if (serializable instanceof Class) {
-                    startOnboarding((Class<?>) serializable);
-                } else {
-                    Log.e(TAG, "serializable not of type Class, cannot call startOnboarding()");
-                }
-            // TODO: Else if we are on the final step of onboarding, do another toolbar.post() so we can access it?
-            } else {
-                startOnboarding(null);
-            }
-        }
+        checkForOnboarding(appToolbar);
     }
 
     @Override
@@ -241,6 +226,34 @@ public class HomeActivity extends AppCompatActivity {
     // Onboarding Methods
     // =============================================================================================
     /**
+     * Check if we need to start the onboarding process, if so start it appropriately.
+     *
+     * @param appToolbar    Toolbar.
+     */
+    private void checkForOnboarding(Toolbar appToolbar) {
+        if (!sharedPrefs.isOnboardingComplete()
+                || getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+                Serializable serializable = getIntent()
+                        .getSerializableExtra(Constants.INTENT_EXTRA_START_ONBOARDING);
+                if (serializable instanceof Class) {
+                    Class<?> previousClass = (Class<?>) serializable;
+                    if (DrillInfoActivity.class == previousClass) {
+                        // This step relies on the toolbar being set up, so wait until it is
+                        appToolbar.post(() -> startOnboarding(previousClass));
+                    } else {
+                        startOnboarding(previousClass);
+                    }
+                } else {
+                    Log.e(TAG, "serializable not of type Class, cannot call startOnboarding()");
+                }
+            } else {
+                startOnboarding(null);
+            }
+        }
+    }
+
+    /**
      * Start the Onboarding process that will walk the user through how to use the app.
      * <br><br>
      * Onboarding Process:
@@ -260,8 +273,8 @@ public class HomeActivity extends AppCompatActivity {
      *                          a new onboarding process.
      */
     private void startOnboarding(@Nullable Class<?> previousActivity) {
-        boolean cancelable = true; // sharedPrefs.isOnboardingComplete(); TODO: PUT BACK IN
-        List<TapTarget> tapTargets = new ArrayList<>();
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+        List<TapTarget> tapTargets;
         Runnable onSequenceFinish;
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
@@ -285,7 +298,7 @@ public class HomeActivity extends AppCompatActivity {
                             "View saved Data",
                             getString(R.string.onboarding_customize_database_description),
                             cancelable
-                            ),
+                    ),
                     OnboardingUtils.createTapTarget(
                             findViewById(R.id.simulatedAttackSettings),
                             "Simulated Attacks!",
@@ -304,11 +317,27 @@ public class HomeActivity extends AppCompatActivity {
                     )
             );
         } else if (DrillInfoActivity.class == previousActivity) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            // TODO: Change this so tapTargets point to the toolbar stuff (shoot, how do I do this? A lock?), then onSequenceFinish is the popup
-            onboardingDonePopup();
-//            sharedPrefs.setOnboardingComplete(true); TODO: PUT BACK IN
-            return;
+            onSequenceFinish = () -> onboardingDonePopup(() -> {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                sharedPrefs.setOnboardingComplete(true);
+            });
+            Toolbar toolbar = findViewById(R.id.appToolbar);
+            tapTargets = List.of(
+                    OnboardingUtils.createToolbarTapTarget(
+                            toolbar,
+                            R.id.feedbackButton,
+                            "Feedback",
+                            getString(R.string.onboarding_feedback_description),
+                            cancelable
+                    ),
+                    OnboardingUtils.createToolbarTapTarget(
+                            toolbar,
+                            R.id.helpButton,
+                            "Help",
+                            getString(R.string.onboarding_help_description),
+                            cancelable
+                    )
+            );
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Something went wrong");
             Log.e(TAG, "Invalid class for previousActivity: " + previousActivity);
@@ -393,9 +422,9 @@ public class HomeActivity extends AppCompatActivity {
 
             // Set up logic to only show the button to continue once the user has scrolled all pages
             Button showMeAroundButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-    //        if (!cancelable) { //TODO: PUT BACK IN
+            if (!cancelable) {
                 showMeAroundButton.setVisibility(View.GONE);
-    //        }
+            }
             viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -424,15 +453,20 @@ public class HomeActivity extends AppCompatActivity {
 
     /**
      * Popup to finish off the onboarding process.
+     *
+     * @param onPopupFinished Runnable for when the popup is closed.
      */
-    private void onboardingDonePopup() {
+    private void onboardingDonePopup(@Nullable Runnable onPopupFinished) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("That's it!");
         builder.setIcon(R.drawable.ic_launcher_foreground);
         builder.setCancelable(true);
-        // TODO: Insert where to take this again and then extract string resource
-        builder.setMessage("And that's the run down! You can review this tutorial any time in __INSERT__. Have fun and make sure to practice for best results!");
-        builder.setPositiveButton("Finish", null);
+        builder.setMessage(R.string.onboarding_finished_popup_message);
+        builder.setPositiveButton("Finish", ((dialogInterface, i) -> {
+            if (null != onPopupFinished) {
+                onPopupFinished.run();
+            }
+        }));
 
         builder.create().show();
     }

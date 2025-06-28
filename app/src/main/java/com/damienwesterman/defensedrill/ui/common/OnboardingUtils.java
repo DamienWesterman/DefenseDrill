@@ -66,7 +66,7 @@ public class OnboardingUtils {
 
     /**
      * Create a TapTarget specifically for the Home button in the Toolbar to be used during
-     * onboarding screens . This customizes the TapTarget to ensure a consistent look across
+     * onboarding screens. This customizes the TapTarget to ensure a consistent look across
      * activities.
      * @param context       Activity context.
      * @param toolbar       Toolbar in the activity.
@@ -76,11 +76,34 @@ public class OnboardingUtils {
     public static TapTarget createToolbarHomeTapTarget(@NonNull Context context,
                                                        @NonNull Toolbar toolbar,
                                                        boolean cancelable) {
+        return createToolbarTapTarget(toolbar,
+                R.id.homeButton,
+                "Home",
+                context.getString(R.string.onboarding_home_navigation_description),
+                cancelable);
+    }
+
+    /**
+     * Create a TapTarget for a button in the Toolbar to be used during onboarding screens. This
+     * customizes the TapTarget to ensure a consistent look across activities.
+     *
+     * @param toolbar           Toolbar in the activity.
+     * @param buttonResourceId  Resource ID of the button in the toolbar.
+     * @param title             Title for the TapTarget.
+     * @param description       Description of the TapTarget.
+     * @param cancelable        true if the user is able to cancel the TapTarget.
+     * @return                  TapTarget with consistent customizations.
+     */
+    public static TapTarget createToolbarTapTarget(@NonNull Toolbar toolbar,
+                                                   int buttonResourceId,
+                                                   @NonNull String title,
+                                                   @NonNull String description,
+                                                   boolean cancelable) {
         return TapTarget.forToolbarMenuItem(
                         toolbar,
-                        R.id.homeButton,
-                        "Home",
-                        context.getString(R.string.onboarding_home_navigation_description))
+                        buttonResourceId,
+                        title,
+                        description)
                 .outerCircleColor(R.color.tapTargetOuterCircleColor)
                 .tintTarget(false)
                 .cancelable(cancelable);
