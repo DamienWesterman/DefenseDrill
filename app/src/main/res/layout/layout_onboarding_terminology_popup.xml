@@ -9,7 +9,6 @@
         android:id="@+id/onboardingViewPager"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
-<!--    TODO: ABOVE - Once everything is typed out, see if we can slim that down at all -->
 
     <me.relex.circleindicator.CircleIndicator3
         android:id="@+id/indicator"

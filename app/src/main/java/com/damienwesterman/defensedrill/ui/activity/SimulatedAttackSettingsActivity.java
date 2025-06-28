@@ -44,7 +44,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -60,6 +59,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.adapter.PolicyAdapter;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
@@ -98,12 +98,15 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     @Inject
     SimulatedAttackManager simulatedAttackManager;
     @Inject
+    DefenseDrillNotificationManager notificationManager;
+    @Inject
     SharedPrefs sharedPrefs;
     private SimulatedAttackSettingsViewModel viewModel;
 
     private Context context;
 
     private LinearLayout rootView;
+    SwitchCompat enabledSwitch;
     private ProgressBar progressBar;
     private Button addPolicyButton;
     private TextView modifyInstructions;
@@ -146,7 +149,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(SimulatedAttackSettingsViewModel.class);
 
         rootView = findViewById(R.id.activitySimulatedAttackSettings);
-        SwitchCompat enabledSwitch = findViewById(R.id.enabledSwitch);
+        enabledSwitch = findViewById(R.id.enabledSwitch);
         progressBar = findViewById(R.id.progressBar);
         addPolicyButton = findViewById(R.id.addPolicyButton);
         modifyInstructions = findViewById(R.id.modifyInstructions);
@@ -158,26 +161,28 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
             showPolicies(isChecked);
 
-            // TODO: Future PR - Check if notifications are enabled, if not prompt to enable them (and if they don't, return and mark this as unchecked)
+            if (isChecked && !notificationManager.areNotificationsEnabled()) {
+                promptEnableNotificationsPopup();
+            } else {
+                viewModel.checkForSelfDefenseDrills(
+                        categoryExists -> {
+                            boolean policiesExist = !viewModel.getPoliciesByName().isEmpty();
 
-            viewModel.checkForSelfDefenseDrills(
-                categoryExists -> {
-                    boolean policiesExist = !viewModel.getPoliciesByName().isEmpty();
-
-                    if (isChecked) {
-                        if (categoryExists && policiesExist) {
-                            // We have self defense drills and policies, start the manager
-                            SimulatedAttackManager.start(this);
-                        } else if (categoryExists) {
-                            // We have self defense drills but no policies, do nothing
-                        } else if (policiesExist) {
-                            // We have policies but no self defense drills, show popup
-                            runOnUiThread(this::noSelfDefenseDrillsPopup);
-                        }
-                    } else {
-                        SimulatedAttackManager.stop(this);
-                    }
-                });
+                            if (isChecked) {
+                                if (categoryExists && policiesExist) {
+                                    // We have self defense drills and policies, start the manager
+                                    SimulatedAttackManager.start(this);
+                                } else if (categoryExists) {
+                                    // We have self defense drills but no policies, do nothing
+                                } else if (policiesExist) {
+                                    // We have policies but no self defense drills, show popup
+                                    runOnUiThread(this::noSelfDefenseDrillsPopup);
+                                }
+                            } else {
+                                SimulatedAttackManager.stop(this);
+                            }
+                        });
+            }
         });
 
         setUpRecyclerView();
@@ -487,6 +492,22 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }));
 
         builder.setNegativeButton("Back", null);
+
+        builder.create().show();
+    }
+
+    /**
+     * Prompt the user to enable notifications. The prompt depends on Android version. Then takes
+     * actions depending on whether or not the user enabled the notifications.
+     */
+    private void promptEnableNotificationsPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enable Notifications");
+        builder.setIcon(R.drawable.notification_w_sound_icon);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.request_notifications_popup_message);
+        builder.setPositiveButton("Done", (dialogInterface, i) ->
+                enabledSwitch.setChecked(notificationManager.areNotificationsEnabled()));
 
         builder.create().show();
     }

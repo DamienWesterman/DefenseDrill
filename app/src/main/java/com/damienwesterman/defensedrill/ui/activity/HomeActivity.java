@@ -26,11 +26,14 @@
 
 package com.damienwesterman.defensedrill.ui.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -51,6 +54,7 @@ import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.service.CheckServerUpdateService;
 import com.damienwesterman.defensedrill.ui.adapter.ViewPagerAdapter;
@@ -75,14 +79,6 @@ import me.relex.circleindicator.CircleIndicator3;
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = HomeActivity.class.getSimpleName();
-    // TODO: On first startup, go through help screen. THEN prompt the user for notifications:
-        // https://developer.android.com/develop/ui/views/notifications/notification-permission#best-practices
-        // https://developer.android.com/training/permissions/requesting#request-permission
-    // TODO: THEN prompt the user for unrestricted background usage:
-        // https://stackoverflow.com/a/54852199
-
-    // TODO: Maybe start this process with a popup the then requests the permissions before starting the TapTargetView sequence stuff
-    // TODO: Make sure to set battery option permissions if the user checks the simulated attacks notifications on
 
     private static boolean isUpdateServiceStarted = false;
 
@@ -93,6 +89,8 @@ public class HomeActivity extends AppCompatActivity {
     CheckPhoneInternetConnection internetConnection;
     @Inject
     SimulatedAttackManager simulatedAttackManager;
+    @Inject
+    DefenseDrillNotificationManager notificationManager;
     @Inject
     SharedPrefs sharedPrefs;
 
@@ -388,12 +386,35 @@ public class HomeActivity extends AppCompatActivity {
         ViewPager2 viewPager = dialogView.findViewById(R.id.onboardingViewPager);
         CircleIndicator3 indicator = dialogView.findViewById(R.id.indicator);
 
-        List<Pair<String, String>> pages = List.of(
-                new Pair<>("This Tutorial", getString(R.string.onboarding_this_tutorial_description)),
-                new Pair<>("What does the app do?", getString(R.string.onboarding_app_usage_description)),
-                new Pair<>("Terminology", getString(R.string.onboarding_terminology_description)),
-                new Pair<>("Let's Go!", getString(R.string.onboarding_lets_go_description))
-        );
+        List<Pair<String, String>> pages = new ArrayList<>();
+        Pair<String, String> tutorialPage =
+                new Pair<>("This Tutorial", getString(R.string.onboarding_this_tutorial_description));
+        pages.add(tutorialPage);
+        Pair<String, String> appUsagePage =
+                new Pair<>("What does the app do?", getString(R.string.onboarding_app_usage_description));
+        pages.add(appUsagePage);
+        Pair<String, String> terminologyPage =
+                new Pair<>("Terminology", getString(R.string.onboarding_terminology_description));
+        pages.add(terminologyPage);
+        Pair<String, String> notificationsPermissionsPage =
+                new Pair<>("Notification Permissions", getString(R.string.onboarding_notifications_permission_description));
+        if (!notificationManager.areNotificationsEnabled()
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && !sharedPrefs.isOnboardingComplete()) {
+            // Notifications are denied by default above TIRAMISU
+            pages.add(notificationsPermissionsPage);
+        }
+        Pair<String, String> batteryPermissionsPage =
+                new Pair<>("Battery Permissions", getString(R.string.onboarding_battery_permissions_description));
+        if (PackageManager.PERMISSION_GRANTED !=
+                    checkSelfPermission(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                && !sharedPrefs.isOnboardingComplete()) {
+            pages.add(batteryPermissionsPage);
+        }
+        Pair<String, String> finishedPage =
+                new Pair<>("Let's Go!", getString(R.string.onboarding_lets_go_description));
+        pages.add(finishedPage);
+
         viewPager.setAdapter(new ViewPagerAdapter(pages));
         indicator.setViewPager(viewPager);
 
@@ -434,6 +455,21 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
+
+                    if (0 < position) {
+                        int lastPage = position - 1;
+                        if (notificationsPermissionsPage.equals(pages.get(lastPage))) {
+                            // Ask for notification permissions after we describe why
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                requestPermissions(
+                                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+                            }
+                        } else if (batteryPermissionsPage.equals(pages.get(lastPage))) {
+                            requestPermissions(
+                                    new String[]{Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS}, 0);
+                        }
+                    }
+
                     if (position == (pages.size() - 1)) {
                         // User reached the last page, let them continue
                         showMeAroundButton.setVisibility(View.VISIBLE);
