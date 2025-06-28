@@ -205,7 +205,7 @@ public class DrillListViewModel extends AndroidViewModel {
     @NonNull
     public Set<Long> getCategoryFilterIds() {
         if (null == categoryFilterIds) {
-            if (allCategories != null) {
+            if (null != allCategories) {
                 categoryFilterIds = allCategories.stream().map(CategoryEntity::getId)
                         .collect(Collectors.toSet());
             } else {
@@ -227,7 +227,7 @@ public class DrillListViewModel extends AndroidViewModel {
     @NonNull
     public Set<Long> getSubCategoryFilterIds() {
         if (null == subCategoryFilterIds) {
-            if (allSubCategories != null) {
+            if (null != allSubCategories) {
                 subCategoryFilterIds = allSubCategories.stream().map(SubCategoryEntity::getId)
                         .collect(Collectors.toSet());
             } else {

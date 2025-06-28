@@ -250,7 +250,7 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
         new Thread(() -> {
             if (drillRepo.getCategory(Constants.CATEGORY_NAME_SELF_DEFENSE).isPresent()) {
                 // Category already exists
-                if (callback != null) {
+                if (null != callback) {
                     callback.onSuccess();
                 }
                 return;
@@ -261,11 +261,11 @@ public class SimulatedAttackSettingsViewModel extends AndroidViewModel {
                     .description("Drills used for Self Defense")
                     .build());
             if (success) {
-                if (callback != null) {
+                if (null != callback) {
                     callback.onSuccess();
                 }
             } else {
-                if (callback != null) {
+                if (null != callback) {
                     callback.onFailure("Failed to create Self Defense Category");
                 }
             }

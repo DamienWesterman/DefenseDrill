@@ -168,19 +168,19 @@ public class DrillInfoViewModel extends AndroidViewModel {
         executor.execute(() -> {
            try {
                if (!drillRepo.updateDrills(drill)) {
-                   if (callback != null) {
+                   if (null != callback) {
                        callback.onFailure("Something went wrong");
                    }
                } else {
                    if (reloadScreen) {
                        uiCurrentDrill.postValue(drill);
                    }
-                   if (callback != null) {
+                   if (null != callback) {
                        callback.onSuccess();
                    }
                }
            } catch (SQLiteConstraintException e) {
-               if (callback != null) {
+               if (null != callback) {
                    callback.onFailure("Issue saving Drill");
                }
            }
