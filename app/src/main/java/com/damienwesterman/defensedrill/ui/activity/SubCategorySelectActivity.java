@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +37,8 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,10 +47,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.CategoryEntity;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.ui.viewmodel.SubCategoryViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -61,8 +70,11 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SubCategorySelectActivity extends AppCompatActivity {
     private static final String RANDOM_CATEGORY_NAME = "Random";
 
+    @Inject
+    SharedPrefs sharedPrefs;
     private SubCategoryViewModel subCategoryViewModel;
     long selectedCategoryId;
+    private Context context;
 
     // =============================================================================================
     // Activity Creation Methods
@@ -76,6 +88,18 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     public static void startActivity(@NonNull Context context, long categoryChoice) {
         Intent intent = new Intent(context, SubCategorySelectActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, categoryChoice);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start the SubCategorySelectActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, SubCategorySelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE, Constants.USER_RANDOM_SELECTION);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
         context.startActivity(intent);
     }
 
@@ -95,6 +119,7 @@ public class SubCategorySelectActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        context = this;
         selectedCategoryId = getIntent().getLongExtra(Constants.INTENT_EXTRA_CATEGORY_CHOICE,
                 Constants.USER_RANDOM_SELECTION);
 
@@ -115,6 +140,10 @@ public class SubCategorySelectActivity extends AppCompatActivity {
                 setCategoryTitle(null != category ? category.getName() : RANDOM_CATEGORY_NAME);
             });
             categoryViewModel.populateAbstractCategories();
+        }
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            startOnboarding();
         }
     }
 
@@ -179,5 +208,62 @@ public class SubCategorySelectActivity extends AppCompatActivity {
     private void setCategoryTitle(@NonNull String category) {
         TextView categorySelection = findViewById(R.id.categorySelection);
         runOnUiThread(() -> categorySelection.setText(getString(R.string.category_selected_prefix, category)));
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link CategorySelectActivity#startOnboardingActivity(Context)}, proceeded by
+     * {@link DrillInfoActivity#startOnboardingActivity(Context)}.
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
+        TapTarget randomTapTarget = OnboardingUtils.createTapTarget(
+                findViewById(R.id.randomSubCategoryCard),
+                "Select a Sub-Category",
+                getString(R.string.onboarding_random_sub_category_description),
+                cancelable);
+
+        Runnable startTapTarget = () -> TapTargetView.showFor(this, randomTapTarget,
+                new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);
+                        DrillInfoActivity.startOnboardingActivity(context);
+                    }
+                });
+
+        activityUsePopup(cancelable, startTapTarget);
+    }
+
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     */
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Sub-Category");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.onboarding_sub_category_select_activity_description);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", null);
+        }
+
+        builder.create().show();
     }
 }

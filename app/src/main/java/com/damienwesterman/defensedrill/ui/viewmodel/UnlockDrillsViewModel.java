@@ -110,7 +110,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
      * Filter the displayed drills based on the current filter settings.
      */
     public void displayFilteredList() {
-        if (allDrills != null) {
+        if (null != allDrills) {
             uiDrillsList.postValue(allDrills.stream()
                 .filter(drill -> {
                     if (!showKnownDrills && drill.isKnownDrill()) {
@@ -137,7 +137,7 @@ public class UnlockDrillsViewModel extends AndroidViewModel {
                 drill.setIsKnownDrill(isKnown);
                 try {
                     if (repo.updateDrills(drill)) {
-                        if (allDrills != null) {
+                        if (null != allDrills) {
                             /*
                              Update the list so if there is a destructive action (like screen
                              rotation) we can have the correct information. However, the checkbox is

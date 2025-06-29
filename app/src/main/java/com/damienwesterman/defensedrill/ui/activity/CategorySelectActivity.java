@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +36,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -42,9 +45,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.ui.adapter.AbstractCategoryAdapter;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.CategoryViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -55,6 +64,10 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class CategorySelectActivity extends AppCompatActivity {
+    @Inject
+    SharedPrefs sharedPrefs;
+
+    private Context context;
 
     // =============================================================================================
     // Activity Creation Methods
@@ -80,6 +93,17 @@ public class CategorySelectActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
+    /**
+     * Start the CategorySelectActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, CategorySelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
+        context.startActivity(intent);
+    }
+
     // =============================================================================================
     // Activity Methods
     // =============================================================================================
@@ -89,6 +113,8 @@ public class CategorySelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category_select);
         Toolbar appToolbar = findViewById(R.id.appToolbar);
 
+        context = this;
+
         // Modify Toolbar
         appToolbar.setTitle("Generate Drill");
         setSupportActionBar(appToolbar);
@@ -97,6 +123,10 @@ public class CategorySelectActivity extends AppCompatActivity {
         }
 
         setUpRecyclerView();
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            startOnboarding();
+        }
     }
 
     @Override
@@ -159,5 +189,62 @@ public class CategorySelectActivity extends AppCompatActivity {
         CategoryViewModel viewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         viewModel.getUiAbstractCategoriesList().observe(this, adapter::submitList);
         viewModel.populateAbstractCategories();
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)}, proceeded by
+     * {@link SubCategorySelectActivity#startOnboardingActivity(Context)}.
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+
+        TapTarget randomTapTarget = OnboardingUtils.createTapTarget(
+                findViewById(R.id.randomCategoryCard),
+                "Select a Category",
+                getString(R.string.onboarding_random_category_description),
+                cancelable);
+
+        Runnable startTapTarget = () -> TapTargetView.showFor(this, randomTapTarget,
+                new TapTargetView.Listener() {
+                        @Override
+                        public void onTargetClick(TapTargetView view) {
+                            super.onTargetClick(view);
+                            SubCategorySelectActivity.startOnboardingActivity(context);
+                        }
+        });
+
+        activityUsePopup(cancelable, startTapTarget);
+    }
+
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     */
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Category");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.onboarding_category_select_activity_description);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", null);
+        }
+
+        builder.create().show();
     }
 }

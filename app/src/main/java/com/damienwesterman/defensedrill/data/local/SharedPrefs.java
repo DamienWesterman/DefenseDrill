@@ -51,6 +51,7 @@ public class SharedPrefs {
     /** Denotes if the user wants the simulated attacks instructional popup to launch by default */
     private static final String KEY_SIMULATED_ATTACKS_POPUP_BY_DEFAULT
             = "simulated_attacks_popup_by_default";
+    private static final String KEY_ONBOARDING_COMPLETE = "onboarding_complete";
 
     private final SharedPreferences sharedPrefs;
     private final SharedPreferences encryptedSharedPrefs;
@@ -129,6 +130,16 @@ public class SharedPrefs {
     public boolean setSimulatedAttackPopupDefault(boolean isDefault) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putBoolean(KEY_SIMULATED_ATTACKS_POPUP_BY_DEFAULT, isDefault);
+        return editor.commit();
+    }
+
+    public boolean isOnboardingComplete() {
+        return sharedPrefs.getBoolean(KEY_ONBOARDING_COMPLETE, false);
+    }
+
+    public boolean setOnboardingComplete(boolean isComplete) {
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean(KEY_ONBOARDING_COMPLETE, isComplete);
         return editor.commit();
     }
 }

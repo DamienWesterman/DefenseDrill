@@ -71,17 +71,6 @@
             app:description="@string/web_drill_options_description"
             android:onClick="onCardClick" />
 
-        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
-            android:id="@+id/feedbackCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            app:cardCornerRadius="8dp"
-            app:title="@string/feedback_title"
-            app:description="@string/feedback_description"
-            android:onClick="onCardClick" />
-
     </LinearLayout>
 </ScrollView>
 </LinearLayout>

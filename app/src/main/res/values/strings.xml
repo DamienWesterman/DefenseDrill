@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Defense Drill</string>
-    <string name="generate_drill_title">Generate Drill</string>
-    <string name="generate_drills_description">Randomly generate a drill to practice.</string>
+    <string name="generate_drill_title">Generate Drills</string>
+    <string name="generate_drills_description">Randomly generate drills to practice.</string>
     <string name="customize_drills_title">Customize Drills</string>
     <string name="customize_drills_description">See all currently saved Drills and edit them, or create a new one. Filter drills by category and/or sub-category. Long click a Drill to delete it.</string>
     <string name="customize_categories_title">Customize Categories</string>
@@ -180,4 +180,39 @@ Username: [Online Database Username]
 
 Thank you and we will try to get back to you as quickly as possible!
     </string>
+    <string name="page_icon">Page Icon</string>
+    <string name="onboarding_confidence_description">This indicates how confident you feel executing this drill. The less confident you are, the more likely this drill is to be chosen first. This helps you work on drills you are less confident on.</string>
+    <string name="onboarding_last_drilled_description">The longer the time since you\'ve last practiced a drill, the more likely it is to be chosen first. This helps keep drills fresh.</string>
+    <string name="onboarding_skip_drill_description">If you do not like the drill that was generated, this will give you a new one!</string>
+    <string name="onboarding_reset_skipped_drills_description">Once you have completed or skipped a drill, it will not be chosen again during this workout. Press this button if you want to include them as options again.</string>
+    <string name="onboarding_mark_as_practiced_description">After you have finished practicing this drill, make sure to mark it as practiced! This will record your practice session and ask you how confident you felt. This is important so the app can make sure to pick the most appropriate drills during your workouts!</string>
+    <string name="onboarding_home_navigation_description">Let\'s go back to the home page</string>
+    <string name="onboarding_drill_info_activity_details">This screen shows you all the details about a Drill. Here you can take notes about your drill, see when you last practiced it, modify what categories it belongs to, and most importantly: practice it!</string>
+    <string name="onboarding_category_select_activity_description">Here we will decide what category we want our workout to use - if any. One of the most useful will be \"Self Defense\"!</string>
+    <string name="onboarding_random_category_description">Rather than selecting a specific category, we will select \"Random\" and let the app choose any.</string>
+    <string name="onboarding_sub_category_select_activity_description">Here we will decide what sub-category we want our workout to use - if any.</string>
+    <string name="onboarding_random_sub_category_description">Rather than selecting a specific sub-category, we will select \"Random\" and let the app choose any.</string>
+    <string name="onboarding_generate_drill_description">Now for the most important part of the app: the workout! Click here to have the app generate a custom workout for you.</string>
+    <string name="unlock_drills_how_to_popup_message"><![CDATA[Successfully downloaded drills. You can always unlock drills as you learn more by going to: Home -> Customize Database -> Unlock Drills]]></string>
+    <string name="onboarding_customize_database_description">You can go here to view drills, create your own, unlock new ones as you learn, and check what categories and sub-categories there are.</string>
+    <string name="onboarding_simulated_attacks_description">Now let\'s go through setting up custom notifications to help you put theory into context.</string>
+    <string name="onboarding_enable_simulated_attacks_description">Turn on Simulated Attack notifications. This requires notification permissions and will request permission the first time you enable it.</string>
+    <string name="onboarding_add_new_alarm_description">Create new alarms here. You will be able to select what day(s) and time(s) you want Simluated Attack Notifications, along with how frequently.</string>
+    <string name="onboarding_web_drill_options_activity_description">There are already a bunch of Drills online in our server! Here we can download them into the app, and any time more are added to the online database we can download the new ones.</string>
+    <string name="onboarding_download_drills_description">Let\'s tap here to get started and download drills from the online database so we have drills to work with. If you don\'t want to or don\'t have a login, just hit cancel to continue.</string>
+    <string name="onboarding_logout_description">If you ever want to log out from your device, you can tap here. You will be automatically logged out ever 30 days and will be prompted to log back in if you want.</string>
+    <string name="onboarding_download_drills_no_internet_description">Click here to log in and download drills from the online database. Looks like you don\'t have internet right now, so please make sure to do this later so you get access to all the Drills!</string>
+    <string name="onboarding_web_drill_options_description">First, let\'s look at the online options to get all the existing Drills from the online database.</string>
+    <string name="onboarding_this_tutorial_description">Welcome to Defense Drill! This app will help you to practice self defense. This guide will walk you through how to use this app. Swipe right!</string>
+    <string name="onboarding_app_usage_description">This app will save different techniques related to self defense. Each of these techniques is referred to as a \'Drill\'. This app will help you practice by creating a workout of Drills, more on that later.</string>
+    <string name="onboarding_terminology_description">Drills are categorized in two ways. A \'Category\' is usually a martial arts discipline like Krav Maga, Kickboxing, or Jiu-Jitsu. A \'Sub-Category\' is a more granular categorization describing what a drill does, such as Kicks, Escapes, or Takedowns.</string>
+    <string name="onboarding_lets_go_description">That should be the basics, now let\'s explore the app, tap \'Show me Around\' to explore the app!</string>
+    <string name="help">Help</string>
+    <string name="send_feedback">Send Feedback</string>
+    <string name="onboarding_feedback_description">You can press here to send feedback about the app. Feedback is highly appreciated! All feedback is welcome, what works, what doesn\'t, ideas of things you\'d like to see, anything you\'d like me to know.</string>
+    <string name="onboarding_help_description">Click this button any time you want to go through this tutorial again if you need a refresher</string>
+    <string name="onboarding_finished_popup_message">And that\'s the run down! Have fun and make sure to practice for best results!</string>
+    <string name="onboarding_notifications_permission_description">This app uses notifications to let you know when there are updates for you. Notifications are also used if you choose to use Simulated attacks - more on those later. When you swipe you will be asked to enable notifications.</string>
+    <string name="onboarding_battery_permissions_description">If you keep your phone on power saving, some notifications may not work properly. If this applies to you, please allow the ignore battery optimization permission. When you swipe you will be asked about this permission.</string>
+    <string name="request_notifications_popup_message"><![CDATA[Notifications are required for Simulated Attacks. Please go to Settings -> Apps -> Defense Drill and then enable notifications.]]></string>
 </resources>

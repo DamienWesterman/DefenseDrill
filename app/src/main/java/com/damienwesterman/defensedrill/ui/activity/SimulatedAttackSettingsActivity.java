@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.ui.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,12 +59,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.damienwesterman.defensedrill.R;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.WeeklyHourPolicyEntity;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.manager.SimulatedAttackManager;
 import com.damienwesterman.defensedrill.ui.adapter.PolicyAdapter;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
+import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
 import com.damienwesterman.defensedrill.ui.viewmodel.SimulatedAttackSettingsViewModel;
 import com.damienwesterman.defensedrill.common.Constants;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -93,12 +98,15 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     @Inject
     SimulatedAttackManager simulatedAttackManager;
     @Inject
+    DefenseDrillNotificationManager notificationManager;
+    @Inject
     SharedPrefs sharedPrefs;
     private SimulatedAttackSettingsViewModel viewModel;
 
     private Context context;
 
     private LinearLayout rootView;
+    SwitchCompat enabledSwitch;
     private ProgressBar progressBar;
     private Button addPolicyButton;
     private TextView modifyInstructions;
@@ -109,6 +117,17 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     // =============================================================================================
     public static void startActivity(@NonNull Context context) {
         Intent intent = new Intent(context, SimulatedAttackSettingsActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * Start the SimulatedAttackSettingsActivity in the Onboarding state.
+     *
+     * @param context   Context.
+     */
+    public static void startOnboardingActivity(@NonNull Context context) {
+        Intent intent = new Intent(context, SimulatedAttackSettingsActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_START_ONBOARDING, "");
         context.startActivity(intent);
     }
 
@@ -130,7 +149,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(SimulatedAttackSettingsViewModel.class);
 
         rootView = findViewById(R.id.activitySimulatedAttackSettings);
-        SwitchCompat enabledSwitch = findViewById(R.id.enabledSwitch);
+        enabledSwitch = findViewById(R.id.enabledSwitch);
         progressBar = findViewById(R.id.progressBar);
         addPolicyButton = findViewById(R.id.addPolicyButton);
         modifyInstructions = findViewById(R.id.modifyInstructions);
@@ -142,30 +161,40 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
             sharedPrefs.setSimulatedAttacksEnabled(isChecked);
             showPolicies(isChecked);
 
-            // TODO: Future PR - Check if notifications are enabled, if not prompt to enable them (and if they don't, return and mark this as unchecked)
+            if (isChecked && !notificationManager.areNotificationsEnabled()) {
+                promptEnableNotificationsPopup();
+            } else {
+                viewModel.checkForSelfDefenseDrills(
+                        categoryExists -> {
+                            boolean policiesExist = !viewModel.getPoliciesByName().isEmpty();
 
-            viewModel.checkForSelfDefenseDrills(
-                categoryExists -> {
-                    boolean policiesExist = !viewModel.getPoliciesByName().isEmpty();
-
-                    if (isChecked) {
-                        if (categoryExists && policiesExist) {
-                            // We have self defense drills and policies, start the manager
-                            SimulatedAttackManager.start(this);
-                        } else if (categoryExists) {
-                            // We have self defense drills but no policies, do nothing
-                        } else if (policiesExist) {
-                            // We have policies but no self defense drills, show popup
-                            runOnUiThread(this::noSelfDefenseDrillsPopup);
-                        }
-                    } else {
-                        SimulatedAttackManager.stop(this);
-                    }
-                });
+                            if (isChecked) {
+                                if (categoryExists && policiesExist) {
+                                    // We have self defense drills and policies, start the manager
+                                    SimulatedAttackManager.start(this);
+                                } else if (categoryExists) {
+                                    // We have self defense drills but no policies, do nothing
+                                } else if (policiesExist) {
+                                    // We have policies but no self defense drills, show popup
+                                    runOnUiThread(this::noSelfDefenseDrillsPopup);
+                                }
+                            } else {
+                                SimulatedAttackManager.stop(this);
+                            }
+                        });
+            }
         });
 
         setUpRecyclerView();
         viewModel.loadPolicies();
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
+            /*
+            We need to wait for the toolbar to be finished loading before calling onboarding, as we
+            want to access one of the buttons.
+             */
+            appToolbar.post(this::startOnboarding);
+        }
     }
 
     @Override
@@ -467,6 +496,22 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         builder.create().show();
     }
 
+    /**
+     * Prompt the user to enable notifications. The prompt depends on Android version. Then takes
+     * actions depending on whether or not the user enabled the notifications.
+     */
+    private void promptEnableNotificationsPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enable Notifications");
+        builder.setIcon(R.drawable.notification_w_sound_icon);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.request_notifications_popup_message);
+        builder.setPositiveButton("Done", (dialogInterface, i) ->
+                enabledSwitch.setChecked(notificationManager.areNotificationsEnabled()));
+
+        builder.create().show();
+    }
+
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
@@ -697,5 +742,96 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
         }
 
         return ret;
+    }
+
+    // =============================================================================================
+    // Onboarding Methods
+    // =============================================================================================
+    /**
+     * Start the onboarding process for this activity, walking the user through the screen and
+     * explaining how it works. Preceded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)}, proceeded by
+     * {@link HomeActivity#continueOnboardingActivity(Context, Class)} from
+     * SimulatedAttackSettingsActivity.
+     */
+    private void startOnboarding() {
+        boolean cancelable = sharedPrefs.isOnboardingComplete();
+        SwitchCompat enabledSwitch = findViewById(R.id.enabledSwitch);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        enabledSwitch.setOnCheckedChangeListener(null);
+        enabledSwitch.setChecked(false);
+
+        TapTarget enableSwitchTapTarget = OnboardingUtils.createTapTarget(
+                enabledSwitch,
+                "Enable Simulated Attacks",
+                getString(R.string.onboarding_enable_simulated_attacks_description),
+                cancelable
+        );
+        TapTarget addPolicyTapTarget = OnboardingUtils.createTapTarget(
+                addPolicyButton,
+                "Add New Alarm",
+                getString(R.string.onboarding_add_new_alarm_description),
+                cancelable
+        );
+        TapTarget homeTapTarget = OnboardingUtils.createToolbarHomeTapTarget(context,
+                findViewById(R.id.appToolbar),
+                cancelable);
+
+        TapTargetSequence sequence = new TapTargetSequence(this)
+                .targets(enableSwitchTapTarget, addPolicyTapTarget, homeTapTarget)
+                .listener(new TapTargetSequence.Listener() {
+                    @Override
+                    public void onSequenceFinish() {
+                        HomeActivity.continueOnboardingActivity(context,
+                                SimulatedAttackSettingsActivity.class);
+                    }
+
+                    @Override
+                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+                        if (lastTarget == enableSwitchTapTarget) {
+                            enabledSwitch.setChecked(true);
+                            addPolicyButton.setEnabled(true);
+                        }
+                    }
+
+                    @Override
+                    public void onSequenceCanceled(TapTarget lastTarget) {
+
+                    }
+                });
+
+        activityUsePopup(cancelable, sequence::start, sequence::cancel);
+    }
+
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     * @param onDialogCancel    Runnable if the user cancels the popup.
+     */
+    private void activityUsePopup(boolean cancelable,
+                                  @Nullable Runnable onDialogFinish,
+                                  @Nullable Runnable onDialogCancel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Simulated Attack Notifications");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setCancelable(cancelable);
+        builder.setMessage(R.string.simulated_attacks_description);
+        builder.setPositiveButton("Continue", (dialogInterface, i) -> {
+            if (null != onDialogFinish) {
+                onDialogFinish.run();
+            }
+        });
+        if (cancelable) {
+            builder.setNeutralButton("Exit", ((dialogInterface, i) -> {
+                if (null != onDialogCancel) {
+                    onDialogCancel.run();
+                }
+            }));
+        }
+
+        builder.create().show();
     }
 }

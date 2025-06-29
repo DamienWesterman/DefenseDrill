@@ -89,7 +89,7 @@ public class TitleDescCard extends CardView {
         this.titleView = findViewById(R.id.title);
         this.descView = findViewById(R.id.description);
 
-        if (attrs != null) {
+        if (null != attrs) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TitleDescCard);
             String title = typedArray.getString(R.styleable.TitleDescCard_title);
             String description = typedArray.getString(R.styleable.TitleDescCard_description);
