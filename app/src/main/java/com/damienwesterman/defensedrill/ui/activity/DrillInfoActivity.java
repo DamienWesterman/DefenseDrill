@@ -108,7 +108,7 @@ public class DrillInfoActivity extends AppCompatActivity {
         /** This drill was not generated and we are only displaying its information. */
         DISPLAYING_DRILL,
         /** Same as {@link ActivityState#DISPLAYING_DRILL} but started from a simulated attack. */
-        SIMULATED_ATTACK_DRILL,
+        SIMULATED_ATTACK_DRILL
     }
 
     private DrillInfoViewModel viewModel;
@@ -777,15 +777,14 @@ public class DrillInfoActivity extends AppCompatActivity {
                             .getLongExtra(Constants.INTENT_EXTRA_SUB_CATEGORY_CHOICE, -1);
                     viewModel.populateDrill(categoryId, subCategoryId);
                     break;
-                case REGENERATED_DRILL:
-                    // Fallthrough intentional
                 case ONBOARDING_DRILL:
-                    // Fallthrough intentional
                     final long dummyTime = 1750781942000L; // June 24th, 2025 16:19 GMT
                     Drill dummyDrill = new Drill("Jab", dummyTime, Drill.MEDIUM_CONFIDENCE,
                             "Remember to keep your back hand up!", null, true, List.of(), List.of());
                     viewModel.getUiCurrentDrill().setValue(dummyDrill);
                     break;
+                case REGENERATED_DRILL:
+                    // Fallthrough intentional
                 default:
                     // Not in a correct state. Toast so it persists screens
                     Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -1153,6 +1152,14 @@ public class DrillInfoActivity extends AppCompatActivity {
         activityUsePopup(cancelable, sequence::start, sequence::cancel);
     }
 
+    /**
+     * Explain the purpose of this activity.
+     *
+     * @param cancelable        true if this popup can be canceled by the user.
+     * @param onDialogFinish    Runnable once the user has finished the popup.
+     * @param onCancelCallback  Runnable for if the user cancels the callback. Only applicable if
+     *                          cancelable is true.
+     */
     private void activityUsePopup(boolean cancelable,
                                   @Nullable Runnable onDialogFinish,
                                   @Nullable Runnable onCancelCallback) {
