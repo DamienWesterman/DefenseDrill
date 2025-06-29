@@ -497,8 +497,7 @@ public class SimulatedAttackSettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * Prompt the user to enable notifications. The prompt depends on Android version. Then takes
-     * actions depending on whether or not the user enabled the notifications.
+     * Prompt the user to enable notifications.
      */
     private void promptEnableNotificationsPopup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

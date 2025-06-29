@@ -74,7 +74,7 @@ import me.relex.circleindicator.CircleIndicator3;
 
 /**
  * Home screen activity and entry point for the application. Displays the different general
- * functionalities of the app. CRUD operations in the database, Drill generation, and feedback.
+ * functionalities of the app.
  */
 @AndroidEntryPoint
 public class HomeActivity extends AppCompatActivity {
@@ -218,7 +218,6 @@ public class HomeActivity extends AppCompatActivity {
         intent.setData(data);
         startActivity(intent);
     }
-
 
     // =============================================================================================
     // Onboarding Methods
