@@ -30,6 +30,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,7 +62,8 @@ public class CheckServerUpdateService extends Service {
     @Inject
     DefenseDrillNotificationManager notificationManager;
 
-    private Disposable disposable = null;
+    private Disposable appDisposable = null;
+    private Disposable databaseDisposable = null;
 
     // =============================================================================================
     // Service Creation Methods
@@ -84,6 +86,7 @@ public class CheckServerUpdateService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        checkForAppUpdate();
         checkForDatabaseUpdate();
         // TODO: Create a method to check the server for an update
             // TODO: Have to create method in apiRepo
@@ -95,10 +98,16 @@ public class CheckServerUpdateService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
-        if (null != disposable
-                && !disposable.isDisposed()) {
-            disposable.dispose();
-            disposable = null;
+        if (null != databaseDisposable
+                && !databaseDisposable.isDisposed()) {
+            databaseDisposable.dispose();
+            databaseDisposable = null;
+        }
+
+        if (null != appDisposable
+                && !appDisposable.isDisposed()) {
+            appDisposable.dispose();
+            appDisposable = null;
         }
     }
 
@@ -114,14 +123,15 @@ public class CheckServerUpdateService extends Service {
         if (internetConnection.isNetworkConnected()
                 && 0 < lastUpdate
                 && !sharedPrefs.getJwt().isEmpty()) {
-            disposable = apiRepo.getAllDrillsUpdatedAfterTimestamp(lastUpdate)
+            databaseDisposable = apiRepo.getAllDrillsUpdatedAfterTimestamp(lastUpdate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .flatMap(response -> {
                     if (HttpsURLConnection.HTTP_OK == response.code()) {
                         // There are updates! Alert the user and stop the chain
                         notificationManager.notifyDatabaseUpdateAvailable();
-                        stopSelf();
+                        // TODO: Address this
+//                        stopSelf();
                         return Observable.empty();
                     }
 
@@ -131,7 +141,8 @@ public class CheckServerUpdateService extends Service {
                     if (HttpsURLConnection.HTTP_OK == response.code()) {
                         // There are updates! Alert the user and stop the chain
                         notificationManager.notifyDatabaseUpdateAvailable();
-                        stopSelf();
+                        // TODO: Address this
+//                        stopSelf();
                         return Observable.empty();
                     }
 
@@ -143,13 +154,33 @@ public class CheckServerUpdateService extends Service {
                             // There are updates! Alert the user and stop the chain
                             notificationManager.notifyDatabaseUpdateAvailable();
                         }
-                        stopSelf();
+                        // TODO: Address this
+//                        stopSelf();
                     },
                     throwable -> {
                         // No need to do anything
-                        stopSelf();
+                        // TODO: Address this
+//                        stopSelf();
                     }
                 );
+        }
+    }
+
+    // TODO: Doc comments
+    private void checkForAppUpdate() {
+        if (internetConnection.isNetworkConnected()) {
+            appDisposable = apiRepo.getServerAppVersion()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(
+                            // TODO: Properly implement
+                            response -> {
+                                Log.i("DxTag", response.toString());
+                            },
+                            throwable -> {
+                                Log.e("DxTag", throwable.toString());
+                            }
+                    );
         }
     }
 }

@@ -28,6 +28,7 @@ package com.damienwesterman.defensedrill.data.remote;
 
 import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.RemoteAppVersionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 
 import java.util.List;
@@ -78,4 +79,7 @@ import retrofit2.http.Query;
     @Headers("Content-Type: application/json") // Need this so it knows it is an API request
     Observable<DrillDTO> getDrillById(@Header("Cookie") String jwtHeader,
                                       @Path("id") Long drillServerId);
+
+    @GET("/DefenseDrill.version")
+    Observable<RemoteAppVersionsDTO> getServerAppVersion();
 }

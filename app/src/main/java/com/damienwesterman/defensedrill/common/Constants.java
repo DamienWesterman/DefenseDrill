@@ -115,7 +115,7 @@ public class Constants {
     /** Expected name for a self defense CategoryEntity. Should match with the server. */
     public static final String CATEGORY_NAME_SELF_DEFENSE = "Self Defense";
 
-    public static final String SERVER_URL = BuildConfig.SERVER_URL;
+    public static final String SERVER_URL = "http://192.168.50.128:8080/";// BuildConfig.SERVER_URL; // TODO: PUT BACK
     public static final String FEEDBACK_RECEIPT_EMAIL = BuildConfig.FEEDBACK_RECEIPT_EMAIL;
 
     /** Low Confidence index position of strings.xml's confidence_levels string-array. */
