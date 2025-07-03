@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -94,7 +95,20 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * @param context   Context.
      */
     public static void startActivity(@NonNull Context context) {
+        startActivity(context, false);
+    }
+
+    /**
+     * Start the WebDrillOptionsActivity.
+     *
+     * @param context           Context.
+     * @param updateAvailable   true if an application update is available.
+     */
+    public static void startActivity(@NonNull Context context, boolean updateAvailable) {
         Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        if (updateAvailable) {
+            intent.putExtra(Constants.INTENT_EXTRA_APP_UPDATE_AVAILABLE, "");
+        }
         context.startActivity(intent);
     }
 
@@ -140,6 +154,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
 
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_APP_UPDATE_AVAILABLE)) {
+            findViewById(R.id.updateAppCard).setVisibility(View.VISIBLE);
+        }
+
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
             /*
             We need to wait for the toolbar to be finished loading before calling onboarding, as we
@@ -178,6 +196,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         int cardId = view.getId();
         if (R.id.downloadFromDatabaseCard == cardId) {
             handleDownloadDrills();
+        } else if (R.id.updateAppCard == cardId) {
+            // TODO: Create a popup and explain to the user that they need to download, then update, then install
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://192.168.50.128:8080/DefenseDrill.apk")); // TODO: REPLACE WITH Constants.DEFENSE_DRILL_URI or whatever
+            context.startActivity(intent);
         } else if (R.id.loginCard == cardId) {
             commonPopups.displayLoginPopup(new OperationCompleteCallback() {
                 @Override
