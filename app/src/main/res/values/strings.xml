@@ -215,4 +215,6 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="onboarding_notifications_permission_description">This app uses notifications to let you know when there are updates for you. Notifications are also used if you choose to use Simulated attacks - more on those later. When you swipe you will be asked to enable notifications.</string>
     <string name="onboarding_battery_permissions_description">If you keep your phone on power saving, some notifications may not work properly. If this applies to you, please allow the ignore battery optimization permission. When you swipe you will be asked about this permission.</string>
     <string name="request_notifications_popup_message"><![CDATA[Notifications are required for Simulated Attacks. Please go to Settings -> Apps -> Defense Drill and then enable notifications.]]></string>
+    <string name="update_app_title">Update App</string>
+    <string name="update_app_description">Open a link to download and update the Defense Drill app</string>
 </resources>

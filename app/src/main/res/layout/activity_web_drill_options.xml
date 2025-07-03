@@ -39,6 +39,18 @@
             android:onClick="onCardClick"/>
 
         <com.damienwesterman.defensedrill.ui.view.TitleDescCard
+            android:id="@+id/updateAppCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/update_app_title"
+            app:description="@string/update_app_description"
+            android:onClick="onCardClick"
+            android:visibility="gone"/>
+
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
             android:id="@+id/loginCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

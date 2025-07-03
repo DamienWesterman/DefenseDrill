@@ -85,6 +85,10 @@ public class CheckServerUpdateService extends Service {
         super.onCreate();
 
         checkForDatabaseUpdate();
+        // TODO: Create a method to check the server for an update
+            // TODO: Have to create method in apiRepo
+            // TODO: Compare to context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode
+            // TODO: Then create a notification that opens WebDrillOptionsActivity.startActivity(context, true)
     }
 
     @Override
@@ -101,7 +105,6 @@ public class CheckServerUpdateService extends Service {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-
     /**
      * Check the backend if there has been any updates since our last download. If so, send the user
      * a notification that they should download the drills from the backend.
