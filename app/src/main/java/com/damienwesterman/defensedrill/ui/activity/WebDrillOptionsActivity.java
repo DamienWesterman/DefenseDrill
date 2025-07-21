@@ -53,6 +53,7 @@ import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.ui.common.CommonPopups;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
@@ -82,6 +83,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     CommonPopups commonPopups;
     @Inject
     CheckPhoneInternetConnection internetConnection;
+    @Inject
+    DefenseDrillNotificationManager notificationManager;
 
     private WebDrillApiViewModel viewModel;
     private Context context;
@@ -95,20 +98,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * @param context   Context.
      */
     public static void startActivity(@NonNull Context context) {
-        startActivity(context, false);
-    }
-
-    /**
-     * Start the WebDrillOptionsActivity.
-     *
-     * @param context           Context.
-     * @param updateAvailable   true if an application update is available.
-     */
-    public static void startActivity(@NonNull Context context, boolean updateAvailable) {
         Intent intent = new Intent(context, WebDrillOptionsActivity.class);
-        if (updateAvailable) {
-            intent.putExtra(Constants.INTENT_EXTRA_APP_UPDATE_AVAILABLE, "");
-        }
         context.startActivity(intent);
     }
 
@@ -116,10 +106,15 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * Create an intent designed to launch the WebDrillOptionsActivity.
      *
      * @param context   Context.
+     * @param appUpdate true if an application update is available.
      * @return          Intent that can be used to launch WebDrillOptionsActivity.
      */
-    public static Intent createIntentToStartActivity(@NonNull Context context) {
-        return new Intent(context, WebDrillOptionsActivity.class);
+    public static Intent createIntentToStartActivity(@NonNull Context context, boolean appUpdate) {
+        Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        if (appUpdate) {
+            intent.putExtra(Constants.INTENT_EXTRA_APP_UPDATE_AVAILABLE, "");
+        }
+        return intent;
     }
 
     /**
@@ -197,8 +192,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         if (R.id.downloadFromDatabaseCard == cardId) {
             handleDownloadDrills();
         } else if (R.id.updateAppCard == cardId) {
+            notificationManager.removeAppUpdateAvailableNotification();
             // TODO: Create a popup and explain to the user that they need to download, then update, then install
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://192.168.50.128:8080/DefenseDrill.apk")); // TODO: REPLACE WITH Constants.DEFENSE_DRILL_URI or whatever
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Constants.SERVER_URL + "/DefenseDrill.apk"));
             context.startActivity(intent);
         } else if (R.id.loginCard == cardId) {
             commonPopups.displayLoginPopup(new OperationCompleteCallback() {

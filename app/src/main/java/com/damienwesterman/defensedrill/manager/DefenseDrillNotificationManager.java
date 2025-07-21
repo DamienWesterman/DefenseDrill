@@ -50,12 +50,18 @@ import lombok.RequiredArgsConstructor;
 public class DefenseDrillNotificationManager {
     private static final String CHANNEL_ID_DATABASE_UPDATE_AVAILABLE = "database_update_available";
     private static final String CHANNEL_ID_SIMULATED_ATTACKS = "simulated_attacks";
+    private static final String CHANNEL_ID_APP_UPDATE_AVAILABLE = "app_update_available";
+
     private static final String CHANNEL_DESCRIPTION_DATABASE_UPDATE_AVAILABLE =
             "Database Update Available";
     private static final String CHANNEL_DESCRIPTION_SIMULATED_ATTACKS =
             "Simulated Attacks";
+    private static final String CHANNEL_DESCRIPTION_APP_UPDATE_AVAILABLE =
+            "App Update Available";
+
     private static final int NOTIFICATION_ID_DATABASE_UPDATE_AVAILABLE = 1;
     private static final int NOTIFICATION_ID_SIMULATED_ATTACKS = 2;
+    private static final int NOTIFICATION_ID_APP_UPDATE_AVAILABLE = 3;
 
     @NonNull
     private final Context context;
@@ -78,6 +84,11 @@ public class DefenseDrillNotificationManager {
                 CHANNEL_DESCRIPTION_SIMULATED_ATTACKS,
                 NotificationManager.IMPORTANCE_HIGH
         ));
+        systemNotificationManager.createNotificationChannel(new NotificationChannel(
+                CHANNEL_ID_APP_UPDATE_AVAILABLE,
+                CHANNEL_DESCRIPTION_APP_UPDATE_AVAILABLE,
+                NotificationManager.IMPORTANCE_HIGH
+        ));
         initSuccess = true;
     }
 
@@ -90,7 +101,7 @@ public class DefenseDrillNotificationManager {
             return;
         }
 
-        Intent intent = WebDrillOptionsActivity.createIntentToStartActivity(context);
+        Intent intent = WebDrillOptionsActivity.createIntentToStartActivity(context, false);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
@@ -159,6 +170,48 @@ public class DefenseDrillNotificationManager {
                 .build();
 
         systemNotificationManager.notify(NOTIFICATION_ID_SIMULATED_ATTACKS, notification);
+    }
+
+    /**
+     * Create a notification that an app update is available. If clicked, will bring the user to
+     * the {@link WebDrillOptionsActivity} activity with the App Update option available.
+     */
+    public void notifyAppUpdateAvailable() {
+        if (!initSuccess || !systemNotificationManager.areNotificationsEnabled()) {
+            return;
+        }
+
+        Intent intent = WebDrillOptionsActivity.createIntentToStartActivity(context, true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0, /* Request Code for sender. Irrelevant */
+                intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT
+        );
+
+        Notification notification =
+                new NotificationCompat.Builder(context, CHANNEL_ID_APP_UPDATE_AVAILABLE)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle("App Update Available!")
+                        .setContentText("Click here to update your app.")
+                        .setContentIntent(pendingIntent)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true) /* Remove notification after it is clicked */
+                        .build();
+
+        systemNotificationManager.notify(NOTIFICATION_ID_APP_UPDATE_AVAILABLE, notification);
+    }
+
+    /**
+     * Clear the notification for app update available.
+     */
+    public void removeAppUpdateAvailableNotification() {
+        if (!initSuccess || !systemNotificationManager.areNotificationsEnabled()) {
+            return;
+        }
+
+        systemNotificationManager.cancel(NOTIFICATION_ID_APP_UPDATE_AVAILABLE);
     }
 
     /**
