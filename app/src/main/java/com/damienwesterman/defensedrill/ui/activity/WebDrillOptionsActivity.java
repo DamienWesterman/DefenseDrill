@@ -193,10 +193,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
             handleDownloadDrills();
         } else if (R.id.updateAppCard == cardId) {
             notificationManager.removeAppUpdateAvailableNotification();
-            // TODO: Create a popup and explain to the user that they need to download, then update, then install
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(Constants.SERVER_URL + "/DefenseDrill.apk"));
-            context.startActivity(intent);
+            howToAppUpdatePopup();
         } else if (R.id.loginCard == cardId) {
             commonPopups.displayLoginPopup(new OperationCompleteCallback() {
                 @Override
@@ -365,6 +362,24 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         builder.setMessage(R.string.unlock_drills_how_to_popup_message);
         builder.setPositiveButton("Done", null);
 
+        builder.create().show();
+    }
+
+    /**
+     * Popup that informs the user how to update the app using a web browser, then opens the web
+     * browser.
+     */
+    private void howToAppUpdatePopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Update App");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setMessage(R.string.app_update_instructions);
+        builder.setPositiveButton("Update App", ((dialogInterface, i) -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Constants.SERVER_URL + "DefenseDrill.apk"));
+            context.startActivity(intent);
+        }));
+        builder.setNeutralButton("I'll do it later", null);
         builder.create().show();
     }
 

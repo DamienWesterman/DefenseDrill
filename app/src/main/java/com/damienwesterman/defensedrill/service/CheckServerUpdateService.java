@@ -204,7 +204,7 @@ public class CheckServerUpdateService extends Service {
             }
             long serverAppVersion = response.getVersionCode();
 
-            if (serverAppVersion >= currentAppVersion) {
+            if (serverAppVersion > currentAppVersion) {
                 notificationManager.notifyAppUpdateAvailable();
             }
         } catch (PackageManager.NameNotFoundException e) {

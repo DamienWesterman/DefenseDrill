@@ -178,7 +178,7 @@ Details: [Please include a detailed description of your feedback, the more detai
 
 Username: [Online Database Username]
 
-Thank you and we will try to get back to you as quickly as possible!
+Thank you and we will try to get back to you as quickly as possible!"
     </string>
     <string name="page_icon">Page Icon</string>
     <string name="onboarding_confidence_description">This indicates how confident you feel executing this drill. The less confident you are, the more likely this drill is to be chosen first. This helps you work on drills you are less confident on.</string>
@@ -217,4 +217,13 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="request_notifications_popup_message"><![CDATA[Notifications are required for Simulated Attacks. Please go to Settings -> Apps -> Defense Drill and then enable notifications.]]></string>
     <string name="update_app_title">Update App</string>
     <string name="update_app_description">Open a link to download and update the Defense Drill app.</string>
+    <string name="app_update_instructions">
+"1. When you click "Update App" it will open a web browser of your choice.
+
+2. Click DOWNLOAD when in the internet browser.
+
+3. Then press Open on the Downloaded app.
+
+4. Then press Update in order to update the app!"
+    </string>
 </resources>
