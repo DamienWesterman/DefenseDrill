@@ -68,7 +68,7 @@
     <string name="web_drill_options_title">Web Drill Options</string>
     <string name="web_drill_options_description">Interactive with the online Drill Database, download drills, set up the connection, and log in or out.</string>
     <string name="download_from_database_title">Download From Database</string>
-    <string name="download_from_database_description">Download and Update Drills, Categories, and Sub-Categories form the DefenseDrill Online Database</string>
+    <string name="download_from_database_description">Download and Update Drills, Categories, and Sub-Categories form the DefenseDrill Online Database.</string>
     <string name="check_for_updates_card_title">Check for Database Updates</string>
     <string name="check_for_updates_card_description">Check the online database for updates to your Drills or for new ones!</string>
     <string name="login_title">Login</string>
@@ -178,7 +178,7 @@ Details: [Please include a detailed description of your feedback, the more detai
 
 Username: [Online Database Username]
 
-Thank you and we will try to get back to you as quickly as possible!
+Thank you and we will try to get back to you as quickly as possible!"
     </string>
     <string name="page_icon">Page Icon</string>
     <string name="onboarding_confidence_description">This indicates how confident you feel executing this drill. The less confident you are, the more likely this drill is to be chosen first. This helps you work on drills you are less confident on.</string>
@@ -215,4 +215,15 @@ Thank you and we will try to get back to you as quickly as possible!
     <string name="onboarding_notifications_permission_description">This app uses notifications to let you know when there are updates for you. Notifications are also used if you choose to use Simulated attacks - more on those later. When you swipe you will be asked to enable notifications.</string>
     <string name="onboarding_battery_permissions_description">If you keep your phone on power saving, some notifications may not work properly. If this applies to you, please allow the ignore battery optimization permission. When you swipe you will be asked about this permission.</string>
     <string name="request_notifications_popup_message"><![CDATA[Notifications are required for Simulated Attacks. Please go to Settings -> Apps -> Defense Drill and then enable notifications.]]></string>
+    <string name="update_app_title">Update App</string>
+    <string name="update_app_description">Open a link to download and update the Defense Drill app.</string>
+    <string name="app_update_instructions">
+"1. When you click "Update App" it will open a web browser of your choice.
+
+2. Click DOWNLOAD when in the internet browser.
+
+3. Then press Open on the Downloaded app.
+
+4. Then press Update in order to update the app!"
+    </string>
 </resources>

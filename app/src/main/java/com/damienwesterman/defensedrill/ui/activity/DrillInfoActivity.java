@@ -743,9 +743,13 @@ public class DrillInfoActivity extends AppCompatActivity {
                                 in. Clear out the jwt so we do not keep doing a popup.
                                  */
                                 sharedPrefs.setJwt("");
+                                drillProgressBar.setVisibility(View.GONE);
                             }
                         }),
-                        errorMessage -> UiUtils.displayDismissibleSnackbar(rootView, errorMessage)
+                        errorMessage -> {
+                            drillProgressBar.setVisibility(View.GONE);
+                            UiUtils.displayDismissibleSnackbar(rootView, errorMessage);
+                        }
                 );
             }
         }));

@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,6 +53,7 @@ import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.data.local.Drill;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
+import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 import com.damienwesterman.defensedrill.ui.common.CommonPopups;
 import com.damienwesterman.defensedrill.common.OperationCompleteCallback;
 import com.damienwesterman.defensedrill.ui.common.OnboardingUtils;
@@ -81,6 +83,8 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
     CommonPopups commonPopups;
     @Inject
     CheckPhoneInternetConnection internetConnection;
+    @Inject
+    DefenseDrillNotificationManager notificationManager;
 
     private WebDrillApiViewModel viewModel;
     private Context context;
@@ -102,10 +106,15 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * Create an intent designed to launch the WebDrillOptionsActivity.
      *
      * @param context   Context.
+     * @param appUpdate true if an application update is available.
      * @return          Intent that can be used to launch WebDrillOptionsActivity.
      */
-    public static Intent createIntentToStartActivity(@NonNull Context context) {
-        return new Intent(context, WebDrillOptionsActivity.class);
+    public static Intent createIntentToStartActivity(@NonNull Context context, boolean appUpdate) {
+        Intent intent = new Intent(context, WebDrillOptionsActivity.class);
+        if (appUpdate) {
+            intent.putExtra(Constants.INTENT_EXTRA_APP_UPDATE_AVAILABLE, "");
+        }
+        return intent;
     }
 
     /**
@@ -139,6 +148,10 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         context = this;
 
         viewModel = new ViewModelProvider(this).get(WebDrillApiViewModel.class);
+
+        if (getIntent().hasExtra(Constants.INTENT_EXTRA_APP_UPDATE_AVAILABLE)) {
+            findViewById(R.id.updateAppCard).setVisibility(View.VISIBLE);
+        }
 
         if (getIntent().hasExtra(Constants.INTENT_EXTRA_START_ONBOARDING)) {
             /*
@@ -178,6 +191,9 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         int cardId = view.getId();
         if (R.id.downloadFromDatabaseCard == cardId) {
             handleDownloadDrills();
+        } else if (R.id.updateAppCard == cardId) {
+            notificationManager.removeAppUpdateAvailableNotification();
+            howToAppUpdatePopup();
         } else if (R.id.loginCard == cardId) {
             commonPopups.displayLoginPopup(new OperationCompleteCallback() {
                 @Override
@@ -346,6 +362,24 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
         builder.setMessage(R.string.unlock_drills_how_to_popup_message);
         builder.setPositiveButton("Done", null);
 
+        builder.create().show();
+    }
+
+    /**
+     * Popup that informs the user how to update the app using a web browser, then opens the web
+     * browser.
+     */
+    private void howToAppUpdatePopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Update App");
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setMessage(R.string.app_update_instructions);
+        builder.setPositiveButton("Update App", ((dialogInterface, i) -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Constants.SERVER_URL + "DefenseDrill.apk"));
+            context.startActivity(intent);
+        }));
+        builder.setNeutralButton("I'll do it later", null);
         builder.create().show();
     }
 

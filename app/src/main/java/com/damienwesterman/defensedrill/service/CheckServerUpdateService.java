@@ -29,6 +29,8 @@ package com.damienwesterman.defensedrill.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
@@ -36,6 +38,7 @@ import androidx.annotation.Nullable;
 
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.ApiRepo;
+import com.damienwesterman.defensedrill.data.remote.dto.RemoteAppVersionsDTO;
 import com.damienwesterman.defensedrill.domain.CheckPhoneInternetConnection;
 import com.damienwesterman.defensedrill.manager.DefenseDrillNotificationManager;
 
@@ -61,7 +64,9 @@ public class CheckServerUpdateService extends Service {
     @Inject
     DefenseDrillNotificationManager notificationManager;
 
-    private Disposable disposable = null;
+    private Disposable appDisposable = null;
+    private Disposable databaseDisposable = null;
+    private int runningThreads;
 
     // =============================================================================================
     // Service Creation Methods
@@ -84,24 +89,31 @@ public class CheckServerUpdateService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        runningThreads = 2;
         checkForDatabaseUpdate();
+        checkServerUpdateVersin();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        if (null != disposable
-                && !disposable.isDisposed()) {
-            disposable.dispose();
-            disposable = null;
+        if (null != databaseDisposable
+                && !databaseDisposable.isDisposed()) {
+            databaseDisposable.dispose();
+            databaseDisposable = null;
+        }
+
+        if (null != appDisposable
+                && !appDisposable.isDisposed()) {
+            appDisposable.dispose();
+            appDisposable = null;
         }
     }
 
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-
     /**
      * Check the backend if there has been any updates since our last download. If so, send the user
      * a notification that they should download the drills from the backend.
@@ -111,14 +123,14 @@ public class CheckServerUpdateService extends Service {
         if (internetConnection.isNetworkConnected()
                 && 0 < lastUpdate
                 && !sharedPrefs.getJwt().isEmpty()) {
-            disposable = apiRepo.getAllDrillsUpdatedAfterTimestamp(lastUpdate)
+            databaseDisposable = apiRepo.getAllDrillsUpdatedAfterTimestamp(lastUpdate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .flatMap(response -> {
                     if (HttpsURLConnection.HTTP_OK == response.code()) {
                         // There are updates! Alert the user and stop the chain
                         notificationManager.notifyDatabaseUpdateAvailable();
-                        stopSelf();
+                        tryStopSelf();
                         return Observable.empty();
                     }
 
@@ -128,7 +140,7 @@ public class CheckServerUpdateService extends Service {
                     if (HttpsURLConnection.HTTP_OK == response.code()) {
                         // There are updates! Alert the user and stop the chain
                         notificationManager.notifyDatabaseUpdateAvailable();
-                        stopSelf();
+                        tryStopSelf();
                         return Observable.empty();
                     }
 
@@ -140,13 +152,74 @@ public class CheckServerUpdateService extends Service {
                             // There are updates! Alert the user and stop the chain
                             notificationManager.notifyDatabaseUpdateAvailable();
                         }
-                        stopSelf();
+                        tryStopSelf();
                     },
                     throwable -> {
                         // No need to do anything
-                        stopSelf();
+                        tryStopSelf();
                     }
                 );
+        } else {
+            tryStopSelf();
+        }
+    }
+
+    /**
+     * Query the backend for what version of the app they host, then check if it is newer.
+     */
+    private void checkServerUpdateVersin() {
+        if (internetConnection.isNetworkConnected()) {
+            appDisposable = apiRepo.getServerAppVersion()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .subscribe(
+                            response -> {
+                                checkIfAppUpdateAvailable(response);
+                                tryStopSelf();
+                            },
+                            throwable -> {
+                                // No need to do anything
+                                tryStopSelf();
+                            }
+                    );
+        } else {
+            tryStopSelf();
+        }
+    }
+
+    /**
+     * Check if the returned app version is greater than the current, if so send the user an update.
+     *
+     * @param response  App version held by the server.
+     */
+    private void checkIfAppUpdateAvailable(RemoteAppVersionsDTO response) {
+        try {
+            long currentAppVersion;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                currentAppVersion = getPackageManager()
+                        .getPackageInfo(getPackageName(), 0).getLongVersionCode();
+            } else {
+                currentAppVersion = getPackageManager()
+                        .getPackageInfo(getPackageName(), 0).versionCode;
+            }
+            long serverAppVersion = response.getVersionCode();
+
+            if (serverAppVersion > currentAppVersion) {
+                notificationManager.notifyAppUpdateAvailable();
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            // Nothing we can really do, ignore it and continue
+        }
+
+    }
+
+    /**
+     * Stop the service if all threads have completed.
+     */
+    private synchronized void tryStopSelf() {
+        runningThreads--;
+        if (0 == runningThreads) {
+            stopSelf();
         }
     }
 }

@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.remote.dto.CategoryDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.DrillDTO;
+import com.damienwesterman.defensedrill.data.remote.dto.RemoteAppVersionsDTO;
 import com.damienwesterman.defensedrill.data.remote.dto.SubCategoryDTO;
 import com.damienwesterman.defensedrill.common.Constants;
 
@@ -168,6 +169,15 @@ public class ApiRepo {
         String jwtHeader = "jwt=" + jwt;
 
         return apiDao.getDrillById(jwtHeader, serverDrillId);
+    }
+
+    /**
+     * Check the versions of the app hosted on the server to see if an update is available.
+     *
+     * @return Observable RemoteAppVersionsDTO.
+     */
+    public Observable<RemoteAppVersionsDTO> getServerAppVersion() {
+        return apiDao.getServerAppVersion();
     }
 
     /**

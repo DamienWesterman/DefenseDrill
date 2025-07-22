@@ -308,6 +308,7 @@ public class DrillInfoViewModel extends AndroidViewModel {
             // getLocalizedMessage(): failed to connect to your.server.org/1.1.1.1 (port 99999) from /2.2.2.2 (port 99999) after 10000ms
             failureCallback.accept("Issue connecting to the server, try again later");
         } else {
+            Log.e(TAG, "Unknown handleLoadNetworkLinksFailure() error: ", throwable);
             failureCallback.accept("An unexpected error has occurred");
         }
     }
