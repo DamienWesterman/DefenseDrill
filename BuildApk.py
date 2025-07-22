@@ -80,6 +80,6 @@ if __name__ == '__main__':
         description='Builds a signed APK for DefenseDrill and copies it to the desired output directory. Also writes the version information in a json in the output directory to be served to the app.')
 
     parser.add_argument('-o', '--output', required=True,
-                        help='Output directory to put the resulting DefenseDrill.apk file.')
+                        help='Output directory to put the resulting files. Should be in the DefenseDrillMVC/src/main/resources/static/ directory.')
 
     run_build(parser.parse_args())
