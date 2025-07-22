@@ -42,9 +42,9 @@ def run_build(args):
         print('Failed to build the apk!')
         return
 
-    print('\n\nMoving the apk the the output directory')
+    print('\n\nMoving the apk to the output directory')
     print('###########################################################')
-    if 0 != os.system('cp ' + APK_SIGNED_PATH + ' ' + APK_OUTPUT_PATH):
+    if 0 != os.system(f"cp {APK_SIGNED_PATH} {APK_OUTPUT_PATH}"):
         print('Failed to copy the apk to the output directory!')
         return
 
@@ -68,9 +68,9 @@ def run_build(args):
     print(f"Creating version file using versionCode <{version_code}> and versionName <{version_name}>")
     with open(VERSION_OUTPUT_PATH, 'w+') as output_file:
         json.dump({
-        "versionCode": int(version_code),
-        "versionName": version_name
-    }, output_file)
+            "versionCode": int(version_code),
+            "versionName": version_name
+        }, output_file)
 
     print(f"\n\nDone! Version file created at: {VERSION_OUTPUT_PATH}")
 
