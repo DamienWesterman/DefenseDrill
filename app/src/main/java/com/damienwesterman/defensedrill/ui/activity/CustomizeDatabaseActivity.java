@@ -117,8 +117,8 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
         } else if (R.id.backupDatabaseCard == cardId) {
             createDocumentLauncher.launch("defense_drill_backup.json");
         } else if (R.id.importDatabaseCard == cardId) {
-            // TODO: implement
-            UiUtils.displayDismissibleSnackbar(rootView, "IMPORTING DATA");
+            // TODO: Implement for an already instantiated database
+            UiUtils.displayDismissibleSnackbar(rootView, "Not yet implemented");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

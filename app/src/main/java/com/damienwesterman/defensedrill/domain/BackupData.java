@@ -112,10 +112,6 @@ public class BackupData {
     // =============================================================================================
     // Private Helper Methods
     // =============================================================================================
-    /**
-     * TODO: Doc comments
-     * @return
-     */
     @NonNull
     private String createJsonString() {
         Map<String, String> jsonMap = new HashMap<>();

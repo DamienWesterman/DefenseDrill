@@ -56,9 +56,11 @@ public class BackupImportViewModel extends AndroidViewModel {
     }
 
     /**
-     * TODO: Doc comments
-     * @param uri
-     * @param callback
+     * Create a JSON backup file of all this app's data in the requested location.
+     *
+     * @param uri File path to save the JSON to.
+     * @param callback Callback object for when the operation is done. Sends a boolean indicating
+     *                 success and a String results message.
      */
     public void backupDatabase(@NonNull Uri uri, @NonNull BiConsumer<Boolean, String> callback) {
         new Thread(() -> {
