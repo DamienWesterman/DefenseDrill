@@ -61,7 +61,6 @@ public class BackupImportViewModel extends AndroidViewModel {
      * @param callback
      */
     public void backupDatabase(@NonNull Uri uri, @NonNull BiConsumer<Boolean, String> callback) {
-        // TODO: Do we need to validate the uri, access or anything?
         new Thread(() -> {
             final boolean success = backupData.backupDatabase(uri);
             callback.accept(success, backupData.getResultMessage());

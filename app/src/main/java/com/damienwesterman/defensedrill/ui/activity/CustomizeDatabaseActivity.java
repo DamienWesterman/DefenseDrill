@@ -72,7 +72,7 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
                     if (!success) {
                         Log.e(TAG, "backupDatabase Failed: " + message);
                     }
-                    // TODO: Replace with a popup or something
+
                     runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(rootView, message));
                 }));
     }
@@ -115,9 +115,9 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
             ViewAbstractCategoriesActivity.startActivity(this,
                     ViewAbstractCategoriesActivity.ActivityMode.MODE_SUB_CATEGORIES);
         } else if (R.id.backupDatabaseCard == cardId) {
-            // TODO: implement properly
             createDocumentLauncher.launch("defense_drill_backup.json");
         } else if (R.id.importDatabaseCard == cardId) {
+            // TODO: implement
             UiUtils.displayDismissibleSnackbar(rootView, "IMPORTING DATA");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");

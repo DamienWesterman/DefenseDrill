@@ -29,6 +29,7 @@ package com.damienwesterman.defensedrill.domain;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -87,21 +88,19 @@ public class BackupData {
     public boolean backupDatabase(@NonNull Uri uri) {
         try (OutputStream os = contentResolver.openOutputStream(uri, "w")) {
             if (null == os) {
-                // TODO: Something properly
-                throw new IOException("Unable to open backup file");
+                throw new IOException("OutputStream was NULL");
             }
 
             // TODO: Actually get the things
             os.write(createJsonString().getBytes(StandardCharsets.UTF_8));
+            resultsMessage = "Backup file successfully created!";
         } catch (FileNotFoundException e) {
-            //TODO: Handle properly
-            throw new RuntimeException(e);
+            resultsMessage = "Something went wrong, file not found";
         } catch (IOException e) {
-            //TODO: Handle properly
-            throw new RuntimeException(e);
+            Log.e(TAG, "Error while backing up database", e);
+            resultsMessage = "Error while saving backup file";
         }
 
-        resultsMessage = "Backup file successfully created!";
         return true;
     }
 
