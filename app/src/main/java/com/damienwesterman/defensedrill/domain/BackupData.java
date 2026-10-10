@@ -33,6 +33,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.damienwesterman.defensedrill.common.Constants;
 import com.damienwesterman.defensedrill.data.local.DrillRepository;
 import com.damienwesterman.defensedrill.data.local.SharedPrefs;
 import com.damienwesterman.defensedrill.data.local.SimulatedAttackRepo;
@@ -91,7 +92,6 @@ public class BackupData {
                 throw new IOException("OutputStream was NULL");
             }
 
-            // TODO: Actually get the things
             os.write(createJsonString().getBytes(StandardCharsets.UTF_8));
             resultsMessage = "Backup file successfully created!";
         } catch (FileNotFoundException e) {
@@ -120,10 +120,9 @@ public class BackupData {
     private String createJsonString() {
         Map<String, String> jsonMap = new HashMap<>();
 
-        // TODO: extract the string keys
-        jsonMap.put("database", createDatabaseJson());
-        jsonMap.put("simulateAttacks", createSimulatedAttacksJson());
-        jsonMap.put("sharedPrefs", createSharedPrefsJson());
+        jsonMap.put(Constants.BACKUP_JSON_KEY_DATABASE, createDatabaseJson());
+        jsonMap.put(Constants.BACKUP_JSON_KEY_SIMULATED_ATTACKS, createSimulatedAttacksJson());
+        jsonMap.put(Constants.BACKUP_JSON_KEY_SHARED_PREFS, createSharedPrefsJson());
 
         return gson.toJson(jsonMap);
     }
@@ -132,10 +131,12 @@ public class BackupData {
     private String createDatabaseJson() {
         Map<String, String> jsonMap = new HashMap<>();
 
-        // TODO: extract the string keys
-        jsonMap.put("categories", gson.toJson(drillRepo.getAllCategories()));
-        jsonMap.put("subCategories", gson.toJson(drillRepo.getAllSubCategories()));
-        jsonMap.put("drills", gson.toJson(drillRepo.getAllDrills()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_CATEGORIES,
+                gson.toJson(drillRepo.getAllCategories()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_SUB_CATEGORIES,
+                gson.toJson(drillRepo.getAllSubCategories()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_DRILLS,
+                gson.toJson(drillRepo.getAllDrills()));
 
         return gson.toJson(jsonMap);
     }
@@ -144,8 +145,8 @@ public class BackupData {
     private String createSimulatedAttacksJson() {
         Map<String, String> jsonMap = new HashMap<>();
 
-        // TODO: extract the string keys
-        jsonMap.put("policies", gson.toJson(simulatedAttackRepo.getAllPolicies()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_POLICIES,
+                gson.toJson(simulatedAttackRepo.getAllPolicies()));
 
         return gson.toJson(jsonMap);
     }
@@ -154,10 +155,12 @@ public class BackupData {
     private String createSharedPrefsJson() {
         Map<String, String> jsonMap = new HashMap<>();
 
-        // TODO: extract the string keys
-        jsonMap.put("lastUpdate", gson.toJson(sharedPrefs.getLastDrillUpdateTime()));
-        jsonMap.put("attacksEnabled", gson.toJson(sharedPrefs.areSimulatedAttacksEnabled()));
-        jsonMap.put("popupEnabled", gson.toJson(sharedPrefs.isSimulatedAttackPopupDefault()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_LAST_UPDATE,
+                gson.toJson(sharedPrefs.getLastDrillUpdateTime()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_ATTACKS_ENABLED,
+                gson.toJson(sharedPrefs.areSimulatedAttacksEnabled()));
+        jsonMap.put(Constants.BACKUP_JSON_KEY_POPUP_ENABLED,
+                gson.toJson(sharedPrefs.isSimulatedAttackPopupDefault()));
         // Don't need onboarding, that will have to have been finished before importing anyway
 
         return gson.toJson(jsonMap);

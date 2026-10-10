@@ -156,6 +156,27 @@ public class Constants {
     /** Value does not matter. */
     public static final String INTENT_EXTRA_APP_UPDATE_AVAILABLE = "app_update_available";
 
+    /** JSON key to extract the json for the entire drills database from the backup file. */
+    public static final String BACKUP_JSON_KEY_DATABASE = "database";
+    /** JSON key to extract the json for the simulated attacks database from the backup file. */
+    public static final String BACKUP_JSON_KEY_SIMULATED_ATTACKS = "simulateAttacks";
+    /** JSON key to extract the json for the shared preferences from the backup file. */
+    public static final String BACKUP_JSON_KEY_SHARED_PREFS = "sharedPrefs";
+    /** JSON key to extract the categories from the drills database json object. */
+    public static final String BACKUP_JSON_KEY_CATEGORIES = "categories";
+    /** JSON key to extract the sub-categories from the drills database json object. */
+    public static final String BACKUP_JSON_KEY_SUB_CATEGORIES = "subCategories";
+    /** JSON key to extract the drills from the drills database json object. */
+    public static final String BACKUP_JSON_KEY_DRILLS = "drills";
+    /** JSON key to extract the policies from the simulated attacks json object. */
+    public static final String BACKUP_JSON_KEY_POLICIES = "policies";
+    /** JSON key to extract the last update time from the shared preferences json object. */
+    public static final String BACKUP_JSON_KEY_LAST_UPDATE = "lastUpdate";
+    /** JSON key to extract if attacks are enabled from the shared preferences json object. */
+    public static final String BACKUP_JSON_KEY_ATTACKS_ENABLED = "attacksEnabled";
+    /** JSON key to extract if popups are enabled from the shared preferences json object. */
+    public static final String BACKUP_JSON_KEY_POPUP_ENABLED = "popupEnabled";
+
     /**
      * Converts a confidence weight into its respective position in the confidence_levels string
      * array in res/values/strings.xml. For use in a spinner with indexed positions.
