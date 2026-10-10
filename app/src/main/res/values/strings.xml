@@ -226,4 +226,8 @@ Thank you and we will try to get back to you as quickly as possible!"
 
 4. Then press Update in order to update the app!"
     </string>
+    <string name="backup_database_title">Backup Database</string>
+    <string name="backup_database_description">Create a database backup file for transferring data to another device.</string>
+    <string name="import_database_title">Import Database</string>
+    <string name="import_database_description">Import data from a file created from another device.</string>
 </resources>

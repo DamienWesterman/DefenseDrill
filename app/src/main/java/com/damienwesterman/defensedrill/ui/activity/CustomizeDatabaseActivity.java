@@ -90,6 +90,10 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
         } else if (R.id.viewSubCategoriesCard == cardId) {
             ViewAbstractCategoriesActivity.startActivity(this,
                     ViewAbstractCategoriesActivity.ActivityMode.MODE_SUB_CATEGORIES);
+        } else if (R.id.backupDatabaseCard == cardId) {
+            UiUtils.displayDismissibleSnackbar(rootView, "BACKING UP DATA");
+        } else if (R.id.importDatabaseCard == cardId) {
+            UiUtils.displayDismissibleSnackbar(rootView, "IMPORTING DATA");
         } else {
             UiUtils.displayDismissibleSnackbar(rootView, "Unknown option");
         }

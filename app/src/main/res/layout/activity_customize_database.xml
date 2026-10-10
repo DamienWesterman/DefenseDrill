@@ -71,6 +71,28 @@
             app:description="@string/customize_sub_categories_description"
             android:onClick="onCardClick" />
 
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
+            android:id="@+id/backupDatabaseCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/backup_database_title"
+            app:description="@string/backup_database_description"
+            android:onClick="onCardClick" />
+
+        <com.damienwesterman.defensedrill.ui.view.TitleDescCard
+            android:id="@+id/importDatabaseCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="8dp"
+            app:title="@string/import_database_title"
+            app:description="@string/import_database_description"
+            android:onClick="onCardClick" />
+
     </LinearLayout>
 </ScrollView>
 </LinearLayout>
