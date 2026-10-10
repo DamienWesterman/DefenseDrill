@@ -3,22 +3,35 @@ package com.damienwesterman.defensedrill.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.damienwesterman.defensedrill.R;
+import com.damienwesterman.defensedrill.data.local.BackupImportViewModel;
 import com.damienwesterman.defensedrill.ui.common.UiUtils;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Screen to offer the user options for altering the local database via CRUD operations.
  */
+@AndroidEntryPoint
 public class CustomizeDatabaseActivity extends AppCompatActivity {
+    private static final String TAG = CustomizeDatabaseActivity.class.getSimpleName();
+
+    private BackupImportViewModel backupImportViewModel;
+    private ActivityResultLauncher<String> createDocumentLauncher;
+
     private LinearLayout rootView;
 
     // =============================================================================================
@@ -51,6 +64,17 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
         }
 
         rootView = findViewById(R.id.activityCustomizeDatabase);
+        backupImportViewModel = new ViewModelProvider(this).get(BackupImportViewModel.class);
+
+        createDocumentLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument("application/json"),
+                uri -> backupImportViewModel.backupDatabase(uri, (success, message) -> {
+                    if (!success) {
+                        Log.e(TAG, "backupDatabase Failed: " + message);
+                    }
+                    // TODO: Replace with a popup or something
+                    runOnUiThread(() -> UiUtils.displayDismissibleSnackbar(rootView, message));
+                }));
     }
 
     @Override
@@ -91,7 +115,8 @@ public class CustomizeDatabaseActivity extends AppCompatActivity {
             ViewAbstractCategoriesActivity.startActivity(this,
                     ViewAbstractCategoriesActivity.ActivityMode.MODE_SUB_CATEGORIES);
         } else if (R.id.backupDatabaseCard == cardId) {
-            UiUtils.displayDismissibleSnackbar(rootView, "BACKING UP DATA");
+            // TODO: implement properly
+            createDocumentLauncher.launch("defense_drill_backup.json");
         } else if (R.id.importDatabaseCard == cardId) {
             UiUtils.displayDismissibleSnackbar(rootView, "IMPORTING DATA");
         } else {
