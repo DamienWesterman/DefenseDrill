@@ -424,6 +424,7 @@ public class WebDrillOptionsActivity extends AppCompatActivity {
      * WebDrillOptionsActivity.
      */
     private void startOnboarding() {
+        // TODO: Modify this with the new enabled options
         boolean cancelable = sharedPrefs.isOnboardingComplete();
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
