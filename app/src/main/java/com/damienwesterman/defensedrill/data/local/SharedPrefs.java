@@ -52,6 +52,8 @@ public class SharedPrefs {
     private static final String KEY_SIMULATED_ATTACKS_POPUP_BY_DEFAULT
             = "simulated_attacks_popup_by_default";
     private static final String KEY_ONBOARDING_COMPLETE = "onboarding_complete";
+    /** Denotes if the user has chosen to enabled connection with the Web Drill Backend. */
+    private static final String KEY_WEB_DRILL_NETWORK_ENABLED = "network_enabled";
 
     private final SharedPreferences sharedPrefs;
     private final SharedPreferences encryptedSharedPrefs;
@@ -140,6 +142,16 @@ public class SharedPrefs {
     public boolean setOnboardingComplete(boolean isComplete) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putBoolean(KEY_ONBOARDING_COMPLETE, isComplete);
+        return editor.commit();
+    }
+
+    public boolean isWebDrillNetworkEnabled() {
+        return sharedPrefs.getBoolean(KEY_WEB_DRILL_NETWORK_ENABLED, false);
+    }
+
+    public boolean setWebDrillNetworkEnabled(boolean enabled) {
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean(KEY_WEB_DRILL_NETWORK_ENABLED, enabled);
         return editor.commit();
     }
 }

@@ -721,7 +721,8 @@ public class DrillInfoActivity extends AppCompatActivity {
             fillDrillInfo(drill);
             setUiLoading(false);
 
-            if (null != drill.getServerDrillId() && !sharedPrefs.getJwt().isEmpty()) {
+            if (null != drill.getServerDrillId() && !sharedPrefs.getJwt().isEmpty()
+                    && sharedPrefs.isWebDrillNetworkEnabled()) {
                 // Keep the spinner visible until instructions and related drills are loaded (or not)
                 drillProgressBar.setVisibility(View.VISIBLE);
                 instructionsSelect.setVisibility(View.GONE);
